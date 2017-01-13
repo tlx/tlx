@@ -55,11 +55,11 @@ public:
           capacity_(0), mask_(0),
           data_(nullptr) { }
 
-    explicit RingBuffer(size_t max_size,
+    explicit RingBuffer(size_t _max_size,
                         const Allocator& alloc = allocator_type())
-        : max_size_(max_size),
+        : max_size_(_max_size),
           alloc_(alloc),
-          capacity_(round_up_to_power_of_two(max_size + 1)),
+          capacity_(round_up_to_power_of_two(_max_size + 1)),
           mask_(capacity_ - 1),
           data_(alloc_.allocate(capacity_)) { }
 
@@ -279,9 +279,9 @@ public:
 
     template <class Archive>
     void save(Archive& ar) const {
-        uint32_t size = this->size();
-        ar(max_size_, size);
-        for (size_t i = 0; i < size; ++i) ar(operator [] (i));
+        uint32_t ar_size = size();
+        ar(max_size_, ar_size);
+        for (size_t i = 0; i < ar_size; ++i) ar(operator [] (i));
     }
 
     template <class Archive>
@@ -300,10 +300,10 @@ public:
         begin_ = end_ = 0;
 
         // load items
-        uint32_t size;
-        ar(size);
+        uint32_t ar_size;
+        ar(ar_size);
 
-        for (size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < ar_size; ++i) {
             push_back(Type());
             ar(back());
         }

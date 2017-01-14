@@ -14,6 +14,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <memory>
+#include <vector>
 
 #include <tlx/math/round_to_power_of_two.hpp>
 
@@ -50,15 +51,12 @@ public:
     // using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     explicit RingBuffer(const Allocator& alloc = allocator_type()) noexcept
-        : max_size_(0),
-          alloc_(alloc),
-          capacity_(0), mask_(0),
-          data_(nullptr) { }
+        : max_size_(0), alloc_(alloc),
+          capacity_(0), mask_(0), data_(nullptr) { }
 
     explicit RingBuffer(size_t _max_size,
                         const Allocator& alloc = allocator_type())
-        : max_size_(_max_size),
-          alloc_(alloc),
+        : max_size_(_max_size), alloc_(alloc),
           capacity_(round_up_to_power_of_two(_max_size + 1)),
           mask_(capacity_ - 1),
           data_(alloc_.allocate(capacity_)) { }
@@ -138,6 +136,24 @@ public:
         alloc_.deallocate(data_, capacity_);
     }
 
+    //! allocate buffer
+    void allocate(size_t max_size) {
+        assert(!data_);
+        max_size_ = max_size;
+        capacity_ = round_up_to_power_of_two(max_size + 1);
+        mask_ = capacity_ - 1;
+        data_ = alloc_.allocate(capacity_);
+    }
+
+    //! deallocate buffer
+    void deallocate() {
+        if (data_) {
+            clear();
+            alloc_.deallocate(data_, capacity_);
+            data_ = nullptr;
+        }
+    }
+
     //! \name Modifiers
     //! \{
 
@@ -209,40 +225,54 @@ public:
             pop_front();
     }
 
+    //! copy all element into the vector
+    void copy_to(std::vector<value_type>* out) const {
+        for (size_t i = 0; i < size(); ++i)
+            out->emplace_back(operator [] (i));
+    }
+
+    //! move all element from the RingBuffer into the vector
+    void move_to(std::vector<value_type>* out) {
+        while (!empty()) {
+            out->emplace_back(std::move(front()));
+            pop_front();
+        }
+    }
+
     //! \}
 
     //! \name Element access
     //! \{
 
     //! Returns a reference to the i-th element.
-    reference operator [] (size_type i) {
+    reference operator [] (size_type i) noexcept {
         assert(i < size());
         return data_[(begin_ + i) & mask_];
     }
     //! Returns a reference to the i-th element.
-    const_reference operator [] (size_type i) const {
+    const_reference operator [] (size_type i) const noexcept {
         assert(i < size());
         return data_[(begin_ + i) & mask_];
     }
 
     //! Returns a reference to the first element.
-    reference front() {
+    reference front() noexcept {
         assert(!empty());
         return data_[begin_];
     }
     //! Returns a reference to the first element.
-    const_reference front() const {
+    const_reference front() const noexcept {
         assert(!empty());
         return data_[begin_];
     }
 
     //! Returns a reference to the last element.
-    reference back() {
+    reference back() noexcept {
         assert(!empty());
         return data_[(end_ - 1) & mask_];
     }
     //! Returns a reference to the last element.
-    const_reference back() const {
+    const_reference back() const noexcept {
         assert(!empty());
         return data_[(end_ - 1) & mask_];
     }

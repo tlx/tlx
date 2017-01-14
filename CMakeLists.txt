@@ -80,10 +80,10 @@ if(NOT MSVC)
   ### Linux/Unix-like Build Environment ########################################
 
   # enable warnings
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -W -Wall -Wextra -fPIC")
+  set(CMAKE_CXX_FLAGS "-std=c++11 -g -W -Wall -Wextra -fPIC ${CMAKE_CXX_FLAGS}")
 
   # enable more warnings
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wshadow")
+  set(CMAKE_CXX_FLAGS "-Wpedantic -Wshadow ${CMAKE_CXX_FLAGS}")
 
   # remove -rdynamic from linker flags (smaller binaries which cannot be loaded
   # with dlopen() -- something no one needs)

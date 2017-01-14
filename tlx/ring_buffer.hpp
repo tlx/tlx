@@ -54,10 +54,10 @@ public:
         : max_size_(0), alloc_(alloc),
           capacity_(0), mask_(0), data_(nullptr) { }
 
-    explicit RingBuffer(size_t _max_size,
+    explicit RingBuffer(size_t max_size,
                         const Allocator& alloc = allocator_type())
-        : max_size_(_max_size), alloc_(alloc),
-          capacity_(round_up_to_power_of_two(_max_size + 1)),
+        : max_size_(max_size), alloc_(alloc),
+          capacity_(round_up_to_power_of_two(max_size + 1)),
           mask_(capacity_ - 1),
           data_(alloc_.allocate(capacity_)) { }
 

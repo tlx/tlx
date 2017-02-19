@@ -12,8 +12,12 @@
 #define TLX_STRING_HEXDUMP_HEADER
 
 #include <string>
+#include <vector>
 
 namespace tlx {
+
+/******************************************************************************/
+// Uppercase Hexdump Methods
 
 /*!
  * Dump a (binary) string as a sequence of uppercase hexadecimal pairs.
@@ -44,6 +48,22 @@ std::string hexdump_type(const Type& t) {
 }
 
 /*!
+ * Dump a char vector as a sequence of uppercase hexadecimal pairs.
+ *
+ * \param str  binary data to output in hex
+ * \return     string of hexadecimal pairs
+ */
+std::string hexdump(const std::vector<char>& data);
+
+/*!
+ * Dump a uint8_t vector as a sequence of uppercase hexadecimal pairs.
+ *
+ * \param str  binary data to output in hex
+ * \return     string of hexadecimal pairs
+ */
+std::string hexdump(const std::vector<uint8_t>& data);
+
+/*!
  * Dump a (binary) string into a C source code snippet. The snippet defines an
  * array of const uint8_t* holding the data of the string.
  *
@@ -53,6 +73,56 @@ std::string hexdump_type(const Type& t) {
  */
 std::string hexdump_sourcecode(
     const std::string& str, const std::string& var_name = "name");
+
+/******************************************************************************/
+// Lowercase Hexdump Methods
+
+/*!
+ * Dump a (binary) string as a sequence of lowercase hexadecimal pairs.
+ *
+ * \param data  binary data to output in hex
+ * \param size  length of binary data
+ * \return      string of hexadecimal pairs
+ */
+std::string hexdump_lc(const void* const data, size_t size);
+
+/*!
+ * Dump a (binary) string as a sequence of lowercase hexadecimal pairs.
+ *
+ * \param str  binary data to output in hex
+ * \return     string of hexadecimal pairs
+ */
+std::string hexdump_lc(const std::string& str);
+
+/*!
+ * Dump a (binary) item as a sequence of lowercase hexadecimal pairs.
+ *
+ * \param t  binary data to output in hex
+ * \return   string of hexadecimal pairs
+ */
+template <typename Type>
+std::string hexdump_lc_type(const Type& t) {
+    return hexdump_lc(&t, sizeof(t));
+}
+
+/*!
+ * Dump a char vector as a sequence of lowercase hexadecimal pairs.
+ *
+ * \param str  binary data to output in hex
+ * \return     string of hexadecimal pairs
+ */
+std::string hexdump_lc(const std::vector<char>& data);
+
+/*!
+ * Dump a uint8_t vector as a sequence of lowercase hexadecimal pairs.
+ *
+ * \param str  binary data to output in hex
+ * \return     string of hexadecimal pairs
+ */
+std::string hexdump_lc(const std::vector<uint8_t>& data);
+
+/******************************************************************************/
+// Parser for Hex Digit Sequence
 
 /*!
  * Read a string as a sequence of hexadecimal pairs. Converts each pair of

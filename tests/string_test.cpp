@@ -8,6 +8,7 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <random>
 #include <stdexcept>
 
 #include <tlx/die.hpp>
@@ -17,7 +18,83 @@
 #define ARRAY_AS_STRING(array) \
     std::string(reinterpret_cast<const char*>(array), sizeof(array))
 
-void test_hexdump() {
+/*!
+ * Generate a random binary string of given length. Any byte from 0-256 is
+ * equally probable. Uses the pseudo-random number generator from stdlib; take
+ * care to seed it using srand() before calling this function.
+ *
+ * \param size  length of result
+ * \return      random binary string of given length
+ */
+static inline
+std::string random_binary(std::string::size_type size) {
+    static std::random_device random_device;
+    std::minstd_rand prng(random_device());
+
+    std::string out;
+    out.resize(size);
+
+    for (size_t i = 0; i < size; ++i)
+        out[i] = static_cast<unsigned char>(prng() % 256);
+
+    return out;
+}
+
+static void test_base64() {
+    // take some static hex data and dump it using base64 encoding, then decode
+    // it again.
+    const unsigned char rand1data[42] = {
+        0x16, 0x35, 0xCA, 0x03, 0x90, 0x6B, 0x47, 0x11,
+        0x85, 0x02, 0xE7, 0x40, 0x9E, 0x3A, 0xCE, 0x43,
+        0x0C, 0x57, 0x3E, 0x35, 0xE7, 0xA6, 0xB2, 0x37,
+        0xEC, 0x6D, 0xF6, 0x68, 0xF6, 0x0E, 0x74, 0x0C,
+        0x44, 0x3F, 0x0F, 0xD4, 0xAA, 0x56, 0xE5, 0x2F,
+        0x58, 0xCC
+    };
+
+    std::string rand1 = ARRAY_AS_STRING(rand1data);
+
+    std::string rand1base64 = tlx::base64_encode(rand1);
+
+    die_unequal(rand1base64,
+                "FjXKA5BrRxGFAudAnjrOQwxXPjXnprI37G32aPYOdAxEPw/UqlblL1jM");
+
+    die_unequal(tlx::base64_decode(rand1base64), rand1);
+
+    // check line-splitting
+    std::string rand1base64lines = tlx::base64_encode(rand1, 16);
+
+    die_unequal(rand1base64lines,
+                "FjXKA5BrRxGFAudA\n" "njrOQwxXPjXnprI3\n"
+                "7G32aPYOdAxEPw/U\n" "qlblL1jM");
+
+    // take three random binary data string with different sizes and run
+    // the base64 encoding->decoding->checking drill.
+
+    std::string rand12 = random_binary(12);
+    die_unequal(tlx::base64_decode(tlx::base64_encode(rand12)), rand12);
+
+    std::string rand13 = random_binary(13);
+    die_unequal(tlx::base64_decode(tlx::base64_encode(rand13)), rand13);
+
+    std::string rand14 = random_binary(14);
+    die_unequal(tlx::base64_decode(tlx::base64_encode(rand14)), rand14);
+
+    // run a larger set of random tests
+    for (unsigned int ti = 0; ti < 1000; ++ti)
+    {
+        unsigned int randlen = ti; // rand() % 1000;
+        std::string randstr = random_binary(randlen);
+
+        die_unequal(
+            tlx::base64_decode(tlx::base64_encode(randstr)), randstr);
+    }
+
+    die_noexcept(
+        tlx::base64_decode("FjXKA5!!RxGFAudA"), std::runtime_error);
+}
+
+static void test_hexdump() {
 
     // take hex data and dump it into a string, then parse back into array
     const unsigned char hexdump[8] = {
@@ -34,8 +111,8 @@ void test_hexdump() {
     die_unequal(hexparsed, hexdata);
 
     // dump random binary string into hex and parse it back
-    // std::string rand1 = tlx::random_binary(42);
-    // die_unequal(tlx::parse_hexdump(tlx::hexdump(rand1)), rand1);
+    std::string rand1 = random_binary(42);
+    die_unequal(tlx::parse_hexdump(tlx::hexdump(rand1)), rand1);
 
     // take the first hex list and dump it into source code format, then
     // compare it with correct data (which was also dumped with
@@ -61,7 +138,7 @@ void test_hexdump() {
     die_noexcept(tlx::parse_hexdump("8DE285D4BF98E60"), std::runtime_error);
 }
 
-void test_starts_with_ends_with() {
+static void test_starts_with_ends_with() {
 
     die_unless(tlx::starts_with("abcdef", "abc"));
     die_unless(!tlx::starts_with("abcdef", "def"));
@@ -87,6 +164,7 @@ void test_starts_with_ends_with() {
 
 int main() {
 
+    test_base64();
     test_hexdump();
     test_starts_with_ends_with();
 

@@ -10,9 +10,10 @@
 set(LIBTLX_SOURCES
 
   die.cpp
+  string/base64.cpp
+  string/ends_with.cpp
   string/hexdump.cpp
   string/starts_with.cpp
-  string/ends_with.cpp
 
   )
 

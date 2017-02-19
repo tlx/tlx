@@ -21,10 +21,23 @@ namespace tlx {
 bool ends_with(const std::string& str, const std::string& match);
 
 /*!
+ * Checks if the given match string is located at the end of this string.
+ */
+bool ends_with(const std::string& str, const char* match);
+
+/******************************************************************************/
+
+/*!
  * Checks if the given match string is located at the end of this
  * string. Compares the characters case-insensitively.
  */
 bool ends_with_icase(const std::string& str, const std::string& match);
+
+/*!
+ * Checks if the given match string is located at the end of this
+ * string. Compares the characters case-insensitively.
+ */
+bool ends_with_icase(const std::string& str, const char* match);
 
 } // namespace tlx
 

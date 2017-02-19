@@ -11,6 +11,7 @@
 #include <tlx/string/ends_with.hpp>
 
 #include <algorithm>
+#include <cstring>
 
 namespace tlx {
 
@@ -21,6 +22,20 @@ bool ends_with(const std::string& str, const std::string& match) {
     return std::equal(match.begin(), match.end(), str.end() - match.size());
 }
 
+bool ends_with(const std::string& str, const char* match) {
+    size_t match_size = strlen(match);
+    std::string::const_iterator s = str.end() - match_size;
+
+    while (*match != 0) {
+        if (s == str.end() || *s != *match) return false;
+        ++s, ++match;
+    }
+
+    return true;
+}
+
+/******************************************************************************/
+
 bool ends_with_icase(const std::string& str, const std::string& match) {
     if (match.size() > str.size())
         return false;
@@ -29,6 +44,19 @@ bool ends_with_icase(const std::string& str, const std::string& match) {
                       [](const char& c1, const char& c2) {
                           return std::tolower(c1) == std::tolower(c2);
                       });
+}
+
+bool ends_with_icase(const std::string& str, const char* match) {
+    size_t match_size = strlen(match);
+    std::string::const_iterator s = str.end() - match_size;
+
+    while (*match != 0) {
+        if (s == str.end() || std::tolower(*s) != std::tolower(*match))
+            return false;
+        ++s, ++match;
+    }
+
+    return true;
 }
 
 } // namespace tlx

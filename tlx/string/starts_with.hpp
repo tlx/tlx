@@ -21,10 +21,23 @@ namespace tlx {
 bool starts_with(const std::string& str, const std::string& match);
 
 /*!
+ * Checks if the given match string is located at the start of this string.
+ */
+bool starts_with(const std::string& str, const char* match);
+
+/******************************************************************************/
+
+/*!
  * Checks if the given match string is located at the start of this
  * string. Compares the characters case-insensitively.
  */
 bool starts_with_icase(const std::string& str, const std::string& match);
+
+/*!
+ * Checks if the given match string is located at the start of this
+ * string. Compares the characters case-insensitively.
+ */
+bool starts_with_icase(const std::string& str, const char* match);
 
 } // namespace tlx
 

@@ -13,6 +13,7 @@ set(LIBTLX_SOURCES
   string/base64.cpp
   string/ends_with.cpp
   string/hexdump.cpp
+  string/replace.cpp
   string/starts_with.cpp
 
   )

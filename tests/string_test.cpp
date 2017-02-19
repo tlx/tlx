@@ -138,6 +138,47 @@ static void test_hexdump() {
     die_noexcept(tlx::parse_hexdump("8DE285D4BF98E60"), std::runtime_error);
 }
 
+void test_replace() {
+    // copy variants
+    die_unequal(
+        tlx::replace_first_copy("abcdef abcdef", "abc", "a"), "adef abcdef");
+    die_unequal(
+        tlx::replace_first_copy("abcdef abcdef", "cba", "a"), "abcdef abcdef");
+    die_unequal(
+        tlx::replace_all_copy("abcdef abcdef", "abc", "a"), "adef adef");
+    die_unequal(
+        tlx::replace_all_copy("abcdef abcdef", "cba", "a"), "abcdef abcdef");
+
+    die_unequal(
+        tlx::replace_first_copy("abcdef abcdef", "a", "aaa"),
+        "aaabcdef abcdef");
+    die_unequal(
+        tlx::replace_all_copy("abcdef abcdef", "a", "aaa"),
+        "aaabcdef aaabcdef");
+
+    // in-place variants
+    std::string str1 = "abcdef abcdef";
+    std::string str2 = "abcdef abcdef";
+    die_unequal(
+        tlx::replace_first(&str1, "abc", "a"), "adef abcdef");
+    die_unequal(
+        tlx::replace_first(&str2, "cba", "a"), "abcdef abcdef");
+
+    str1 = "abcdef abcdef";
+    str2 = "abcdef abcdef";
+    die_unequal(
+        tlx::replace_all(&str1, "abc", "a"), "adef adef");
+    die_unequal(
+        tlx::replace_all(&str2, "cba", "a"), "abcdef abcdef");
+
+    str1 = "abcdef abcdef";
+    str2 = "abcdef abcdef";
+    die_unequal(
+        tlx::replace_first(&str1, "a", "aaa"), "aaabcdef abcdef");
+    die_unequal(
+        tlx::replace_all(&str2, "a", "aaa"), "aaabcdef aaabcdef");
+}
+
 static void test_starts_with_ends_with() {
 
     die_unless(tlx::starts_with("abcdef", "abc"));
@@ -166,6 +207,7 @@ int main() {
 
     test_base64();
     test_hexdump();
+    test_replace();
     test_starts_with_ends_with();
 
     return 0;

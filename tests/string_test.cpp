@@ -8,11 +8,10 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/string.hpp>
+#include <stdexcept>
 
 #include <tlx/die.hpp>
-
-#include <stdexcept>
+#include <tlx/string.hpp>
 
 //! Returns an initialized unsigned char[] array inside an std::string
 #define ARRAY_AS_STRING(array) \

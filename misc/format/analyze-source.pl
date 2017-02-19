@@ -667,7 +667,9 @@ if (1)
     my @filter = (
         "-build/header_guard",
         "-whitespace/blank_line",
-        "-whitespace/comments"
+        "-whitespace/comments",
+        "-whitespace/braces",
+        "-whitespace/indent"
         );
 
     system("cpplint", "--counting=total", "--extensions=h,c,cc,hpp,cpp",

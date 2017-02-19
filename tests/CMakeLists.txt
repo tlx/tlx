@@ -58,6 +58,7 @@ endmacro(tlx_build_test)
 
 ### list of tests in subdirectories
 
+tlx_build_test(counting_ptr_test)
 tlx_build_test(string_test)
 
 ################################################################################

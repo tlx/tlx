@@ -12,6 +12,8 @@
 
 #include <tlx/die.hpp>
 
+#include <stdexcept>
+
 //! Returns an initialized unsigned char[] array inside an std::string
 #define ARRAY_AS_STRING(array) \
     std::string(reinterpret_cast<const char*>(array), sizeof(array))

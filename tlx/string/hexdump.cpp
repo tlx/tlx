@@ -11,6 +11,7 @@
 #include <tlx/string/hexdump.hpp>
 
 #include <sstream>
+#include <stdexcept>
 
 namespace tlx {
 

@@ -165,6 +165,90 @@ static void test_hexdump() {
     die_noexcept(tlx::parse_hexdump("8DE285D4BF98E60"), std::runtime_error);
 }
 
+static void test_join() {
+    // simple string split and join
+    std::vector<std::string> sv = tlx::split('/', "/usr/bin/test");
+    die_unequal(sv.size(), 4);
+
+    die_unequal(tlx::join("--", sv), "--usr--bin--test");
+    die_unequal(tlx::join(";", sv), ";usr;bin;test");
+
+    std::vector<std::string> sv2;
+    for (unsigned int i = 0; i < 6; ++i)
+        sv2.push_back("abc");
+
+    die_unequal(tlx::join(".", sv2), "abc.abc.abc.abc.abc.abc");
+}
+
+static void test_split() {
+    // simple char split
+    std::vector<std::string> sv = tlx::split('/', "/usr/bin/test/");
+
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin");
+    die_unequal(sv[3], "test");
+    die_unequal(sv[4], "");
+
+    sv = tlx::split('/', "/usr/bin/test", 3);
+
+    die_unequal(sv.size(), 3u);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin/test");
+
+    // char split with some strange limits
+    sv = tlx::split('/', "/usr//bin/test", 0);
+    die_unequal(sv.size(), 0u);
+
+    sv = tlx::split('/', "/usr//bin/test", 1);
+    die_unequal(sv.size(), 1u);
+    die_unequal(sv[0], "/usr//bin/test");
+
+    // simple str split
+    sv = tlx::split("/", "/usr/bin/test");
+
+    die_unequal(sv.size(), 4u);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin");
+    die_unequal(sv[3], "test");
+
+    sv = tlx::split("/", "/usr/bin/test", 3);
+
+    die_unequal(sv.size(), 3u);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin/test");
+
+    // str split with some strange limits
+    sv = tlx::split("/", "/usr//bin/test", 0);
+    die_unequal(sv.size(), 0u);
+
+    sv = tlx::split("/", "/usr//bin/test", 1);
+    die_unequal(sv.size(), 1u);
+    die_unequal(sv[0], "/usr//bin/test");
+
+    // str split with parital needle at end
+    sv = tlx::split("abc", "testabcblahabcabcab");
+    die_unequal(sv.size(), 4u);
+    die_unequal(sv[0], "test");
+    die_unequal(sv[1], "blah");
+    die_unequal(sv[2], "");
+    die_unequal(sv[3], "ab");
+
+    // str split with "" separator
+    sv = tlx::split("", "abcdef");
+    die_unequal(sv.size(), 6u);
+    die_unequal(sv[0], "a");
+    die_unequal(sv[1], "b");
+    die_unequal(sv[2], "c");
+    die_unequal(sv[3], "d");
+    die_unequal(sv[4], "e");
+    die_unequal(sv[5], "f");
+}
+
 static void test_replace() {
     // copy variants
     die_unequal(
@@ -410,7 +494,9 @@ int main() {
     test_base64();
     test_erase_all();
     test_hexdump();
+    test_join();
     test_replace();
+    test_split();
     test_starts_with_ends_with();
     test_toupper_tolower();
     test_trim();

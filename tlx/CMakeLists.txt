@@ -10,11 +10,14 @@
 set(LIBTLX_SOURCES
 
   die.cpp
+
   string/base64.cpp
   string/ends_with.cpp
   string/erase_all.cpp
   string/hexdump.cpp
+  string/join.cpp
   string/replace.cpp
+  string/split.cpp
   string/starts_with.cpp
   string/to_lower.cpp
   string/to_upper.cpp

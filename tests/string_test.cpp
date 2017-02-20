@@ -138,7 +138,7 @@ static void test_hexdump() {
     die_noexcept(tlx::parse_hexdump("8DE285D4BF98E60"), std::runtime_error);
 }
 
-void test_replace() {
+static void test_replace() {
     // copy variants
     die_unequal(
         tlx::replace_first_copy("abcdef abcdef", "abc", "a"), "adef abcdef");
@@ -203,7 +203,20 @@ static void test_starts_with_ends_with() {
     die_unless(tlx::ends_with("", ""));
 }
 
-void test_trim() {
+static void test_toupper_tolower() {
+    // string-copy functions
+    die_unequal(tlx::to_upper(" aBc "), " ABC ");
+    die_unequal(tlx::to_lower(" AbCdEfG "), " abcdefg ");
+
+    // in-place functions
+    std::string str1 = "  aBc  ";
+    std::string str2 = "AbCdEfGh ";
+
+    die_unequal(tlx::to_upper(&str1), "  ABC  ");
+    die_unequal(tlx::to_lower(&str2), "abcdefgh ");
+}
+
+static void test_trim() {
     // string-copy functions
     die_unequal(tlx::trim_copy("  abc  "), "abc");
     die_unequal(tlx::trim_copy("abc  "), "abc");
@@ -252,6 +265,7 @@ int main() {
     test_hexdump();
     test_replace();
     test_starts_with_ends_with();
+    test_toupper_tolower();
     test_trim();
 
     return 0;

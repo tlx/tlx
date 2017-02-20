@@ -68,7 +68,7 @@ if(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -W -Wall -Wextra -fPIC")
 
   # enable more warnings
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wshadow")
 
   # enable -march=native on Debug and Release builds
   include(CheckCXXCompilerFlag)

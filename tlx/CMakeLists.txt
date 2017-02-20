@@ -15,6 +15,8 @@ set(LIBTLX_SOURCES
   string/hexdump.cpp
   string/replace.cpp
   string/starts_with.cpp
+  string/to_lower.cpp
+  string/to_upper.cpp
   string/trim.cpp
 
   )
@@ -91,7 +93,5 @@ endif()
 # export variables to top-level cmakelists
 set(TLX_LIBNAME ${TLX_LIBNAME} PARENT_SCOPE)
 set(TLX_EXPORTED_LIBS ${TLX_EXPORTED_LIBS} PARENT_SCOPE)
-
-############################################################################
 
 ################################################################################

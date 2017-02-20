@@ -16,6 +16,8 @@
 #include <tlx/string/hexdump.hpp>
 #include <tlx/string/replace.hpp>
 #include <tlx/string/starts_with.hpp>
+#include <tlx/string/to_lower.hpp>
+#include <tlx/string/to_upper.hpp>
 #include <tlx/string/trim.hpp>
 
 #endif // !TLX_STRING_HEADER

@@ -141,19 +141,19 @@ static void test_hexdump() {
 static void test_replace() {
     // copy variants
     die_unequal(
-        tlx::replace_first_copy("abcdef abcdef", "abc", "a"), "adef abcdef");
+        tlx::replace_first("abcdef abcdef", "abc", "a"), "adef abcdef");
     die_unequal(
-        tlx::replace_first_copy("abcdef abcdef", "cba", "a"), "abcdef abcdef");
+        tlx::replace_first("abcdef abcdef", "cba", "a"), "abcdef abcdef");
     die_unequal(
-        tlx::replace_all_copy("abcdef abcdef", "abc", "a"), "adef adef");
+        tlx::replace_all("abcdef abcdef", "abc", "a"), "adef adef");
     die_unequal(
-        tlx::replace_all_copy("abcdef abcdef", "cba", "a"), "abcdef abcdef");
+        tlx::replace_all("abcdef abcdef", "cba", "a"), "abcdef abcdef");
 
     die_unequal(
-        tlx::replace_first_copy("abcdef abcdef", "a", "aaa"),
+        tlx::replace_first("abcdef abcdef", "a", "aaa"),
         "aaabcdef abcdef");
     die_unequal(
-        tlx::replace_all_copy("abcdef abcdef", "a", "aaa"),
+        tlx::replace_all("abcdef abcdef", "a", "aaa"),
         "aaabcdef aaabcdef");
 
     // in-place variants
@@ -218,18 +218,18 @@ static void test_toupper_tolower() {
 
 static void test_trim() {
     // string-copy functions
-    die_unequal(tlx::trim_copy("  abc  "), "abc");
-    die_unequal(tlx::trim_copy("abc  "), "abc");
-    die_unequal(tlx::trim_copy("  abc"), "abc");
-    die_unequal(tlx::trim_copy("  "), "");
+    die_unequal(tlx::trim("  abc  "), "abc");
+    die_unequal(tlx::trim("abc  "), "abc");
+    die_unequal(tlx::trim("  abc"), "abc");
+    die_unequal(tlx::trim("  "), "");
 
-    die_unequal(tlx::trim_left_copy("  abc  "), "abc  ");
-    die_unequal(tlx::trim_left_copy("abc  "), "abc  ");
-    die_unequal(tlx::trim_left_copy("  "), "");
+    die_unequal(tlx::trim_left("  abc  "), "abc  ");
+    die_unequal(tlx::trim_left("abc  "), "abc  ");
+    die_unequal(tlx::trim_left("  "), "");
 
-    die_unequal(tlx::trim_right_copy("  abc  "), "  abc");
-    die_unequal(tlx::trim_right_copy("  abc"), "  abc");
-    die_unequal(tlx::trim_right_copy("  "), "");
+    die_unequal(tlx::trim_right("  abc  "), "  abc");
+    die_unequal(tlx::trim_right("  abc"), "  abc");
+    die_unequal(tlx::trim_right("  "), "");
 
     // in-place functions
     std::string str1 = "  abc  ";

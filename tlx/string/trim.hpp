@@ -45,8 +45,8 @@ std::string& trim(std::string* str, const std::string& drop);
  * \param drop  remove these characters
  * \return      reference to the modified string
  */
-std::string trim_copy(const std::string& str,
-                      const char* drop = " \r\n\t");
+std::string trim(const std::string& str,
+                 const char* drop = " \r\n\t");
 
 /*!
  * Trims the given string in-place on the left and right. Removes all
@@ -56,7 +56,7 @@ std::string trim_copy(const std::string& str,
  * \param drop  remove these characters
  * \return      reference to the modified string
  */
-std::string trim_copy(const std::string& str, const std::string& drop);
+std::string trim(const std::string& str, const std::string& drop);
 
 /******************************************************************************/
 
@@ -88,8 +88,8 @@ std::string& trim_right(std::string* str, const std::string& drop);
  * \param drop  remove these characters
  * \return      new trimmed string
  */
-std::string trim_right_copy(const std::string& str,
-                            const char* drop = " \r\n\t");
+std::string trim_right(const std::string& str,
+                       const char* drop = " \r\n\t");
 
 /*!
  * Trims the given string only on the right. Removes all characters in the
@@ -99,7 +99,7 @@ std::string trim_right_copy(const std::string& str,
  * \param drop  remove these characters
  * \return      new trimmed string
  */
-std::string trim_right_copy(const std::string& str, const std::string& drop);
+std::string trim_right(const std::string& str, const std::string& drop);
 
 /******************************************************************************/
 
@@ -131,8 +131,8 @@ std::string& trim_left(std::string* str, const std::string& drop);
  * \param drop  remove these characters
  * \return      new trimmed string
  */
-std::string trim_left_copy(const std::string& str,
-                           const char* drop = " \r\n\t");
+std::string trim_left(const std::string& str,
+                      const char* drop = " \r\n\t");
 
 /*!
  * Trims the given string only on the left. Removes all characters in the given
@@ -142,7 +142,7 @@ std::string trim_left_copy(const std::string& str,
  * \param drop  remove these characters
  * \return      new trimmed string
  */
-std::string trim_left_copy(const std::string& str, const std::string& drop);
+std::string trim_left(const std::string& str, const std::string& drop);
 
 } // namespace tlx
 

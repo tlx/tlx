@@ -43,7 +43,7 @@ std::string& trim(std::string* str, const std::string& drop) {
     return *str;
 }
 
-std::string trim_copy(const std::string& str, const char* drop) {
+std::string trim(const std::string& str, const char* drop) {
     // trim beginning
     std::string::size_type pos1 = str.find_first_not_of(drop);
     if (pos1 == std::string::npos) return std::string();
@@ -59,8 +59,8 @@ std::string trim_copy(const std::string& str, const char* drop) {
     return out;
 }
 
-std::string trim_copy(const std::string& str,
-                      const std::string& drop) {
+std::string trim(const std::string& str,
+                 const std::string& drop) {
     std::string out;
     out.reserve(str.size());
 
@@ -93,14 +93,14 @@ std::string& trim_right(std::string* str, const std::string& drop) {
     return *str;
 }
 
-std::string trim_right_copy(const std::string& str, const char* drop) {
+std::string trim_right(const std::string& str, const char* drop) {
     std::string::size_type pos = str.find_last_not_of(drop);
     if (pos == std::string::npos) return std::string();
 
     return str.substr(0, pos + 1);
 }
 
-std::string trim_right_copy(const std::string& str, const std::string& drop) {
+std::string trim_right(const std::string& str, const std::string& drop) {
     std::string::size_type pos = str.find_last_not_of(drop);
     if (pos == std::string::npos) return std::string();
 
@@ -119,14 +119,14 @@ std::string& trim_left(std::string* str, const std::string& drop) {
     return *str;
 }
 
-std::string trim_left_copy(const std::string& str, const char* drop) {
+std::string trim_left(const std::string& str, const char* drop) {
     std::string::size_type pos = str.find_first_not_of(drop);
     if (pos == std::string::npos) return std::string();
 
     return str.substr(pos, std::string::npos);
 }
 
-std::string trim_left_copy(const std::string& str, const std::string& drop) {
+std::string trim_left(const std::string& str, const std::string& drop) {
     std::string::size_type pos = str.find_first_not_of(drop);
     if (pos == std::string::npos) return std::string();
 

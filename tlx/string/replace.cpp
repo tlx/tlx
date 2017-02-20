@@ -63,9 +63,9 @@ std::string& replace_first(
 }
 
 /******************************************************************************/
-// replace_first_copy() copy
+// replace_first() copy
 
-std::string replace_first_copy(
+std::string replace_first(
     const std::string& str,
     const std::string& needle, const std::string& instead) {
 
@@ -78,7 +78,7 @@ std::string replace_first_copy(
     return newstr;
 }
 
-std::string replace_first_copy(
+std::string replace_first(
     const std::string& str, const std::string& needle, const char* instead) {
 
     std::string newstr = str;
@@ -90,7 +90,7 @@ std::string replace_first_copy(
     return newstr;
 }
 
-std::string replace_first_copy(
+std::string replace_first(
     const std::string& str, const char* needle, const std::string& instead) {
 
     std::string newstr = str;
@@ -102,7 +102,7 @@ std::string replace_first_copy(
     return newstr;
 }
 
-std::string replace_first_copy(
+std::string replace_first(
     const std::string& str, const char* needle, const char* instead) {
 
     std::string newstr = str;
@@ -174,9 +174,9 @@ std::string& replace_all(
 }
 
 /******************************************************************************/
-// replace_all_copy() copy
+// replace_all() copy
 
-std::string replace_all_copy(
+std::string replace_all(
     const std::string& str,
     const std::string& needle, const std::string& instead) {
 
@@ -191,7 +191,7 @@ std::string replace_all_copy(
     return newstr;
 }
 
-std::string replace_all_copy(
+std::string replace_all(
     const std::string& str, const std::string& needle, const char* instead) {
 
     std::string newstr = str;
@@ -206,7 +206,7 @@ std::string replace_all_copy(
     return newstr;
 }
 
-std::string replace_all_copy(
+std::string replace_all(
     const std::string& str, const char* needle, const std::string& instead) {
 
     std::string newstr = str;
@@ -221,7 +221,7 @@ std::string replace_all_copy(
     return newstr;
 }
 
-std::string replace_all_copy(
+std::string replace_all(
     const std::string& str, const char* needle, const char* instead) {
 
     std::string newstr = str;

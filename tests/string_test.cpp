@@ -94,6 +94,33 @@ static void test_base64() {
         tlx::base64_decode("FjXKA5!!RxGFAudA"), std::runtime_error);
 }
 
+static void test_erase_all() {
+
+    die_unequal(
+        tlx::erase_all(" abcdef   ghi jk "), "abcdefghijk");
+
+    die_unequal(
+        tlx::erase_all("abcdef   ghi jk"), "abcdefghijk");
+
+    die_unequal(
+        tlx::erase_all(" abcdef   ghi jk ", " bg"), "acdefhijk");
+
+    die_unequal(
+        tlx::erase_all("abcdef   ghi jk", " bg"), "acdefhijk");
+
+    std::string s1 = " abcdef   ghi jk ";
+    die_unequal(tlx::erase_all(&s1), "abcdefghijk");
+
+    std::string s2 = "abcdef   ghi jk";
+    die_unequal(tlx::erase_all(&s2), "abcdefghijk");
+
+    std::string s3 = " abcdef   ghi jk ";
+    die_unequal(tlx::erase_all(&s3, " bg"), "acdefhijk");
+
+    std::string s4 = "abcdef   ghi jk";
+    die_unequal(tlx::erase_all(&s4, " bg"), "acdefhijk");
+}
+
 static void test_hexdump() {
 
     // take hex data and dump it into a string, then parse back into array
@@ -381,6 +408,7 @@ static void test_word_wrap() {
 int main() {
 
     test_base64();
+    test_erase_all();
     test_hexdump();
     test_replace();
     test_starts_with_ends_with();

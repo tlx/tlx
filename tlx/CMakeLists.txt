@@ -12,6 +12,7 @@ set(LIBTLX_SOURCES
   die.cpp
   string/base64.cpp
   string/ends_with.cpp
+  string/erase_all.cpp
   string/hexdump.cpp
   string/replace.cpp
   string/starts_with.cpp

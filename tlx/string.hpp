@@ -13,6 +13,7 @@
 
 #include <tlx/string/base64.hpp>
 #include <tlx/string/ends_with.hpp>
+#include <tlx/string/erase_all.hpp>
 #include <tlx/string/hexdump.hpp>
 #include <tlx/string/replace.hpp>
 #include <tlx/string/starts_with.hpp>

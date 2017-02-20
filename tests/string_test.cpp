@@ -94,6 +94,12 @@ static void test_base64() {
         tlx::base64_decode("FjXKA5!!RxGFAudA"), std::runtime_error);
 }
 
+static void test_format_si_iec_units() {
+
+    die_unequal(tlx::format_si_units(33 * 1024 * 1024 * 1024LLU), "35.433 G");
+    die_unequal(tlx::format_iec_units(33 * 1024 * 1024 * 1024LLU), "33.000 Gi");
+}
+
 static void test_erase_all() {
 
     die_unequal(
@@ -163,6 +169,15 @@ static void test_hexdump() {
     // test parse_hexdump with illegal strings
     die_noexcept(tlx::parse_hexdump("illegal"), std::runtime_error);
     die_noexcept(tlx::parse_hexdump("8DE285D4BF98E60"), std::runtime_error);
+}
+
+static void test_parse_si_iec_units() {
+
+    uint64_t size;
+    die_unless(tlx::parse_si_iec_units(" 33 GiB ", &size));
+    die_unequal(33 * 1024 * 1024 * 1024LLU, size);
+
+    die_if(tlx::parse_si_iec_units(" 33 GiBX ", &size));
 }
 
 static void test_join() {
@@ -519,8 +534,10 @@ int main() {
 
     test_base64();
     test_erase_all();
+    test_format_si_iec_units();
     test_hexdump();
     test_join();
+    test_parse_si_iec_units();
     test_replace();
     test_split();
     test_starts_with_ends_with();

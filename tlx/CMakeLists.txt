@@ -14,8 +14,10 @@ set(LIBTLX_SOURCES
   string/base64.cpp
   string/ends_with.cpp
   string/erase_all.cpp
+  string/format_si_iec_units.cpp
   string/hexdump.cpp
   string/join.cpp
+  string/parse_si_iec_units.cpp
   string/replace.cpp
   string/split.cpp
   string/starts_with.cpp

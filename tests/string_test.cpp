@@ -168,7 +168,7 @@ static void test_hexdump() {
 static void test_join() {
     // simple string split and join
     std::vector<std::string> sv = tlx::split('/', "/usr/bin/test");
-    die_unequal(sv.size(), 4);
+    die_unequal(sv.size(), 4u);
 
     die_unequal(tlx::join("--", sv), "--usr--bin--test");
     die_unequal(tlx::join(";", sv), ";usr;bin;test");
@@ -247,6 +247,32 @@ static void test_split() {
     die_unequal(sv[3], "d");
     die_unequal(sv[4], "e");
     die_unequal(sv[5], "f");
+
+    /**************************************************************************/
+
+    // str split with min-limit
+    sv = tlx::split('/', "/usr/bin/test", 2, 2);
+    die_unequal(sv.size(), 2u);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr/bin/test");
+
+    // str split with min-limit
+    sv = tlx::split('/', "/usr/bin/test", 5, 5);
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin");
+    die_unequal(sv[3], "test");
+    die_unequal(sv[4], "");
+
+    // str split with min-limit
+    sv = tlx::split("/", "/usr/bin/test", 5, 5);
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin");
+    die_unequal(sv[3], "test");
+    die_unequal(sv[4], "");
 }
 
 static void test_replace() {

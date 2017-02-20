@@ -50,16 +50,16 @@ std::string hexdump_type(const Type& t) {
 /*!
  * Dump a char vector as a sequence of uppercase hexadecimal pairs.
  *
- * \param str  binary data to output in hex
- * \return     string of hexadecimal pairs
+ * \param data  binary data to output in hex
+ * \return      string of hexadecimal pairs
  */
 std::string hexdump(const std::vector<char>& data);
 
 /*!
  * Dump a uint8_t vector as a sequence of uppercase hexadecimal pairs.
  *
- * \param str  binary data to output in hex
- * \return     string of hexadecimal pairs
+ * \param data  binary data to output in hex
+ * \return      string of hexadecimal pairs
  */
 std::string hexdump(const std::vector<uint8_t>& data);
 
@@ -108,16 +108,16 @@ std::string hexdump_lc_type(const Type& t) {
 /*!
  * Dump a char vector as a sequence of lowercase hexadecimal pairs.
  *
- * \param str  binary data to output in hex
- * \return     string of hexadecimal pairs
+ * \param data  binary data to output in hex
+ * \return      string of hexadecimal pairs
  */
 std::string hexdump_lc(const std::vector<char>& data);
 
 /*!
  * Dump a uint8_t vector as a sequence of lowercase hexadecimal pairs.
  *
- * \param str  binary data to output in hex
- * \return     string of hexadecimal pairs
+ * \param data  binary data to output in hex
+ * \return      string of hexadecimal pairs
  */
 std::string hexdump_lc(const std::vector<uint8_t>& data);
 

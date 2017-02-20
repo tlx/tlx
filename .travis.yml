@@ -31,8 +31,9 @@ matrix:
             - cmake
             - cmake-data
             - g++-5
+            - doxygen
 
-    - env: CMAKE_CC="gcc-5" CMAKE_CXX="g++-5" BUILD_TYPE="Release" COMPILER_FLAGS=""
+    - env: CMAKE_CC="gcc-5" CMAKE_CXX="g++-5" BUILD_TYPE="Release" COMPILER_FLAGS="" BUILD_DOXYGEN="1"
       os: linux
       addons: *gcc5
 
@@ -91,3 +92,10 @@ before_script:
 
 script:
   - make -j2 && ctest
+
+# Generate and deploy documentation
+after_success:
+  - cd $TRAVIS_BUILD_DIR
+  - if [ -n "$BUILD_DOXYGEN" -a "$TRAVIS_REPO_SLUG" == "tlx/tlx" -a "$TRAVIS_BRANCH" == "master" ]; then
+      ./misc/mk-doxygen-travis.sh;
+    fi

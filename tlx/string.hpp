@@ -19,6 +19,7 @@
 #include <tlx/string/to_lower.hpp>
 #include <tlx/string/to_upper.hpp>
 #include <tlx/string/trim.hpp>
+#include <tlx/string/word_wrap.hpp>
 
 #endif // !TLX_STRING_HEADER
 

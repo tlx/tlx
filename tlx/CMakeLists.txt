@@ -18,6 +18,7 @@ set(LIBTLX_SOURCES
   string/to_lower.cpp
   string/to_upper.cpp
   string/trim.cpp
+  string/word_wrap.cpp
 
   )
 

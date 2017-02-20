@@ -15,6 +15,7 @@ set(LIBTLX_SOURCES
   string/hexdump.cpp
   string/replace.cpp
   string/starts_with.cpp
+  string/trim.cpp
 
   )
 

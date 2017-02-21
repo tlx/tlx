@@ -28,11 +28,12 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 ################################################################################
-### Options and Switches
+### Set Version
 
-# BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to
-# make it prominent in the GUI.
-option(BUILD_SHARED_LIBS "Build shared libraries (DLLs)." OFF)
+set(TLX_VERSION "0.1.0")
+
+################################################################################
+### Options and Switches
 
 option(TLX_BUILD_TESTS "Build and run tlx's tests." OFF)
 
@@ -46,15 +47,27 @@ option(TLX_TRY_COMPILE_HEADERS
 
 # by default we currently only build a static library, since we do not aim to
 # keep a stable binary interface.
-option(BUILD_STATIC_LIBS "Build static library version of libtlx" ON)
-option(BUILD_SHARED_LIBS "Build shared library version of libtlx" OFF)
+option(TLX_BUILD_STATIC_LIBS "Build static library version of libtlx" ON)
+option(TLX_BUILD_SHARED_LIBS "Build shared library version of libtlx" OFF)
 
-### allow user to specify other installation paths
+### allow user to change installation paths relative to CMAKE_INSTALL_PREFIX
 
-set(INSTALL_BIN_DIR "bin" CACHE PATH "Installation directory for executables")
-set(INSTALL_LIB_DIR "lib" CACHE PATH "Installation directory for libraries")
-set(INSTALL_INCLUDE_DIR "include" CACHE PATH "Installation directory for header files")
-set(INSTALL_PKGCONFIG_DIR "lib/pkgconfig" CACHE PATH "Installation directory for pkg-config file")
+set(TLX_INSTALL_BIN_DIR "bin"
+  CACHE PATH "Installation directory for executables")
+set(TLX_INSTALL_LIB_DIR "lib"
+  CACHE PATH "Installation directory for libraries")
+set(TLX_INSTALL_INCLUDE_DIR "include"
+  CACHE PATH "Installation directory for header files")
+set(TLX_INSTALL_PKGCONFIG_DIR "lib/pkgconfig"
+  CACHE PATH "Installation directory for pkg-config file")
+
+if(WIN32 AND NOT CYGWIN)
+  set(TLX_DEFAULT_INSTALL_CMAKE_DIR "CMake")
+else()
+  set(TLX_DEFAULT_INSTALL_CMAKE_DIR "lib/cmake/tlx")
+endif()
+set(TLX_INSTALL_CMAKE_DIR "${TLX_DEFAULT_INSTALL_CMAKE_DIR}"
+  CACHE PATH "Installation directory for cmake files")
 
 ################################################################################
 
@@ -64,18 +77,13 @@ set(TLX_INCLUDE_DIRS "")
 set(TLX_LINK_LIBRARIES "")
 
 if(NOT MSVC)
+  ### Linux/Unix-like Build Environment ########################################
+
   # enable warnings
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -W -Wall -Wextra -fPIC")
 
   # enable more warnings
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wpedantic -Wshadow")
-
-  # enable -march=native on Debug and Release builds
-  include(CheckCXXCompilerFlag)
-  check_cxx_compiler_flag("-march=native" TLX_HAS_MARCH_NATIVE)
-  if(TLX_HAS_MARCH_NATIVE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-  endif()
 
   # remove -rdynamic from linker flags (smaller binaries which cannot be loaded
   # with dlopen() -- something no one needs)
@@ -94,8 +102,6 @@ if(NOT MSVC)
   if(OFF)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread -pie -fPIC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DTLX_HAVE_THREAD_SANITIZER=1")
-    set(TLX_USE_MPI OFF)
-    set(TLX_USE_TBB OFF)
   endif()
 
   # enable UndefinedBehaviorSanitizer
@@ -122,6 +128,8 @@ if(NOT MSVC)
   endif()
 
 elseif(MSVC)
+  ### Visual Studio Build Environment ##########################################
+
   # Force to always compile with W4
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
     string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -232,7 +240,7 @@ if(TLX_USE_GCOV)
   add_custom_target(lcov-html
     COMMAND ${LCOV} -q --directory . --capture --output-file lcov.info
     COMMAND ${LCOV} -q --remove lcov.info '/usr/*' '*/extlib/*' ${LCOV_FLAGS} --output-file lcov-clean.info
-    COMMAND ${GENHTML} -q -o coverage --title "Tlx ${GITDESC}" --prefix ${PROJECT_SOURCE_DIR} ${GENHTML_FLAGS} lcov-clean.info
+    COMMAND ${GENHTML} -q -o coverage --title "tlx ${GITDESC}" --prefix ${PROJECT_SOURCE_DIR} ${GENHTML_FLAGS} lcov-clean.info
     DEPENDS lcov-runtests
     COMMENT "Capturing code coverage counters and create HTML coverage report"
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -245,7 +253,7 @@ if(TLX_USE_GCOV)
 endif(TLX_USE_GCOV)
 
 ###############################################################################
-# enable gtest framework, valgrind, and collection of results
+# enable ctest framework for running tests
 
 enable_testing()
 
@@ -269,6 +277,11 @@ if(TLX_BUILD_TESTS)
 endif()
 
 set(TLX_LIBRARIES tlx)
+
+# install header files
+install(DIRECTORY tlx
+  DESTINATION ${TLX_INSTALL_INCLUDE_DIR}
+  FILES_MATCHING PATTERN "*.hpp")
 
 ###############################################################################
 ### cmake script TLX_TRY_COMPILE_HEADERS to compile all tlx header files
@@ -300,5 +313,48 @@ if(TLX_TRY_COMPILE_HEADERS)
   endforeach()
 
 endif(TLX_TRY_COMPILE_HEADERS)
+
+###############################################################################
+# export targets to cmake project config file
+
+# register package for use from the global CMake-registry
+export(PACKAGE tlx)
+
+# add tlx library targets to the build tree export set
+export(TARGETS ${TLX_EXPORTED_LIBS}
+  FILE "${PROJECT_BINARY_DIR}/tlx-targets.cmake")
+
+include(CMakePackageConfigHelpers)
+
+# create common tlx-version.cmake file
+configure_file(misc/cmake/tlx-version.cmake.in
+  "${PROJECT_BINARY_DIR}/tlx-version.cmake" @ONLY)
+
+# create tlx-version.cmake file for the install tree
+configure_package_config_file(
+  misc/cmake/tlx-config.cmake.in tlx-config.cmake
+  INSTALL_DESTINATION "${TLX_INSTALL_CMAKE_DIR}"
+  PATH_VARS TLX_INSTALL_INCLUDE_DIR)
+
+# install the tlx-config.cmake and tlx-version.cmake
+install(FILES
+  "${PROJECT_BINARY_DIR}/tlx-version.cmake"
+  "${PROJECT_BINARY_DIR}/tlx-config.cmake"
+  DESTINATION "${TLX_INSTALL_CMAKE_DIR}")
+
+# Install the export set for use with the install-tree
+install(EXPORT tlx-targets DESTINATION "${TLX_INSTALL_CMAKE_DIR}")
+
+###############################################################################
+# prepare pkg-config file
+
+configure_file(misc/cmake/tlx.pc
+  "${PROJECT_BINARY_DIR}/${TLX_LIBNAME}.pc" @ONLY)
+
+# copy the tlx.pc file into lib/pkgconfig
+if(TLX_INSTALL_PKGCONFIG_DIR)
+  install(FILES ${PROJECT_BINARY_DIR}/${TLX_LIBNAME}.pc
+    DESTINATION ${TLX_INSTALL_PKGCONFIG_DIR})
+endif()
 
 ################################################################################

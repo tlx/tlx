@@ -1,0 +1,27 @@
+# CMake config file for TLX
+#
+# It defines the following variables
+#  TLX_VERSION      - library version
+#  TLX_CXX_FLAGS    - C++ flags for TLX
+#  TLX_INCLUDE_DIRS - include directories for TLX
+#  TLX_LIBRARIES    - libraries to link against
+
+@PACKAGE_INIT@
+
+set(TLX_VERSION "@TLX_VERSION@")
+
+# compute paths from current cmake file path
+get_filename_component(TLX_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+# additional compiler flags
+set(TLX_CXX_FLAGS "@TLX_CXX_FLAGS@")
+
+# additional include directories for tlx dependencies
+set(TLX_INCLUDE_DIRS "@PACKAGE_TLX_INSTALL_INCLUDE_DIR@")
+
+# load our library dependencies (contains definitions for IMPORTED targets)
+include("${TLX_CMAKE_DIR}/tlx-targets.cmake")
+
+# these are IMPORTED targets created by tlx-targets.cmake, link these with
+# your program.
+set(TLX_LIBRARIES "@TLX_LIBRARIES@")

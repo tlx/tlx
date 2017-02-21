@@ -42,7 +42,7 @@ std::string base64_encode(const void* data, size_t size, size_t line_break) {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
     };
 
-    unsigned char result = 0;
+    uint8_t result = 0;
     size_t line_begin = 0;
 
     while (1)
@@ -53,14 +53,14 @@ std::string base64_encode(const void* data, size_t size, size_t line_break) {
         }
 
         // step 0: process first byte, write first letter
-        char fragment = *in++;
+        uint8_t fragment = *in++;
         result = (fragment & 0xFC) >> 2;
-        out += encoding64[static_cast<int>(result)];
-        result = (fragment & 0x03) << 4;
+        out += encoding64[result];
+        result = static_cast<uint8_t>((fragment & 0x03) << 4);
 
         // step 1: if string finished here, add two padding '='s
         if (in == in_end) {
-            out += encoding64[static_cast<int>(result)];
+            out += encoding64[result];
             out += '=';
             out += '=';
             return out;
@@ -70,12 +70,12 @@ std::string base64_encode(const void* data, size_t size, size_t line_break) {
         // letter
         fragment = *in++;
         result |= (fragment & 0xF0) >> 4;
-        out += encoding64[static_cast<int>(result)];
-        result = (fragment & 0x0F) << 2;
+        out += encoding64[result];
+        result = static_cast<uint8_t>((fragment & 0x0F) << 2);
 
         // step 2: if string finished here, add one padding '='
         if (in == in_end) {
-            out += encoding64[static_cast<int>(result)];
+            out += encoding64[result];
             out += '=';
             return out;
         }
@@ -84,10 +84,10 @@ std::string base64_encode(const void* data, size_t size, size_t line_break) {
         fragment = *in++;
 
         result |= (fragment & 0xC0) >> 6;
-        out += encoding64[static_cast<int>(result)];
+        out += encoding64[result];
 
         result = (fragment & 0x3F) >> 0;
-        out += encoding64[static_cast<int>(result)];
+        out += encoding64[result];
 
         // wrap base64 encoding into lines if desired, but only after whole
         // blocks of 4 letters.
@@ -114,10 +114,10 @@ std::string base64_decode(const void* data, size_t size, bool strict) {
     // base64 encoded.
     out.reserve(size * 3 / 4);
 
-    static constexpr signed char ex = -1;
-    static constexpr signed char ws = -2;
+    static constexpr uint8_t ex = 255;
+    static constexpr uint8_t ws = 254;
     // value lookup table: -1 -> exception, -2 -> skip whitespace
-    static const signed char decoding64[256] = {
+    static const uint8_t decoding64[256] = {
         ex, ex, ex, ex, ex, ex, ex, ex, ex, ws, ws, ex, ex, ws, ex, ex,
         ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex,
         ws, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, 62, ex, ex, ex, 63,
@@ -136,8 +136,7 @@ std::string base64_decode(const void* data, size_t size, bool strict) {
         ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex
     };
 
-    signed char outchar;
-    signed char fragment;
+    uint8_t outchar, fragment;
 
     static const char* ex_message =
         "Invalid character encountered during base64 decoding.";
@@ -148,55 +147,55 @@ std::string base64_decode(const void* data, size_t size, bool strict) {
         do {
             if (in == in_end) return out;
 
-            fragment = decoding64[static_cast<int>(*in++)];
+            fragment = decoding64[*in++];
 
             if (fragment == ex && strict)
                 throw std::runtime_error(ex_message);
-        } while (fragment < 0);
+        } while (fragment >= ws);
 
-        outchar = (fragment & 0x3F) << 2;
+        outchar = static_cast<uint8_t>((fragment & 0x3F) << 2);
 
         // step 1: get second valid letter. output the first byte.
         do {
             if (in == in_end) return out;
 
-            fragment = decoding64[static_cast<int>(*in++)];
+            fragment = decoding64[*in++];
 
             if (fragment == ex && strict)
                 throw std::runtime_error(ex_message);
-        } while (fragment < 0);
+        } while (fragment >= ws);
 
-        outchar |= (fragment & 0x30) >> 4;
+        outchar |= static_cast<uint8_t>((fragment & 0x30) >> 4);
         out += outchar;
 
-        outchar = (fragment & 0x0F) << 4;
+        outchar = static_cast<uint8_t>((fragment & 0x0F) << 4);
 
         // step 2: get third valid letter. output the second byte.
         do {
             if (in == in_end) return out;
 
-            fragment = decoding64[static_cast<int>(*in++)];
+            fragment = decoding64[*in++];
 
             if (fragment == ex && strict)
                 throw std::runtime_error(ex_message);
-        } while (fragment < 0);
+        } while (fragment >= ws);
 
         outchar |= (fragment & 0x3C) >> 2;
         out += outchar;
 
-        outchar = (fragment & 0x03) << 6;
+        outchar = static_cast<uint8_t>((fragment & 0x03) << 6);
 
         // step 3: get fourth valid letter. output the third byte.
         do {
             if (in == in_end) return out;
 
-            fragment = decoding64[static_cast<int>(*in++)];
+            fragment = decoding64[*in++];
 
             if (fragment == ex && strict)
                 throw std::runtime_error(ex_message);
-        } while (fragment < 0);
+        } while (fragment >= ws);
 
-        outchar |= (fragment & 0x3F);
+        outchar |= static_cast<uint8_t>((fragment & 0x3F) >> 0);
         out += outchar;
     }
 }

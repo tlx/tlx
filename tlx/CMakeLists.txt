@@ -9,6 +9,7 @@
 
 set(LIBTLX_SOURCES
 
+  cmdline_parser.cpp
   die.cpp
   string/base64.cpp
   string/ends_with.cpp

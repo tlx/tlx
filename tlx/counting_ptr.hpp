@@ -41,8 +41,8 @@ public:
  * data object determines that it's internal count is zero, then it must destroy
  * itself.
  *
- * Accompanying the CountingPtr is a class ReferenceCount, from which reference
- * counted classes may be derive from. The class ReferenceCount implement all
+ * Accompanying the CountingPtr is a class ReferenceCounter, from which reference
+ * counted classes may be derive from. The class ReferenceCounter implement all
  * methods required for reference counting.
  *
  * The whole method is more similar to boost's instrusive_ptr, but also yields
@@ -121,7 +121,7 @@ public:
     //! copy-assignment operator: acquire reference on new one and dereference
     //! current object.
     CountingPtr& operator = (const CountingPtr& other) noexcept {
-        if (&other == this)
+        if (ptr_ == other.ptr_)
             return *this;
         inc_reference(other.ptr_);
         dec_reference();
@@ -136,7 +136,7 @@ public:
                   std::is_convertible<Subclass*, Type*>::value, void>::type>
     CountingPtr&
     operator = (const CountingPtr<Subclass, Deleter>& other) noexcept {
-        if (&other == this)
+        if (ptr_ == other.ptr_)
             return *this;
         inc_reference(other.ptr_);
         dec_reference();
@@ -146,7 +146,7 @@ public:
 
     //! move-assignment operator: move reference of other to current object.
     CountingPtr& operator = (CountingPtr&& other) noexcept {
-        if (&other == this)
+        if (ptr_ == other.ptr_)
             return *this;
         dec_reference();
         ptr_ = other.ptr_;
@@ -159,7 +159,7 @@ public:
               typename = typename std::enable_if<
                   std::is_convertible<Subclass*, Type*>::value, void>::type>
     CountingPtr& operator = (CountingPtr<Subclass, Deleter>&& other) noexcept {
-        if (&other == this)
+        if (ptr_ == other.ptr_)
             return *this;
         dec_reference();
         ptr_ = other.ptr_;
@@ -220,7 +220,7 @@ public:
     //! make and refer a copy if the original object was shared.
     void unify() {
         if (ptr_ && !ptr_->unique())
-            operator = (new Type(*ptr_));
+            operator = (CountingPtr(new Type(*ptr_)));
     }
 
     //! release contained pointer, frees object if this is the last reference.
@@ -234,6 +234,10 @@ public:
     void swap(CountingPtr& b) noexcept
     { std::swap(ptr_, b.ptr_); }
 };
+
+//! make alias due to similarity with std::shared_ptr<T>
+template <typename Type>
+using counting_ptr = CountingPtr<Type>;
 
 //! method analogous to std::make_shared and std::make_unique.
 template <typename Type, typename ... Args>
@@ -261,7 +265,7 @@ std::ostream& operator << (std::ostream& os, const CountingPtr<A>& c) {
  * value. Then either use CountingPtr as pointer to manage references and
  * deletion, or just do normal new and delete.
  */
-class ReferenceCount
+class ReferenceCounter
 {
 private:
     //! the reference count is kept mutable for CountingPtr<const Type> to
@@ -270,20 +274,20 @@ private:
 
 public:
     //! new objects have zero reference count
-    ReferenceCount() noexcept
+    ReferenceCounter() noexcept
         : reference_count_(0) { }
 
     //! coping still creates a new object with zero reference count
-    ReferenceCount(const ReferenceCount&) noexcept
+    ReferenceCounter(const ReferenceCounter&) noexcept
         : reference_count_(0) { }
 
     //! assignment operator, leaves pointers unchanged
-    ReferenceCount& operator = (const ReferenceCount&) noexcept {
+    ReferenceCounter& operator = (const ReferenceCounter&) noexcept {
         // changing the contents leaves pointers unchanged
         return *this;
     }
 
-    ~ReferenceCount()
+    ~ReferenceCounter()
     { assert(reference_count_ == 0); }
 
 public:
@@ -303,7 +307,7 @@ public:
         return (--reference_count_ == 0);
     }
 
-    //! Test if the ReferenceCount is referenced by only one CountingPtr.
+    //! Test if the ReferenceCounter is referenced by only one CountingPtr.
     bool unique() const noexcept
     { return (reference_count_ == 1); }
 
@@ -311,6 +315,9 @@ public:
     size_t reference_count() const noexcept
     { return reference_count_; }
 };
+
+//! make alias due to CountingPtr's similarity with std::shared_ptr<T>
+using reference_counter = ReferenceCounter;
 
 } // namespace tlx
 

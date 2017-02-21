@@ -14,7 +14,7 @@
 static unsigned int count_deletes = 0;
 
 // derive from counted_object to include reference counter
-struct MyIntegerRC : public tlx::ReferenceCount {
+struct MyIntegerRC : public tlx::ReferenceCounter {
 
     //! some value
     int i;

@@ -16,14 +16,12 @@
 #ifndef TLX_META_LOG2_HEADER
 #define TLX_META_LOG2_HEADER
 
-#include <cstddef>
-
 namespace tlx {
 
 /******************************************************************************/
 // Log2Floor<Value>::value
 
-template <size_t Input>
+template <unsigned long long Input>
 class Log2Floor
 {
 public:
@@ -168,7 +166,7 @@ public:
 /******************************************************************************/
 // Log2<Value>::floor and Log2<Value>::ceil
 
-template <size_t Input>
+template <unsigned long long Input>
 class Log2
 {
 public:

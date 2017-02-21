@@ -18,18 +18,18 @@
 
 static void test_ffs() {
 
-    die_unequal(tlx::ffs(0), 0);
+    die_unequal(tlx::ffs(0), 0u);
 
     size_t power = 0;
     for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
         if (i > 1)
-            die_unequal(tlx::ffs(i - 1), 1);
+            die_unequal(tlx::ffs(i - 1), 1u);
 
         die_unequal(tlx::ffs(i), power + 1);
 
         if (i > 1)
-            die_unequal(tlx::ffs(i + 1), 1);
+            die_unequal(tlx::ffs(i + 1), 1u);
     }
 }
 

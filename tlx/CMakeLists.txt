@@ -11,6 +11,7 @@ set(LIBTLX_SOURCES
 
   cmdline_parser.cpp
   die.cpp
+  math/ffs.cpp
   math/integer_log2.cpp
   math/is_power_of_two.cpp
   math/round_to_power_of_two.cpp

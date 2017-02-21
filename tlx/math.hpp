@@ -14,6 +14,7 @@
 /*[[[perl
 print "#include <$_>\n" foreach sort glob("tlx/math/"."*.hpp");
 ]]]*/
+#include <tlx/math/ffs.hpp>
 #include <tlx/math/integer_log2.hpp>
 #include <tlx/math/is_power_of_two.hpp>
 #include <tlx/math/round_to_power_of_two.hpp>

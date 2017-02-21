@@ -15,6 +15,7 @@
 print "#include <$_>\n" foreach sort glob("tlx/math/"."*.hpp");
 ]]]*/
 #include <tlx/math/integer_log2.hpp>
+#include <tlx/math/round_to_power_of_two.hpp>
 // [[[end]]]
 
 #endif // !TLX_MATH_HEADER

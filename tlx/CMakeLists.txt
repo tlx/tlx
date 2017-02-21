@@ -12,6 +12,7 @@ set(LIBTLX_SOURCES
   cmdline_parser.cpp
   die.cpp
   math/integer_log2.cpp
+  math/round_to_power_of_two.cpp
   string/base64.cpp
   string/ends_with.cpp
   string/erase_all.cpp

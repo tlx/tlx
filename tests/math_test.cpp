@@ -15,7 +15,7 @@
 #include <cmath>
 #include <cstddef>
 
-static void test_ilog2() {
+static void test_integer_log2() {
 
     size_t power = 0;
     for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
@@ -34,9 +34,29 @@ static void test_ilog2() {
     }
 }
 
+static void test_round_to_power_of_two() {
+
+    size_t power = 0;
+    for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
+    {
+        if (i > 2)
+            die_unequal(tlx::round_up_to_power_of_two(i - 1), i);
+
+        die_unequal(tlx::round_up_to_power_of_two(i), i);
+        die_unequal(tlx::round_up_to_power_of_two(i + 1), i << 1);
+
+        die_unequal(tlx::round_down_to_power_of_two(i - 1), i >> 1);
+        die_unequal(tlx::round_down_to_power_of_two(i), i);
+
+        if (i > 2)
+            die_unequal(tlx::round_down_to_power_of_two(i + 1), i);
+    }
+}
+
 int main() {
 
-    test_ilog2();
+    test_integer_log2();
+    test_round_to_power_of_two();
 
     return 0;
 }

@@ -14,7 +14,7 @@
 /*[[[perl
 print "#include <$_>\n" foreach sort glob("tlx/math/"."*.hpp");
 ]]]*/
-#include <tlx/math/ilog2.hpp>
+#include <tlx/math/integer_log2.hpp>
 // [[[end]]]
 
 #endif // !TLX_MATH_HEADER

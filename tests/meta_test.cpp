@@ -9,7 +9,7 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/math/ilog2.hpp>
+#include <tlx/math/integer_log2.hpp>
 #include <tlx/meta.hpp>
 
 #include <tlx/die.hpp>
@@ -20,9 +20,9 @@
 template <size_t Value>
 void test_log_i(size_t floor_value, size_t ceil_value) {
 
-    die_unequal(tlx::Log2Floor<Value>::value, tlx::ilog2_floor(Value));
-    die_unequal(tlx::Log2<Value>::floor, tlx::ilog2_floor(Value));
-    die_unequal(tlx::Log2<Value>::ceil, tlx::ilog2_ceil(Value));
+    die_unequal(tlx::Log2Floor<Value>::value, tlx::integer_log2_floor(Value));
+    die_unequal(tlx::Log2<Value>::floor, tlx::integer_log2_floor(Value));
+    die_unequal(tlx::Log2<Value>::ceil, tlx::integer_log2_ceil(Value));
 
     if (Value <= 1)
     {

@@ -21,16 +21,16 @@ static void test_ilog2() {
     for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
         if (i > 1)
-            die_unequal(tlx::ilog2_floor(i - 1), power - 1);
+            die_unequal(tlx::integer_log2_floor(i - 1), power - 1);
 
-        die_unequal(tlx::ilog2_floor(i), power);
-        die_unequal(tlx::ilog2_floor(i + 1), power + (i == 1 ? 1 : 0));
+        die_unequal(tlx::integer_log2_floor(i), power);
+        die_unequal(tlx::integer_log2_floor(i + 1), power + (i == 1 ? 1 : 0));
 
         if (i > 1)
-            die_unequal(tlx::ilog2_ceil(i - 1), power - (i == 2 ? 1 : 0));
+            die_unequal(tlx::integer_log2_ceil(i - 1), power - (i == 2 ? 1 : 0));
 
-        die_unequal(tlx::ilog2_ceil(i), power);
-        die_unequal(tlx::ilog2_ceil(i + 1), power + 1);
+        die_unequal(tlx::integer_log2_ceil(i), power);
+        die_unequal(tlx::integer_log2_ceil(i + 1), power + 1);
     }
 }
 

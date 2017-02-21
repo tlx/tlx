@@ -34,6 +34,17 @@ static void test_integer_log2() {
     }
 }
 
+static void test_is_power_of_two() {
+
+    size_t power = 0;
+    for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
+    {
+        die_if(tlx::is_power_of_two(i - 1) && i != 2);
+        die_unless(tlx::is_power_of_two(i));
+        die_if(tlx::is_power_of_two(i + 1) && i != 1);
+    }
+}
+
 static void test_round_to_power_of_two() {
 
     size_t power = 0;
@@ -57,6 +68,7 @@ int main() {
 
     test_integer_log2();
     test_round_to_power_of_two();
+    test_is_power_of_two();
 
     return 0;
 }

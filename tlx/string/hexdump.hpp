@@ -11,10 +11,10 @@
 #ifndef TLX_STRING_HEXDUMP_HEADER
 #define TLX_STRING_HEXDUMP_HEADER
 
+#include <stdint.h>
+
 #include <string>
 #include <vector>
-
-#include <stdint.h>
 
 namespace tlx {
 

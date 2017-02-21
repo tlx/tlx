@@ -94,6 +94,19 @@ static void test_base64() {
         tlx::base64_decode("FjXKA5!!RxGFAudA"), std::runtime_error);
 }
 
+static void test_escape_html() {
+
+    die_unequal(
+        tlx::escape_html("hello <tag> \"abc\" & \"def\""),
+        "hello &lt;tag&gt; &quot;abc&quot; &amp; &quot;def&quot;");
+}
+
+static void test_escape_uri() {
+
+    die_unequal(
+        tlx::escape_uri("hello <tag>\""), "hello%20%3Ctag%3E%22");
+}
+
 static void test_format_si_iec_units() {
 
     die_unequal(tlx::format_si_units(33 * 1024 * 1024 * 1024LLU), "35.433 G");
@@ -534,6 +547,8 @@ int main() {
 
     test_base64();
     test_erase_all();
+    test_escape_html();
+    test_escape_uri();
     test_format_si_iec_units();
     test_hexdump();
     test_join();

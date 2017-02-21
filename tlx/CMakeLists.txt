@@ -13,6 +13,8 @@ set(LIBTLX_SOURCES
   string/base64.cpp
   string/ends_with.cpp
   string/erase_all.cpp
+  string/escape_html.cpp
+  string/escape_uri.cpp
   string/format_si_iec_units.cpp
   string/hexdump.cpp
   string/join.cpp

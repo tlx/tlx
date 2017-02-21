@@ -63,6 +63,7 @@ tlx_build_only(cmdline_parser_example)
 tlx_build_test(counting_ptr_test)
 tlx_build_test(delegate_test)
 tlx_build_test(math_test)
+tlx_build_test(meta_test)
 tlx_build_test(string_test)
 
 ################################################################################

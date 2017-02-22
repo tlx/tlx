@@ -3,7 +3,6 @@
  *
  * Replacement for std::function with ideas and base code borrowed from
  * http://codereview.stackexchange.com/questions/14730/impossibly-fast-delegate
- *
  * Massively rewritten, commented, simplified, and improved.
  *
  * Part of tlx - http://panthema.net/tlx
@@ -446,7 +445,7 @@ make_delegate(
 template <class C, typename R, typename ... A>
 inline Delegate<R(A ...)>
 make_delegate(
-    C& object_ptr, R(C::* const method_ptr)(A ...)) noexcept {
+    C& object_ptr, R(C::* const method_ptr)(A ...)) noexcept { // NOLINT
     return Delegate<R(A ...)>::template make<C>(object_ptr, method_ptr);
 }
 

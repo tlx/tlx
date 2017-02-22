@@ -669,7 +669,10 @@ if (1)
         "-whitespace/blank_line",
         "-whitespace/comments",
         "-whitespace/braces",
-        "-whitespace/indent"
+        "-readability/braces",
+        "-whitespace/indent",
+        "-whitespace/newline",
+        "-runtime/int"
         );
 
     system("cpplint", "--counting=total", "--extensions=h,c,cc,hpp,cpp",

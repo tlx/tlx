@@ -8,7 +8,7 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/math/round_to_power_of_two.hpp>
+#include <tlx/math/is_power_of_two.hpp>
 
 namespace tlx {
 

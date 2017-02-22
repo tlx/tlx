@@ -8,7 +8,7 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/math/round_to_power_of_two.hpp>
+#include <tlx/math/ffs.hpp>
 
 namespace tlx {
 
@@ -39,10 +39,10 @@ unsigned ffs(unsigned long x) {
     return __builtin_ffsl(x);
 }
 unsigned ffs(long long x) {
-    return __builtin_ffsl(x);
+    return __builtin_ffsll(x);
 }
 unsigned ffs(unsigned long long x) {
-    return __builtin_ffsl(x);
+    return __builtin_ffsll(x);
 }
 
 #else

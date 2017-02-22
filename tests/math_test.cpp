@@ -8,19 +8,18 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/math.hpp>
-
-#include <tlx/die.hpp>
-
 #include <cmath>
 #include <cstddef>
 #include <iostream>
+
+#include <tlx/die.hpp>
+#include <tlx/math.hpp>
 
 static void test_ffs() {
 
     die_unequal(tlx::ffs(0), 0u);
 
-    size_t power = 0;
+    unsigned power = 0;
     for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
         if (i > 1)
@@ -35,7 +34,7 @@ static void test_ffs() {
 
 static void test_integer_log2() {
 
-    size_t power = 0;
+    unsigned power = 0;
     for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
         if (i > 1)
@@ -44,8 +43,10 @@ static void test_integer_log2() {
         die_unequal(tlx::integer_log2_floor(i), power);
         die_unequal(tlx::integer_log2_floor(i + 1), power + (i == 1 ? 1 : 0));
 
-        if (i > 1)
-            die_unequal(tlx::integer_log2_ceil(i - 1), power - (i == 2 ? 1 : 0));
+        if (i > 1) {
+            die_unequal(
+                tlx::integer_log2_ceil(i - 1), power - (i == 2 ? 1 : 0));
+        }
 
         die_unequal(tlx::integer_log2_ceil(i), power);
         die_unequal(tlx::integer_log2_ceil(i + 1), power + 1);
@@ -54,7 +55,7 @@ static void test_integer_log2() {
 
 static void test_is_power_of_two() {
 
-    size_t power = 0;
+    unsigned power = 0;
     for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
         die_if(tlx::is_power_of_two(i - 1) && i != 2);
@@ -65,7 +66,7 @@ static void test_is_power_of_two() {
 
 static void test_round_to_power_of_two() {
 
-    size_t power = 0;
+    unsigned power = 0;
     for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
         if (i > 2)

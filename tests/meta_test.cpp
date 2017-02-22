@@ -4,20 +4,20 @@
  * Part of tlx - http://panthema.net/tlx
  *
  * Copyright (C) 2008 Andreas Beckmann <beckmann@cs.uni-frankfurt.de>
- * Copyright (C) 2013 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2013-2017 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <cmath>
+#include <cstddef>
+#include <iostream>
+
+#include <tlx/die.hpp>
 #include <tlx/math/integer_log2.hpp>
 #include <tlx/meta.hpp>
 
-#include <tlx/die.hpp>
-
-#include <cmath>
-#include <cstddef>
-
-template <size_t Value>
+template <unsigned long long Value>
 void test_log_i(size_t floor_value, size_t ceil_value) {
 
     die_unequal(tlx::Log2Floor<Value>::value, tlx::integer_log2_floor(Value));
@@ -44,7 +44,7 @@ void test_log_i(size_t floor_value, size_t ceil_value) {
     }
 }
 
-template <size_t Value>
+template <unsigned long long Value>
 void test_log2_value(size_t p) {
     test_log_i<Value - 1>(p - 1, p);
     test_log_i<Value>(p, p);

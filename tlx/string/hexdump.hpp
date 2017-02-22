@@ -11,8 +11,7 @@
 #ifndef TLX_STRING_HEXDUMP_HEADER
 #define TLX_STRING_HEXDUMP_HEADER
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <string>
 #include <vector>
 

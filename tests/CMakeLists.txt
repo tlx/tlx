@@ -67,5 +67,6 @@ tlx_build_test(math_test)
 tlx_build_test(meta_test)
 tlx_build_test(simple_vector_test)
 tlx_build_test(string_test)
+tlx_build_test(thread_pool_test)
 
 ################################################################################

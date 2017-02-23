@@ -665,14 +665,15 @@ if (1)
     }
 
     my @filter = (
+        "-build/c++11",
         "-build/header_guard",
-        "-whitespace/blank_line",
-        "-whitespace/comments",
-        "-whitespace/braces",
         "-readability/braces",
+        "-runtime/int",
+        "-whitespace/blank_line",
+        "-whitespace/braces",
+        "-whitespace/comments",
         "-whitespace/indent",
         "-whitespace/newline",
-        "-runtime/int"
         );
 
     system("cpplint", "--counting=total", "--extensions=h,c,cc,hpp,cpp",

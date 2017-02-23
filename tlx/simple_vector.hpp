@@ -20,6 +20,17 @@
 
 namespace tlx {
 
+//! enum class to select SimpleVector object initialization
+enum class SimpleVectorMode {
+    //! Initialize objects at allocation and destroy on deallocation
+    Normal,
+    //! Do not initialize objects at allocation, but destroy on
+    //! deallocation. Thus, all objects must be constructed from outside.
+    NoInitButDestroy,
+    //! Do not initialize objects at allocation and do not destroy them.
+    NoInitNoDestroy,
+};
+
 /*!
  * Simpler non-growing vector without initialization.
  *
@@ -30,7 +41,8 @@ namespace tlx {
  * types allow faster compilation and is less error prone to copying and other
  * problems.
  */
-template <typename ValueType>
+template <typename ValueType,
+          SimpleVectorMode Mode = SimpleVectorMode::Normal>
 class SimpleVector
 {
 public:
@@ -62,7 +74,7 @@ public:
     explicit SimpleVector(const size_type& sz)
         : size_(sz), array_(nullptr) {
         if (size_ > 0)
-            array_ = new value_type[size_];
+            array_ = create_array(size_);
     }
 
     //! non-copyable: delete copy-constructor
@@ -78,7 +90,7 @@ public:
     //! move-assignment
     SimpleVector& operator = (SimpleVector&& v) noexcept {
         if (&v == this) return *this;
-        delete[] array_;
+        destroy_array(array_, size_);
         size_ = v.size_, array_ = v.array_;
         v.size_ = 0, v.array_ = nullptr;
         return *this;
@@ -92,7 +104,7 @@ public:
 
     //! delete vector
     ~SimpleVector() {
-        delete[] array_;
+        destroy_array(array_, size_);
     }
 
     //! return iterator to beginning of vector
@@ -147,13 +159,13 @@ public:
     void resize(size_type new_size) {
         if (array_) {
             value_type* tmp = array_;
-            array_ = new value_type[new_size];
+            array_ = create_array(new_size);
             std::move(tmp, tmp + std::min(size_, new_size), array_);
-            delete[] tmp;
+            destroy_array(tmp, size_);
             size_ = new_size;
         }
         else {
-            array_ = new value_type[new_size];
+            array_ = create_array(new_size);
             size_ = new_size;
         }
     }
@@ -161,6 +173,39 @@ public:
     //! Zero the whole array content.
     void fill(const value_type& v = value_type()) noexcept {
         std::fill(array_, array_ + size_, v);
+    }
+
+private:
+    static ValueType * create_array(size_t size) {
+        switch (Mode)
+        {
+        case SimpleVectorMode::Normal:
+            // with normal object construction
+            return new value_type[size];
+        case SimpleVectorMode::NoInitButDestroy:
+        case SimpleVectorMode::NoInitNoDestroy:
+            // operator new allocates bytes
+            return static_cast<ValueType*>(
+                operator new (size * sizeof(ValueType)));
+        }
+    }
+
+    static void destroy_array(ValueType* array, size_t size) {
+        switch (Mode)
+        {
+        case SimpleVectorMode::Normal:
+            // with normal object destruction
+            delete[] array;
+            return;
+        case SimpleVectorMode::NoInitButDestroy:
+            for (size_t i = 0; i < size; ++i)
+                array[i].~ValueType();
+        // intentionally fall through to next case
+        case SimpleVectorMode::NoInitNoDestroy:
+            // only deallocate memory
+            operator delete (array);
+            return;
+        }
     }
 };
 

@@ -9,10 +9,11 @@
  ******************************************************************************/
 
 #include <tlx/string/ends_with.hpp>
-#include <tlx/string/to_lower.hpp>
 
 #include <algorithm>
 #include <cstring>
+
+#include <tlx/string/to_lower.hpp>
 
 namespace tlx {
 
@@ -25,6 +26,9 @@ bool ends_with(const std::string& str, const std::string& match) {
 
 bool ends_with(const std::string& str, const char* match) {
     size_t match_size = strlen(match);
+    if (match_size > str.size())
+        return false;
+
     std::string::const_iterator s = str.end() - match_size;
 
     while (*match != 0) {
@@ -49,6 +53,9 @@ bool ends_with_icase(const std::string& str, const std::string& match) {
 
 bool ends_with_icase(const std::string& str, const char* match) {
     size_t match_size = strlen(match);
+    if (match_size > str.size())
+        return false;
+
     std::string::const_iterator s = str.end() - match_size;
 
     while (*match != 0) {

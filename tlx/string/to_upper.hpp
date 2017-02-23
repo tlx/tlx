@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! Transform the given character to upper case without any localization.
+char to_upper(char ch);
+
 /*!
  * Transforms the given string to uppercase and returns a reference to it.
  *

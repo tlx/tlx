@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include <tlx/string/starts_with.hpp>
+#include <tlx/string/to_lower.hpp>
 
 #include <algorithm>
 
@@ -40,7 +41,7 @@ bool starts_with_icase(const std::string& str, const std::string& match) {
 
     return std::equal(match.begin(), match.end(), str.begin(),
                       [](const char& c1, const char& c2) {
-                          return std::tolower(c1) == std::tolower(c2);
+                          return to_lower(c1) == to_lower(c2);
                       });
 }
 
@@ -48,7 +49,7 @@ bool starts_with_icase(const std::string& str, const char* match) {
     std::string::const_iterator s = str.begin();
 
     while (*match != 0) {
-        if (s == str.end() || std::tolower(*s) != std::tolower(*match))
+        if (s == str.end() || to_lower(*s) != to_lower(*match))
             return false;
         ++s, ++match;
     }

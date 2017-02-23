@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! Transform the given character to lower case without any localization.
+char to_lower(char ch);
+
 /*!
  * Transforms the given string to lowercase and returns a reference to it.
  *

@@ -14,7 +14,7 @@
 
 namespace tlx {
 
-static inline char to_lower(char ch) {
+char to_lower(char ch) {
     if (static_cast<unsigned>(ch - 'A') < 26u)
         ch += 'a' - 'A';
     return ch;

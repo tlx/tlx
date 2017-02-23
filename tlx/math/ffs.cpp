@@ -15,7 +15,7 @@ namespace tlx {
 //! ffs (find first set bit) - generic implementation
 template <typename Integral>
 static inline unsigned ffs_template(Integral x) {
-    if (x == 0) return x;
+    if (x == 0) return 0u;
     unsigned r = 1;
     while ((x & 1) == 0)
         x >>= 1, ++r;

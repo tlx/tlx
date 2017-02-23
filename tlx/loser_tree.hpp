@@ -19,21 +19,22 @@
 #ifndef TLX_LOSER_TREE_HEADER
 #define TLX_LOSER_TREE_HEADER
 
-#include <tlx/define/likely.hpp>
-#include <tlx/math/round_to_power_of_two.hpp>
-#include <tlx/unused.hpp>
-
 #include <algorithm>
 #include <cassert>
 #include <functional>
 #include <ostream>
 #include <utility>
 
+#include <tlx/define/likely.hpp>
+#include <tlx/math/round_to_power_of_two.hpp>
+#include <tlx/simple_vector.hpp>
+#include <tlx/unused.hpp>
+
 namespace tlx {
 
 /*!
- * Guarded loser tree/tournament tree, either copying the whole element into
- * the tree structure, or looking up the element via the index.
+ * Guarded loser tree/tournament tree, either copying the whole element into the
+ * tree structure, or looking up the element via the index.
  *
  * This is a base class for the LoserTreeCopy\<true> and \<false> classes.
  *
@@ -69,36 +70,23 @@ protected:
     const Source ik_;
     //! log_2(ik) next greater power of 2
     const Source k_;
-    //! array containing loser tree nodes
-    Loser* losers_;
+    //! array containing loser tree nodes -- avoid default-constructing
+    //! losers[].key
+    SimpleVector<Loser> losers_;
     //! the comparator object
     Comparator cmp_;
     //! still have to construct keys
     bool first_insert_;
 
 public:
-    explicit LoserTreeCopyBase(
-        Source k, const Comparator& cmp = Comparator())
-        : ik_(k), k_(round_up_to_power_of_two(ik_)), cmp_(cmp), first_insert_(true) {
-        // avoid default-constructing losers[].key
-        losers_ = static_cast<Loser*>(operator new (2 * k_ * sizeof(Loser)));
+    explicit LoserTreeCopyBase(Source k, const Comparator& cmp = Comparator())
+        : ik_(k), k_(round_up_to_power_of_two(ik_)),
+          losers_(2 * k_), cmp_(cmp), first_insert_(true) {
 
         for (Source i = ik_ - 1; i < k_; ++i) {
             losers_[i + k_].sup = true;
             losers_[i + k_].source = invalid_;
         }
-    }
-
-    LoserTreeCopyBase(const LoserTreeCopyBase&) = delete;
-    LoserTreeCopyBase& operator = (const LoserTreeCopyBase&) = delete;
-    LoserTreeCopyBase(LoserTreeCopyBase&&) = default;
-    LoserTreeCopyBase& operator = (LoserTreeCopyBase&&) = default;
-
-    ~LoserTreeCopyBase() {
-        for (Source i = 0; i < (2 * k_); ++i)
-            losers_[i].~Loser();
-
-        operator delete (losers_);
     }
 
     void print(std::ostream& os) {
@@ -129,9 +117,9 @@ public:
             // copy construct all keys from this first key
             for (Source i = 0; i < 2 * k_; ++i) {
                 if (keyp)
-                    new (&(losers_[i].key))ValueType(*keyp);
+                    losers_[i].key = *keyp;
                 else
-                    losers_[pos].key = ValueType();
+                    losers_[i].key = ValueType();
             }
             first_insert_ = false;
         }
@@ -170,8 +158,8 @@ public:
 };
 
 /*!
- * Guarded loser tree/tournament tree, either copying the whole element into
- * the tree structure, or looking up the element via the index.
+ * Guarded loser tree/tournament tree, either copying the whole element into the
+ * tree structure, or looking up the element via the index.
  *
  * Unstable specialization of LoserTreeCopyBase.
  *
@@ -194,8 +182,7 @@ public:
     using Super::losers_;
     using Super::cmp_;
 
-    explicit LoserTreeCopy(
-        Source k, const Comparator& cmp = Comparator())
+    explicit LoserTreeCopy(Source k, const Comparator& cmp = Comparator())
         : Super(k, cmp) { }
 
     // do not pass const reference since key will be used as local variable
@@ -205,6 +192,7 @@ public:
 
         Source source = losers_[0].source;
         ValueType key = keyp ? *keyp : ValueType();
+
         for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
             // the smaller one gets promoted
             if (sup || (!losers_[pos].sup && cmp_(losers_[pos].key, key))) {
@@ -222,8 +210,8 @@ public:
 };
 
 /*!
- * Guarded loser tree/tournament tree, either copying the whole element into
- * the tree structure, or looking up the element via the index.
+ * Guarded loser tree/tournament tree, either copying the whole element into the
+ * tree structure, or looking up the element via the index.
  *
  * Stable specialization of LoserTreeCopyBase.
  *
@@ -246,8 +234,7 @@ public:
     using Super::losers_;
     using Super::cmp_;
 
-    explicit LoserTreeCopy(
-        Source k, const Comparator& cmp = Comparator())
+    explicit LoserTreeCopy(Source k, const Comparator& cmp = Comparator())
         : Super(k, cmp) { }
 
     // do not pass const reference since key will be used as local variable
@@ -310,14 +297,14 @@ protected:
     //! log_2(ik) next greater power of 2
     const Source k_;
     //! array containing loser tree nodes
-    Loser* losers_;
+    SimpleVector<Loser> losers_;
     //! the comparator object
     Comparator cmp_;
 
 public:
-    LoserTreePointerBase(
+    explicit LoserTreePointerBase(
         Source k, const Comparator& cmp = Comparator())
-        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(new Loser[k_ * 2]),
+        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(k_ * 2),
           cmp_(cmp) {
         for (Source i = ik_ - 1; i < k_; i++) {
             losers_[i + k_].keyp = nullptr;
@@ -329,8 +316,6 @@ public:
     LoserTreePointerBase& operator = (const LoserTreePointerBase&) = delete;
     LoserTreePointerBase(LoserTreePointerBase&&) = default;
     LoserTreePointerBase& operator = (LoserTreePointerBase&&) = default;
-
-    ~LoserTreePointerBase() { delete[] losers_; }
 
     void print(std::ostream& os) {
         for (Source i = 0; i < (k_ * 2); i++)
@@ -411,8 +396,7 @@ public:
     using Super::losers_;
     using Super::cmp_;
 
-    explicit LoserTreePointer(
-        Source k, const Comparator& cmp = Comparator())
+    explicit LoserTreePointer(Source k, const Comparator& cmp = Comparator())
         : Super(k, cmp) { }
 
     void delete_min_insert(const ValueType* keyp, bool sup) {
@@ -423,8 +407,8 @@ public:
         for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
             // the smaller one gets promoted
             if (!keyp ||
-                (losers_[pos].keyp && cmp_(*losers_[pos].keyp,
-                                           *keyp))) { // the other one is smaller
+                (losers_[pos].keyp &&
+                 cmp_(*losers_[pos].keyp, *keyp))) { // the other one is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].keyp, keyp);
             }
@@ -458,8 +442,7 @@ public:
     using Super::losers_;
     using Super::cmp_;
 
-    explicit LoserTreePointer(
-        Source k, const Comparator& cmp = Comparator())
+    explicit LoserTreePointer(Source k, const Comparator& cmp = Comparator())
         : Super(k, cmp) { }
 
     void delete_min_insert(const ValueType* keyp, bool sup) {
@@ -520,29 +503,20 @@ protected:
     //! log_2(ik) next greater power of 2
     Source k_;
     //! array containing loser tree nodes
-    Loser* losers_;
+    SimpleVector<Loser> losers_;
     //! the comparator object
     Comparator cmp_;
 
 public:
     LoserTreeCopyUnguardedBase(Source k, const ValueType& sentinel,
                                const Comparator& cmp = Comparator())
-        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(new Loser[k_ * 2]),
+        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(k_ * 2),
           cmp_(cmp) {
         for (Source i = 0; i < 2 * k_; i++) {
             losers_[i].source = invalid_;
             losers_[i].key = sentinel;
         }
     }
-
-    ~LoserTreeCopyUnguardedBase() { delete[] losers_; }
-
-    // non construction-copyable
-    LoserTreeCopyUnguardedBase(
-        const LoserTreeCopyUnguardedBase& other) = delete;
-    // non copyable
-    LoserTreeCopyUnguardedBase& operator = (
-        const LoserTreeCopyUnguardedBase&) = delete;
 
     void print(std::ostream& os) {
         for (Source i = 0; i < k_ + ik_; i++)
@@ -690,22 +664,20 @@ protected:
     //! log_2(ik) next greater power of 2
     Source k_;
     //! array containing loser tree nodes
-    Loser* losers_;
+    SimpleVector<Loser> losers_;
     //! the comparator object
     Comparator cmp_;
 
 protected:
     LoserTreePointerUnguardedBase(Source k, const ValueType& sentinel,
                                   const Comparator& cmp = Comparator())
-        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(new Loser[k_ * 2]),
-          cmp_(cmp) {
+        : ik_(k), k_(round_up_to_power_of_two(ik_)),
+          losers_(k_ * 2), cmp_(cmp) {
         for (Source i = ik_ - 1; i < k_; i++) {
             losers_[i + k_].source = invalid_;
             losers_[i + k_].keyp = &sentinel;
         }
     }
-
-    ~LoserTreePointerUnguardedBase() { delete[] losers_; }
 
     // non construction-copyable
     LoserTreePointerUnguardedBase(
@@ -830,14 +802,18 @@ public:
 
 template <bool Stable, typename ValueType, typename Comparator,
           typename Enable = void>
-struct LoserTreeTraits {
+class LoserTreeTraits
+{
 public:
     using Type = LoserTreePointer<Stable, ValueType, Comparator>;
 };
 
 template <bool Stable, typename ValueType, typename Comparator>
-struct LoserTreeTraits<Stable, ValueType, Comparator,
-                       typename std::enable_if<sizeof(ValueType) <= 2* sizeof(size_t)>::type>{
+class LoserTreeTraits<
+        Stable, ValueType, Comparator,
+        typename std::enable_if<sizeof(ValueType) <= 2* sizeof(size_t)>::type>
+{
+public:
     using Type = LoserTreeCopy<Stable, ValueType, Comparator>;
 };
 
@@ -850,8 +826,11 @@ public:
 };
 
 template <bool Stable, typename ValueType, typename Comparator>
-struct LoserTreeTraitsUnguarded<Stable, ValueType, Comparator,
-                                typename std::enable_if<sizeof(ValueType) <= 2* sizeof(size_t)>::type>{
+class LoserTreeTraitsUnguarded<
+        Stable, ValueType, Comparator,
+        typename std::enable_if<sizeof(ValueType) <= 2* sizeof(size_t)>::type>
+{
+public:
     using Type = LoserTreeCopyUnguarded<Stable, ValueType, Comparator>;
 };
 

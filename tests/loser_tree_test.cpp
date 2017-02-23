@@ -16,9 +16,31 @@
 #include <tlx/die.hpp>
 #include <tlx/loser_tree.hpp>
 
+static long ctor_dtor_counter = 0;
+
+//! object to track construction and destruction
+struct MyTracker {
+    MyTracker() {
+        ++ctor_dtor_counter;
+    }
+    MyTracker(const MyTracker&) {
+        ++ctor_dtor_counter;
+    }
+    MyTracker& operator = (const MyTracker&) {
+        // no change
+        return *this;
+    }
+    ~MyTracker() {
+        --ctor_dtor_counter;
+    }
+};
+
 struct MyInteger {
-    size_t val_ = 1;
-    size_t dummy_ = 42;
+    size_t    val_ = 1;
+    size_t    dummy_ = 42;
+
+    //! tracker to count constructions/destructions
+    MyTracker track_;
 
     //! SimpleVector needs default constructor
     MyInteger() = default;
@@ -37,28 +59,34 @@ struct MyIntegerCompare {
     }
 };
 
+struct MyIntegerCompareFull {
+    bool operator () (const MyInteger& a, const MyInteger& b) const {
+        return std::tie(a.val_, a.dummy_) < std::tie(b.val_, b.dummy_);
+    }
+};
+
 // force instantiation
 namespace tlx {
 
 template class LoserTreeCopy<false, MyInteger, MyIntegerCompare>;
 template class LoserTreeCopy<true, MyInteger, MyIntegerCompare>;
-template class LoserTreePointer<false, MyInteger, MyIntegerCompare>;
-template class LoserTreePointer<true, MyInteger, MyIntegerCompare>;
-
 template class LoserTreeCopyUnguarded<false, MyInteger, MyIntegerCompare>;
 template class LoserTreeCopyUnguarded<true, MyInteger, MyIntegerCompare>;
+
+template class LoserTreePointer<false, MyInteger, MyIntegerCompare>;
+template class LoserTreePointer<true, MyInteger, MyIntegerCompare>;
 template class LoserTreePointerUnguarded<false, MyInteger, MyIntegerCompare>;
 template class LoserTreePointerUnguarded<true, MyInteger, MyIntegerCompare>;
 
 } // namespace tlx
 
-int main() {
+template <typename LoserTree>
+void test_losertree(bool stable, size_t num_vectors) {
 
     using Vector = std::vector<MyInteger>;
     std::vector<Vector> vecs;
 
     std::default_random_engine rng(std::random_device { } ());
-    size_t num_vectors = 10;
 
     std::vector<MyInteger> correct;
 
@@ -73,15 +101,29 @@ int main() {
         vecs.emplace_back(vec1);
     }
 
-    std::sort(correct.begin(), correct.end(), MyIntegerCompare());
+    if (stable)
+    {
+        // take first lists and replicate them with higher dummy order id
+        for (size_t i = 0; i < num_vectors / 2; ++i) {
+            std::vector<MyInteger> vec1;
+            for (size_t j = 0; j < 1000; ++j) {
+                vec1.emplace_back(vecs[i][j].val_, vecs.size());
+                correct.emplace_back(vec1.back());
+            }
 
-    using LT = tlx::LoserTreeCopy<false, MyInteger, MyIntegerCompare>;
-    LT lt(vecs.size());
+            std::sort(vec1.begin(), vec1.end(), MyIntegerCompare());
+            vecs.emplace_back(vec1);
+        }
+    }
 
-    std::vector<Vector::const_iterator> lt_iter(num_vectors);
+    std::stable_sort(correct.begin(), correct.end(), MyIntegerCompareFull());
+
+    LoserTree lt(vecs.size());
+
+    std::vector<Vector::const_iterator> lt_iter(vecs.size());
     size_t remaining_inputs = 0;
 
-    for (size_t i = 0; i < num_vectors; ++i) {
+    for (size_t i = 0; i < vecs.size(); ++i) {
         lt_iter[i] = vecs[i].begin();
 
         if (lt_iter[i] == vecs[i].end()) {
@@ -117,6 +159,42 @@ int main() {
     }
 
     die_unless(result == correct);
+}
+
+template <typename LoserTree>
+void test_losertree(bool stable) {
+
+    test_losertree<LoserTree>(stable, 1);
+    test_losertree<LoserTree>(stable, 2);
+    test_losertree<LoserTree>(stable, 3);
+    test_losertree<LoserTree>(stable, 4);
+    test_losertree<LoserTree>(stable, 5);
+    test_losertree<LoserTree>(stable, 6);
+    test_losertree<LoserTree>(stable, 7);
+    test_losertree<LoserTree>(stable, 8);
+    test_losertree<LoserTree>(stable, 9);
+    test_losertree<LoserTree>(stable, 10);
+    test_losertree<LoserTree>(stable, 11);
+    test_losertree<LoserTree>(stable, 12);
+}
+
+int main() {
+
+    test_losertree<
+        tlx::LoserTreeCopy<false, MyInteger, MyIntegerCompare> >(
+        /* stable */ false);
+    test_losertree<
+        tlx::LoserTreeCopy<true, MyInteger, MyIntegerCompare> >(
+        /* stable */ true);
+
+    test_losertree<
+        tlx::LoserTreePointer<false, MyInteger, MyIntegerCompare> >(
+        /* stable */ false);
+    test_losertree<
+        tlx::LoserTreePointer<true, MyInteger, MyIntegerCompare> >(
+        /* stable */ true);
+
+    die_unequal(ctor_dtor_counter, 0);
 
     return 0;
 }

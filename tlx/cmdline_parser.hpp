@@ -83,6 +83,7 @@ private:
     struct ArgumentInt;
     struct ArgumentUnsigned;
     struct ArgumentSizeT;
+    struct ArgumentFloat;
     struct ArgumentDouble;
     struct ArgumentBytes32;
     struct ArgumentBytes64;
@@ -192,6 +193,12 @@ public:
         char key, const std::string& longkey,
         const std::string& keytype, size_t& dest, const std::string& desc);
 
+    //! add float option -key, --longkey [keytype] with description and store
+    //! to dest
+    void add_float(
+        char key, const std::string& longkey,
+        const std::string& keytype, float& dest, const std::string& desc);
+
     //! add double option -key, --longkey [keytype] with description and store
     //! to dest
     void add_double(
@@ -253,6 +260,11 @@ public:
     void add_size_t(char key, const std::string& longkey, size_t& dest,
                     const std::string& desc);
 
+    //! add float option -key, --longkey [keytype] with description and store
+    //! to dest
+    void add_float(char key, const std::string& longkey, float& dest,
+                    const std::string& desc);
+
     //! add double option -key, --longkey [keytype] with description and store
     //! to dest
     void add_double(char key, const std::string& longkey, double& dest,
@@ -295,6 +307,10 @@ public:
     //! add size_t parameter [name] with description and store to dest
     void add_param_size_t(
         const std::string& name, size_t& dest, const std::string& desc);
+
+    //! add float parameter [name] with description and store to dest
+    void add_param_float(
+        const std::string& name, float& dest, const std::string& desc);
 
     //! add double parameter [name] with description and store to dest
     void add_param_double(
@@ -341,6 +357,10 @@ public:
     //! add optional size_t parameter [name] with description and store to dest
     void add_opt_param_size_t(
         const std::string& name, size_t& dest, const std::string& desc);
+
+    //! add optional float parameter [name] with description and store to dest
+    void add_opt_param_float(
+        const std::string& name, float& dest, const std::string& desc);
 
     //! add optional double parameter [name] with description and store to dest
     void add_opt_param_double(

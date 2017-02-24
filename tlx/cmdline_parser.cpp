@@ -192,6 +192,34 @@ struct CmdlineParser::ArgumentSizeT final : public Argument {
     void print_value(std::ostream& os) const final { os << dest_; }
 };
 
+//! specialization of argument for float options or parameters
+struct CmdlineParser::ArgumentFloat final : public Argument {
+    float& dest_;
+
+    //! contructor filling most attributes
+    ArgumentFloat(char key, const std::string& longkey,
+                   const std::string& keytype, const std::string& desc,
+                   bool required, float& dest)
+        : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
+
+    const char * type_name() const final { return "float"; }
+
+    //! parse unsigned integer using sscanf.
+    bool process(int& argc, const char* const*& argv) final {
+        if (argc == 0)
+            return false;
+        if (sscanf(argv[0], "%f", &dest_) == 1) {
+            --argc, ++argv;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    void print_value(std::ostream& os) const final { os << dest_; }
+};
+
 //! specialization of argument for double options or parameters
 struct CmdlineParser::ArgumentDouble final : public Argument {
     double& dest_;
@@ -465,6 +493,14 @@ void CmdlineParser::add_size_t(char key, const std::string& longkey,
     calc_option_max(option_list_.back());
 }
 
+void CmdlineParser::add_float(char key, const std::string& longkey,
+                              const std::string& keytype, float& dest,
+                              const std::string& desc) {
+    option_list_.push_back(
+        new ArgumentFloat(key, longkey, keytype, desc, false, dest));
+    calc_option_max(option_list_.back());
+}
+
 void CmdlineParser::add_double(char key, const std::string& longkey,
                                const std::string& keytype, double& dest,
                                const std::string& desc) {
@@ -539,6 +575,11 @@ void CmdlineParser::add_size_t(char key, const std::string& longkey,
     return add_size_t(key, longkey, "", dest, desc);
 }
 
+void CmdlineParser::add_float(char key, const std::string& longkey,
+                              float& dest, const std::string& desc) {
+    return add_float(key, longkey, "", dest, desc);
+}
+
 void CmdlineParser::add_double(char key, const std::string& longkey,
                                double& dest, const std::string& desc) {
     return add_double(key, longkey, "", dest, desc);
@@ -587,6 +628,12 @@ void CmdlineParser::add_param_uint(
 void CmdlineParser::add_param_size_t(
     const std::string& name, size_t& dest, const std::string& desc) {
     param_list_.push_back(new ArgumentSizeT(0, name, "", desc, true, dest));
+    calc_param_max(param_list_.back());
+}
+
+void CmdlineParser::add_param_float(
+    const std::string& name, float& dest, const std::string& desc) {
+    param_list_.push_back(new ArgumentFloat(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
@@ -644,6 +691,12 @@ void CmdlineParser::add_opt_param_uint(
 void CmdlineParser::add_opt_param_size_t(
     const std::string& name, size_t& dest, const std::string& desc) {
     param_list_.push_back(new ArgumentSizeT(0, name, "", desc, false, dest));
+    calc_param_max(param_list_.back());
+}
+
+void CmdlineParser::add_opt_param_float(
+    const std::string& name, float& dest, const std::string& desc) {
+    param_list_.push_back(new ArgumentFloat(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 

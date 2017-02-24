@@ -56,7 +56,7 @@ struct CmdlineParser::Argument {
     virtual const char * type_name() const = 0;
 
     //! process one item from command line for this argument
-    virtual bool process(int& argc, const char* const*& argv) = 0;
+    virtual bool process(int& argc, const char* const*& argv) = 0; // NOLINT
 
     //! format value to ostream
     virtual void print_value(std::ostream& os) const = 0;
@@ -92,7 +92,7 @@ struct CmdlineParser::ArgumentBool final : public Argument {
     //! contructor filling most attributes
     ArgumentBool(char key, const std::string& longkey,
                  const std::string& keytype, const std::string& desc,
-                 bool required, bool& dest)
+                 bool required, bool& dest) // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "bool"; }
@@ -115,13 +115,13 @@ struct CmdlineParser::ArgumentInt final : public Argument {
     //! contructor filling most attributes
     ArgumentInt(char key, const std::string& longkey,
                 const std::string& keytype, const std::string& desc,
-                bool required, int& dest)
+                bool required, int& dest) // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "integer"; }
 
     //! parse signed integer using sscanf.
-    bool process(int& argc, const char* const*& argv) final {
+    bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
         if (sscanf(argv[0], "%d", &dest_) == 1) {
@@ -143,13 +143,13 @@ struct CmdlineParser::ArgumentUnsigned final : public Argument {
     //! contructor filling most attributes
     ArgumentUnsigned(char key, const std::string& longkey,
                      const std::string& keytype, const std::string& desc,
-                     bool required, unsigned int& dest)
+                     bool required, unsigned int& dest) // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "unsigned"; }
 
     //! parse unsigned integer using sscanf.
-    bool process(int& argc, const char* const*& argv) final {
+    bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
         if (sscanf(argv[0], "%u", &dest_) == 1) {
@@ -171,13 +171,13 @@ struct CmdlineParser::ArgumentSizeT final : public Argument {
     //! contructor filling most attributes
     ArgumentSizeT(char key, const std::string& longkey,
                   const std::string& keytype, const std::string& desc,
-                  bool required, size_t& dest)
+                  bool required, size_t& dest) // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "size_t"; }
 
     //! parse size_t using sscanf.
-    bool process(int& argc, const char* const*& argv) final {
+    bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
         if (sscanf(argv[0], "%zu", &dest_) == 1) {
@@ -199,13 +199,13 @@ struct CmdlineParser::ArgumentFloat final : public Argument {
     //! contructor filling most attributes
     ArgumentFloat(char key, const std::string& longkey,
                   const std::string& keytype, const std::string& desc,
-                  bool required, float& dest)
+                  bool required, float& dest) // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "float"; }
 
     //! parse unsigned integer using sscanf.
-    bool process(int& argc, const char* const*& argv) final {
+    bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
         if (sscanf(argv[0], "%f", &dest_) == 1) {
@@ -227,13 +227,13 @@ struct CmdlineParser::ArgumentDouble final : public Argument {
     //! contructor filling most attributes
     ArgumentDouble(char key, const std::string& longkey,
                    const std::string& keytype, const std::string& desc,
-                   bool required, double& dest)
+                   bool required, double& dest) // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "double"; }
 
     //! parse unsigned integer using sscanf.
-    bool process(int& argc, const char* const*& argv) final {
+    bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
         if (sscanf(argv[0], "%lf", &dest_) == 1) {
@@ -256,13 +256,13 @@ struct CmdlineParser::ArgumentBytes32 final : public Argument {
     //! contructor filling most attributes
     ArgumentBytes32(char key, const std::string& longkey,
                     const std::string& keytype, const std::string& desc,
-                    bool required, uint32_t& dest)
+                    bool required, uint32_t& dest) // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "bytes"; }
 
     //! parse byte size using SI/IEC parser.
-    bool process(int& argc, const char* const*& argv) final {
+    bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
         uint64_t dest;
@@ -287,13 +287,13 @@ struct CmdlineParser::ArgumentBytes64 final : public Argument {
     //! contructor filling most attributes
     ArgumentBytes64(char key, const std::string& longkey,
                     const std::string& keytype, const std::string& desc,
-                    bool required, uint64_t& dest)
+                    bool required, uint64_t& dest) // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "bytes"; }
 
     //! parse byte size using SI/IEC parser.
-    bool process(int& argc, const char* const*& argv) final {
+    bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
         if (parse_si_iec_units(argv[0], &dest_)) {
@@ -315,13 +315,13 @@ struct CmdlineParser::ArgumentString final : public Argument {
     //! contructor filling most attributes
     ArgumentString(char key, const std::string& longkey,
                    const std::string& keytype, const std::string& desc,
-                   bool required, std::string& dest)
+                   bool required, std::string& dest) // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "string"; }
 
     //! "process" string argument just by storing it.
-    bool process(int& argc, const char* const*& argv) final {
+    bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
         dest_ = argv[0];
@@ -341,7 +341,7 @@ struct CmdlineParser::ArgumentStringlist final : public Argument {
     //! contructor filling most attributes
     ArgumentStringlist(char key, const std::string& longkey,
                        const std::string& keytype, const std::string& desc,
-                       bool required, std::vector<std::string>& dest)
+                       bool required, std::vector<std::string>& dest) // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) {
         repeated_ = true;
     }
@@ -349,7 +349,7 @@ struct CmdlineParser::ArgumentStringlist final : public Argument {
     const char * type_name() const final { return "string list"; }
 
     //! "process" string argument just by storing it in vector.
-    bool process(int& argc, const char* const*& argv) final {
+    bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
         dest_.push_back(argv[0]);

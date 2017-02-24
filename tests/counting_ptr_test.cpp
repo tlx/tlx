@@ -21,6 +21,9 @@ struct MyIntegerRC : public tlx::ReferenceCounter {
 
     explicit MyIntegerRC(int _i) : i(_i) { }
 
+    //! default copy constructor for unify()
+    MyIntegerRC(const MyIntegerRC&) = default;
+
     // count number of destructor calls
     ~MyIntegerRC() { ++count_deletes; }
 };

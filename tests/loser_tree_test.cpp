@@ -70,13 +70,19 @@ namespace tlx {
 
 template class LoserTreeCopy<false, MyInteger, MyIntegerCompare>;
 template class LoserTreeCopy<true, MyInteger, MyIntegerCompare>;
+template class LoserTreeCopyBase<MyInteger, MyIntegerCompare>;
+
 template class LoserTreeCopyUnguarded<false, MyInteger, MyIntegerCompare>;
 template class LoserTreeCopyUnguarded<true, MyInteger, MyIntegerCompare>;
+template class LoserTreeCopyUnguardedBase<MyInteger, MyIntegerCompare>;
 
 template class LoserTreePointer<false, MyInteger, MyIntegerCompare>;
 template class LoserTreePointer<true, MyInteger, MyIntegerCompare>;
+template class LoserTreePointerBase<MyInteger, MyIntegerCompare>;
+
 template class LoserTreePointerUnguarded<false, MyInteger, MyIntegerCompare>;
 template class LoserTreePointerUnguarded<true, MyInteger, MyIntegerCompare>;
+template class LoserTreePointerUnguardedBase<MyInteger, MyIntegerCompare>;
 
 } // namespace tlx
 

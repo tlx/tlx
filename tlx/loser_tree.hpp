@@ -22,7 +22,6 @@
 #include <algorithm>
 #include <cassert>
 #include <functional>
-#include <ostream>
 #include <utility>
 
 #include <tlx/define/likely.hpp>
@@ -87,12 +86,6 @@ public:
             losers_[i + k_].sup = true;
             losers_[i + k_].source = invalid_;
         }
-    }
-
-    void print(std::ostream& os) {
-        for (Source i = 0; i < (k_ * 2); i++)
-            os << i << "    " << losers_[i].key << " from " << losers_[i].source
-               << ",  " << losers_[i].sup << "\n";
     }
 
     //! return the index of the player with the smallest element.
@@ -317,12 +310,6 @@ public:
     LoserTreePointerBase(LoserTreePointerBase&&) = default;
     LoserTreePointerBase& operator = (LoserTreePointerBase&&) = default;
 
-    void print(std::ostream& os) {
-        for (Source i = 0; i < (k_ * 2); i++)
-            os << i << "    " << losers_[i].keyp << " from "
-               << losers_[i].source << ",  " << losers_[i].keyp << "\n";
-    }
-
     //! return the index of the player with the smallest element.
     Source min_source() {
         return losers_[0].keyp ? losers_[0].source : invalid_;
@@ -518,12 +505,6 @@ public:
         }
     }
 
-    void print(std::ostream& os) {
-        for (Source i = 0; i < k_ + ik_; i++)
-            os << i << "    " << losers_[i].key << " from " << losers_[i].source
-               << "\n";
-    }
-
     //! return the index of the player with the smallest element.
     Source min_source() {
         assert(losers_[0].source != invalid_ &&
@@ -685,12 +666,6 @@ protected:
     // non copyable
     LoserTreePointerUnguardedBase& operator = (
         const LoserTreePointerUnguardedBase&) = delete;
-
-    void print(std::ostream& os) {
-        for (Source i = 0; i < k_ + ik_; i++)
-            os << i << "    " << *losers_[i].keyp << " from "
-               << losers_[i].source << "\n";
-    }
 
     Source min_source() { return losers_[0].source; }
 

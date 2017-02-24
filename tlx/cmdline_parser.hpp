@@ -263,7 +263,7 @@ public:
     //! add float option -key, --longkey [keytype] with description and store
     //! to dest
     void add_float(char key, const std::string& longkey, float& dest,
-                    const std::string& desc);
+                   const std::string& desc);
 
     //! add double option -key, --longkey [keytype] with description and store
     //! to dest

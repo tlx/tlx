@@ -28,6 +28,8 @@ struct MyIntegerRC : public tlx::ReferenceCounter {
 using IntegerPtr = tlx::CountingPtr<MyIntegerRC>;
 using IntegerCPtr = tlx::CountingPtr<const MyIntegerRC>;
 
+template class tlx::CountingPtr<MyIntegerRC>;
+
 static IntegerPtr MakeIntegerPtr() {
     return tlx::make_counting<MyIntegerRC>(24);
 }

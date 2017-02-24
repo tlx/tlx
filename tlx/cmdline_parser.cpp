@@ -198,8 +198,8 @@ struct CmdlineParser::ArgumentFloat final : public Argument {
 
     //! contructor filling most attributes
     ArgumentFloat(char key, const std::string& longkey,
-                   const std::string& keytype, const std::string& desc,
-                   bool required, float& dest)
+                  const std::string& keytype, const std::string& desc,
+                  bool required, float& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "float"; }

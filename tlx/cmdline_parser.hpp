@@ -160,6 +160,12 @@ public:
         char key, const std::string& longkey,
         const std::string& keytype, bool& dest, const std::string& desc);
 
+    //! add boolean option flag -key, --longkey [keytype] with description and
+    //! store to dest. identical to add_bool()
+    void add_flag(
+        char key, const std::string& longkey,
+        const std::string& keytype, bool& dest, const std::string& desc);
+
     //! add signed integer option -key, --longkey [keytype] with description
     //! and store to dest
     void add_int(
@@ -169,6 +175,13 @@ public:
     //! add unsigned integer option -key, --longkey [keytype] with description
     //! and store to dest
     void add_unsigned(
+        char key, const std::string& longkey,
+        const std::string& keytype, unsigned int& dest,
+        const std::string& desc);
+
+    //! add unsigned integer option -key, --longkey [keytype] with description
+    //! and store to dest. identical to add_unsigned()
+    void add_uint(
         char key, const std::string& longkey,
         const std::string& keytype, unsigned int& dest,
         const std::string& desc);
@@ -215,6 +228,11 @@ public:
     void add_bool(char key, const std::string& longkey, bool& dest,
                   const std::string& desc);
 
+    //! add boolean option flag -key, --longkey with description and store to
+    //! dest. identical to add_bool()
+    void add_flag(char key, const std::string& longkey, bool& dest,
+                  const std::string& desc);
+
     //! add signed integer option -key, --longkey with description and store to
     //! dest
     void add_int(char key, const std::string& longkey, int& dest,
@@ -224,6 +242,11 @@ public:
     //! and store to dest
     void add_unsigned(char key, const std::string& longkey, unsigned int& dest,
                       const std::string& desc);
+
+    //! add unsigned integer option -key, --longkey [keytype] with description
+    //! and store to dest. identical to add_unsigned()
+    void add_uint(char key, const std::string& longkey, unsigned int& dest,
+                  const std::string& desc);
 
     //! add size_t option -key, --longkey [keytype] with description and store
     //! to dest
@@ -262,6 +285,11 @@ public:
 
     //! add unsigned integer parameter [name] with description and store to dest
     void add_param_unsigned(
+        const std::string& name, unsigned int& dest, const std::string& desc);
+
+    //! add unsigned integer parameter [name] with description and store to
+    //! dest. identical to add_unsigned()
+    void add_param_uint(
         const std::string& name, unsigned int& dest, const std::string& desc);
 
     //! add size_t parameter [name] with description and store to dest
@@ -303,6 +331,11 @@ public:
     //! add optional unsigned integer parameter [name] with description and
     //! store to dest
     void add_opt_param_unsigned(
+        const std::string& name, unsigned int& dest, const std::string& desc);
+
+    //! add optional unsigned integer parameter [name] with description and
+    //! store to dest. identical to add_unsigned()
+    void add_opt_param_uint(
         const std::string& name, unsigned int& dest, const std::string& desc);
 
     //! add optional size_t parameter [name] with description and store to dest

@@ -429,6 +429,12 @@ void CmdlineParser::add_bool(char key, const std::string& longkey,
     calc_option_max(option_list_.back());
 }
 
+void CmdlineParser::add_flag(char key, const std::string& longkey,
+                             const std::string& keytype, bool& dest,
+                             const std::string& desc) {
+    return add_bool(key, longkey, keytype, dest, desc);
+}
+
 void CmdlineParser::add_int(char key, const std::string& longkey,
                             const std::string& keytype, int& dest,
                             const std::string& desc) {
@@ -443,6 +449,12 @@ void CmdlineParser::add_unsigned(char key, const std::string& longkey,
     option_list_.push_back(
         new ArgumentUnsigned(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
+}
+
+void CmdlineParser::add_uint(char key, const std::string& longkey,
+                             const std::string& keytype, unsigned int& dest,
+                             const std::string& desc) {
+    return add_unsigned(key, longkey, keytype, dest, desc);
 }
 
 void CmdlineParser::add_size_t(char key, const std::string& longkey,
@@ -495,9 +507,16 @@ void CmdlineParser::add_stringlist(
     calc_option_max(option_list_.back());
 }
 
+/******************************************************************************/
+
 void CmdlineParser::add_bool(
     char key, const std::string& longkey, bool& dest, const std::string& desc) {
     return add_bool(key, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_flag(
+    char key, const std::string& longkey, bool& dest, const std::string& desc) {
+    return add_bool(key, longkey, dest, desc);
 }
 
 void CmdlineParser::add_int(
@@ -508,6 +527,11 @@ void CmdlineParser::add_int(
 void CmdlineParser::add_unsigned(char key, const std::string& longkey,
                                  unsigned int& dest, const std::string& desc) {
     return add_unsigned(key, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_uint(char key, const std::string& longkey,
+                             unsigned int& dest, const std::string& desc) {
+    return add_unsigned(key, longkey, dest, desc);
 }
 
 void CmdlineParser::add_size_t(char key, const std::string& longkey,
@@ -553,6 +577,11 @@ void CmdlineParser::add_param_unsigned(
     const std::string& name, unsigned int& dest, const std::string& desc) {
     param_list_.push_back(new ArgumentUnsigned(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
+}
+
+void CmdlineParser::add_param_uint(
+    const std::string& name, unsigned int& dest, const std::string& desc) {
+    add_param_unsigned(name, dest, desc);
 }
 
 void CmdlineParser::add_param_size_t(
@@ -605,6 +634,11 @@ void CmdlineParser::add_opt_param_unsigned(
     const std::string& name, unsigned int& dest, const std::string& desc) {
     param_list_.push_back(new ArgumentUnsigned(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
+}
+
+void CmdlineParser::add_opt_param_uint(
+    const std::string& name, unsigned int& dest, const std::string& desc) {
+    return add_opt_param_unsigned(name, dest, desc);
 }
 
 void CmdlineParser::add_opt_param_size_t(

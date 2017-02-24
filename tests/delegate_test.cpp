@@ -65,24 +65,24 @@ static void test_class_methods() {
     A a = { 2 };
     {
         // construction for an immediate class::method with class object
-        TestDelegate d = TestDelegate::make<A, & A::func>(&a);
+        TestDelegate d = TestDelegate::make<A, &A::func>(&a);
         die_unequal(42, d(40));
     }
     {
         // construction for an immediate class::method with class object
-        TestDelegate d = TestDelegate::make<A, & A::const_func>(&a);
+        TestDelegate d = TestDelegate::make<A, &A::const_func>(&a);
         die_unequal(42, d(40));
     }
     {
         // construction for an immediate class::method with class object by
         // reference
-        TestDelegate d = TestDelegate::make<A, & A::func>(a);
+        TestDelegate d = TestDelegate::make<A, &A::func>(a);
         die_unequal(42, d(40));
     }
     {
         // construction for an immediate class::method with class object by
         // reference
-        TestDelegate d = TestDelegate::make<A, & A::const_func>(a);
+        TestDelegate d = TestDelegate::make<A, &A::const_func>(a);
         die_unequal(42, d(40));
     }
 

@@ -504,8 +504,8 @@ foreach my $arg (@ARGV) {
 
 # check uncrustify's version:
 my ($uncrustver) = filter_program("", "uncrustify", "--version");
-($uncrustver eq "uncrustify 0.62\n")
-    or die("Requires uncrustify 0.62 to run correctly. Got: $uncrustver");
+($uncrustver eq "uncrustify 0.64\n")
+    or die("Requires uncrustify 0.64 to run correctly. Got: $uncrustver");
 
 use File::Find;
 my @filelist;

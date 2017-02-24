@@ -89,11 +89,11 @@ inline bool die_unequal_compare(double a, double b) {
 
 //! Check that X == Y or die miserably, but output the values of X and Y for
 //! better debugging.
-#define die_unequal(X, Y)                                               \
-    do {                                                                \
-        if (!::tlx::die_unequal_compare((X), (Y)))                      \
-            die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "         \
-                             "\"" << (X) << "\" != \"" << (Y) << "\""); \
+#define die_unequal(X, Y)                                                \
+    do {                                                                 \
+        if (!::tlx::die_unequal_compare((X), (Y)))                       \
+            die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "          \
+                             "\"" << (X) << "\" != \"" << (Y) << "\"");  \
     } while (0)
 
 /******************************************************************************/

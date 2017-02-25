@@ -78,7 +78,8 @@ protected:
     bool first_insert_;
 
 public:
-    explicit LoserTreeCopyBase(Source k, const Comparator& cmp = Comparator())
+    explicit LoserTreeCopyBase(const Source& k,
+                               const Comparator& cmp = Comparator())
         : ik_(k), k_(round_up_to_power_of_two(ik_)),
           losers_(2 * k_), cmp_(cmp), first_insert_(true) {
 
@@ -99,7 +100,7 @@ public:
      * \param sup flag that determines whether the value to insert is an
      *   explicit supremum sentinel.
      */
-    void insert_start(const ValueType* keyp, Source source, bool sup) {
+    void insert_start(const ValueType* keyp, const Source& source, bool sup) {
         Source pos = k_ + source;
         assert(sup == (keyp == nullptr));
 
@@ -127,7 +128,7 @@ public:
      *
      * \param root index of the game to start.
      */
-    Source init_winner(Source root) {
+    Source init_winner(const Source& root) {
         if (root >= k_)
             return root;
 
@@ -169,13 +170,16 @@ class LoserTreeCopy : public LoserTreeCopyBase<ValueType, Comparator>
 {
 public:
     using Super = LoserTreeCopyBase<ValueType, Comparator>;
-
     using Source = typename Super::Source;
+
+protected:
     using Super::k_;
     using Super::losers_;
     using Super::cmp_;
 
-    explicit LoserTreeCopy(Source k, const Comparator& cmp = Comparator())
+public:
+    explicit LoserTreeCopy(const Source& k,
+                           const Comparator& cmp = Comparator())
         : Super(k, cmp) { }
 
     // do not pass const reference since key will be used as local variable
@@ -221,13 +225,16 @@ class LoserTreeCopy</* Stable == */ true, ValueType, Comparator>
 {
 public:
     using Super = LoserTreeCopyBase<ValueType, Comparator>;
-
     using Source = typename Super::Source;
+
+protected:
     using Super::k_;
     using Super::losers_;
     using Super::cmp_;
 
-    explicit LoserTreeCopy(Source k, const Comparator& cmp = Comparator())
+public:
+    explicit LoserTreeCopy(const Source& k,
+                           const Comparator& cmp = Comparator())
         : Super(k, cmp) { }
 
     // do not pass const reference since key will be used as local variable
@@ -323,7 +330,7 @@ public:
      * \param sup flag that determines whether the value to insert is an
      *   explicit supremum sentinel.
      */
-    void insert_start(const ValueType* keyp, Source source, bool sup) {
+    void insert_start(const ValueType* keyp, const Source& source, bool sup) {
         Source pos = k_ + source;
 
         assert(sup == (keyp == nullptr));
@@ -338,7 +345,7 @@ public:
      *
      * \param root index of the game to start.
      */
-    Source init_winner(Source root) {
+    Source init_winner(const Source& root) {
         if (root >= k_)
             return root;
 
@@ -377,12 +384,14 @@ class LoserTreePointer : public LoserTreePointerBase<ValueType, Comparator>
 {
 public:
     using Super = LoserTreePointerBase<ValueType, Comparator>;
-
     using Source = typename Super::Source;
+
+protected:
     using Super::k_;
     using Super::losers_;
     using Super::cmp_;
 
+public:
     explicit LoserTreePointer(Source k, const Comparator& cmp = Comparator())
         : Super(k, cmp) { }
 
@@ -423,12 +432,14 @@ class LoserTreePointer</* Stable == */ true, ValueType, Comparator>
 {
 public:
     using Super = LoserTreePointerBase<ValueType, Comparator>;
-
     using Source = typename Super::Source;
+
+protected:
     using Super::k_;
     using Super::losers_;
     using Super::cmp_;
 
+public:
     explicit LoserTreePointer(Source k, const Comparator& cmp = Comparator())
         : Super(k, cmp) { }
 
@@ -512,14 +523,15 @@ public:
         return losers_[0].source;
     }
 
-    void insert_start(const ValueType& key, Source source) {
+    void insert_start(const ValueType* keyp, const Source& source, bool sup) {
         Source pos = k_ + source;
 
+        assert(sup == (keyp == nullptr));
         losers_[pos].source = source;
-        losers_[pos].key = key;
+        losers_[pos].key = *keyp;
     }
 
-    Source init_winner(Source root) {
+    Source init_winner(const Source& root) {
         if (root >= k_)
             return root;
 
@@ -544,10 +556,11 @@ template <bool Stable /* == false */, typename ValueType,
 class LoserTreeCopyUnguarded
     : public LoserTreeCopyUnguardedBase<ValueType, Comparator>
 {
-private:
+public:
     using Super = LoserTreeCopyUnguardedBase<ValueType, Comparator>;
     using Source = typename Super::Source;
 
+private:
     using Super::k_;
     using Super::losers_;
     using Super::cmp_;
@@ -558,10 +571,13 @@ public:
         : Super(k, sentinel, cmp) { }
 
     // do not pass const reference since key will be used as local variable
-    void delete_min_insert(ValueType key) {
+    void delete_min_insert(const ValueType* keyp, bool sup) {
         using std::swap;
+        assert(sup == (keyp == nullptr));
 
         Source source = losers_[0].source;
+        ValueType key = keyp ? *keyp : ValueType();
+
         for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
             // the smaller one gets promoted
             if (cmp_(losers_[pos].key, key)) {
@@ -580,10 +596,11 @@ template <typename ValueType, typename Comparator>
 class LoserTreeCopyUnguarded</* Stable == */ true, ValueType, Comparator>
     : public LoserTreeCopyUnguardedBase<ValueType, Comparator>
 {
-private:
+public:
     using Super = LoserTreeCopyUnguardedBase<ValueType, Comparator>;
     using Source = typename Super::Source;
 
+private:
     using Super::k_;
     using Super::losers_;
     using Super::cmp_;
@@ -594,10 +611,13 @@ public:
         : Super(k, sentinel, comp) { }
 
     // do not pass const reference since key will be used as local variable
-    void delete_min_insert(ValueType key) {
+    void delete_min_insert(const ValueType* keyp, bool sup) {
         using std::swap;
+        assert(sup == (keyp == nullptr));
 
         Source source = losers_[0].source;
+        ValueType key = keyp ? *keyp : ValueType();
+
         for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
             if (!cmp_(key, losers_[pos].key) && losers_[pos].source < source) {
                 // the other one is smaller
@@ -649,8 +669,8 @@ protected:
     //! the comparator object
     Comparator cmp_;
 
-protected:
-    LoserTreePointerUnguardedBase(Source k, const ValueType& sentinel,
+public:
+    LoserTreePointerUnguardedBase(const Source& k, const ValueType& sentinel,
                                   const Comparator& cmp = Comparator())
         : ik_(k), k_(round_up_to_power_of_two(ik_)),
           losers_(k_ * 2), cmp_(cmp) {
@@ -669,14 +689,15 @@ protected:
 
     Source min_source() { return losers_[0].source; }
 
-    void insert_start(const ValueType& key, Source source) {
+    void insert_start(const ValueType* keyp, const Source& source, bool sup) {
         Source pos = k_ + source;
 
+        assert(sup == (keyp == nullptr));
         losers_[pos].source = source;
-        losers_[pos].keyp = &key;
+        losers_[pos].keyp = keyp;
     }
 
-    Source init_winner(Source root) {
+    Source init_winner(const Source& root) {
         if (root >= k_)
             return root;
 
@@ -702,23 +723,24 @@ template <bool Stable /* == false */, typename ValueType,
 class LoserTreePointerUnguarded
     : public LoserTreePointerUnguardedBase<ValueType, Comparator>
 {
-private:
+public:
     using Super = LoserTreePointerUnguardedBase<ValueType, Comparator>;
     using Source = typename Super::Source;
 
+protected:
     using Super::k_;
     using Super::losers_;
     using Super::cmp_;
 
 public:
-    LoserTreePointerUnguarded(Source k, const ValueType& sentinel,
+    LoserTreePointerUnguarded(const Source& k, const ValueType& sentinel,
                               const Comparator& cmp = Comparator())
         : Super(k, sentinel, cmp) { }
 
-    void delete_min_insert(const ValueType& key) {
+    void delete_min_insert(const ValueType* keyp, bool sup) {
         using std::swap;
+        assert(sup == (keyp == nullptr));
 
-        const ValueType* keyp = &key;
         Source source = losers_[0].source;
         for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
             // the smaller one gets promoted
@@ -738,23 +760,24 @@ template <typename ValueType, typename Comparator>
 class LoserTreePointerUnguarded</* Stable == */ true, ValueType, Comparator>
     : public LoserTreePointerUnguardedBase<ValueType, Comparator>
 {
-private:
+public:
     using Super = LoserTreePointerUnguardedBase<ValueType, Comparator>;
     using Source = typename Super::Source;
 
+protected:
     using Super::k_;
     using Super::losers_;
     using Super::cmp_;
 
 public:
-    LoserTreePointerUnguarded(Source k, const ValueType& sentinel,
+    LoserTreePointerUnguarded(const Source& k, const ValueType& sentinel,
                               const Comparator& cmp = Comparator())
         : Super(k, sentinel, cmp) { }
 
-    void delete_min_insert(const ValueType& key) {
+    void delete_min_insert(const ValueType* keyp, bool sup) {
         using std::swap;
+        assert(sup == (keyp == nullptr));
 
-        const ValueType* keyp = &key;
         Source source = losers_[0].source;
         for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
             // the smaller one gets promoted, ties are broken by source

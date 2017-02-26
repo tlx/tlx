@@ -44,7 +44,7 @@ struct MyInt {
     //! LoserTreeCopy needs default constructor
     MyInt() = default;
 
-    MyInt(size_t value) : value_(value) { }
+    explicit MyInt(size_t value) : value_(value) { }
 
     bool operator == (const MyInt& b) const {
         return value_ == b.value_;
@@ -327,7 +327,7 @@ int main(int argc, char* argv[]) {
     clp.add_size_t('R', "outer_repeat", outer_repeat,
                    "Number of outer repetitions, default: 1");
 
-    size_t vector_size = 1000000;
+    uint32_t vector_size = 1000000;
     clp.add_bytes('s', "vector_size", vector_size,
                   "Length of vectors to merge, default: 1000000");
 

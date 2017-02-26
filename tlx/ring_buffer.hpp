@@ -308,14 +308,14 @@ public:
     //! \{
 
     template <class Archive>
-    void save(Archive& ar) const {
+    void save(Archive& ar) const { // NOLINT
         uint32_t ar_size = size();
         ar(max_size_, ar_size);
         for (size_t i = 0; i < ar_size; ++i) ar(operator [] (i));
     }
 
     template <class Archive>
-    void load(Archive& ar) {
+    void load(Archive& ar) { // NOLINT
         ar(max_size_);
 
         if (data_) {

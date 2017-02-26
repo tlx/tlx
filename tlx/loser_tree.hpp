@@ -189,15 +189,27 @@ public:
 
         Source source = losers_[0].source;
         ValueType key = keyp ? *keyp : ValueType();
+        Source pos = (k_ + source) / 2;
 
-        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
-            // the smaller one gets promoted
-            if (sup || (!losers_[pos].sup && cmp_(losers_[pos].key, key))) {
-                // the other one is smaller
+        while (pos > 0) {
+            if (TLX_UNLIKELY(sup)) {
+                // the other candidate is smaller
                 swap(losers_[pos].sup, sup);
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].key, key);
             }
+            else if (TLX_UNLIKELY(losers_[pos].sup)) {
+                // this candidate is smaller
+            }
+            else if (cmp_(losers_[pos].key, key)) {
+                // the other one is smaller
+                swap(losers_[pos].source, source);
+                swap(losers_[pos].key, key);
+            }
+            else {
+                // this candidate is smaller
+            }
+            pos /= 2;
         }
 
         losers_[0].sup = sup;
@@ -244,9 +256,13 @@ public:
 
         Source source = losers_[0].source;
         ValueType key = keyp ? *keyp : ValueType();
-        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
-            if ((sup && (!losers_[pos].sup || losers_[pos].source < source)) ||
-                (!sup && !losers_[pos].sup &&
+        Source pos = (k_ + source) / 2;
+
+        while (pos > 0) {
+            if ((TLX_UNLIKELY(sup) && (
+                     !TLX_UNLIKELY(losers_[pos].sup) ||
+                     losers_[pos].source < source)) ||
+                (!TLX_UNLIKELY(sup) && !TLX_UNLIKELY(losers_[pos].sup) &&
                  ((cmp_(losers_[pos].key, key)) ||
                   (!cmp_(key, losers_[pos].key) &&
                    losers_[pos].source < source)))) {
@@ -255,6 +271,7 @@ public:
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].key, key);
             }
+            pos /= 2;
         }
 
         losers_[0].sup = sup;
@@ -398,21 +415,33 @@ public:
     void delete_min_insert(const ValueType* keyp, bool sup) {
         using std::swap;
         assert(sup == (keyp == nullptr));
+        unused(sup);
 
         Source source = losers_[0].source;
-        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
-            // the smaller one gets promoted
-            if (!keyp ||
-                (losers_[pos].keyp &&
-                 cmp_(*losers_[pos].keyp, *keyp))) { // the other one is smaller
+        Source pos = (k_ + source) / 2;
+
+        while (pos > 0) {
+            if (TLX_UNLIKELY(!keyp)) {
+                // the other candidate is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].keyp, keyp);
             }
+            else if (TLX_UNLIKELY(!losers_[pos].keyp)) {
+                // this candidate is smaller
+            }
+            else if (cmp_(*losers_[pos].keyp, *keyp)) {
+                // the other one is smaller
+                swap(losers_[pos].source, source);
+                swap(losers_[pos].keyp, keyp);
+            }
+            else {
+                // this candidate is smaller
+            }
+            pos /= 2;
         }
 
         losers_[0].source = source;
         losers_[0].keyp = keyp;
-        unused(sup);
     }
 };
 

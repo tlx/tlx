@@ -91,9 +91,11 @@ inline bool die_unequal_compare(double a, double b) {
 //! better debugging.
 #define die_unequal(X, Y)                                                \
     do {                                                                 \
-        if (!::tlx::die_unequal_compare((X), (Y)))                       \
+        auto x__ = (X);                                                  \
+        auto y__ = (Y);                                                  \
+        if (!::tlx::die_unequal_compare(x__, y__))                       \
             die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "          \
-                             "\"" << (X) << "\" != \"" << (Y) << "\"");  \
+                             "\"" << x__ << "\" != \"" << y__ << "\"");  \
     } while (0)
 
 /******************************************************************************/

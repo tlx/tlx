@@ -59,6 +59,7 @@ endmacro(tlx_build_test)
 ### list of tests in subdirectories
 
 tlx_build_only(cmdline_parser_example)
+
 tlx_build_test(cmdline_parser_test)
 tlx_build_test(counting_ptr_test)
 tlx_build_test(delegate_test)

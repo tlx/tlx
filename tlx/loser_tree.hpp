@@ -527,6 +527,8 @@ public:
         Source pos = k_ + source;
 
         assert(sup == (keyp == nullptr));
+        unused(sup);
+
         losers_[pos].source = source;
         losers_[pos].key = *keyp;
     }
@@ -574,6 +576,7 @@ public:
     void delete_min_insert(const ValueType* keyp, bool sup) {
         using std::swap;
         assert(sup == (keyp == nullptr));
+        unused(sup);
 
         Source source = losers_[0].source;
         ValueType key = keyp ? *keyp : ValueType();
@@ -614,6 +617,7 @@ public:
     void delete_min_insert(const ValueType* keyp, bool sup) {
         using std::swap;
         assert(sup == (keyp == nullptr));
+        unused(sup);
 
         Source source = losers_[0].source;
         ValueType key = keyp ? *keyp : ValueType();
@@ -693,6 +697,7 @@ public:
         Source pos = k_ + source;
 
         assert(sup == (keyp == nullptr));
+        unused(sup);
         losers_[pos].source = source;
         losers_[pos].keyp = keyp;
     }
@@ -740,6 +745,7 @@ public:
     void delete_min_insert(const ValueType* keyp, bool sup) {
         using std::swap;
         assert(sup == (keyp == nullptr));
+        unused(sup);
 
         Source source = losers_[0].source;
         for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
@@ -777,6 +783,7 @@ public:
     void delete_min_insert(const ValueType* keyp, bool sup) {
         using std::swap;
         assert(sup == (keyp == nullptr));
+        unused(sup);
 
         Source source = losers_[0].source;
         for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {

@@ -14,7 +14,6 @@
 /*[[[perl
 print "#include <$_>\n" foreach sort glob("tlx/meta/"."*.hpp");
 ]]]*/
-#include <tlx/meta/if.hpp>
 #include <tlx/meta/log2.hpp>
 // [[[end]]]
 

@@ -17,13 +17,6 @@
 #include <tlx/math/integer_log2.hpp>
 #include <tlx/meta.hpp>
 
-static_assert(
-    std::is_same<tlx::If<true, int, unsigned>::type, int>::value == true,
-    "tlx::If is misfunctioning.");
-static_assert(
-    std::is_same<tlx::If<false, int, unsigned>::type, int>::value == false,
-    "tlx::If is misfunctioning.");
-
 template <unsigned long long Value>
 void test_log_i(size_t floor_value, size_t ceil_value) {
 

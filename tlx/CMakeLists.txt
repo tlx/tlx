@@ -16,20 +16,24 @@ set(LIBTLX_SOURCES
   math/is_power_of_two.cpp
   math/round_to_power_of_two.cpp
   string/base64.cpp
+  string/contains_word.cpp
   string/ends_with.cpp
   string/erase_all.cpp
   string/escape_html.cpp
   string/escape_uri.cpp
+  string/extract_between.cpp
   string/format_si_iec_units.cpp
   string/hexdump.cpp
   string/join.cpp
   string/parse_si_iec_units.cpp
   string/replace.cpp
   string/split.cpp
+  string/split_words.cpp
   string/starts_with.cpp
   string/to_lower.cpp
   string/to_upper.cpp
   string/trim.cpp
+  string/union_words.cpp
   string/word_wrap.cpp
   thread_pool.cpp
 

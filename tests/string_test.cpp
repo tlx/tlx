@@ -94,6 +94,21 @@ static void test_base64() {
         tlx::base64_decode("FjXKA5!!RxGFAudA"), std::runtime_error);
 }
 
+static void test_contains_word() {
+    std::string data = "test admin write readall read do";
+
+    die_unless(tlx::contains_word(data, "test"));
+    die_unless(!tlx::contains_word(data, "testit"));
+
+    die_unless(tlx::contains_word(data, "read"));
+    die_unless(tlx::contains_word(data, "readall"));
+
+    die_unless(tlx::contains_word(data, std::string("read")));
+    die_unless(tlx::contains_word(data, std::string("readall")));
+
+    die_unless(!tlx::contains_word(data, "doit"));
+}
+
 static void test_escape_html() {
 
     die_unequal(
@@ -105,6 +120,17 @@ static void test_escape_uri() {
 
     die_unequal(
         tlx::escape_uri("hello <tag>\""), "hello%20%3Ctag%3E%22");
+}
+
+static void test_extract_between() {
+    std::string data =
+        "Content-Disposition: form-data; name='testfile'; filename='test.html'";
+
+    die_unequal(tlx::extract_between(data, "name='", "'"), "testfile");
+    die_unequal(tlx::extract_between(data, "filename='", "'"), "test.html");
+    die_unequal(tlx::extract_between(data, "other='", "'"), "");
+
+    die_unequal(tlx::extract_between(data, "Name='", "'"), "");
 }
 
 static void test_format_si_iec_units() {
@@ -301,6 +327,79 @@ static void test_split() {
     die_unequal(sv[2], "bin");
     die_unequal(sv[3], "test");
     die_unequal(sv[4], "");
+}
+
+static void test_split_words() {
+    // simple whitespace split
+    std::vector<std::string> sv = tlx::split_words("  ab c df  fdlk f  ");
+
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    sv = tlx::split_words("ab c df  fdlk f  ");
+
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    sv = tlx::split_words("ab c df  fdlk f");
+
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    sv = tlx::split_words("");
+    die_unequal(sv.size(), 0u);
+
+    sv = tlx::split_words("    ");
+    die_unequal(sv.size(), 0u);
+
+    // whitespace split with limit
+    sv = tlx::split_words("  ab c   df  fdlk f  ", 3);
+
+    die_unequal(sv.size(), 3u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df  fdlk f  ");
+
+    // whitespace split with some strange limits
+    sv = tlx::split_words("  ab c df  fdlk f  ", 0);
+    die_unequal(sv.size(), 0u);
+
+    sv = tlx::split_words("  ab c df  fdlk f  ", 1);
+
+    die_unequal(sv.size(), 1u);
+    die_unequal(sv[0], "ab c df  fdlk f  ");
+
+    // whitespace split with large limit
+    sv = tlx::split_words("  ab  c  df  fdlk f  ", 10);
+
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    // whitespace split with limit at exactly the end
+    sv = tlx::split_words("  ab  c  df  fdlk f  ", 5);
+
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f  ");
 }
 
 static void test_replace() {
@@ -546,15 +645,18 @@ static void test_word_wrap() {
 int main() {
 
     test_base64();
+    test_contains_word();
     test_erase_all();
     test_escape_html();
     test_escape_uri();
+    test_extract_between();
     test_format_si_iec_units();
     test_hexdump();
     test_join();
     test_parse_si_iec_units();
     test_replace();
     test_split();
+    test_split_words();
     test_starts_with_ends_with();
     test_toupper_tolower();
     test_trim();

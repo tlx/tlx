@@ -15,10 +15,12 @@
 print "#include <$_>\n" foreach sort glob("tlx/string/"."*.hpp");
 ]]]*/
 #include <tlx/string/base64.hpp>
+#include <tlx/string/contains_word.hpp>
 #include <tlx/string/ends_with.hpp>
 #include <tlx/string/erase_all.hpp>
 #include <tlx/string/escape_html.hpp>
 #include <tlx/string/escape_uri.hpp>
+#include <tlx/string/extract_between.hpp>
 #include <tlx/string/format_si_iec_units.hpp>
 #include <tlx/string/hexdump.hpp>
 #include <tlx/string/join.hpp>
@@ -26,10 +28,12 @@ print "#include <$_>\n" foreach sort glob("tlx/string/"."*.hpp");
 #include <tlx/string/parse_si_iec_units.hpp>
 #include <tlx/string/replace.hpp>
 #include <tlx/string/split.hpp>
+#include <tlx/string/split_words.hpp>
 #include <tlx/string/starts_with.hpp>
 #include <tlx/string/to_lower.hpp>
 #include <tlx/string/to_upper.hpp>
 #include <tlx/string/trim.hpp>
+#include <tlx/string/union_words.hpp>
 #include <tlx/string/word_wrap.hpp>
 // [[[end]]]
 

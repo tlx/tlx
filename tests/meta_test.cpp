@@ -96,13 +96,13 @@ static void test_call_for_range() {
 
     std::ostringstream oss;
 
-    tlx::call_for_range<16>(
+    tlx::call_for_range<6>(
         [&](size_t index) { oss << index << ' '; });
 
     tlx::call_for_range<4, 8>(
         [&](auto index) { oss << index << ' '; });
 
-    die_unequal("0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 4 5 6 7 ", oss.str());
+    die_unequal("0 1 2 3 4 5 4 5 6 7 ", oss.str());
 }
 
 /******************************************************************************/
@@ -356,13 +356,13 @@ static void test_vmap_for_range() {
 
     std::ostringstream oss;
 
-    auto r1 = tlx::vmap_for_range<16>(
+    auto r1 = tlx::vmap_for_range<6>(
         [&](size_t index) {
             oss << index << ' ';
             return std::to_string(index + 42);
         });
 
-    die_unequal(std::tuple_size<decltype(r1)>::value, 16u);
+    die_unequal(std::tuple_size<decltype(r1)>::value, 6u);
     die_unequal(std::get<0>(r1), "42");
     die_unequal(std::get<1>(r1), "43");
 
@@ -376,7 +376,7 @@ static void test_vmap_for_range() {
     die_unequal(std::get<0>(r2), 46u);
     die_unequal(std::get<1>(r2), 47u);
 
-    die_unequal("0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 4 5 6 7 ", oss.str());
+    die_unequal("0 1 2 3 4 5 4 5 6 7 ", oss.str());
 }
 
 /******************************************************************************/

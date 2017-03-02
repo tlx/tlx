@@ -36,8 +36,8 @@ template <typename Functor, typename Tuple>
 auto apply_tuple(Functor&& f, Tuple&& t) {
     using Indices = make_index_sequence<
               std::tuple_size<std::decay_t<Tuple> >::value>;
-    return apply_tuple_impl(std::forward<Functor>(f), std::forward<Tuple>(t),
-                            Indices());
+    return detail::apply_tuple_impl(
+        std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }
 
 } // namespace tlx

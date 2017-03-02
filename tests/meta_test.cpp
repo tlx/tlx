@@ -12,10 +12,46 @@
 #include <cmath>
 #include <cstddef>
 #include <iostream>
+#include <sstream>
 
 #include <tlx/die.hpp>
 #include <tlx/math/integer_log2.hpp>
 #include <tlx/meta.hpp>
+
+/******************************************************************************/
+// call_foreach
+
+struct SimpleFunctor {
+    explicit SimpleFunctor(std::ostream& os) : os_(os) { }
+    template <typename Arg>
+    void operator () (const Arg& a) const {
+        os_ << a << '\n';
+    }
+    std::ostream& os_;
+};
+
+template <typename ... Args>
+void test_call_foreach_run(std::ostream& os, const Args& ... args) {
+
+    tlx::call_foreach(
+        [&os](auto a) { os << a << '\n'; },
+        args ...);
+
+    tlx::call_foreach(SimpleFunctor(os), args ...);
+}
+
+static void test_call_foreach() {
+
+    std::ostringstream oss;
+
+    test_call_foreach_run(
+        oss, static_cast<int>(42), static_cast<double>(5), "hello");
+
+    die_unequal("42\n5\nhello\n42\n5\nhello\n", oss.str());
+}
+
+/******************************************************************************/
+// Log2 and Log2Floor
 
 template <unsigned long long Value>
 void test_log_i(size_t floor_value, size_t ceil_value) {
@@ -124,6 +160,7 @@ static void test_log2() {
 
 int main() {
 
+    test_call_foreach();
     test_log2();
 
     return 0;

@@ -1,0 +1,47 @@
+/*******************************************************************************
+ * tlx/meta/apply_tuple.hpp
+ *
+ * Part of tlx - http://panthema.net/tlx
+ *
+ * Copyright (C) 2016-2017 Timo Bingmann <tb@panthema.net>
+ *
+ * All rights reserved. Published under the Boost Software License, Version 1.0
+ ******************************************************************************/
+
+#ifndef TLX_META_APPLY_TUPLE_HEADER
+#define TLX_META_APPLY_TUPLE_HEADER
+
+#include <utility>
+
+#include <tlx/meta/index_sequence.hpp>
+
+namespace tlx {
+
+/******************************************************************************/
+// Tuple Applier: takes a std::tuple<> and applies a variadic template function
+// to it. Hence, this expands the content of the tuple as the arguments.
+
+namespace detail {
+
+template <typename Functor, typename Tuple, std::size_t ... Is>
+auto apply_tuple_impl(Functor&& f, Tuple&& t, index_sequence<Is ...>) {
+    return std::forward<Functor>(f)(
+        std::get<Is>(std::forward<Tuple>(t)) ...);
+}
+
+} // namespace detail
+
+//! Call the functor f with the contents of t as arguments.
+template <typename Functor, typename Tuple>
+auto apply_tuple(Functor&& f, Tuple&& t) {
+    using Indices = make_index_sequence<
+              std::tuple_size<std::decay_t<Tuple> >::value>;
+    return apply_tuple_impl(std::forward<Functor>(f), std::forward<Tuple>(t),
+                            Indices());
+}
+
+} // namespace tlx
+
+#endif // !TLX_META_APPLY_TUPLE_HEADER
+
+/******************************************************************************/

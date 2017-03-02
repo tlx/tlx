@@ -94,6 +94,23 @@ static void test_base64() {
         tlx::base64_decode("FjXKA5!!RxGFAudA"), std::runtime_error);
 }
 
+static void test_compare_icase() {
+    die_unless(std::string("ABC") != std::string("abc"));
+
+    die_unless(tlx::equal_icase("ABC", "abc"));
+    die_unless(!tlx::equal_icase("ABC", "abd"));
+    die_unless(!tlx::equal_icase("ABC", "abcedf"));
+
+    die_unless(std::string("ABC") < std::string("abc"));
+    die_unless(!tlx::less_icase("ABC", "abc"));
+    die_unless(tlx::less_icase("abc", "abcdef"));
+    die_unless(!tlx::less_icase("abcdef", "abcd"));
+
+    die_unless(tlx::compare_icase("ABC", "abc") == 0);
+    die_unless(tlx::compare_icase("ABC", "abd") < 0);
+    die_unless(tlx::compare_icase("ABC", "abb") > 0);
+}
+
 static void test_contains_word() {
     std::string data = "test admin write readall read do";
 
@@ -645,6 +662,7 @@ static void test_word_wrap() {
 int main() {
 
     test_base64();
+    test_compare_icase();
     test_contains_word();
     test_erase_all();
     test_escape_html();

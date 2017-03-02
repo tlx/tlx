@@ -15,8 +15,10 @@
 print "#include <$_>\n" foreach sort glob("tlx/string/"."*.hpp");
 ]]]*/
 #include <tlx/string/base64.hpp>
+#include <tlx/string/compare_icase.hpp>
 #include <tlx/string/contains_word.hpp>
 #include <tlx/string/ends_with.hpp>
+#include <tlx/string/equal_icase.hpp>
 #include <tlx/string/erase_all.hpp>
 #include <tlx/string/escape_html.hpp>
 #include <tlx/string/escape_uri.hpp>
@@ -25,6 +27,7 @@ print "#include <$_>\n" foreach sort glob("tlx/string/"."*.hpp");
 #include <tlx/string/hexdump.hpp>
 #include <tlx/string/join.hpp>
 #include <tlx/string/join_generic.hpp>
+#include <tlx/string/less_icase.hpp>
 #include <tlx/string/parse_si_iec_units.hpp>
 #include <tlx/string/replace.hpp>
 #include <tlx/string/split.hpp>

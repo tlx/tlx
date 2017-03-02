@@ -16,8 +16,10 @@ set(LIBTLX_SOURCES
   math/is_power_of_two.cpp
   math/round_to_power_of_two.cpp
   string/base64.cpp
+  string/compare_icase.cpp
   string/contains_word.cpp
   string/ends_with.cpp
+  string/equal_icase.cpp
   string/erase_all.cpp
   string/escape_html.cpp
   string/escape_uri.cpp
@@ -25,6 +27,7 @@ set(LIBTLX_SOURCES
   string/format_si_iec_units.cpp
   string/hexdump.cpp
   string/join.cpp
+  string/less_icase.cpp
   string/parse_si_iec_units.cpp
   string/replace.cpp
   string/split.cpp

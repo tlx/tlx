@@ -17,6 +17,7 @@ set(LIBTLX_SOURCES
   math/round_to_power_of_two.cpp
   string/base64.cpp
   string/compare_icase.cpp
+  string/contains.cpp
   string/contains_word.cpp
   string/ends_with.cpp
   string/equal_icase.cpp
@@ -28,6 +29,7 @@ set(LIBTLX_SOURCES
   string/hexdump.cpp
   string/join.cpp
   string/less_icase.cpp
+  string/pad.cpp
   string/parse_si_iec_units.cpp
   string/replace.cpp
   string/split.cpp

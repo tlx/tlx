@@ -30,11 +30,11 @@ void die_with_message(const char* msg, const char* file, size_t line);
 void die_with_message(const std::string& msg, const char* file, size_t line);
 
 //! Instead of abort(), throw the output the message via an exception.
-#define die_with_sstream(msg)                               \
-    do {                                                    \
-        std::ostringstream oss;                             \
-        oss << msg << " @ " << __FILE__ << ':' << __LINE__; \
-        ::tlx::die_with_message(oss.str());                 \
+#define die_with_sstream(msg)                                 \
+    do {                                                      \
+        std::ostringstream oss__;                             \
+        oss__ << msg << " @ " << __FILE__ << ':' << __LINE__; \
+        ::tlx::die_with_message(oss__.str());                 \
     } while (0)
 
 //! Instead of abort(), throw the output the message via an exception.

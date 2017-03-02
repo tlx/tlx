@@ -37,7 +37,7 @@ void test_call_foreach_run(std::ostream& os, const Args& ... args) {
         [&os](auto a) { os << a << '\n'; },
         args ...);
 
-    tlx::call_foreach(SimpleFunctor(os), args ...);
+    tlx::call_foreach_tuple(SimpleFunctor(os), std::make_tuple(args ...));
 }
 
 static void test_call_foreach() {
@@ -75,7 +75,8 @@ void test_call_foreach_with_index_run(std::ostream& os, const Args& ... args) {
         },
         args ...);
 
-    tlx::call_foreach_with_index(SimpleFunctorWithIndex(os), args ...);
+    tlx::call_foreach_tuple_with_index(
+        SimpleFunctorWithIndex(os), std::make_tuple(args ...));
 }
 
 static void test_call_foreach_with_index() {

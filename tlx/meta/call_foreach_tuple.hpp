@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/meta/apply_tuple.hpp
+ * tlx/meta/call_foreach_tuple.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,40 +8,46 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_META_APPLY_TUPLE_HEADER
-#define TLX_META_APPLY_TUPLE_HEADER
+#ifndef TLX_META_CALL_FOREACH_TUPLE_HEADER
+#define TLX_META_CALL_FOREACH_TUPLE_HEADER
 
-#include <utility>
+#include <tuple>
 
+#include <tlx/meta/call_foreach.hpp>
 #include <tlx/meta/index_sequence.hpp>
 
 namespace tlx {
 
 /******************************************************************************/
-// Tuple Applier: takes a std::tuple<> and applies a variadic template function
-// to it. Hence, this expands the content of the tuple as the arguments.
+// Variadic Template Expander: run a generic templated functor (like a generic
+// lambda) for each component of a std::tuple.
+//
+// Called with func(Argument arg).
 
 namespace detail {
 
+//! helper for call_foreach_tuple
 template <typename Functor, typename Tuple, std::size_t ... Is>
-auto apply_tuple_impl(Functor&& f, Tuple&& t, index_sequence<Is ...>) {
-    return std::forward<Functor>(f)(
-        std::get<Is>(std::forward<Tuple>(t)) ...);
+void call_foreach_tuple_impl(
+    Functor&& f, Tuple&& t, index_sequence<Is ...>) {
+    return call_foreach(
+        std::forward<Functor>(f), std::get<Is>(std::forward<Tuple>(t)) ...);
 }
 
 } // namespace detail
 
-//! Call the functor f with the contents of t as arguments.
+//! Call a generic functor (like a generic lambda) to each components of a tuple
+//! together with its zero-based index.
 template <typename Functor, typename Tuple>
-auto apply_tuple(Functor&& f, Tuple&& t) {
+void call_foreach_tuple(Functor&& f, Tuple&& t) {
     using Indices = make_index_sequence<
               std::tuple_size<typename std::decay<Tuple>::type>::value>;
-    return detail::apply_tuple_impl(
+    detail::call_foreach_tuple_impl(
         std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }
 
 } // namespace tlx
 
-#endif // !TLX_META_APPLY_TUPLE_HEADER
+#endif // !TLX_META_CALL_FOREACH_TUPLE_HEADER
 
 /******************************************************************************/

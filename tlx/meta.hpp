@@ -25,6 +25,9 @@ print "#include <$_>\n" foreach sort glob("tlx/meta/"."*.hpp");
 #include <tlx/meta/is_std_vector.hpp>
 #include <tlx/meta/log2.hpp>
 #include <tlx/meta/static_index.hpp>
+#include <tlx/meta/vmap_for_range.hpp>
+#include <tlx/meta/vmap_foreach.hpp>
+#include <tlx/meta/vmap_foreach_with_index.hpp>
 // [[[end]]]
 
 #endif // !TLX_META_HEADER

@@ -80,7 +80,7 @@ if(NOT MSVC)
   ### Linux/Unix-like Build Environment ########################################
 
   # enable warnings
-  set(CMAKE_CXX_FLAGS "-std=c++11 -g -W -Wall -Wextra -fPIC ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "-std=c++14 -g -W -Wall -Wextra -fPIC ${CMAKE_CXX_FLAGS}")
 
   # enable more warnings
   set(CMAKE_CXX_FLAGS "-Wpedantic -Wshadow ${CMAKE_CXX_FLAGS}")

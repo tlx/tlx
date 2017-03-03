@@ -71,5 +71,6 @@ tlx_build_test(ring_buffer_test)
 tlx_build_test(simple_vector_test)
 tlx_build_test(string_test)
 tlx_build_test(thread_pool_test)
+tlx_build_test(stack_allocator_test)
 
 ################################################################################

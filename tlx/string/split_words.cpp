@@ -30,17 +30,17 @@ std::vector<std::string> split_words(
 
             if (out.size() + 1 >= limit)
             {
-                out.push_back(std::string(last, str.end()));
+                out.emplace_back(last, str.end());
                 return out;
             }
 
-            out.push_back(std::string(last, it));
+            out.emplace_back(last, it);
             last = it + 1;
         }
     }
 
     if (last != it)
-        out.push_back(std::string(last, it));
+        out.emplace_back(last, it);
 
     return out;
 }

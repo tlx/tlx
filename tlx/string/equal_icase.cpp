@@ -8,10 +8,10 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <algorithm>
-
 #include <tlx/string/equal_icase.hpp>
 #include <tlx/string/to_lower.hpp>
+
+#include <algorithm>
 
 namespace tlx {
 
@@ -38,7 +38,7 @@ bool equal_icase(const std::string& a, const char* b) {
     while (ai != a.end() && *b != 0 && to_lower(*ai) == to_lower(*b))
         ++ai, ++b;
 
-    return ai == a.end() && b != 0;
+    return ai == a.end() && *b != 0;
 }
 
 bool equal_icase(const std::string& a, const std::string& b) {

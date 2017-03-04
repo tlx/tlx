@@ -19,7 +19,7 @@ bool parse_si_iec_units(
 
     char* endptr;
     *out_size = strtoul(str, &endptr, 10);
-    if (!endptr) return false;                  // parse failed, no number
+    if (endptr == nullptr) return false;        // parse failed, no number
 
     while (*endptr == ' ') ++endptr;            // skip over spaces
 

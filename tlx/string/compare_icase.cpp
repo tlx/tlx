@@ -8,10 +8,10 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <algorithm>
-
 #include <tlx/string/compare_icase.hpp>
 #include <tlx/string/to_lower.hpp>
+
+#include <algorithm>
 
 namespace tlx {
 

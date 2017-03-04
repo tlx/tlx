@@ -20,27 +20,27 @@ static inline bool is_power_of_two_template(Integral i) {
 
 /******************************************************************************/
 
-int is_power_of_two(int i) {
+bool is_power_of_two(int i) {
     return is_power_of_two_template(i);
 }
 
-unsigned int is_power_of_two(unsigned int i) {
+bool is_power_of_two(unsigned int i) {
     return is_power_of_two_template(i);
 }
 
-long is_power_of_two(long i) {
+bool is_power_of_two(long i) {
     return is_power_of_two_template(i);
 }
 
-unsigned long is_power_of_two(unsigned long i) {
+bool is_power_of_two(unsigned long i) {
     return is_power_of_two_template(i);
 }
 
-long long is_power_of_two(long long i) {
+bool is_power_of_two(long long i) {
     return is_power_of_two_template(i);
 }
 
-unsigned long long is_power_of_two(unsigned long long i) {
+bool is_power_of_two(unsigned long long i) {
     return is_power_of_two_template(i);
 }
 

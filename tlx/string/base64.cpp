@@ -45,7 +45,7 @@ std::string base64_encode(const void* data, size_t size, size_t line_break) {
     uint8_t result = 0;
     size_t line_begin = 0;
 
-    while (1)
+    while (true)
     {
         // step 0: if the string is finished here, no padding is needed
         if (in == in_end) {
@@ -141,7 +141,7 @@ std::string base64_decode(const void* data, size_t size, bool strict) {
     static const char* ex_message =
         "Invalid character encountered during base64 decoding.";
 
-    while (1)
+    while (true)
     {
         // step 0: save first valid letter. do not output a byte, yet.
         do {

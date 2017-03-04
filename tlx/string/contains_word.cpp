@@ -55,7 +55,7 @@ bool contains_word(const std::string& str, const char* word) {
 bool contains_word(const std::string& str, const std::string& word) {
 
     // all strings contain the empty word
-    if (word.size() == 0)
+    if (word.empty())
         return true;
 
     std::string::const_iterator it = str.begin();

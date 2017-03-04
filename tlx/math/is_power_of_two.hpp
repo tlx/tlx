@@ -17,22 +17,22 @@ namespace tlx {
 // is_power_of_two()
 
 //! does what it says: true if i is a power of two
-int is_power_of_two(int i);
+bool is_power_of_two(int i);
 
 //! does what it says: true if i is a power of two
-unsigned int is_power_of_two(unsigned int i);
+bool is_power_of_two(unsigned int i);
 
 //! does what it says: true if i is a power of two
-long is_power_of_two(long i);
+bool is_power_of_two(long i);
 
 //! does what it says: true if i is a power of two
-unsigned long is_power_of_two(unsigned long i);
+bool is_power_of_two(unsigned long i);
 
 //! does what it says: true if i is a power of two
-long long is_power_of_two(long long i);
+bool is_power_of_two(long long i);
 
 //! does what it says: true if i is a power of two
-unsigned long long is_power_of_two(unsigned long long i);
+bool is_power_of_two(unsigned long long i);
 
 } // namespace tlx
 

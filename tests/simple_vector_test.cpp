@@ -8,10 +8,10 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <algorithm>
-
 #include <tlx/die.hpp>
 #include <tlx/simple_vector.hpp>
+
+#include <algorithm>
 
 struct MyInteger {
     size_t val_ = 1;

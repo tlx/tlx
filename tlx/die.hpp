@@ -35,13 +35,13 @@ void die_with_message(const std::string& msg, const char* file, size_t line);
         std::ostringstream oss__;                             \
         oss__ << msg << " @ " << __FILE__ << ':' << __LINE__; \
         ::tlx::die_with_message(oss__.str());                 \
-    } while (0)
+    } while (false)
 
 //! Instead of abort(), throw the output the message via an exception.
 #define die(msg)                          \
     do {                                  \
         die_with_sstream("DIE: " << msg); \
-    } while (0)
+    } while (false)
 
 /******************************************************************************/
 // die_unless() and die_if()
@@ -54,7 +54,7 @@ void die_with_message(const std::string& msg, const char* file, size_t line);
             ::tlx::die_with_message(                                      \
                 "DIE: Assertion \"" #X "\" failed!", __FILE__, __LINE__); \
         }                                                                 \
-    } while (0)
+    } while (false)
 
 //! Check condition X and die miserably if true. Opposite of assert() except
 //! this is also active in Release mode.
@@ -64,7 +64,7 @@ void die_with_message(const std::string& msg, const char* file, size_t line);
             ::tlx::die_with_message(                                         \
                 "DIE: Assertion \"" #X "\" succeeded!", __FILE__, __LINE__); \
         }                                                                    \
-    } while (0)
+    } while (false)
 
 /******************************************************************************/
 // die_unequal()
@@ -96,7 +96,7 @@ inline bool die_unequal_compare(double a, double b) {
         if (!::tlx::die_unequal_compare(x__, y__))                       \
             die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "          \
                              "\"" << x__ << "\" != \"" << y__ << "\"");  \
-    } while (0)
+    } while (false)
 
 /******************************************************************************/
 // die_noexcept()
@@ -116,7 +116,7 @@ inline bool die_unequal_compare(double a, double b) {
         ::tlx::die_with_message(                                       \
             "DIE-NOEXCEPT: " #code " - NO EXCEPTION " #exception_type, \
             __FILE__, __LINE__);                                       \
-    } while (0)
+    } while (false)
 
 } // namespace tlx
 

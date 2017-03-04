@@ -19,6 +19,7 @@
 #include <vector>
 
 #include <tlx/string/parse_si_iec_units.hpp>
+#include <tlx/unused.hpp>
 
 namespace tlx {
 
@@ -64,7 +65,7 @@ struct CmdlineParser::Argument {
     //! return 'longkey [keytype]'
     std::string param_text() const {
         std::string s = longkey_;
-        if (keytype_.size()) {
+        if (!keytype_.empty()) {
             s += ' ' + keytype_;
         }
         return s;
@@ -73,11 +74,11 @@ struct CmdlineParser::Argument {
     //! return '-s, --longkey [keytype]'
     std::string option_text() const {
         std::string s;
-        if (key_) {
+        if (key_ != 0) {
             s += '-', s += key_, s += ", ";
         }
         s += "--", s += longkey_;
-        if (keytype_.size()) {
+        if (!keytype_.empty()) {
             s += ' ' + keytype_;
         }
         return s;
@@ -98,7 +99,8 @@ struct CmdlineParser::ArgumentBool final : public Argument {
     const char * type_name() const final { return "bool"; }
 
     //! "process" argument: just set to true, no argument is used.
-    bool process(int&, const char* const*&) final {
+    bool process(int& argc, const char* const*& argv) final { // NOLINT
+        unused(argc), unused(argv);
         dest_ = true;
         return true;
     }
@@ -352,7 +354,7 @@ struct CmdlineParser::ArgumentStringlist final : public Argument {
     bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
-        dest_.push_back(argv[0]);
+        dest_.emplace_back(argv[0]);
         --argc, ++argv;
         return true;
     }
@@ -452,7 +454,7 @@ void CmdlineParser::set_verbose_process(bool verbose_process) {
 void CmdlineParser::add_bool(char key, const std::string& longkey,
                              const std::string& keytype, bool& dest,
                              const std::string& desc) {
-    option_list_.push_back(
+    option_list_.emplace_back(
         new ArgumentBool(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
@@ -466,7 +468,7 @@ void CmdlineParser::add_flag(char key, const std::string& longkey,
 void CmdlineParser::add_int(char key, const std::string& longkey,
                             const std::string& keytype, int& dest,
                             const std::string& desc) {
-    option_list_.push_back(
+    option_list_.emplace_back(
         new ArgumentInt(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
@@ -474,7 +476,7 @@ void CmdlineParser::add_int(char key, const std::string& longkey,
 void CmdlineParser::add_unsigned(char key, const std::string& longkey,
                                  const std::string& keytype, unsigned int& dest,
                                  const std::string& desc) {
-    option_list_.push_back(
+    option_list_.emplace_back(
         new ArgumentUnsigned(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
@@ -488,7 +490,7 @@ void CmdlineParser::add_uint(char key, const std::string& longkey,
 void CmdlineParser::add_size_t(char key, const std::string& longkey,
                                const std::string& keytype, size_t& dest,
                                const std::string& desc) {
-    option_list_.push_back(
+    option_list_.emplace_back(
         new ArgumentSizeT(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
@@ -496,7 +498,7 @@ void CmdlineParser::add_size_t(char key, const std::string& longkey,
 void CmdlineParser::add_float(char key, const std::string& longkey,
                               const std::string& keytype, float& dest,
                               const std::string& desc) {
-    option_list_.push_back(
+    option_list_.emplace_back(
         new ArgumentFloat(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
@@ -504,7 +506,7 @@ void CmdlineParser::add_float(char key, const std::string& longkey,
 void CmdlineParser::add_double(char key, const std::string& longkey,
                                const std::string& keytype, double& dest,
                                const std::string& desc) {
-    option_list_.push_back(
+    option_list_.emplace_back(
         new ArgumentDouble(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
@@ -512,7 +514,7 @@ void CmdlineParser::add_double(char key, const std::string& longkey,
 void CmdlineParser::add_bytes(char key, const std::string& longkey,
                               const std::string& keytype, uint32_t& dest,
                               const std::string& desc) {
-    option_list_.push_back(
+    option_list_.emplace_back(
         new ArgumentBytes32(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
@@ -520,7 +522,7 @@ void CmdlineParser::add_bytes(char key, const std::string& longkey,
 void CmdlineParser::add_bytes(char key, const std::string& longkey,
                               const std::string& keytype, uint64_t& dest,
                               const std::string& desc) {
-    option_list_.push_back(
+    option_list_.emplace_back(
         new ArgumentBytes64(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
@@ -528,7 +530,7 @@ void CmdlineParser::add_bytes(char key, const std::string& longkey,
 void CmdlineParser::add_string(char key, const std::string& longkey,
                                const std::string& keytype, std::string& dest,
                                const std::string& desc) {
-    option_list_.push_back(
+    option_list_.emplace_back(
         new ArgumentString(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
@@ -538,7 +540,7 @@ void CmdlineParser::add_stringlist(
     const std::string& keytype, std::vector<std::string>& dest,
     const std::string& desc) {
 
-    option_list_.push_back(
+    option_list_.emplace_back(
         new ArgumentStringlist(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
@@ -610,13 +612,14 @@ void CmdlineParser::add_stringlist(
 
 void CmdlineParser::add_param_int(
     const std::string& name, int& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentInt(0, name, "", desc, true, dest));
+    param_list_.emplace_back(new ArgumentInt(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_param_unsigned(
     const std::string& name, unsigned int& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentUnsigned(0, name, "", desc, true, dest));
+    param_list_.emplace_back(
+        new ArgumentUnsigned(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
@@ -627,44 +630,46 @@ void CmdlineParser::add_param_uint(
 
 void CmdlineParser::add_param_size_t(
     const std::string& name, size_t& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentSizeT(0, name, "", desc, true, dest));
+    param_list_.emplace_back(new ArgumentSizeT(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_param_float(
     const std::string& name, float& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentFloat(0, name, "", desc, true, dest));
+    param_list_.emplace_back(new ArgumentFloat(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_param_double(
     const std::string& name, double& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentDouble(0, name, "", desc, true, dest));
+    param_list_.emplace_back(new ArgumentDouble(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_param_bytes(
     const std::string& name, uint32_t& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentBytes32(0, name, "", desc, true, dest));
+    param_list_.emplace_back(
+        new ArgumentBytes32(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_param_bytes(
     const std::string& name, uint64_t& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentBytes64(0, name, "", desc, true, dest));
+    param_list_.emplace_back(
+        new ArgumentBytes64(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_param_string(
     const std::string& name, std::string& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentString(0, name, "", desc, true, dest));
+    param_list_.emplace_back(new ArgumentString(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_param_stringlist(
     const std::string& name, std::vector<std::string>& dest,
     const std::string& desc) {
-    param_list_.push_back(
+    param_list_.emplace_back(
         new ArgumentStringlist(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
@@ -673,13 +678,14 @@ void CmdlineParser::add_param_stringlist(
 
 void CmdlineParser::add_opt_param_int(
     const std::string& name, int& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentInt(0, name, "", desc, false, dest));
+    param_list_.emplace_back(new ArgumentInt(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_opt_param_unsigned(
     const std::string& name, unsigned int& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentUnsigned(0, name, "", desc, false, dest));
+    param_list_.emplace_back(
+        new ArgumentUnsigned(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
@@ -690,44 +696,48 @@ void CmdlineParser::add_opt_param_uint(
 
 void CmdlineParser::add_opt_param_size_t(
     const std::string& name, size_t& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentSizeT(0, name, "", desc, false, dest));
+    param_list_.emplace_back(new ArgumentSizeT(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_opt_param_float(
     const std::string& name, float& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentFloat(0, name, "", desc, false, dest));
+    param_list_.emplace_back(new ArgumentFloat(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_opt_param_double(
     const std::string& name, double& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentDouble(0, name, "", desc, false, dest));
+    param_list_.emplace_back(
+        new ArgumentDouble(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_opt_param_bytes(
     const std::string& name, uint32_t& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentBytes32(0, name, "", desc, false, dest));
+    param_list_.emplace_back(
+        new ArgumentBytes32(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_opt_param_bytes(
     const std::string& name, uint64_t& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentBytes64(0, name, "", desc, false, dest));
+    param_list_.emplace_back(
+        new ArgumentBytes64(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_opt_param_string(
     const std::string& name, std::string& dest, const std::string& desc) {
-    param_list_.push_back(new ArgumentString(0, name, "", desc, false, dest));
+    param_list_.emplace_back(
+        new ArgumentString(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_opt_param_stringlist(
     const std::string& name, std::vector<std::string>& dest,
     const std::string& desc) {
-    param_list_.push_back(
+    param_list_.emplace_back(
         new ArgumentStringlist(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
@@ -738,7 +748,7 @@ void CmdlineParser::print_usage(std::ostream& os) {
     std::ios::fmtflags flags(os.flags());
 
     os << "Usage: " << program_name_
-       << (option_list_.size() ? " [options]" : "");
+       << (!option_list_.empty() ? " [options]" : "");
 
     for (ArgumentList::const_iterator it = param_list_.begin();
          it != param_list_.end(); ++it) {
@@ -750,18 +760,18 @@ void CmdlineParser::print_usage(std::ostream& os) {
 
     os << std::endl;
 
-    if (description_.size()) {
+    if (!description_.empty()) {
         os << std::endl;
         output_wrap(os, description_, line_wrap_);
     }
-    if (author_.size()) {
+    if (!author_.empty()) {
         os << "Author: " << author_ << std::endl;
     }
 
-    if (description_.size() || author_.size())
+    if (!description_.empty() || !author_.empty())
         os << std::endl;
 
-    if (param_list_.size()) {
+    if (!param_list_.empty()) {
         os << "Parameters:" << std::endl;
 
         for (ArgumentList::const_iterator it = param_list_.begin();
@@ -775,7 +785,7 @@ void CmdlineParser::print_usage(std::ostream& os) {
         }
     }
 
-    if (option_list_.size()) {
+    if (!option_list_.empty()) {
         os << "Options:" << std::endl;
 
         for (ArgumentList::const_iterator it = option_list_.begin();
@@ -973,7 +983,7 @@ void CmdlineParser::print_result(std::ostream& os) {
 
     int maxlong = std::max(param_max_width_, option_max_width_);
 
-    if (param_list_.size()) {
+    if (!param_list_.empty()) {
         os << "Parameters:" << std::endl;
 
         for (ArgumentList::const_iterator it = param_list_.begin();
@@ -991,7 +1001,7 @@ void CmdlineParser::print_result(std::ostream& os) {
         }
     }
 
-    if (option_list_.size()) {
+    if (!option_list_.empty()) {
         os << "Options:" << std::endl;
 
         for (ArgumentList::const_iterator it = option_list_.begin();

@@ -35,7 +35,7 @@ std::string union_words(const std::string& wordsA, const std::string& wordsB) {
         std::string w(i1, it);
 
         if (!contains_word(words, w)) {
-            if (words.size())
+            if (!words.empty())
                 words += ' ';
             words += w;
         }

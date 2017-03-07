@@ -6,6 +6,9 @@
  * is the chain of subsequent functors. This "push-down items" method is used by
  * Thrill to enable expanding of one item to many in FlatMap().
  *
+ * Given functors f_1, f_2, ... f_n, the FunctionStack calls f_1(x, f_2), for x,
+ * and f_1 calls f_2(y, f_3) for each y it emits.
+ *
  * Part of tlx - http://panthema.net/tlx
  *
  * Copyright (C) 2015 Sebastian Lamm <seba.lamm@gmail.com>

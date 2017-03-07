@@ -20,6 +20,7 @@ print "#include <$_>\n" foreach sort glob("tlx/meta/"."*.hpp");
 #include <tlx/meta/call_foreach_tuple.hpp>
 #include <tlx/meta/call_foreach_tuple_with_index.hpp>
 #include <tlx/meta/call_foreach_with_index.hpp>
+#include <tlx/meta/function_chain.hpp>
 #include <tlx/meta/function_stack.hpp>
 #include <tlx/meta/has_member.hpp>
 #include <tlx/meta/index_sequence.hpp>

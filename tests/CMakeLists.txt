@@ -63,6 +63,7 @@ tlx_build_only(cmdline_parser_example)
 tlx_build_test(cmdline_parser_test)
 tlx_build_test(counting_ptr_test)
 tlx_build_test(delegate_test)
+tlx_build_test(function_chain_test)
 tlx_build_test(function_stack_test)
 tlx_build_test(loser_tree_test)
 tlx_build_test(lru_cache_test)
@@ -76,6 +77,7 @@ tlx_build_test(thread_pool_test)
 
 # disable -Wshadow on source with FunctionStack or FunctionChain
 set_source_files_properties(
-  function_stack_test.cpp PROPERTIES COMPILE_FLAGS "-Wno-shadow")
+  function_chain_test.cpp  function_stack_test.cpp
+  PROPERTIES COMPILE_FLAGS "-Wno-shadow")
 
 ################################################################################

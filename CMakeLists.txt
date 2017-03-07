@@ -312,6 +312,10 @@ if(TLX_TRY_COMPILE_HEADERS)
 
   endforeach()
 
+  # disable -Wshadow on source with FunctionStack or FunctionChain
+  set_source_files_properties(
+    tlx/function_stack.hpp PROPERTIES COMPILE_FLAGS "-Wno-shadow")
+
 endif(TLX_TRY_COMPILE_HEADERS)
 
 ###############################################################################

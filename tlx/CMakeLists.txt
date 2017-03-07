@@ -117,7 +117,10 @@ set(TLX_LIBNAME ${TLX_LIBNAME} PARENT_SCOPE)
 set(TLX_EXPORTED_LIBS ${TLX_EXPORTED_LIBS} PARENT_SCOPE)
 
 # disable -Wshadow on source with FunctionStack or FunctionChain
-set_source_files_properties(
-  function_chain.hpp function_stack.hpp PROPERTIES COMPILE_FLAGS "-Wno-shadow")
+if(NOT MSVC)
+  set_source_files_properties(
+    function_chain.hpp function_stack.hpp
+    PROPERTIES COMPILE_FLAGS "-Wno-shadow")
+endif()
 
 ################################################################################

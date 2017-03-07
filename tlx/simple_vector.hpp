@@ -16,6 +16,7 @@
 #define TLX_SIMPLE_VECTOR_HEADER
 
 #include <algorithm>
+#include <cstdlib>
 #include <utility>
 
 namespace tlx {
@@ -188,6 +189,7 @@ private:
             return static_cast<ValueType*>(
                 operator new (size * sizeof(ValueType)));
         }
+        abort();
     }
 
     static void destroy_array(ValueType* array, size_t size) {
@@ -206,6 +208,7 @@ private:
             operator delete (array);
             return;
         }
+        abort();
     }
 };
 

@@ -14,10 +14,10 @@
 namespace tlx {
 
 /******************************************************************************/
-// UNUSED(variable)
+// UNUSED(variables...)
 
-template <typename T>
-void unused(T&&) { }
+template <typename... Types>
+void unused(Types&&...) { }
 
 } // namespace tlx
 

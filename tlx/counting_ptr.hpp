@@ -240,7 +240,7 @@ template <typename Type>
 using counting_ptr = CountingPtr<Type>;
 
 //! method analogous to std::make_shared and std::make_unique.
-template <typename Type, typename ... Args>
+template <typename Type, typename... Args>
 CountingPtr<Type> make_counting(Args&& ... args) {
     return CountingPtr<Type>(new Type(std::forward<Args>(args) ...));
 }

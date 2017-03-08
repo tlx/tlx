@@ -32,7 +32,7 @@ void call_foreach_with_index_impl(Functor&& f, Arg&& arg) {
 }
 
 //! helper for call_foreach_with_index: general recursive case
-template <size_t Index, typename Functor, typename Arg, typename ... MoreArgs>
+template <size_t Index, typename Functor, typename Arg, typename... MoreArgs>
 void call_foreach_with_index_impl(Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
     std::forward<Functor>(f)(StaticIndex<Index>(), std::forward<Arg>(arg));
     call_foreach_with_index_impl<Index + 1>(
@@ -43,7 +43,7 @@ void call_foreach_with_index_impl(Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
 
 //! Call a generic functor (like a generic lambda) for each variadic template
 //! argument together with its zero-based index.
-template <typename Functor, typename ... Args>
+template <typename Functor, typename... Args>
 void call_foreach_with_index(Functor&& f, Args&& ... args) {
     detail::call_foreach_with_index_impl<0>(
         std::forward<Functor>(f), std::forward<Args>(args) ...);

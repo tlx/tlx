@@ -30,14 +30,14 @@ struct SimpleFunctor {
     std::ostream& os_;
 };
 
-template <typename ... Args>
+template <typename... Args>
 void test_call_foreach_run(std::ostream& os, const Args& ... args) {
 
     tlx::call_foreach(
         [&os](auto a) { os << a << '\n'; },
-        args ...);
+        args...);
 
-    tlx::call_foreach_tuple(SimpleFunctor(os), std::make_tuple(args ...));
+    tlx::call_foreach_tuple(SimpleFunctor(os), std::make_tuple(args...));
 }
 
 static void test_call_foreach() {
@@ -62,7 +62,7 @@ struct SimpleFunctorWithIndex {
     std::ostream& os_;
 };
 
-template <typename ... Args>
+template <typename... Args>
 void test_call_foreach_with_index_run(std::ostream& os, const Args& ... args) {
 
     // a variadic tuple to get indexes from using the compile-time index param
@@ -73,10 +73,10 @@ void test_call_foreach_with_index_run(std::ostream& os, const Args& ... args) {
             os << index << ' ' << a << ' '
                << std::get<decltype(index)::index>(my_tuple) << '\n';
         },
-        args ...);
+        args...);
 
     tlx::call_foreach_tuple_with_index(
-        SimpleFunctorWithIndex(os), std::make_tuple(args ...));
+        SimpleFunctorWithIndex(os), std::make_tuple(args...));
 }
 
 static void test_call_foreach_with_index() {
@@ -265,7 +265,7 @@ struct SimpleMapFunctor {
     std::ostream& os_;
 };
 
-template <typename ... Args>
+template <typename... Args>
 void test_vmap_foreach_run(std::ostream& os, const Args& ... args) {
 
     auto r1 = tlx::vmap_foreach(
@@ -273,14 +273,14 @@ void test_vmap_foreach_run(std::ostream& os, const Args& ... args) {
             os << a << '\n';
             return a + 1;
         },
-        args ...);
+        args...);
 
     die_unequal(std::tuple_size<decltype(r1)>::value, 3u);
     die_unequal(std::get<0>(r1), 43);
     die_unequal(std::get<1>(r1), 6.0);
     die_unequal(std::get<2>(r1), std::string("ello"));
 
-    auto r2 = tlx::vmap_foreach(SimpleMapFunctor(os), args ...);
+    auto r2 = tlx::vmap_foreach(SimpleMapFunctor(os), args...);
 
     die_unequal(std::tuple_size<decltype(r2)>::value, 3u);
     die_unequal(std::get<0>(r2), 43);
@@ -311,7 +311,7 @@ struct SimpleMapFunctorWithIndex {
     std::ostream& os_;
 };
 
-template <typename ... Args>
+template <typename... Args>
 void test_vmap_foreach_with_index_run(std::ostream& os, const Args& ... args) {
 
     // a variadic tuple to get indexes from using the compile-time index param
@@ -323,7 +323,7 @@ void test_vmap_foreach_with_index_run(std::ostream& os, const Args& ... args) {
                << std::get<decltype(index)::index>(my_tuple) << '\n';
             return a + 1;
         },
-        args ...);
+        args...);
 
     die_unequal(std::tuple_size<decltype(r1)>::value, 3u);
     die_unequal(std::get<0>(r1), 43);
@@ -331,7 +331,7 @@ void test_vmap_foreach_with_index_run(std::ostream& os, const Args& ... args) {
     die_unequal(std::get<2>(r1), std::string("ello"));
 
     auto r2 =
-        tlx::vmap_foreach_with_index(SimpleMapFunctorWithIndex(os), args ...);
+        tlx::vmap_foreach_with_index(SimpleMapFunctorWithIndex(os), args...);
 
     die_unequal(std::tuple_size<decltype(r2)>::value, 3u);
     die_unequal(std::get<0>(r2), 43);

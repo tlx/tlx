@@ -54,13 +54,13 @@ auto call_stack(const Functor& functor) {
  *
  * \param rest Remaining functors.
  */
-template <typename Functor, typename ... MoreFunctors>
+template <typename Functor, typename... MoreFunctors>
 auto call_stack(const Functor& functor, const MoreFunctors& ... rest) {
     // the functor object is captured by non-const copy so that we can use
     // functors with non-const operator(), i.e. stateful functors (e.g. for
     // sampling)
     return [ =, functor = functor](const auto& input) mutable->void {
-               functor(input, call_stack(rest ...));
+               functor(input, call_stack(rest...));
     };
 }
 
@@ -83,7 +83,7 @@ auto call_stack(const Functor& functor, const MoreFunctors& ... rest) {
  *
  * \tparam Functors Types of the different functor.
  */
-template <typename Input_, typename ... Functors>
+template <typename Input_, typename... Functors>
 class FunctionStack
 {
 public:
@@ -97,7 +97,7 @@ public:
      *
      * \param stack Tuple of functor.
      */
-    explicit FunctionStack(const std::tuple<Functors ...>& stack)
+    explicit FunctionStack(const std::tuple<Functors...>& stack)
         : stack_(stack) { }
 
     /*!
@@ -112,7 +112,7 @@ public:
     template <typename Functor>
     auto push(const Functor& functor) const {
         // append to function stack's type the new function.
-        return FunctionStack<Input, Functors ..., Functor>(
+        return FunctionStack<Input, Functors..., Functor>(
             std::tuple_cat(stack_, std::make_tuple(functor)));
     }
 
@@ -147,7 +147,7 @@ public:
 
 private:
     //! Tuple of varying type that stores all functor objects functions.
-    std::tuple<Functors ...> stack_;
+    std::tuple<Functors...> stack_;
 
     /*!
      * Auxilary function for "folding" the stack.  This is needed to send all
@@ -155,8 +155,8 @@ private:
      *
      * \return Single "folded" functor representing the stack.
      */
-    template <size_t ... Is>
-    auto fold_stack(index_sequence<Is ...>) const {
+    template <size_t... Is>
+    auto fold_stack(index_sequence<Is...>) const {
         return detail::call_stack(std::get<Is>(stack_) ...);
     }
 };

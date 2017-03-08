@@ -23,8 +23,8 @@ namespace tlx {
 
 namespace detail {
 
-template <typename Functor, typename Tuple, std::size_t ... Is>
-auto apply_tuple_impl(Functor&& f, Tuple&& t, index_sequence<Is ...>) {
+template <typename Functor, typename Tuple, std::size_t... Is>
+auto apply_tuple_impl(Functor&& f, Tuple&& t, index_sequence<Is...>) {
     return std::forward<Functor>(f)(
         std::get<Is>(std::forward<Tuple>(t)) ...);
 }

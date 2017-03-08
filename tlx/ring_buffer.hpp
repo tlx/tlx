@@ -173,7 +173,7 @@ public:
     }
 
     //! emplace element at the end
-    template <typename ... Args>
+    template <typename... Args>
     void emplace_back(Args&& ... args) {
         assert(size() + 1 <= max_size_);
         alloc_traits::construct(alloc_, std::addressof(data_[end_]),
@@ -197,7 +197,7 @@ public:
     }
 
     //! emplace element at the beginning
-    template <typename ... Args>
+    template <typename... Args>
     void emplace_front(Args&& ... args) {
         assert(size() + 1 <= max_size_);
         --begin_ &= mask_;

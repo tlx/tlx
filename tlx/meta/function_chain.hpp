@@ -57,12 +57,12 @@ auto call_chain(const Functor& functor) {
  *
  * \param rest Remaining functors.
  */
-template <typename Functor, typename ... MoreFunctors>
+template <typename Functor, typename... MoreFunctors>
 auto call_chain(const Functor& functor, const MoreFunctors& ... rest) {
     // the functor is captured by non-const copy so that we can use functors
     // with non-const operator(), i.e. stateful functors (e.g. for sampling)
     return [ =, functor = functor](const auto& input) mutable->auto {
-               return call_chain(rest ...)(functor(input));
+               return call_chain(rest...)(functor(input));
     };
 }
 
@@ -80,7 +80,7 @@ auto call_chain(const Functor& functor, const MoreFunctors& ... rest) {
  *
  * \tparam Functors Types of the different functors.
  */
-template <typename ... Functors>
+template <typename... Functors>
 class FunctionChain
 {
 public:
@@ -92,7 +92,7 @@ public:
      *
      * \param chain Tuple of functors.
      */
-    explicit FunctionChain(const std::tuple<Functors ...>& chain)
+    explicit FunctionChain(const std::tuple<Functors...>& chain)
         : chain_(chain) { }
 
     /*!
@@ -107,7 +107,7 @@ public:
     template <typename Functor>
     auto push(const Functor& functor) const {
         // append to function chain's type the new function.
-        return FunctionChain<Functors ..., Functor>(
+        return FunctionChain<Functors..., Functor>(
             std::tuple_cat(chain_, std::make_tuple(functor)));
     }
 
@@ -136,9 +136,9 @@ public:
     /*!
      * Directly call the folded function chain with a value.
      */
-    template <typename ... Input>
+    template <typename... Input>
     auto operator () (Input&& ... value) const {
-        return fold()(std::move(value ...));
+        return fold()(std::move(value...));
     }
 
     //! Is true if the FunctionChain is empty.
@@ -149,7 +149,7 @@ public:
 
 private:
     //! Tuple of varying type that stores all functors.
-    std::tuple<Functors ...> chain_;
+    std::tuple<Functors...> chain_;
 
     /*!
      * Auxilary function for "folding" the chain.  This is needed to send all
@@ -157,8 +157,8 @@ private:
      *
      * \return Single "folded" functor representing the chain.
      */
-    template <size_t ... Is>
-    auto fold_chain(index_sequence<Is ...>) const {
+    template <size_t... Is>
+    auto fold_chain(index_sequence<Is...>) const {
         return detail::call_chain(std::get<Is>(chain_) ...);
     }
 };

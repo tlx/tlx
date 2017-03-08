@@ -16,7 +16,7 @@ namespace tlx {
 /******************************************************************************/
 // UNUSED(variables...)
 
-template <typename ... Types>
+template <typename... Types>
 void unused(Types&& ...) { }
 
 } // namespace tlx

@@ -27,9 +27,9 @@ namespace tlx {
 namespace detail {
 
 //! helper for call_foreach_tuple_with_index
-template <typename Functor, typename Tuple, std::size_t ... Is>
+template <typename Functor, typename Tuple, std::size_t... Is>
 void call_foreach_tuple_with_index_impl(
-    Functor&& f, Tuple&& t, index_sequence<Is ...>) {
+    Functor&& f, Tuple&& t, index_sequence<Is...>) {
     return call_foreach_with_index(
         std::forward<Functor>(f), std::get<Is>(std::forward<Tuple>(t)) ...);
 }

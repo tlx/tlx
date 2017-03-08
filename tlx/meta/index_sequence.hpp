@@ -18,25 +18,25 @@ namespace tlx {
 // Compile-time integer sequences, an implementation of std::index_sequence and
 // std::make_index_sequence, as these are not available in many current
 // libraries (MS Visual C++).
-template <size_t ... Indexes>
+template <size_t... Indexes>
 struct index_sequence {
     static size_t size() { return sizeof ... (Indexes); }
 };
 
 namespace detail {
 
-template <size_t CurrentIndex, size_t ... Indexes>
+template <size_t CurrentIndex, size_t... Indexes>
 struct make_index_sequence_helper;
 
-template <size_t ... Indexes>
-struct make_index_sequence_helper<0, Indexes ...>{
-    using type = index_sequence<Indexes ...>;
+template <size_t... Indexes>
+struct make_index_sequence_helper<0, Indexes...>{
+    using type = index_sequence<Indexes...>;
 };
 
-template <size_t CurrentIndex, size_t ... Indexes>
+template <size_t CurrentIndex, size_t... Indexes>
 struct make_index_sequence_helper {
     using type = typename make_index_sequence_helper<
-              CurrentIndex - 1, CurrentIndex - 1, Indexes ...>::type;
+              CurrentIndex - 1, CurrentIndex - 1, Indexes...>::type;
 };
 
 } // namespace detail

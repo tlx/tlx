@@ -70,7 +70,7 @@ public:
 #endif
 
     //! Constructs an element object on the location pointed by p.
-    template <typename SubType, typename ... Args>
+    template <typename SubType, typename... Args>
     void construct(SubType* p, Args&& ... args) {
         ::new ((void*)p)SubType(std::forward<Args>(args) ...); // NOLINT
     }

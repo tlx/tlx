@@ -31,7 +31,7 @@ auto vmap_foreach_impl(Functor&& f, Arg&& arg) {
 }
 
 //! helper for vmap_foreach: general recursive case
-template <typename Functor, typename Arg, typename ... MoreArgs>
+template <typename Functor, typename Arg, typename... MoreArgs>
 auto vmap_foreach_impl(Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
     auto x = std::forward<Functor>(f)(std::forward<Arg>(arg));
     return std::tuple_cat(
@@ -44,7 +44,7 @@ auto vmap_foreach_impl(Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
 
 //! Call a generic functor (like a generic lambda) for each variadic template
 //! argument.
-template <typename Functor, typename ... Args>
+template <typename Functor, typename... Args>
 auto vmap_foreach(Functor&& f, Args&& ... args) {
     return detail::vmap_foreach_impl(
         std::forward<Functor>(f), std::forward<Args>(args) ...);

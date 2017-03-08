@@ -28,7 +28,7 @@ void call_foreach_impl(Functor&& f, Arg&& arg) {
 }
 
 //! helper for call_foreach: general recursive case
-template <typename Functor, typename Arg, typename ... MoreArgs>
+template <typename Functor, typename Arg, typename... MoreArgs>
 void call_foreach_impl(
     Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
     std::forward<Functor>(f)(std::forward<Arg>(arg));
@@ -40,7 +40,7 @@ void call_foreach_impl(
 
 //! Call a generic functor (like a generic lambda) for each variadic template
 //! argument.
-template <typename Functor, typename ... Args>
+template <typename Functor, typename... Args>
 void call_foreach(Functor&& f, Args&& ... args) {
     detail::call_foreach_impl(
         std::forward<Functor>(f), std::forward<Args>(args) ...);

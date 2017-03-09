@@ -43,7 +43,7 @@ static void test_string_vector_deque() {
     }
     {
         tlx::StackArena<128> arena;
-        std::vector<int, IntAlloc> my_vector({ IntAlloc(arena) });
+        std::vector<int, IntAlloc> my_vector(0, int(0), IntAlloc(arena));
 
         // push more data than in our arena
         for (int i = 0; i < 100; ++i) {
@@ -56,7 +56,7 @@ static void test_string_vector_deque() {
     }
     {
         tlx::StackArena<128> arena;
-        std::deque<int, IntAlloc> my_deque({ IntAlloc(arena) });
+        std::deque<int, IntAlloc> my_deque(0, int(0), IntAlloc(arena));
 
         // push more data than in our arena
         for (int i = 0; i < 100; ++i) {

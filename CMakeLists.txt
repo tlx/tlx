@@ -80,10 +80,41 @@ if(NOT MSVC)
   ### Linux/Unix-like Build Environment ########################################
 
   # enable warnings
-  set(CMAKE_CXX_FLAGS "-std=c++14 -g -W -Wall -Wextra -fPIC ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "-g -W -Wall -Wextra -Wpedantic -fPIC ${CMAKE_CXX_FLAGS}")
 
-  # enable more warnings
-  set(CMAKE_CXX_FLAGS "-Wpedantic -Wshadow ${CMAKE_CXX_FLAGS}")
+  # test availability of -std=c++XX version
+  include(CheckCXXCompilerFlag)
+  check_cxx_compiler_flag(-std=c++17 TLX_CXX_HAS_CXX17)
+
+  if(TLX_CXX_HAS_CXX17)
+    set(CMAKE_CXX_FLAGS "-std=c++17 ${CMAKE_CXX_FLAGS}")
+    set(TLX_CXX_HAS_CXX14 ON)
+    set(TLX_CXX_HAS_CXX11 ON)
+    set(TLX_CXX_HAS_CXX0X ON)
+  else()
+    check_cxx_compiler_flag(-std=c++14 TLX_CXX_HAS_CXX14)
+    if(TLX_CXX_HAS_CXX14)
+      set(CMAKE_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS}")
+      set(TLX_CXX_HAS_CXX11 ON)
+      set(TLX_CXX_HAS_CXX0X ON)
+    else()
+      check_cxx_compiler_flag(-std=c++11 TLX_CXX_HAS_CXX11)
+      if(TLX_CXX_HAS_CXX11)
+        set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+        set(TLX_CXX_HAS_CXX0X ON)
+      else()
+        check_cxx_compiler_flag(-std=c++0x TLX_CXX_HAS_CXX0X)
+        if(TLX_CXX_HAS_CXX0X)
+          set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+        endif()
+      endif()
+    endif()
+  endif()
+
+  # enable -Wshadow only for gcc >= 5
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0)
+    set(CMAKE_CXX_FLAGS "-Wshadow ${CMAKE_CXX_FLAGS}")
+  endif()
 
   # remove -rdynamic from linker flags (smaller binaries which cannot be loaded
   # with dlopen() -- something no one needs)
@@ -292,6 +323,16 @@ if(TLX_TRY_COMPILE_HEADERS)
 
   file(GLOB_RECURSE header_files
     RELATIVE "${PROJECT_SOURCE_DIR}" FOLLOW_SYMLINKS "tlx/*.hpp")
+
+  if(NOT TLX_CXX_HAS_CXX14)
+    list(REMOVE_ITEM header_files "tlx/meta.hpp")
+    list(REMOVE_ITEM header_files "tlx/meta/apply_tuple.hpp")
+    list(REMOVE_ITEM header_files "tlx/meta/function_chain.hpp")
+    list(REMOVE_ITEM header_files "tlx/meta/function_stack.hpp")
+    list(REMOVE_ITEM header_files "tlx/meta/vmap_foreach.hpp")
+    list(REMOVE_ITEM header_files "tlx/meta/vmap_foreach_with_index.hpp")
+    list(REMOVE_ITEM header_files "tlx/meta/vmap_for_range.hpp")
+  endif()
 
   foreach(header_file ${header_files})
     # replace / and . with _ to get a valid target and file name

@@ -49,7 +49,8 @@ protected:
 
 public:
     explicit LruCacheSet(const Alloc& alloc = Alloc())
-        : list_(alloc), map_(alloc) { }
+        : list_(alloc),
+          map_(0, std::hash<Key>(), std::equal_to<Key>(), alloc) { }
 
     //! clear LRU
     void clear() {
@@ -172,7 +173,8 @@ protected:
 
 public:
     explicit LruCacheMap(const Alloc& alloc = Alloc())
-        : list_(alloc), map_(alloc) { }
+        : list_(alloc),
+          map_(0, std::hash<Key>(), std::equal_to<Key>(), alloc) { }
 
     //! clear LRU
     void clear() {

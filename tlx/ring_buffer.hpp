@@ -12,6 +12,7 @@
 #define TLX_RING_BUFFER_HEADER
 
 #include <cassert>
+#include <cstdint>
 #include <cstdlib>
 #include <memory>
 #include <vector>

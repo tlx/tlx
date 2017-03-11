@@ -28,7 +28,7 @@ namespace detail {
 /*!
  * Base case for the chaining of functors: zero functors, returns the identity.
  */
-auto call_chain() {
+static inline auto call_chain() {
     return [] (const auto& input)mutable->auto {
                return input;
     };

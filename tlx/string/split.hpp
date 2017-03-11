@@ -16,6 +16,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /******************************************************************************/
 // split() returning std::vector<std::string>
 
@@ -70,11 +73,11 @@ std::vector<std::string> split(
  * in empty split substrings.  Returns a vector of strings with at least
  * min_fields and at most limit_fields, empty fields are added if needed.
  *
- * \param sep    separator character
- * \param str    string to split
- * \param min    minimum number of parts returned
- * \param limit  maximum number of parts returned
- * \return       vector containing each split substring
+ * \param sep         separator string
+ * \param str         string to split
+ * \param min_fields  minimum number of parts returned
+ * \param limit       maximum number of parts returned
+ * \return            vector containing each split substring
  */
 std::vector<std::string> split(
     char sep, const std::string& str,
@@ -86,11 +89,11 @@ std::vector<std::string> split(
  * in empty split substrings.  Returns a vector of strings with at least
  * min_fields and at most limit_fields, empty fields are added if needed.
  *
- * \param sep    separator string
- * \param str    string to split
- * \param min    minimum number of parts returned
- * \param limit  maximum number of parts returned
- * \return       vector containing each split substring
+ * \param sep         separator string
+ * \param str         string to split
+ * \param min_fields  minimum number of parts returned
+ * \param limit       maximum number of parts returned
+ * \return            vector containing each split substring
  */
 std::vector<std::string> split(
     const char* sep, const std::string& str,
@@ -102,11 +105,11 @@ std::vector<std::string> split(
  * in empty split substrings.  Returns a vector of strings with at least
  * min_fields and at most limit_fields, empty fields are added if needed.
  *
- * \param sep    separator string
- * \param str    string to split
- * \param min    minimum number of parts returned
- * \param limit  maximum number of parts returned
- * \return       vector containing each split substring
+ * \param sep         separator string
+ * \param str         string to split
+ * \param min_fields  minimum number of parts returned
+ * \param limit       maximum number of parts returned
+ * \return            vector containing each split substring
  */
 std::vector<std::string> split(
     const std::string& sep, const std::string& str,
@@ -172,12 +175,12 @@ std::vector<std::string>& split(
  * in empty split substrings.  Returns a vector of strings with at least
  * min_fields and at most limit_fields, empty fields are added if needed.
  *
- * \param into   destination std::vector
- * \param sep    separator character
- * \param str    string to split
- * \param min    minimum number of parts returned
- * \param limit  maximum number of parts returned
- * \return       vector containing each split substring
+ * \param into        destination std::vector
+ * \param sep         separator character
+ * \param str         string to split
+ * \param min_fields  minimum number of parts returned
+ * \param limit       maximum number of parts returned
+ * \return            vector containing each split substring
  */
 std::vector<std::string>& split(
     std::vector<std::string>* into,
@@ -190,12 +193,12 @@ std::vector<std::string>& split(
  * in empty split substrings.  Returns a vector of strings with at least
  * min_fields and at most limit_fields, empty fields are added if needed.
  *
- * \param into   destination std::vector
- * \param sep    separator string
- * \param str    string to split
- * \param min    minimum number of parts returned
- * \param limit  maximum number of parts returned
- * \return       vector containing each split substring
+ * \param into        destination std::vector
+ * \param sep         separator string
+ * \param str         string to split
+ * \param min_fields  minimum number of parts returned
+ * \param limit       maximum number of parts returned
+ * \return            vector containing each split substring
  */
 std::vector<std::string>& split(
     std::vector<std::string>* into,
@@ -208,17 +211,19 @@ std::vector<std::string>& split(
  * in empty split substrings.  Returns a vector of strings with at least
  * min_fields and at most limit_fields, empty fields are added if needed.
  *
- * \param into   destination std::vector
- * \param sep    separator string
- * \param str    string to split
- * \param min    minimum number of parts returned
- * \param limit  maximum number of parts returned
- * \return       vector containing each split substring
+ * \param into        destination std::vector
+ * \param sep         separator string
+ * \param str         string to split
+ * \param min_fields  minimum number of parts returned
+ * \param limit       maximum number of parts returned
+ * \return            vector containing each split substring
  */
 std::vector<std::string>& split(
     std::vector<std::string>* into,
     const std::string& sep, const std::string& str,
     std::string::size_type min_fields, std::string::size_type limit);
+
+//! \}
 
 } // namespace tlx
 

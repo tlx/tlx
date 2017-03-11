@@ -15,6 +15,11 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+//! \name Base64 Encoding and Decoding
+//! \{
+
 /******************************************************************************/
 // Base64 Encoding and Decoding
 
@@ -69,6 +74,9 @@ std::string base64_decode(const void* data, size_t size, bool strict = true);
  * \return        decoded binary data
  */
 std::string base64_decode(const std::string& str, bool strict = true);
+
+//! \}
+//! \}
 
 } // namespace tlx
 

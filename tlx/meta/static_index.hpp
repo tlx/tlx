@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 //! Helper for call_foreach_with_index() to save the index as a compile-time
 //! index
 template <size_t Index>
@@ -25,6 +28,8 @@ struct StaticIndex {
     //! implicit conversion to a run-time index.
     operator size_t () const { return index; }
 };
+
+//! \}
 
 } // namespace tlx
 

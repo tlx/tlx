@@ -18,6 +18,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 /******************************************************************************/
 // Variadic Template Expander: run a generic templated functor (like a generic
 // lambda) for each component of a std::tuple.
@@ -45,6 +48,8 @@ void call_foreach_tuple_with_index(Functor&& f, Tuple&& t) {
     detail::call_foreach_tuple_with_index_impl(
         std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }
+
+//! \}
 
 } // namespace tlx
 

@@ -15,10 +15,17 @@
 
 namespace tlx {
 
-//! Try to wrap a string to 80 columns without split words. All newlines are
-//! kept, new newline characters are inserted only at spaces, hence, words are
-//! never split. If words longer than 80 columns occur they are NOT broken.
+//! \addtogroup string
+//! \{
+
+/*!
+ * Try to wrap a string to 80 columns without split words. All newlines are
+ * kept, new newline characters are inserted only at spaces, hence, words are
+ * never split. If words longer than 80 columns occur they are NOT broken.
+ */
 std::string word_wrap(const std::string& str, unsigned int wrap = 80);
+
+//! \}
 
 } // namespace tlx
 

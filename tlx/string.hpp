@@ -11,6 +11,9 @@
 #ifndef TLX_STRING_HEADER
 #define TLX_STRING_HEADER
 
+//! \defgroup string String Algorithms
+//! simple string manipulations
+
 /*[[[perl
 print "#include <$_>\n" foreach sort glob("tlx/string/"."*.hpp");
 ]]]*/

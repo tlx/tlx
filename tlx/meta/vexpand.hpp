@@ -13,12 +13,17 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 /******************************************************************************/
 // vexpand(variables...) -- macro to gobble up expanded parameter packes. This
 // is obviously identical to tlx::unused() but used in a different context.
 
 template <typename... Types>
 void vexpand(Types&& ...) { }
+
+//! \}
 
 } // namespace tlx
 

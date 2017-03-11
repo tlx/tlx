@@ -16,6 +16,12 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
+/******************************************************************************/
+// join()
+
 /*!
  * Join a vector of strings by some glue character between each pair from the
  * sequence.
@@ -48,6 +54,8 @@ std::string join(
  */
 std::string join(
     const std::string& glue, const std::vector<std::string>& parts);
+
+//! \}
 
 } // namespace tlx
 

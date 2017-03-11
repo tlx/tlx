@@ -15,6 +15,12 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
+/******************************************************************************/
+// contains()
+
 //! Tests of string contains pattern
 bool contains(const std::string& str, const std::string& pattern);
 
@@ -23,6 +29,8 @@ bool contains(const std::string& str, const char* pattern);
 
 //! Tests of string contains character
 bool contains(const std::string& str, const char ch);
+
+//! \}
 
 } // namespace tlx
 

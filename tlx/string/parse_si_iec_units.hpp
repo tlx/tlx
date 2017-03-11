@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /*!
  * Parse a string like "343KB" or "44 GiB" into the corresponding size in
  * bytes. Returns the number of bytes and sets ok = true if the string could be
@@ -32,6 +35,8 @@ bool parse_si_iec_units(
  */
 bool parse_si_iec_units(
     const std::string& str, uint64_t* out_size, char default_unit = 0);
+
+//! \}
 
 } // namespace tlx
 

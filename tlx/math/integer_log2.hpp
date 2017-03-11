@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup math
+//! \{
+
 /******************************************************************************/
 // integer_log2_floor()
 
@@ -54,6 +57,8 @@ unsigned integer_log2_ceil(long long i);
 
 //! calculate the log2 ceiling of an integer type (by repeated bit shifts)
 unsigned integer_log2_ceil(unsigned long long i);
+
+//! \}
 
 } // namespace tlx
 

@@ -18,6 +18,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 /******************************************************************************/
 // Variadic Template Enumerate Mapper: run a generic templated functor (like a
 // generic lambda) for each value from [Begin,End), and collect the return
@@ -67,6 +70,8 @@ auto vmap_for_range(Functor&& f) {
     return detail::VMapForRangeImpl<Begin, End - Begin, Functor>::call(
         std::forward<Functor>(f));
 }
+
+//! \}
 
 } // namespace tlx
 

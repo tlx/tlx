@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /******************************************************************************/
 // less_icase()
 
@@ -29,6 +32,8 @@ bool less_icase(const std::string& a, const char* b);
 
 //! returns true if a < b without regard for letter case
 bool less_icase(const std::string& a, const std::string& b);
+
+//! \}
 
 } // namespace tlx
 

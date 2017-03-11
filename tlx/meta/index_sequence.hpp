@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 // Compile-time integer sequences, an implementation of std::index_sequence and
 // std::make_index_sequence, as these are not available in many current
 // libraries (MS Visual C++).
@@ -44,6 +47,8 @@ struct make_index_sequence_helper {
 template <size_t Size>
 struct make_index_sequence
     : public detail::make_index_sequence_helper<Size>::type { };
+
+//! \}
 
 } // namespace tlx
 

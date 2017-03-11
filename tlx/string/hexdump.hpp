@@ -17,6 +17,11 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+//! \name Hexdump Methods
+//! \{
+
 /******************************************************************************/
 // Uppercase Hexdump Methods
 
@@ -134,6 +139,9 @@ std::string hexdump_lc(const std::vector<uint8_t>& data);
  * \return     string of read bytes
  */
 std::string parse_hexdump(const std::string& str);
+
+//! \}
+//! \}
 
 } // namespace tlx
 

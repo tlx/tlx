@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup math
+//! \{
+
 /******************************************************************************/
 // is_power_of_two()
 
@@ -33,6 +36,8 @@ bool is_power_of_two(long long i);
 
 //! does what it says: true if i is a power of two
 bool is_power_of_two(unsigned long long i);
+
+//! \}
 
 } // namespace tlx
 

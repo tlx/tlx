@@ -17,6 +17,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 /******************************************************************************/
 // Tuple Applier: takes a std::tuple<> and applies a variadic template function
 // to it. Hence, this expands the content of the tuple as the arguments.
@@ -39,6 +42,8 @@ auto apply_tuple(Functor&& f, Tuple&& t) {
     return detail::apply_tuple_impl(
         std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }
+
+//! \}
 
 } // namespace tlx
 

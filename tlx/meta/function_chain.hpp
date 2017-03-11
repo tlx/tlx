@@ -23,6 +23,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 namespace detail {
 
 /*!
@@ -175,6 +178,8 @@ static inline
 auto make_function_chain() {
     return FunctionChain<>();
 }
+
+//! \}
 
 } // namespace tlx
 

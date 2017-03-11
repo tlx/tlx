@@ -16,6 +16,9 @@
 
 namespace tlx {
 
+//! \addtogroup math
+//! \{
+
 /******************************************************************************/
 // ffs() - find first set bit in integer
 
@@ -36,6 +39,8 @@ unsigned ffs(long long i);
 
 //! find first set bit in integer, or zero if none are set.
 unsigned ffs(unsigned long long i);
+
+//! \}
 
 } // namespace tlx
 

@@ -15,11 +15,16 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /*!
  * Escape a string into a URI-encoding. This maps all non A-Z0-9 characters to
  * %HH hex representation.
  */
 std::string escape_uri(const std::string& src);
+
+//! \}
 
 } // namespace tlx
 

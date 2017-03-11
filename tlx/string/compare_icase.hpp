@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /******************************************************************************/
 // compare_icase()
 
@@ -29,6 +32,8 @@ int compare_icase(const std::string& a, const char* b);
 
 //! returns +1/0/-1 like strcmp(a, b) but without regard for letter case
 int compare_icase(const std::string& a, const std::string& b);
+
+//! \}
 
 } // namespace tlx
 

@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /******************************************************************************/
 
 /*!
@@ -143,6 +146,8 @@ std::string trim_left(const std::string& str,
  * \return      new trimmed string
  */
 std::string trim_left(const std::string& str, const std::string& drop);
+
+//! \}
 
 } // namespace tlx
 

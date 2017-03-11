@@ -15,10 +15,15 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /*!
  * Return union of two keyword sets.
  */
 std::string union_words(const std::string& wordsA, const std::string& wordsB);
+
+//! \}
 
 } // namespace tlx
 

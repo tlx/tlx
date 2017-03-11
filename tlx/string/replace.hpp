@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /******************************************************************************/
 // replace_first() in-place
 
@@ -232,6 +235,8 @@ std::string replace_all(
  */
 std::string replace_all(
     const std::string& str, const char* needle, const char* instead);
+
+//! \}
 
 } // namespace tlx
 

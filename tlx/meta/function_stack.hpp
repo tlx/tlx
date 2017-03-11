@@ -26,6 +26,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 namespace detail {
 
 /*!
@@ -167,6 +170,8 @@ static inline
 auto make_function_stack(const Functor& functor) {
     return FunctionStack<Input, Functor>(std::make_tuple(functor));
 }
+
+//! \}
 
 } // namespace tlx
 

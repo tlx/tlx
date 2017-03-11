@@ -15,10 +15,15 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /*!
  * Truncate or pad string to exactly len characters.
  */
 std::string pad(const std::string& s, size_t len, char pad_char = ' ');
+
+//! \}
 
 } // namespace tlx
 

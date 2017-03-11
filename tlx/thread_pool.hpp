@@ -25,7 +25,7 @@ namespace tlx {
 
 /*!
  * ThreadPool starts a fixed number p of std::threads which process Jobs that
- * are \ref Enqueue "enqueued" into a concurrent job queue. The jobs
+ * are \ref enqueue "enqueued" into a concurrent job queue. The jobs
  * themselves can enqueue more jobs that will be processed when a thread is
  * ready.
  *
@@ -60,21 +60,6 @@ pool.enqueue([&value]() {
 pool.loop_until_empty();
 \endcode
 
- * ## Synchronization Primitives
- *
- * Beyond threads from the ThreadPool, the framework contains two fast
- * synchronized queue containers:
- *
- * - \ref ConcurrentQueue
- * - \ref ConcurrentBoundedQueue.
- *
- * If the Intel Thread Building Blocks are available, then these use their
- * lock-free implementations, which are very fast, but do busy-waiting for
- * items. Otherwise, compatible replacements are used.
- *
- * The \ref ConcurrentQueue has no busy-waiting pop(), only a try_pop()
- * method. This should be preferred! The \ref ConcurrentBoundedQueue<T> has a
- * blocking pop(), but it probably does busy-waiting.
  */
 class ThreadPool
 {
@@ -118,7 +103,7 @@ public:
     //! Stop processing jobs, terminate threads.
     ~ThreadPool();
 
-    //! Enqueue a Job, the caller must pass in all context using captures.
+    //! enqueue a Job, the caller must pass in all context using captures.
     void enqueue(Job&& job) {
         std::unique_lock<std::mutex> lock(mutex_);
         jobs_.emplace_back(std::move(job));

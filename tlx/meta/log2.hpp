@@ -20,6 +20,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 /******************************************************************************/
 // Log2Floor<Value>::value
 
@@ -78,6 +81,8 @@ public:
         ceil = 0
     };
 };
+
+//! \}
 
 } // namespace tlx
 

@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 //! Transform the given character to upper case without any localization.
 char to_upper(char ch);
 
@@ -33,6 +36,8 @@ std::string& to_upper(std::string* str);
  * \return      new string uppercased
  */
 std::string to_upper(const std::string& str);
+
+//! \}
 
 } // namespace tlx
 

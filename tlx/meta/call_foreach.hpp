@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 /******************************************************************************/
 // Variadic Template Expander: run a generic templated functor (like a generic
 // lambda) for each of the variadic template parameters.
@@ -45,6 +48,8 @@ void call_foreach(Functor&& f, Args&& ... args) {
     detail::call_foreach_impl(
         std::forward<Functor>(f), std::forward<Args>(args) ...);
 }
+
+//! \}
 
 } // namespace tlx
 

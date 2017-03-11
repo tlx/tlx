@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /******************************************************************************/
 // erase_all() in-place
 
@@ -74,6 +77,8 @@ std::string erase_all(const std::string& str, const char* drop);
  * \return      copy of string possibly with less characters
  */
 std::string erase_all(const std::string& str, const std::string& drop);
+
+//! \}
 
 } // namespace tlx
 

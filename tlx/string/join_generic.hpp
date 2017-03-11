@@ -16,6 +16,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /*!
  * Join a sequence of strings by some glue string between each pair from the
  * sequence. The sequence in given as a range between two iterators.
@@ -85,6 +88,8 @@ static inline
 std::string join(const std::string& glue, const Container& parts) {
     return join(glue, parts.begin(), parts.end());
 }
+
+//! \}
 
 } // namespace tlx
 

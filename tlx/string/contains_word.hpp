@@ -15,6 +15,12 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
+/******************************************************************************/
+// contains_word()
+
 /*!
  * Search the given string for a whitespace-delimited word. It works as if the
  * str was split_words() and the resulting vector checked for a given
@@ -38,6 +44,8 @@ bool contains_word(const std::string& str, const char* word);
  * \return      true if the word was found
  */
 bool contains_word(const std::string& str, const std::string& word);
+
+//! \}
 
 } // namespace tlx
 

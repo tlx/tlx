@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup math
+//! \{
+
 /******************************************************************************/
 // round_up_to_power_of_two()
 
@@ -54,6 +57,8 @@ long long round_down_to_power_of_two(long long i);
 
 //! does what it says: round down to next power of two
 unsigned long long round_down_to_power_of_two(unsigned long long i);
+
+//! \}
 
 } // namespace tlx
 

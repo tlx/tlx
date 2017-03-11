@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 //! Transform the given character to lower case without any localization.
 char to_lower(char ch);
 
@@ -33,6 +36,8 @@ std::string& to_lower(std::string* str);
  * \return      new string lowercased
  */
 std::string to_lower(const std::string& str);
+
+//! \}
 
 } // namespace tlx
 

@@ -15,6 +15,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /*!
  * Search the string for given start and end separators and extract all
  * characters between the both, if they are found. Otherwise return an empty
@@ -62,6 +65,8 @@ std::string extract_between(const std::string& str, const std::string& sep1,
  */
 std::string extract_between(const std::string& str, const std::string& sep1,
                             const std::string& sep2);
+
+//! \}
 
 } // namespace tlx
 

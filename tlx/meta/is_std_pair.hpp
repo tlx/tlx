@@ -15,12 +15,17 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 //! test if is a std::pair<...>
 template <typename T>
 struct is_std_pair : public std::false_type { };
 
 template <typename S, typename T>
 struct is_std_pair<std::pair<S, T> >: public std::true_type { };
+
+//! \}
 
 } // namespace tlx
 

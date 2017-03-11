@@ -15,12 +15,17 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 //! test if is a std::tuple<...>
 template <typename T>
 struct is_std_tuple : public std::false_type { };
 
 template <typename... Ts>
 struct is_std_tuple<std::tuple<Ts...> >: public std::true_type { };
+
+//! \}
 
 } // namespace tlx
 

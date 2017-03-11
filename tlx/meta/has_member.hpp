@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 /******************************************************************************/
 // SFINAE check whether a class member exists.
 
@@ -44,6 +47,8 @@ namespace tlx {
     public:                                                                \
         static const bool value = (sizeof(test<Type>(0)) == sizeof(char)); \
     };
+
+//! \}
 
 } // namespace tlx
 

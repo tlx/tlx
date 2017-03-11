@@ -11,6 +11,9 @@
 #ifndef TLX_META_HEADER
 #define TLX_META_HEADER
 
+//! \defgroup meta Meta-Template Programming
+//! tools for easier meta-template programming
+
 /*[[[perl
 print "#include <$_>\n" foreach sort glob("tlx/meta/"."*.hpp");
 ]]]*/

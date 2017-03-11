@@ -17,6 +17,9 @@
 
 namespace tlx {
 
+//! \addtogroup meta
+//! \{
+
 /******************************************************************************/
 // Variadic Template Enumerator: run a generic templated functor (like a generic
 // lambda) for the integers 0 .. Size-1 or more general [Begin,End).
@@ -60,6 +63,8 @@ void call_for_range(Functor&& f) {
     detail::CallForRangeImpl<Begin, End - Begin, Functor>::call(
         std::forward<Functor>(f));
 }
+
+//! \}
 
 } // namespace tlx
 

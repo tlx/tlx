@@ -15,6 +15,12 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
+/******************************************************************************/
+// ends_with()
+
 /*!
  * Checks if the given match string is located at the end of this string.
  */
@@ -26,6 +32,7 @@ bool ends_with(const std::string& str, const std::string& match);
 bool ends_with(const std::string& str, const char* match);
 
 /******************************************************************************/
+// ends_with_icase()
 
 /*!
  * Checks if the given match string is located at the end of this
@@ -38,6 +45,8 @@ bool ends_with_icase(const std::string& str, const std::string& match);
  * string. Compares the characters case-insensitively.
  */
 bool ends_with_icase(const std::string& str, const char* match);
+
+//! \}
 
 } // namespace tlx
 

@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup math
+//! \{
+
 /******************************************************************************/
 // div_ceil() - calculate n div k with rounding up
 
@@ -22,6 +25,8 @@ static inline constexpr
 auto div_ceil(const IntegralN& n, const IntegralK& k)->decltype(n + k) {
     return (n + k - 1) / k;
 }
+
+//! \}
 
 } // namespace tlx
 

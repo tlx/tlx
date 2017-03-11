@@ -11,6 +11,9 @@
 #ifndef TLX_MATH_HEADER
 #define TLX_MATH_HEADER
 
+//! \defgroup math Math Functions
+//! simple math functions
+
 /*[[[perl
 print "#include <$_>\n" foreach sort glob("tlx/math/"."*.hpp");
 ]]]*/

@@ -16,6 +16,9 @@
 
 namespace tlx {
 
+//! \addtogroup string
+//! \{
+
 /*!
  * Split the given string by whitespaces into distinct words. Multiple
  * consecutive whitespaces are considered as one split point. Whitespaces are
@@ -27,6 +30,8 @@ namespace tlx {
  */
 std::vector<std::string> split_words(
     const std::string& str, std::string::size_type limit = std::string::npos);
+
+//! \}
 
 } // namespace tlx
 

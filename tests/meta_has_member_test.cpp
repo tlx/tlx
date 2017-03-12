@@ -57,6 +57,9 @@ static_assert(has_member_tfunc456<ClassA, int>::value == false,
 /******************************************************************************/
 // has_method test
 
+// the following code does not work with gcc 4.8
+#if __GNUC__ > 4 || (__GNUC__ == 4 && (__GNUC_MINOR__ > 8))
+
 class ClassC
 {
 public:
@@ -107,6 +110,8 @@ static_assert(
 static_assert(
     has_method_tfunc123<ClassD, void(int, double)>::value == false,
     "has_method_tfunc123 test failed.");
+
+#endif
 
 /******************************************************************************/
 

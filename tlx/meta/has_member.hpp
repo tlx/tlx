@@ -22,7 +22,17 @@ namespace tlx {
 // based on http://stackoverflow.com/questions/257288/is-it-possible
 // -to-write-a-c-template-to-check-for-a-functions-existence
 
-//! macro template for class member / attribute SFINAE test
+/*!
+ * Macro template for class member / attribute SFINAE test
+
+ Usage:
+ \code
+ TLX_MAKE_HAS_METHOD(myfunc);
+
+ static_assert(has_method_myfunc<MyClass>::value,
+               "check MyClass for existence of attribute/method myfunc");
+ \endcode
+*/
 #define TLX_MAKE_HAS_MEMBER(Member)                                        \
     template <typename Type>                                               \
     class has_member_ ## Member                                            \
@@ -35,13 +45,24 @@ namespace tlx {
         static const bool value = (sizeof(test<Type>(0)) == sizeof(char)); \
     }
 
-//! macro template for class template member SFINAE test
+/*!
+ * Macro template for class template member SFINAE test
+
+ Usage:
+ \code
+ TLX_MAKE_HAS_TEMPLATE_METHOD(myfunc);
+
+ static_assert(has_method_myfunc<MyClass, float, int>::value,
+               "check MyClass for existence of attribute/method myfunc "
+               "if instantiated with <float, int>");
+ \endcode
+*/
 #define TLX_MAKE_HAS_TEMPLATE_MEMBER(Member)                               \
-    template <typename Type, typename Param>                               \
+    template <typename Type, typename... Args>                             \
     class has_member_ ## Member                                            \
     {                                                                      \
         template <typename C>                                              \
-        static char test(decltype(&C::template Member<Param>));            \
+        static char test(decltype(&C::template Member<Args...>));          \
         template <typename C>                                              \
         static int test(...);                                              \
     public:                                                                \

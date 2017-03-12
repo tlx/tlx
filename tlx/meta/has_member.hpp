@@ -23,7 +23,7 @@ namespace tlx {
 // -to-write-a-c-template-to-check-for-a-functions-existence
 
 //! macro template for class member / attribute SFINAE test
-#define TLX_MAKE_MEMBER_TEST(Member)                                       \
+#define TLX_MAKE_HAS_MEMBER(Member)                                        \
     template <typename Type>                                               \
     class has_member_ ## Member                                            \
     {                                                                      \
@@ -33,10 +33,10 @@ namespace tlx {
         static int test(...);                                              \
     public:                                                                \
         static const bool value = (sizeof(test<Type>(0)) == sizeof(char)); \
-    };
+    }
 
 //! macro template for class template member SFINAE test
-#define TLX_MAKE_TEMPLATE_MEMBER_TEST(Member)                              \
+#define TLX_MAKE_HAS_TEMPLATE_MEMBER(Member)                               \
     template <typename Type, typename Param>                               \
     class has_member_ ## Member                                            \
     {                                                                      \
@@ -46,7 +46,7 @@ namespace tlx {
         static int test(...);                                              \
     public:                                                                \
         static const bool value = (sizeof(test<Type>(0)) == sizeof(char)); \
-    };
+    }
 
 //! \}
 

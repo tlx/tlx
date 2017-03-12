@@ -10,9 +10,11 @@
 
 #include <cmath>
 #include <cstddef>
+#include <string>
 
 #include <tlx/die.hpp>
 #include <tlx/meta/has_member.hpp>
+#include <tlx/meta/has_method.hpp>
 
 /******************************************************************************/
 // has_member test
@@ -28,29 +30,83 @@ public:
     void tfunc123(const Type&) { }
 };
 
-TLX_MAKE_MEMBER_TEST(attr1)
-TLX_MAKE_MEMBER_TEST(attr2)
+TLX_MAKE_HAS_MEMBER(attr1);
+TLX_MAKE_HAS_MEMBER(attr2);
 
 static_assert(has_member_attr1<ClassA>::value == true,
               "has_member test failed.");
 static_assert(has_member_attr2<ClassA>::value == false,
               "has_member test failed.");
 
-TLX_MAKE_MEMBER_TEST(func123)
-TLX_MAKE_MEMBER_TEST(func456)
+TLX_MAKE_HAS_MEMBER(func123);
+TLX_MAKE_HAS_MEMBER(func456);
 
 static_assert(has_member_func123<ClassA>::value == true,
               "has_member test failed.");
 static_assert(has_member_func456<ClassA>::value == false,
               "has_member test failed.");
 
-TLX_MAKE_TEMPLATE_MEMBER_TEST(tfunc123)
-TLX_MAKE_TEMPLATE_MEMBER_TEST(tfunc456)
+TLX_MAKE_HAS_TEMPLATE_MEMBER(tfunc123);
+TLX_MAKE_HAS_TEMPLATE_MEMBER(tfunc456);
 
 static_assert(has_member_tfunc123<ClassA, int>::value == true,
               "has_member test failed.");
 static_assert(has_member_tfunc456<ClassA, int>::value == false,
               "has_member test failed.");
+
+/******************************************************************************/
+// has_method test
+
+class ClassC
+{
+public:
+    void func123(int) { }
+
+    static double func456(std::string) { return 42.0; }
+
+    template <typename Type>
+    void tfunc123(int, const Type&) { }
+};
+
+class ClassD
+{
+public:
+    void func123(std::string) { }
+};
+
+TLX_MAKE_HAS_METHOD(func123);
+
+static_assert(has_method_func123<ClassC, void(int)>::value == true,
+              "has_method_func123 test failed.");
+static_assert(has_method_func123<ClassC, void(std::string)>::value == false,
+              "has_method_func123 test failed.");
+
+static_assert(has_method_func123<ClassD, void(int)>::value == false,
+              "has_method_func123 test failed.");
+static_assert(has_method_func123<ClassC, std::string(int)>::value == false,
+              "has_method_func123 test failed.");
+
+TLX_MAKE_HAS_STATIC_METHOD(func456);
+
+static_assert(
+    has_method_func456<ClassC, double(std::string)>::value == true, // NOLINT
+    "has_method_func123 test failed.");
+static_assert(
+    has_method_func456<ClassC, double(int)>::value == false, // NOLINT
+    "has_method_func123 test failed.");
+
+TLX_MAKE_HAS_TEMPLATE_METHOD(tfunc123);
+
+static_assert(
+    has_method_tfunc123<ClassC, void(std::string, double)>::value == false,
+    "has_method_tfunc123 test failed.");
+static_assert(
+    has_method_tfunc123<ClassC, void(int, double)>::value == false,
+    "has_method_tfunc123 test failed.");
+
+static_assert(
+    has_method_tfunc123<ClassD, void(int, double)>::value == false,
+    "has_method_tfunc123 test failed.");
 
 /******************************************************************************/
 

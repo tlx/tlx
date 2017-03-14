@@ -26,23 +26,23 @@ static inline unsigned ffs_template(Integral x) {
 
 #if defined(__GNUC__) || defined(__clang__)
 
-unsigned ffs(int x) {
-    return __builtin_ffs(x);
+unsigned ffs(int i) {
+    return __builtin_ffs(i);
 }
-unsigned ffs(unsigned x) {
-    return __builtin_ffs(x);
+unsigned ffs(unsigned i) {
+    return __builtin_ffs(i);
 }
-unsigned ffs(long x) {
-    return __builtin_ffsl(x);
+unsigned ffs(long i) {
+    return __builtin_ffsl(i);
 }
-unsigned ffs(unsigned long x) {
-    return __builtin_ffsl(x);
+unsigned ffs(unsigned long i) {
+    return __builtin_ffsl(i);
 }
-unsigned ffs(long long x) {
-    return __builtin_ffsll(x);
+unsigned ffs(long long i) {
+    return __builtin_ffsll(i);
 }
-unsigned ffs(unsigned long long x) {
-    return __builtin_ffsll(x);
+unsigned ffs(unsigned long long i) {
+    return __builtin_ffsll(i);
 }
 
 #else

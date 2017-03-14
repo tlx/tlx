@@ -14,6 +14,11 @@
 
 namespace tlx {
 
+bool is_space(char ch) {
+    return ch == ' ' || ch == '\f' || ch == '\t' ||
+        ch == '\r' || ch == '\n' || ch == '\v';
+}
+
 std::string word_wrap(const std::string& str, unsigned int wrap) {
     std::string out;
     out.resize(str.size());
@@ -38,7 +43,7 @@ std::string word_wrap(const std::string& str, unsigned int wrap) {
             if (out[i] == '\n')
                 count = 0;
             // save last space position
-            if (std::isspace(out[i]))
+            if (is_space(out[i]))
                 last_space = i;
 
             ++i;
@@ -59,7 +64,7 @@ std::string word_wrap(const std::string& str, unsigned int wrap) {
         else
         {
             // no space in last line, copy until we find one
-            while (i != str.size() && !std::isspace(str[i]))
+            while (i != str.size() && !is_space(str[i]))
                 out[i] = str[i], ++i;
 
             if (i == str.size()) {

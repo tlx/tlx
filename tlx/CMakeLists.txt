@@ -27,6 +27,7 @@ set(LIBTLX_SOURCES
   string/extract_between.cpp
   string/format_si_iec_units.cpp
   string/hexdump.cpp
+  string/index_of.cpp
   string/join.cpp
   string/less_icase.cpp
   string/pad.cpp

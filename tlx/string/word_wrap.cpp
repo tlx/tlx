@@ -16,7 +16,7 @@ namespace tlx {
 
 bool is_space(char ch) {
     return ch == ' ' || ch == '\f' || ch == '\t' ||
-        ch == '\r' || ch == '\n' || ch == '\v';
+           ch == '\r' || ch == '\n' || ch == '\v';
 }
 
 std::string word_wrap(const std::string& str, unsigned int wrap) {

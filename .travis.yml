@@ -68,8 +68,8 @@ matrix:
       os: linux
       addons: *gcc5_32
 
-    # gcc 6.x, Debug & Release
-    - env: CMAKE_CC="gcc-6" CMAKE_CXX="g++-6" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+    # gcc 6.x, Debug & Release, Debug with UndefinedBehaviorSanitizer
+    - env: CMAKE_CC="gcc-6" CMAKE_CXX="g++-6" BUILD_TYPE="Debug" COMPILER_FLAGS="-fsanitize=undefined"
       os: linux
       addons: &gcc6
         apt:

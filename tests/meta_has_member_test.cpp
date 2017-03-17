@@ -15,6 +15,7 @@
 #include <tlx/die.hpp>
 #include <tlx/meta/has_member.hpp>
 #include <tlx/meta/has_method.hpp>
+#include <tlx/unused.hpp>
 
 /******************************************************************************/
 // has_member test
@@ -27,31 +28,31 @@ public:
     void func123() { }
 
     template <typename Type>
-    void tfunc123(const Type&) { }
+    void tfunc123(const Type& x) { tlx::unused(x); }
 };
 
 TLX_MAKE_HAS_MEMBER(attr1);
 TLX_MAKE_HAS_MEMBER(attr2);
 
-static_assert(has_member_attr1<ClassA>::value == true,
+static_assert(has_member_attr1<ClassA>::value,
               "has_member test failed.");
-static_assert(has_member_attr2<ClassA>::value == false,
+static_assert(!has_member_attr2<ClassA>::value,
               "has_member test failed.");
 
 TLX_MAKE_HAS_MEMBER(func123);
 TLX_MAKE_HAS_MEMBER(func456);
 
-static_assert(has_member_func123<ClassA>::value == true,
+static_assert(has_member_func123<ClassA>::value,
               "has_member test failed.");
-static_assert(has_member_func456<ClassA>::value == false,
+static_assert(!has_member_func456<ClassA>::value,
               "has_member test failed.");
 
 TLX_MAKE_HAS_TEMPLATE_MEMBER(tfunc123);
 TLX_MAKE_HAS_TEMPLATE_MEMBER(tfunc456);
 
-static_assert(has_member_tfunc123<ClassA, int>::value == true,
+static_assert(has_member_tfunc123<ClassA, int>::value,
               "has_member test failed.");
-static_assert(has_member_tfunc456<ClassA, int>::value == false,
+static_assert(!has_member_tfunc456<ClassA, int>::value,
               "has_member test failed.");
 
 /******************************************************************************/
@@ -63,12 +64,12 @@ static_assert(has_member_tfunc456<ClassA, int>::value == false,
 class ClassC
 {
 public:
-    void func123(int) { }
+    void func123(int i) { tlx::unused(i); }
 
-    static double func456(std::string) { return 42.0; }
+    static double func456(std::string s) { tlx::unused(s); return 42.0; }
 
     template <typename Type>
-    void tfunc123(int, const Type&) { }
+    void tfunc123(int i, const Type& t) { tlx::unused(i, t); }
 };
 
 class ClassD
@@ -79,7 +80,7 @@ public:
 
 TLX_MAKE_HAS_METHOD(func123);
 
-static_assert(has_method_func123<ClassC, void(int)>::value == true,
+static_assert(has_method_func123<ClassC, void(int)>::value,
               "has_method_func123 test failed.");
 static_assert(has_method_func123<ClassC, void(std::string)>::value == false,
               "has_method_func123 test failed.");
@@ -92,7 +93,7 @@ static_assert(has_method_func123<ClassC, std::string(int)>::value == false,
 TLX_MAKE_HAS_STATIC_METHOD(func456);
 
 static_assert(
-    has_method_func456<ClassC, double(std::string)>::value == true, // NOLINT
+    has_method_func456<ClassC, double(std::string)>::value, // NOLINT
     "has_method_func123 test failed.");
 static_assert(
     has_method_func456<ClassC, double(int)>::value == false, // NOLINT

@@ -96,7 +96,7 @@ static void test_simple_deduction_test() {
     std::vector<std::string> output;
 
     auto save_output = [&](auto) {
-                           output.push_back("123");
+                           output.emplace_back("123");
                        };
 
     auto new_stack3 = new_stack2.push(save_output);

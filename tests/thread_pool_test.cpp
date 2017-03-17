@@ -96,8 +96,8 @@ void test_loop_until_terminate(size_t sleep_msec) {
     die_unless(tp_delta.count() >= 90);
 
     // check result: count number of flags set.
-    size_t sum = std::accumulate(result1.begin(), result1.end(), 0u);
-    sum += std::accumulate(result2.begin(), result2.end(), 0u);
+    size_t sum = std::accumulate(result1.begin(), result1.end(), 0);
+    sum += std::accumulate(result2.begin(), result2.end(), 0);
     die_unequal(sum, pool.done());
 }
 

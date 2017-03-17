@@ -25,10 +25,10 @@ struct MyTracker {
     MyTracker() {
         ++ctor_dtor_counter;
     }
-    MyTracker(const MyTracker&) {
+    MyTracker(const MyTracker&) { // NOLINT
         ++ctor_dtor_counter;
     }
-    MyTracker& operator = (const MyTracker&) {
+    MyTracker& operator = (const MyTracker&) { // NOLINT
         // no change
         return *this;
     }
@@ -176,7 +176,7 @@ void test_losertree(bool stable, size_t num_vectors) {
     {
         // take next smallest element out
         unsigned top = lt.min_source();
-        MyIntPair res = std::move(*lt_iter[top]);
+        MyIntPair res = *lt_iter[top];
         // std::cout << res.key_ << std::endl;
         result.emplace_back(res);
 

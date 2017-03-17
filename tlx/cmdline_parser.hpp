@@ -100,9 +100,9 @@ private:
     ArgumentList param_list_;
 
     //! formatting width for options, '-s, --switch <#>'
-    int option_max_width_ = 8;
+    size_t option_max_width_ = 8;
     //! formatting width for parameters, 'param <#>'
-    int param_max_width_ = 8;
+    size_t param_max_width_ = 8;
 
     //! argv[0] for usage.
     const char* program_name_ = nullptr;

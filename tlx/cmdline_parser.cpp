@@ -15,6 +15,7 @@
 #include <cstring>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -126,8 +127,12 @@ struct CmdlineParser::ArgumentInt final : public Argument {
     bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
-        if (sscanf(argv[0], "%d", &dest_) == 1) {
+        char* endptr;
+        long x = strtol(argv[0], &endptr, 10);
+        if (endptr != nullptr && *endptr == 0 &&
+            x <= std::numeric_limits<int>::max()) {
             --argc, ++argv;
+            dest_ = static_cast<int>(x);
             return true;
         }
         else {
@@ -154,8 +159,12 @@ struct CmdlineParser::ArgumentUnsigned final : public Argument {
     bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
-        if (sscanf(argv[0], "%u", &dest_) == 1) {
+        char* endptr;
+        unsigned long x = strtoul(argv[0], &endptr, 10);
+        if (endptr != nullptr && *endptr == 0 &&
+            x <= std::numeric_limits<unsigned int>::max()) {
             --argc, ++argv;
+            dest_ = static_cast<unsigned int>(x);
             return true;
         }
         else {
@@ -182,8 +191,12 @@ struct CmdlineParser::ArgumentSizeT final : public Argument {
     bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
-        if (sscanf(argv[0], "%zu", &dest_) == 1) {
+        char* endptr;
+        unsigned long long x = strtoull(argv[0], &endptr, 10);
+        if (endptr != nullptr && *endptr == 0 &&
+            x <= std::numeric_limits<size_t>::max()) {
             --argc, ++argv;
+            dest_ = x;
             return true;
         }
         else {
@@ -210,7 +223,9 @@ struct CmdlineParser::ArgumentFloat final : public Argument {
     bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
-        if (sscanf(argv[0], "%f", &dest_) == 1) {
+        char* endptr;
+        dest_ = strtof(argv[0], &endptr);
+        if (endptr != nullptr && *endptr == 0) {
             --argc, ++argv;
             return true;
         }
@@ -238,7 +253,9 @@ struct CmdlineParser::ArgumentDouble final : public Argument {
     bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
-        if (sscanf(argv[0], "%lf", &dest_) == 1) {
+        char* endptr;
+        dest_ = strtod(argv[0], &endptr);
+        if (endptr != nullptr && *endptr == 0) {
             --argc, ++argv;
             return true;
         }
@@ -269,7 +286,8 @@ struct CmdlineParser::ArgumentBytes32 final : public Argument {
             return false;
         uint64_t dest;
         if (parse_si_iec_units(argv[0], &dest) &&
-            (uint64_t)(dest_ = (uint32_t)dest) == dest) {
+            static_cast<uint64_t>(
+                dest_ = static_cast<uint32_t>(dest)) == dest) {
             --argc, ++argv;
             return true;
         }
@@ -374,12 +392,12 @@ struct CmdlineParser::ArgumentStringlist final : public Argument {
 
 void CmdlineParser::calc_option_max(const Argument* arg) {
     option_max_width_ = std::max(
-        static_cast<int>(arg->option_text().size() + 2), option_max_width_);
+        arg->option_text().size() + 2, option_max_width_);
 }
 
 void CmdlineParser::calc_param_max(const Argument* arg) {
     param_max_width_ = std::max(
-        static_cast<int>(arg->param_text().size() + 2), param_max_width_);
+        arg->param_text().size() + 2, param_max_width_);
 }
 
 /******************************************************************************/
@@ -778,8 +796,8 @@ void CmdlineParser::print_usage(std::ostream& os) {
              it != param_list_.end(); ++it) {
             const Argument* arg = *it;
 
-            os << "  " << std::setw(param_max_width_) << std::left
-               << arg->param_text();
+            os << "  " << std::setw(static_cast<int>(param_max_width_))
+               << std::left << arg->param_text();
             output_wrap(os, arg->desc_, line_wrap_, 0, param_max_width_ + 2,
                         param_max_width_ + 2, 8);
         }
@@ -792,8 +810,8 @@ void CmdlineParser::print_usage(std::ostream& os) {
              it != option_list_.end(); ++it) {
             const Argument* arg = *it;
 
-            os << "  " << std::setw(option_max_width_) << std::left
-               << arg->option_text();
+            os << "  " << std::setw(static_cast<int>(option_max_width_))
+               << std::left << arg->option_text();
             output_wrap(os, arg->desc_, line_wrap_, 0, option_max_width_ + 2,
                         option_max_width_ + 2, 8);
         }
@@ -981,7 +999,7 @@ bool CmdlineParser::process(int argc, const char* const* argv) {
 void CmdlineParser::print_result(std::ostream& os) {
     std::ios::fmtflags flags(os.flags());
 
-    int maxlong = std::max(param_max_width_, option_max_width_);
+    size_t maxlong = std::max(param_max_width_, option_max_width_);
 
     if (!param_list_.empty()) {
         os << "Parameters:" << std::endl;
@@ -990,7 +1008,8 @@ void CmdlineParser::print_result(std::ostream& os) {
              it != param_list_.end(); ++it) {
             const Argument* arg = *it;
 
-            os << "  " << std::setw(maxlong) << std::left << arg->param_text();
+            os << "  " << std::setw(static_cast<int>(maxlong))
+               << std::left << arg->param_text();
 
             std::string typestr = "(" + std::string(arg->type_name()) + ")";
             os << std::setw(max_type_name_ + 4) << typestr;
@@ -1008,7 +1027,8 @@ void CmdlineParser::print_result(std::ostream& os) {
              it != option_list_.end(); ++it) {
             const Argument* arg = *it;
 
-            os << "  " << std::setw(maxlong) << std::left << arg->option_text();
+            os << "  " << std::setw(static_cast<int>(maxlong))
+               << std::left << arg->option_text();
 
             std::string typestr = "(" + std::string(arg->type_name()) + ")";
             os << std::setw(max_type_name_ + 4) << std::left << typestr;

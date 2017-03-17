@@ -165,8 +165,8 @@ std::string base64_decode(const void* data, size_t size, bool strict) {
                 throw std::runtime_error(ex_message);
         } while (fragment >= ws);
 
-        outchar |= static_cast<uint8_t>((fragment & 0x30) >> 4);
-        out += outchar;
+        outchar = static_cast<uint8_t>(outchar | ((fragment & 0x30) >> 4));
+        out += static_cast<char>(outchar);
 
         outchar = static_cast<uint8_t>((fragment & 0x0F) << 4);
 
@@ -180,8 +180,8 @@ std::string base64_decode(const void* data, size_t size, bool strict) {
                 throw std::runtime_error(ex_message);
         } while (fragment >= ws);
 
-        outchar |= (fragment & 0x3C) >> 2;
-        out += outchar;
+        outchar = static_cast<uint8_t>(outchar | ((fragment & 0x3C) >> 2));
+        out += static_cast<char>(outchar);
 
         outchar = static_cast<uint8_t>((fragment & 0x03) << 6);
 
@@ -195,8 +195,8 @@ std::string base64_decode(const void* data, size_t size, bool strict) {
                 throw std::runtime_error(ex_message);
         } while (fragment >= ws);
 
-        outchar |= static_cast<uint8_t>((fragment & 0x3F) >> 0);
-        out += outchar;
+        outchar = static_cast<uint8_t>(outchar | ((fragment & 0x3F) >> 0));
+        out += static_cast<char>(outchar);
     }
 }
 

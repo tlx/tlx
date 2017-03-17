@@ -15,7 +15,7 @@
 namespace tlx {
 
 ThreadPool::ThreadPool(size_t num_threads)
-    : mutex_(), threads_(num_threads) {
+    : threads_(num_threads) {
     // immediately construct worker threads
     for (size_t i = 0; i < num_threads; ++i)
         threads_[i] = std::thread(&ThreadPool::worker, this);

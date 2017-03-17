@@ -225,7 +225,7 @@ std::string parse_hexdump(const std::string& str) {
         default: throw std::runtime_error("Invalid string for hex conversion");
         }
 
-        out += c;
+        out += static_cast<char>(c);
     }
 
     return out;

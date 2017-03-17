@@ -246,7 +246,7 @@ static void test_join() {
 
     std::vector<std::string> sv2;
     for (unsigned int i = 0; i < 6; ++i)
-        sv2.push_back("abc");
+        sv2.emplace_back("abc");
 
     die_unequal(tlx::join(".", sv2), "abc.abc.abc.abc.abc.abc");
 }

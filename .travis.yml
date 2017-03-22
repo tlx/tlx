@@ -3,7 +3,6 @@
 language: cpp
 
 sudo: false
-dist: trusty
 
 matrix:
   include:
@@ -35,6 +34,7 @@ matrix:
 
     # gcc 5.x, Debug & Release
     - env: CMAKE_CC="gcc-5" CMAKE_CXX="g++-5" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+      dist: trusty
       os: linux
       addons: &gcc5
         apt:
@@ -63,6 +63,7 @@ matrix:
             - george-edison55-precise-backports # cmake 3.2.3
           packages:
             - g++-5-multilib
+            - linux-libc-dev:i386
             - cmake
             - cmake-data
 
@@ -144,7 +145,7 @@ before_script:
       $CMAKE_ARGS ..
 
 script:
-  - if [[ "$CMAKE_CXX" == "g++-5" && "$BUILD_TYPE" == "Debug" ]]; then
+  - if [[ "$CMAKE_CXX" == "g++-5" && "$BUILD_TYPE" == "Debug"  && "$COMPILER_FLAGS" == "" ]]; then
       build-wrapper-linux-x86-64 --out-dir bw-output make -j2 && ctest; sonar-scanner;
     else
       make -j2 && ctest;

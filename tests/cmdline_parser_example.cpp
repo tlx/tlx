@@ -48,6 +48,8 @@ int main(int argc, char* argv[]) {
     cp.print_result();
 
     // do something useful
+
+    return 0;
 }
 // [example]
 

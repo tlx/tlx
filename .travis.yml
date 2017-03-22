@@ -3,6 +3,7 @@
 language: cpp
 
 sudo: false
+dist: trusty
 
 matrix:
   include:
@@ -45,6 +46,8 @@ matrix:
             - cmake-data
             - g++-5
             - doxygen
+        sonarqube:
+          organization: "bingmann-github"
 
     - env: CMAKE_CC="gcc-5" CMAKE_CXX="g++-5" BUILD_TYPE="Release" COMPILER_FLAGS="" BUILD_DOXYGEN="1"
       os: linux
@@ -60,7 +63,6 @@ matrix:
             - george-edison55-precise-backports # cmake 3.2.3
           packages:
             - g++-5-multilib
-            - linux-libc-dev:i386
             - cmake
             - cmake-data
 
@@ -131,7 +133,9 @@ before_script:
     fi
 
   # configure
-  - mkdir build; cd build
+  - mkdir build
+  - cp sonar-project.properties build/
+  - cd build
   - cmake
       -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
       -DCMAKE_C_COMPILER="$CMAKE_CC" -DCMAKE_CXX_COMPILER="$CMAKE_CXX"
@@ -140,7 +144,11 @@ before_script:
       $CMAKE_ARGS ..
 
 script:
-  - make -j2 && ctest
+  - if [[ "$CMAKE_CXX" == "g++-5" && "$BUILD_TYPE" == "Debug" ]]; then
+      build-wrapper-linux-x86-64 --out-dir bw-output make -j2 && ctest; sonar-scanner;
+    else
+      make -j2 && ctest;
+    fi
 
 # Generate and deploy documentation
 after_success:
@@ -148,3 +156,7 @@ after_success:
   - if [ -n "$BUILD_DOXYGEN" -a "$TRAVIS_REPO_SLUG" == "tlx/tlx" -a "$TRAVIS_BRANCH" == "master" ]; then
       ./misc/mk-doxygen-travis.sh;
     fi
+
+cache:
+  directories:
+    - '$HOME/.sonar/cache'

@@ -11,7 +11,7 @@
 #ifndef TLX_DIE_HEADER
 #define TLX_DIE_HEADER
 
-#include <cmath>
+#include <cstring>
 #include <sstream>
 #include <string>
 
@@ -71,20 +71,26 @@ void die_with_message(const std::string& msg, const char* file, size_t line);
 
 //! helper method to compare two values in die_unequal()
 template <typename TypeA, typename TypeB>
-inline bool die_unequal_compare(TypeA a, TypeB b) {
+inline bool die_equal_compare(TypeA a, TypeB b) {
     return a == b;
 }
 
 template <>
-inline bool die_unequal_compare(float a, float b) {
-    // cast due to NaN != NaN
-    return static_cast<uint32_t>(a) == static_cast<uint32_t>(b);
+inline bool die_equal_compare(const char* a, const char* b) {
+    // compare string contents
+    return std::strcmp(a, b) == 0;
 }
 
 template <>
-inline bool die_unequal_compare(double a, double b) {
-    // cast due to NaN != NaN
-    return static_cast<uint64_t>(a) == static_cast<uint64_t>(b);
+inline bool die_equal_compare(float a, float b) {
+    // special case for NAN
+    return a != a ? b != b : a == b;
+}
+
+template <>
+inline bool die_equal_compare(double a, double b) {
+    // special case for NAN
+    return a != a ? b != b : a == b;
 }
 
 //! Check that X == Y or die miserably, but output the values of X and Y for
@@ -93,7 +99,7 @@ inline bool die_unequal_compare(double a, double b) {
     do {                                                                 \
         auto x__ = (X);                                     /* NOLINT */ \
         auto y__ = (Y);                                     /* NOLINT */ \
-        if (!::tlx::die_unequal_compare(x__, y__))                       \
+        if (!::tlx::die_equal_compare(x__, y__))                         \
             die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "          \
                              "\"" << x__ << "\" != \"" << y__ << "\"");  \
     } while (false)

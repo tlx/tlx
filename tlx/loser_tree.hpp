@@ -832,18 +832,18 @@ public:
 };
 
 /******************************************************************************/
-// LoserTreeTraits selects loser tree by size of value type
+// LoserTreeSwitch selects loser tree by size of value type
 
 template <bool Stable, typename ValueType, typename Comparator,
           typename Enable = void>
-class LoserTreeTraits
+class LoserTreeSwitch
 {
 public:
     using Type = LoserTreePointer<Stable, ValueType, Comparator>;
 };
 
 template <bool Stable, typename ValueType, typename Comparator>
-class LoserTreeTraits<
+class LoserTreeSwitch<
         Stable, ValueType, Comparator,
         typename std::enable_if<sizeof(ValueType) <= 2* sizeof(size_t)>::type>
 {
@@ -851,22 +851,31 @@ public:
     using Type = LoserTreeCopy<Stable, ValueType, Comparator>;
 };
 
+template <bool Stable, typename ValueType, typename Comparator>
+using LoserTree = typename LoserTreeSwitch<Stable, ValueType, Comparator>::Type;
+
+/*----------------------------------------------------------------------------*/
+
 template <bool Stable, typename ValueType, typename Comparator,
           typename Enable = void>
-class LoserTreeTraitsUnguarded
+class LoserTreeUnguardedSwitch
 {
 public:
     using Type = LoserTreePointerUnguarded<Stable, ValueType, Comparator>;
 };
 
 template <bool Stable, typename ValueType, typename Comparator>
-class LoserTreeTraitsUnguarded<
+class LoserTreeUnguardedSwitch<
         Stable, ValueType, Comparator,
         typename std::enable_if<sizeof(ValueType) <= 2* sizeof(size_t)>::type>
 {
 public:
     using Type = LoserTreeCopyUnguarded<Stable, ValueType, Comparator>;
 };
+
+template <bool Stable, typename ValueType, typename Comparator>
+using LoserTreeUnguarded =
+          typename LoserTreeUnguardedSwitch<Stable, ValueType, Comparator>::Type;
 
 } // namespace tlx
 

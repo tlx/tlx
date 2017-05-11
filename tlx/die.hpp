@@ -35,6 +35,7 @@ void die_with_message(const std::string& msg, const char* file, size_t line);
         std::ostringstream oss__;                             \
         oss__ << msg << " @ " << __FILE__ << ':' << __LINE__; \
         ::tlx::die_with_message(oss__.str());                 \
+        std::terminate();                                     \
     } while (false)
 
 //! Instead of abort(), throw the output the message via an exception.
@@ -104,24 +105,29 @@ inline bool die_equal_compare(double a, double b) {
                              "\"" << x__ << "\" != \"" << y__ << "\"");  \
     } while (false)
 
+//! Check that X == Y or die miserably, but output the values of X and Y for
+//! better debugging. Only active if NDEBUG is not defined.
+#ifdef NDEBUG
+#define assert_equal(X, Y)
+#else
+#define assert_equal(X, Y)  die_unequal(X, Y)
+#endif
+
 /******************************************************************************/
-// die_noexcept()
+// die_unless_throws()
 
 //! Define to check that [code] throws and exception of given type
-#define die_noexcept(code, exception_type)                             \
-    do {                                                               \
-        bool test__ = false;                                           \
-        try {                                                          \
-            code;                                                      \
-        }                                                              \
-        catch (const exception_type&) {                                \
-            test__ = true;                                             \
-        }                                                              \
-        if (test__)                                                    \
-            break;                                                     \
-        ::tlx::die_with_message(                                       \
-            "DIE-NOEXCEPT: " #code " - NO EXCEPTION " #exception_type, \
-            __FILE__, __LINE__);                                       \
+#define die_unless_throws(code, exception_type)                             \
+    do {                                                                    \
+        try {                                                               \
+            code;                                                           \
+        }                                                                   \
+        catch (const exception_type&) {                                     \
+            break;                                                          \
+        }                                                                   \
+        ::tlx::die_with_message(                                            \
+            "DIE-UNLESS-THROWS: " #code " - NO EXCEPTION " #exception_type, \
+            __FILE__, __LINE__);                                            \
     } while (false)
 
 } // namespace tlx

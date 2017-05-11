@@ -34,7 +34,7 @@ static void test_set_simple_put() {
 
 static void test_set_missing_value() {
     tlx::LruCacheSet<size_t> cache;
-    die_noexcept(cache.touch(7), std::range_error);
+    die_unless_throws(cache.touch(7), std::range_error);
 }
 
 static void test_set_keep_all_values_within_capacity() {
@@ -120,8 +120,8 @@ static void test_map_simple_put() {
 
 static void test_map_missing_value() {
     tlx::LruCacheMap<size_t, size_t> cache;
-    die_noexcept(cache.get(7), std::range_error);
-    die_noexcept(cache.touch(7), std::range_error);
+    die_unless_throws(cache.get(7), std::range_error);
+    die_unless_throws(cache.touch(7), std::range_error);
 }
 
 static void test_map_keep_all_values_within_capacity() {

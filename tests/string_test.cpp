@@ -90,7 +90,7 @@ static void test_base64() {
             tlx::base64_decode(tlx::base64_encode(randstr)), randstr);
     }
 
-    die_noexcept(
+    die_unless_throws(
         tlx::base64_decode("FjXKA5!!RxGFAudA"), std::runtime_error);
 }
 
@@ -223,8 +223,8 @@ static void test_hexdump() {
     die_unequal(hexsource, ARRAY_AS_STRING(hexsourcecmp));
 
     // test parse_hexdump with illegal strings
-    die_noexcept(tlx::parse_hexdump("illegal"), std::runtime_error);
-    die_noexcept(tlx::parse_hexdump("8DE285D4BF98E60"), std::runtime_error);
+    die_unless_throws(tlx::parse_hexdump("illegal"), std::runtime_error);
+    die_unless_throws(tlx::parse_hexdump("8DE285D4BF98E60"), std::runtime_error);
 }
 
 static void test_parse_si_iec_units() {

@@ -283,12 +283,12 @@ public:
 
     //! compare delegate with another
     bool operator == (std::nullptr_t const) const noexcept {
-        return !caller_;
+        return caller_ == nullptr;
     }
 
     //! compare delegate with another
     bool operator != (std::nullptr_t const) const noexcept {
-        return caller_;
+        return caller_ != nullptr;
     }
 
     //! explicit conversion to bool -> valid or invalid.

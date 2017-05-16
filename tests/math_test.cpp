@@ -15,20 +15,48 @@
 #include <tlx/die.hpp>
 #include <tlx/math.hpp>
 
+static void test_clz() {
+
+    die_unequal(tlx::clz_template<uint32_t>(0), 32u);
+
+    unsigned bitpos = 0;
+    for (uint64_t i = 1llu << 63; i != 0; i >>= 1, ++bitpos)
+    {
+        if (i > 1) {
+            die_unequal(tlx::clz(i - 1), bitpos + 1);
+            die_unequal(tlx::clz_template(i - 1), bitpos + 1);
+        }
+
+        die_unequal(tlx::clz(i), bitpos);
+        die_unequal(tlx::clz_template(i), bitpos);
+
+        if (i > 1) {
+            die_unequal(tlx::clz(i + 1), bitpos);
+            die_unequal(tlx::clz_template(i + 1), bitpos);
+        }
+    }
+}
+
 static void test_ffs() {
 
     die_unequal(tlx::ffs(0), 0u);
+    die_unequal(tlx::ffs_template(0), 0u);
 
     unsigned power = 0;
     for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
-        if (i > 1)
+        if (i > 1) {
             die_unequal(tlx::ffs(i - 1), 1u);
+            die_unequal(tlx::ffs_template(i - 1), 1u);
+        }
 
         die_unequal(tlx::ffs(i), power + 1);
+        die_unequal(tlx::ffs_template(i), power + 1);
 
-        if (i > 1)
+        if (i > 1) {
             die_unequal(tlx::ffs(i + 1), 1u);
+            die_unequal(tlx::ffs_template(i + 1), 1u);
+        }
     }
 }
 
@@ -85,6 +113,7 @@ static void test_round_to_power_of_two() {
 
 int main() {
 
+    test_clz();
     test_ffs();
     test_integer_log2();
     test_round_to_power_of_two();

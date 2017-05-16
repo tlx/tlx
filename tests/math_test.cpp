@@ -35,6 +35,12 @@ static void test_clz() {
             die_unequal(tlx::clz_template(i + 1), bitpos);
         }
     }
+
+    die_unequal(tlx::clz<uint32_t>(0x0100), 31u - 8u);
+    die_unequal(tlx::clz<uint64_t>(0x0100), 63u - 8u);
+
+    die_unequal(tlx::clz_template<uint32_t>(0x0100), 31u - 8u);
+    die_unequal(tlx::clz_template<uint64_t>(0x0100), 63u - 8u);
 }
 
 static void test_ffs() {

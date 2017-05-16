@@ -13,6 +13,10 @@
 #ifndef TLX_MATH_CLZ_HEADER
 #define TLX_MATH_CLZ_HEADER
 
+#ifdef _MSC_VER
+#include <intrin.h>
+#endif
+
 namespace tlx {
 
 //! \addtogroup math
@@ -40,38 +44,58 @@ inline unsigned clz(Integral x);
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<int>(int i) {
+inline unsigned clz<unsigned>(unsigned i) {
     return static_cast<unsigned>(__builtin_clz(i));
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<unsigned>(unsigned i) {
-    return clz(static_cast<int>(i));
-}
-
-//! clz (count leading zeros)
-template <>
-inline unsigned clz<long>(long i) {
-    return static_cast<unsigned>(__builtin_clzl(i));
+inline unsigned clz<int>(int i) {
+    return clz(static_cast<unsigned>(i));
 }
 
 //! clz (count leading zeros)
 template <>
 inline unsigned clz<unsigned long>(unsigned long i) {
-    return clz(static_cast<long>(i));
+    return static_cast<unsigned>(__builtin_clzl(i));
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<long long>(long long i) {
-    return static_cast<unsigned>(__builtin_clzll(i));
+inline unsigned clz<long>(long i) {
+    return clz(static_cast<unsigned long>(i));
 }
 
 //! clz (count leading zeros)
 template <>
 inline unsigned clz<unsigned long long>(unsigned long long i) {
-    return clz(static_cast<long long>(i));
+    return static_cast<unsigned>(__builtin_clzll(i));
+}
+
+//! clz (count leading zeros)
+template <>
+inline unsigned clz<long long>(long long i) {
+    return clz(static_cast<unsigned long long>(i));
+}
+
+#elif defined(_MSC_VER)
+
+//! clz (count leading zeros)
+template <typename Integral>
+inline unsigned clz<unsigned>(Integral i) {
+    unsigned long leading_zeros = 0;
+    if (sizeof(i) > 4) {
+        if (_BitScanReverse64(&leading_zeros, i))
+            return 63 - leading_zeros;
+        else
+            return 8 * sizeof(i);
+    }
+    else {
+        if (_BitScanReverse(&leading_zeros, static_cast<unsigned>(i)))
+            return 31 - leading_zeros;
+        else
+            return 8 * sizeof(i);
+    }
 }
 
 #else

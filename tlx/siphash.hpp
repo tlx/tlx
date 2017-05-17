@@ -209,12 +209,26 @@ uint64_t siphash_sse2(const uint8_t key[16], const uint8_t* m, size_t len) {
 // Switch between available implementations
 
 static inline
-uint64_t siphash(const uint8_t key[16], const uint8_t* m, size_t len) {
+uint64_t siphash(const uint8_t key[16], const uint8_t* msg, size_t size) {
 #if defined(__SSE2__)
-    return siphash_sse2(key, m, len);
+    return siphash_sse2(key, msg, size);
 #else
-    return siphash_plain(key, m, len);
+    return siphash_plain(key, msg, size);
 #endif
+}
+
+static inline
+uint64_t siphash(const uint8_t* msg, size_t size) {
+    const unsigned char key[16] = {
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    };
+    return siphash(key, msg, size);
+}
+
+template <typename Type>
+static inline
+uint64_t siphash(const Type& value) {
+    return siphash(reinterpret_cast<const uint8_t*>(&value), sizeof(value));
 }
 
 #undef ROTL64

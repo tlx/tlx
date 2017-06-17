@@ -73,6 +73,18 @@ std::string& replace_first(
 std::string& replace_first(
     std::string* str, const char* needle, const char* instead);
 
+/*!
+ * Replace only the first occurrence of needle in str. The needle will be
+ * replaced with instead, if found. The replacement is done in the given string
+ * and a reference to the same is returned.
+ *
+ * \param str           the string to process
+ * \param needle        character to search for in str
+ * \param instead       replace needle with instead
+ * \return              reference to str
+ */
+std::string& replace_first(std::string* str, char needle, char instead);
+
 /******************************************************************************/
 // replace_first() copy
 
@@ -129,6 +141,18 @@ std::string replace_first(
 std::string replace_first(
     const std::string& str, const char* needle, const char* instead);
 
+/*!
+ * Replace only the first occurrence of needle in str. The needle will be
+ * replaced with instead, if found. Returns a copy of the string with the
+ * possible replacement.
+ *
+ * \param str           the string to process
+ * \param needle        character to search for in str
+ * \param instead       replace needle with instead
+ * \return              copy of string possibly with replacement
+ */
+std::string replace_first(const std::string& str, char needle, char instead);
+
 /******************************************************************************/
 // replace_all() in-place
 
@@ -184,6 +208,18 @@ std::string& replace_all(
 std::string& replace_all(
     std::string* str, const char* needle, const char* instead);
 
+/*!
+ * Replace all occurrences of needle in str. Each needle will be replaced with
+ * instead, if found. The replacement is done in the given string and a
+ * reference to the same is returned.
+ *
+ * \param str           the string to process
+ * \param needle        character to search for in str
+ * \param instead       replace needle with instead
+ * \return              reference to str
+ */
+std::string& replace_all(std::string* str, char needle, char instead);
+
 /******************************************************************************/
 // replace_all() copy
 
@@ -235,6 +271,17 @@ std::string replace_all(
  */
 std::string replace_all(
     const std::string& str, const char* needle, const char* instead);
+
+/*!
+ * Replace all occurrences of needle in str. Each needle will be replaced with
+ * instead, if found. Returns a copy of the string with possible replacements.
+ *
+ * \param str           the string to process
+ * \param needle        character to search for in str
+ * \param instead       replace needle with instead
+ * \return              copy of string possibly with replacements
+ */
+std::string replace_all(const std::string& str, char needle, char instead);
 
 //! \}
 

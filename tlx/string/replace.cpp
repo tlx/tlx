@@ -62,6 +62,16 @@ std::string& replace_first(
     return *str;
 }
 
+std::string& replace_first(std::string* str, char needle, char instead) {
+
+    std::string::size_type firstpos = str->find(needle);
+
+    if (firstpos != std::string::npos)
+        (*str)[firstpos] = instead;
+
+    return *str;
+}
+
 /******************************************************************************/
 // replace_first() copy
 
@@ -110,6 +120,17 @@ std::string replace_first(
 
     if (firstpos != std::string::npos)
         newstr.replace(firstpos, strlen(needle), instead);
+
+    return newstr;
+}
+
+std::string replace_first(const std::string& str, char needle, char instead) {
+
+    std::string newstr = str;
+    std::string::size_type firstpos = newstr.find(needle);
+
+    if (firstpos != std::string::npos)
+        newstr[firstpos] = instead;
 
     return newstr;
 }
@@ -169,6 +190,18 @@ std::string& replace_all(
     {
         str->replace(thispos, needle_size, instead);
         lastpos = thispos + instead_size;
+    }
+    return *str;
+}
+
+std::string& replace_all(std::string* str, char needle, char instead) {
+
+    std::string::size_type lastpos = 0, thispos;
+
+    while ((thispos = str->find(needle, lastpos)) != std::string::npos)
+    {
+        (*str)[thispos] = instead;
+        lastpos = thispos + 1;
     }
     return *str;
 }
@@ -233,6 +266,19 @@ std::string replace_all(
     {
         newstr.replace(thispos, needle_size, instead);
         lastpos = thispos + instead_size;
+    }
+    return newstr;
+}
+
+std::string replace_all(const std::string& str, char needle, char instead) {
+
+    std::string newstr = str;
+    std::string::size_type lastpos = 0, thispos;
+
+    while ((thispos = newstr.find(needle, lastpos)) != std::string::npos)
+    {
+        newstr[thispos] = instead;
+        lastpos = thispos + 1;
     }
     return newstr;
 }

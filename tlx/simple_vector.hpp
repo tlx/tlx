@@ -202,6 +202,7 @@ private:
         case SimpleVectorMode::NoInitButDestroy:
             for (size_t i = 0; i < size; ++i)
                 array[i].~ValueType();
+            __attribute__((fallthrough));
         // intentionally fall through to next case
         case SimpleVectorMode::NoInitNoDestroy:
             // only deallocate memory

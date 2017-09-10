@@ -200,9 +200,11 @@ private:
             delete[] array;
             return;
         case SimpleVectorMode::NoInitButDestroy:
+            // destroy objects and deallocate memory
             for (size_t i = 0; i < size; ++i)
                 array[i].~ValueType();
-        // intentionally fall through to next case
+            operator delete (array);
+            return;
         case SimpleVectorMode::NoInitNoDestroy:
             // only deallocate memory
             operator delete (array);

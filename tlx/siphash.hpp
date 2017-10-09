@@ -126,7 +126,7 @@ uint64_t siphash_plain(const uint8_t key[16], const uint8_t* m, size_t len) {
 
 union siphash_packedelem64 {
     uint64_t u[2];
-    __m128i  v;
+    __m128i v;
 };
 
 /* 0,2,1,3 */

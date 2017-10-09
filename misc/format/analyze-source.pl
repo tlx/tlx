@@ -9,6 +9,9 @@
 # All rights reserved. Published under the Boost Software License, Version 1.0
 ################################################################################
 
+# uncrustify executable
+my $uncrustify = "uncrustify-0.65";
+
 # print multiple email addresses
 my $email_multimap = 0;
 
@@ -329,7 +332,7 @@ sub process_cpp {
     if (filter_uncrustify($path))
     {
         my $data = join("", @data);
-        @data = filter_program($data, "uncrustify", "-q", "-c", "misc/format/uncrustify.cfg", "-l", "CPP");
+        @data = filter_program($data, $uncrustify, "-q", "-c", "misc/format/uncrustify.cfg", "-l", "CPP");
 
         # manually add blank line after "namespace xyz {" and before "} // namespace xyz"
         my @namespace;
@@ -503,9 +506,9 @@ foreach my $arg (@ARGV) {
     or die("Please run this script in the tlx source base directory.");
 
 # check uncrustify's version:
-my ($uncrustver) = filter_program("", "uncrustify", "--version");
-($uncrustver eq "uncrustify 0.64\n")
-    or die("Requires uncrustify 0.64 to run correctly. Got: $uncrustver");
+my ($uncrustver) = filter_program("", $uncrustify, "--version");
+($uncrustver eq "Uncrustify-0.65\n")
+    or die("Requires $uncrustify to run correctly. Got: $uncrustver");
 
 use File::Find;
 my @filelist;

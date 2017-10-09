@@ -43,7 +43,7 @@ auto call_stack(const Functor& functor) {
     // the functor object is captured by non-const copy so that we can use
     // functors with non-const operator(), i.e. stateful functors (e.g. for
     // sampling)
-    return [ =, functor = functor](const auto& input) mutable->void {
+    return [=, functor = functor](const auto& input) mutable -> void {
                functor(input);
     };
 }
@@ -62,7 +62,7 @@ auto call_stack(const Functor& functor, const MoreFunctors& ... rest) {
     // the functor object is captured by non-const copy so that we can use
     // functors with non-const operator(), i.e. stateful functors (e.g. for
     // sampling)
-    return [ =, functor = functor](const auto& input) mutable->void {
+    return [=, functor = functor](const auto& input) mutable -> void {
                functor(input, call_stack(rest...));
     };
 }

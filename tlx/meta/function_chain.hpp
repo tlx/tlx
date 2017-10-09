@@ -32,7 +32,7 @@ namespace detail {
  * Base case for the chaining of functors: zero functors, returns the identity.
  */
 static inline auto call_chain() {
-    return [] (const auto& input)mutable->auto {
+    return [](const auto& input) mutable -> auto {
                return input;
     };
 }
@@ -47,7 +47,7 @@ template <typename Functor>
 auto call_chain(const Functor& functor) {
     // the functor is captured by non-const copy so that we can use functors
     // with non-const operator(), i.e. stateful functors (e.g. for sampling)
-    return [functor = functor](const auto& input) mutable->auto {
+    return [functor = functor](const auto& input) mutable -> auto {
                return functor(input);
     };
 }
@@ -64,7 +64,7 @@ template <typename Functor, typename... MoreFunctors>
 auto call_chain(const Functor& functor, const MoreFunctors& ... rest) {
     // the functor is captured by non-const copy so that we can use functors
     // with non-const operator(), i.e. stateful functors (e.g. for sampling)
-    return [ =, functor = functor](const auto& input) mutable->auto {
+    return [=, functor = functor](const auto& input) mutable -> auto {
                return call_chain(rest...)(functor(input));
     };
 }

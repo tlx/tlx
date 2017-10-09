@@ -14,6 +14,8 @@
 #ifndef TLX_SIPHASH_HEADER
 #define TLX_SIPHASH_HEADER
 
+#include <tlx/define/attribute_fallthrough.hpp>
+
 #include <cstdint>
 #include <cstdlib>
 
@@ -77,13 +79,27 @@ uint64_t siphash_plain(const uint8_t key[16], const uint8_t* m, size_t len) {
     }
 
     switch (len - blocks) {
-    case 7: last7 |= (uint64_t)m[i + 6] << 48;
-    case 6: last7 |= (uint64_t)m[i + 5] << 40;
-    case 5: last7 |= (uint64_t)m[i + 4] << 32;
-    case 4: last7 |= (uint64_t)m[i + 3] << 24;
-    case 3: last7 |= (uint64_t)m[i + 2] << 16;
-    case 2: last7 |= (uint64_t)m[i + 1] << 8;
-    case 1: last7 |= (uint64_t)m[i + 0];
+    case 7:
+        last7 |= (uint64_t)m[i + 6] << 48;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 6:
+        last7 |= (uint64_t)m[i + 5] << 40;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 5:
+        last7 |= (uint64_t)m[i + 4] << 32;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 4:
+        last7 |= (uint64_t)m[i + 3] << 24;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 3:
+        last7 |= (uint64_t)m[i + 2] << 16;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 2:
+        last7 |= (uint64_t)m[i + 1] << 8;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 1:
+        last7 |= (uint64_t)m[i + 0];
+        TLX_ATTRIBUTE_FALLTHROUGH;
     case 0:
     default:;
     }
@@ -170,13 +186,27 @@ uint64_t siphash_sse2(const uint8_t key[16], const uint8_t* m, size_t len) {
     }
 
     switch (len - blocks) {
-    case 7: last7 |= (uint64_t)m[i + 6] << 48;
-    case 6: last7 |= (uint64_t)m[i + 5] << 40;
-    case 5: last7 |= (uint64_t)m[i + 4] << 32;
-    case 4: last7 |= (uint64_t)m[i + 3] << 24;
-    case 3: last7 |= (uint64_t)m[i + 2] << 16;
-    case 2: last7 |= (uint64_t)m[i + 1] << 8;
-    case 1: last7 |= (uint64_t)m[i + 0];
+    case 7:
+        last7 |= (uint64_t)m[i + 6] << 48;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 6:
+        last7 |= (uint64_t)m[i + 5] << 40;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 5:
+        last7 |= (uint64_t)m[i + 4] << 32;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 4:
+        last7 |= (uint64_t)m[i + 3] << 24;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 3:
+        last7 |= (uint64_t)m[i + 2] << 16;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 2:
+        last7 |= (uint64_t)m[i + 1] << 8;
+        TLX_ATTRIBUTE_FALLTHROUGH;
+    case 1:
+        last7 |= (uint64_t)m[i + 0];
+        TLX_ATTRIBUTE_FALLTHROUGH;
     case 0:
     default:;
     }

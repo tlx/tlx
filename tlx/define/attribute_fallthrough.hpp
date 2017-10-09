@@ -16,8 +16,10 @@ namespace tlx {
 /******************************************************************************/
 // __attribute__ ((fallthrough))
 
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(__GNUC__) && __GNUC__ >= 7
 #define TLX_ATTRIBUTE_FALLTHROUGH __attribute__ ((fallthrough))
+#elif defined(__clang__)
+#define TLX_ATTRIBUTE_FALLTHROUGH [[clang::fallthrough]]
 #else
 #define TLX_ATTRIBUTE_FALLTHROUGH
 #endif

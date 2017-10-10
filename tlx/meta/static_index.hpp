@@ -15,7 +15,7 @@
 
 namespace tlx {
 
-//! \addtogroup meta
+//! \addtogroup tlx_meta
 //! \{
 
 //! Helper for call_foreach_with_index() to save the index as a compile-time

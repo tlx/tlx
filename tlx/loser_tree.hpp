@@ -31,6 +31,12 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_data_structures
+//! \{
+//! \defgroup tlx_data_structures_loser_tree Loser Trees
+//! Loser/Tournament tree variants
+//! \{
+
 /*!
  * Guarded loser tree/tournament tree, either copying the whole element into the
  * tree structure, or looking up the element via the index.
@@ -876,6 +882,9 @@ public:
 template <bool Stable, typename ValueType, typename Comparator>
 using LoserTreeUnguarded =
           typename LoserTreeUnguardedSwitch<Stable, ValueType, Comparator>::Type;
+
+//! \}
+//! \}
 
 } // namespace tlx
 

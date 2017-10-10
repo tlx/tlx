@@ -15,7 +15,7 @@
 
 namespace tlx {
 
-//! \addtogroup meta
+//! \addtogroup tlx_meta
 //! \{
 
 //! test if is a std::pair<...>

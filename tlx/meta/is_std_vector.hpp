@@ -15,7 +15,7 @@
 
 namespace tlx {
 
-//! \addtogroup meta
+//! \addtogroup tlx_meta
 //! \{
 
 //! test if is std::vector<T>

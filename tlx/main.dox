@@ -1,5 +1,7 @@
 /*******************************************************************************
- * tlx/math/abs_diff.hpp
+ * tlx/main.dox
+ *
+ * Main doxygen group
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,27 +10,26 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_MATH_ABS_DIFF_HEADER
-#define TLX_MATH_ABS_DIFF_HEADER
-
 namespace tlx {
 
-//! \addtogroup tlx_math
-//! \{
-
 /******************************************************************************/
-// abs_diff() - calculate absolute difference
+/*!
 
-//! absolute difference, which also works for unsigned types
-template <typename T>
-T abs_diff(const T& a, const T& b) {
-    return a > b ? a - b : b - a;
-}
+\defgroup tlx tlx - C++ Extensions and Utilities
+\{
 
-//! \}
+\defgroup tlx_data_structures Data Structures
+\defgroup tlx_math Math Functions
+\defgroup tlx_meta Meta-Template Programming
+\defgroup tlx_string String Algorithms
+
+\}
+
+*/
+
+//! \defgroup tlx_data_structures Data Structures
+//! data structures
 
 } // namespace tlx
-
-#endif // !TLX_MATH_ABS_DIFF_HEADER
 
 /******************************************************************************/

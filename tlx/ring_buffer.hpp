@@ -21,6 +21,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_data_structures
+//! \{
+
 /*!
  * A ring (circular) buffer of static (non-growing) size.
  *
@@ -366,6 +369,8 @@ protected:
     //! iterator at current begin of ring buffer
     size_type end_ = 0;
 };
+
+//! \}
 
 } // namespace tlx
 

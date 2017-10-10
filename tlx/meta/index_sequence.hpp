@@ -15,7 +15,7 @@
 
 namespace tlx {
 
-//! \addtogroup meta
+//! \addtogroup tlx_meta
 //! \{
 
 // Compile-time integer sequences, an implementation of std::index_sequence and

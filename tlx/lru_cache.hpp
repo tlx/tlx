@@ -26,6 +26,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_data_structures
+//! \{
+
 /*!
  * This is an expected O(1) LRU cache which contains a set of key-only
  * elements. Elements can be put() into LRU cache, and tested for existence
@@ -291,6 +294,8 @@ private:
     //! map for accelerated access to keys
     Map map_;
 };
+
+//! \}
 
 } // namespace tlx
 

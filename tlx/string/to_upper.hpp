@@ -15,7 +15,7 @@
 
 namespace tlx {
 
-//! \addtogroup string
+//! \addtogroup tlx_string
 //! \{
 
 //! Transform the given character to upper case without any localization.

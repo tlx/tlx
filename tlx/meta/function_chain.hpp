@@ -23,7 +23,7 @@
 
 namespace tlx {
 
-//! \addtogroup meta
+//! \addtogroup tlx_meta
 //! \{
 
 namespace detail {

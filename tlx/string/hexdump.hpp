@@ -17,7 +17,7 @@
 
 namespace tlx {
 
-//! \addtogroup string
+//! \addtogroup tlx_string
 //! \{
 //! \name Hexdump Methods
 //! \{

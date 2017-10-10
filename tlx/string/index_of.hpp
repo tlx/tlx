@@ -16,7 +16,7 @@
 
 namespace tlx {
 
-//! \addtogroup string
+//! \addtogroup tlx_string
 //! \{
 
 /*!

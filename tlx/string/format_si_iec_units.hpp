@@ -15,7 +15,7 @@
 
 namespace tlx {
 
-//! \addtogroup string
+//! \addtogroup tlx_string
 //! \{
 
 //! Format a byte size using SI (K, M, G, T) suffixes (powers of ten). Returns

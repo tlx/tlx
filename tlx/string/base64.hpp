@@ -15,7 +15,7 @@
 
 namespace tlx {
 
-//! \addtogroup string
+//! \addtogroup tlx_string
 //! \{
 //! \name Base64 Encoding and Decoding
 //! \{

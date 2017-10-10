@@ -21,6 +21,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_data_structures
+//! \{
+
 //! enum class to select SimpleVector object initialization
 enum class SimpleVectorMode {
     //! Initialize objects at allocation and destroy on deallocation
@@ -217,6 +220,8 @@ private:
 //! make template alias due to similarity with std::vector
 template <typename T>
 using simple_vector = SimpleVector<T>;
+
+//! \}
 
 } // namespace tlx
 

@@ -11,7 +11,7 @@
 #ifndef TLX_MATH_HEADER
 #define TLX_MATH_HEADER
 
-//! \defgroup math Math Functions
+//! \defgroup tlx_math Math Functions
 //! simple math functions
 
 /*[[[perl

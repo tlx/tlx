@@ -11,7 +11,7 @@
 #ifndef TLX_META_HEADER
 #define TLX_META_HEADER
 
-//! \defgroup meta Meta-Template Programming
+//! \defgroup tlx_meta Meta-Template Programming
 //! tools for easier meta-template programming
 
 /*[[[perl

@@ -30,6 +30,14 @@ public:
     }
 };
 
+//! dummy deleter for CountingPtr
+class CountingPtrNoOperationDeleter
+{
+public:
+    template <typename Type>
+    void operator () (Type*) const noexcept { }
+};
+
 /*!
  * High-performance smart pointer used as a wrapping reference counting pointer.
  *
@@ -239,6 +247,10 @@ public:
 template <typename Type>
 using counting_ptr = CountingPtr<Type>;
 
+//! make alias for dummy deleter
+template <typename Type>
+using CountingPtrNoDelete = CountingPtr<Type, CountingPtrNoOperationDeleter>;
+
 //! method analogous to std::make_shared and std::make_unique.
 template <typename Type, typename... Args>
 CountingPtr<Type> make_counting(Args&& ... args) {
@@ -247,14 +259,14 @@ CountingPtr<Type> make_counting(Args&& ... args) {
 
 //! swap enclosed object with another counting pointer (no reference counts need
 //! change)
-template <typename A>
-void swap(CountingPtr<A>& a1, CountingPtr<A>& a2) noexcept {
+template <typename A, typename D>
+void swap(CountingPtr<A, D>& a1, CountingPtr<A, D>& a2) noexcept {
     a1.swap(a2);
 }
 
 //! print pointer
-template <typename A>
-std::ostream& operator << (std::ostream& os, const CountingPtr<A>& c) {
+template <typename A, typename D>
+std::ostream& operator << (std::ostream& os, const CountingPtr<A, D>& c) {
     return os << c.get();
 }
 

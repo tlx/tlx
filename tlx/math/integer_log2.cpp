@@ -12,15 +12,6 @@
 
 namespace tlx {
 
-template <typename IntegerType>
-static inline unsigned integer_log2_floor_template(IntegerType i) {
-    unsigned p = 0;
-    while (i >= 65536) i >>= 16, p += 16;
-    while (i >= 256) i >>= 8, p += 8;
-    while (i >>= 1) ++p;
-    return p;
-}
-
 /******************************************************************************/
 
 unsigned integer_log2_floor(int i) {

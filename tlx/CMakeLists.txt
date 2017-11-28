@@ -9,6 +9,7 @@
 
 set(LIBTLX_SOURCES
 
+  backtrace.cpp
   cmdline_parser.cpp
   die.cpp
   logger.cpp

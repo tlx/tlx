@@ -24,10 +24,10 @@
 /******************************************************************************/
 // Instantiation Tests
 
-template class stx::btree_set<unsigned int>;
-template class stx::btree_map<int, double>;
-template class stx::btree_multiset<int>;
-template class stx::btree_multimap<int, int>;
+template class tlx::btree_set<unsigned int>;
+template class tlx::btree_map<int, double>;
+template class tlx::btree_multiset<int>;
+template class tlx::btree_multimap<int, int>;
 
 /******************************************************************************/
 // Simple Tests
@@ -35,7 +35,7 @@ template class stx::btree_multimap<int, int>;
 template <int Slots>
 struct SimpleTest {
     template <typename KeyType>
-    struct traits_nodebug : stx::btree_default_set_traits<KeyType>{
+    struct traits_nodebug : tlx::btree_default_set_traits<KeyType>{
         static const bool selfverify = true;
         static const bool debug = false;
 
@@ -44,7 +44,7 @@ struct SimpleTest {
     };
 
     static void test_empty() {
-        typedef stx::btree_multiset<
+        typedef tlx::btree_multiset<
                 unsigned int,
                 std::less<unsigned int>, traits_nodebug<unsigned int> >
             btree_type;
@@ -58,7 +58,7 @@ struct SimpleTest {
     }
 
     static void test_set_insert_erase_3200() {
-        typedef stx::btree_multiset<
+        typedef tlx::btree_multiset<
                 unsigned int,
                 std::less<unsigned int>, traits_nodebug<unsigned int> >
             btree_type;
@@ -86,7 +86,7 @@ struct SimpleTest {
     }
 
     static void test_set_insert_erase_3200_descending() {
-        typedef stx::btree_multiset<
+        typedef tlx::btree_multiset<
                 unsigned int,
                 std::greater<unsigned int>, traits_nodebug<unsigned int> >
             btree_type;
@@ -113,7 +113,7 @@ struct SimpleTest {
     }
 
     static void test_map_insert_erase_3200() {
-        typedef stx::btree_multimap<
+        typedef tlx::btree_multimap<
                 unsigned int, std::string,
                 std::less<unsigned int>, traits_nodebug<unsigned int> >
             btree_type;
@@ -141,7 +141,7 @@ struct SimpleTest {
     }
 
     static void test_map_insert_erase_3200_descending() {
-        typedef stx::btree_multimap<
+        typedef tlx::btree_multimap<
                 unsigned int, std::string,
                 std::greater<unsigned int>, traits_nodebug<unsigned int> >
             btree_type;
@@ -169,7 +169,7 @@ struct SimpleTest {
     }
 
     static void test2_map_insert_erase_strings() {
-        typedef stx::btree_multimap<
+        typedef tlx::btree_multimap<
                 std::string, unsigned int,
                 std::less<std::string>, traits_nodebug<std::string> >
             btree_type;
@@ -203,7 +203,7 @@ struct SimpleTest {
     }
 
     static void test_set_100000_uint64() {
-        stx::btree_map<uint64_t, uint8_t> bt;
+        tlx::btree_map<uint64_t, uint8_t> bt;
 
         for (uint64_t i = 10; i < 100000; ++i)
         {
@@ -219,7 +219,7 @@ struct SimpleTest {
     }
 
     static void test_multiset_100000_uint32() {
-        stx::btree_multiset<uint32_t> bt;
+        tlx::btree_multiset<uint32_t> bt;
 
         for (uint64_t i = 0; i < 100000; ++i)
         {
@@ -273,7 +273,7 @@ void test_simple() {
 // Large Test
 
 template <typename KeyType>
-struct traits_nodebug : stx::btree_default_set_traits<KeyType>{
+struct traits_nodebug : tlx::btree_default_set_traits<KeyType>{
     static const bool selfverify = true;
     static const bool debug = false;
 
@@ -282,7 +282,7 @@ struct traits_nodebug : stx::btree_default_set_traits<KeyType>{
 };
 
 void test_large_multiset(const unsigned int insnum, const unsigned int modulo) {
-    typedef stx::btree_multiset<
+    typedef tlx::btree_multiset<
             unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
 
@@ -369,7 +369,7 @@ void test_large() {
 }
 
 void test_large_sequence() {
-    typedef stx::btree_multiset<
+    typedef tlx::btree_multiset<
             unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
 
@@ -451,7 +451,7 @@ void test_large_sequence() {
 // Upper/Lower Bound Tests
 
 void test_bounds_multimap(const unsigned int insnum, const int modulo) {
-    typedef stx::btree_multimap<
+    typedef tlx::btree_multimap<
             unsigned int, unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
     btree_type bt;
@@ -586,7 +586,7 @@ void test_bounds() {
 // Test Iterators
 
 void test_iterator1() {
-    typedef stx::btree_multiset<
+    typedef tlx::btree_multiset<
             unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
 
@@ -648,7 +648,7 @@ void test_iterator1() {
 }
 
 void test_iterator2() {
-    typedef stx::btree_multimap<
+    typedef tlx::btree_multimap<
             unsigned int, unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
 
@@ -709,7 +709,7 @@ void test_iterator2() {
 }
 
 void test_iterator3() {
-    typedef stx::btree_map<
+    typedef tlx::btree_map<
             unsigned int, unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
 
@@ -1022,7 +1022,7 @@ void test_iterator3() {
 }
 
 void test_iterator4() {
-    typedef stx::btree_set<
+    typedef tlx::btree_set<
             unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
 
@@ -1265,7 +1265,7 @@ void test_iterator4() {
 }
 
 void test_iterator5() {
-    typedef stx::btree_set<
+    typedef tlx::btree_set<
             unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
 
@@ -1360,7 +1360,7 @@ void test_iterator5() {
 }
 
 void test_erase_iterator1() {
-    typedef stx::btree_multimap<
+    typedef tlx::btree_multimap<
             int, int,
             std::less<int>, traits_nodebug<int> > btree_type;
 
@@ -1443,7 +1443,7 @@ struct TestCompare {
 };
 
 void test_struct() {
-    typedef stx::btree_multiset<struct TestData, struct TestCompare,
+    typedef tlx::btree_multiset<struct TestData, struct TestCompare,
                                 struct traits_nodebug<struct TestData> > btree_type;
 
     btree_type bt(TestCompare(42));
@@ -1469,7 +1469,7 @@ void test_struct() {
 // Test Relations
 
 void test_relations() {
-    typedef stx::btree_multiset<
+    typedef tlx::btree_multiset<
             unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
 
@@ -1516,7 +1516,7 @@ void test_relations() {
 // Test Bulk Load
 
 void test_bulkload_set_instance(size_t numkeys, unsigned int mod) {
-    typedef stx::btree_multiset<
+    typedef tlx::btree_multiset<
             unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
 
@@ -1542,7 +1542,7 @@ void test_bulkload_set_instance(size_t numkeys, unsigned int mod) {
 }
 
 void test_bulkload_map_instance(size_t numkeys, unsigned int mod) {
-    typedef stx::btree_multimap<
+    typedef tlx::btree_multimap<
             int, std::string,
             std::less<int>, traits_nodebug<int> > btree_type;
 

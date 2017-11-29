@@ -13,7 +13,7 @@
 
 #include <tlx/btree.hpp>
 
-namespace stx {
+namespace tlx {
 
 /** @brief Specialized B+ tree template class implementing STL's set container.
  *
@@ -33,10 +33,10 @@ namespace stx {
  * key_type, and not a pair of key and dummy-struct. This is taken case of
  * using some template magic in the btree class.
  */
-template <typename _Key,
-          typename _Compare = std::less<_Key>,
-          typename _Traits = btree_default_set_traits<_Key>,
-          typename _Alloc = std::allocator<_Key> >
+template <typename Key_,
+          typename Compare_ = std::less<Key_>,
+          typename Traits_ = btree_default_set_traits<Key_>,
+          typename Alloc_ = std::allocator<Key_> >
 class btree_set
 {
 public:
@@ -44,22 +44,22 @@ public:
 
     /// First template parameter: The key type of the B+ tree. This is stored
     /// in inner nodes and leaves
-    typedef _Key key_type;
+    typedef Key_ key_type;
 
     /// Second template parameter: Key comparison function object
-    typedef _Compare key_compare;
+    typedef Compare_ key_compare;
 
     /// Third template parameter: Traits object used to define more parameters
     /// of the B+ tree
-    typedef _Traits traits;
+    typedef Traits_ traits;
 
     /// Fourth template parameter: STL allocator
-    typedef _Alloc allocator_type;
+    typedef Alloc_ allocator_type;
 
-    /// The macro BTREE_FRIENDS can be used by outside class to access the B+
+    /// The macro TLX_BTREE_FRIENDS can be used by outside class to access the B+
     /// tree internals. This was added for wxBTreeDemo to be able to draw the
     /// tree.
-    BTREE_FRIENDS
+    TLX_BTREE_FRIENDS
 
 private:
     // *** The data_type
@@ -80,8 +80,8 @@ public:
     typedef btree_set<key_type, key_compare, traits, allocator_type> self;
 
     /// Implementation type of the btree_base
-    typedef stx::btree<key_type, data_type, value_type, key_compare,
-                       traits, false, allocator_type, true> btree_impl;
+    typedef btree<key_type, data_type, value_type, key_compare,
+                  traits, false, allocator_type, true> btree_impl;
 
     /// Function class comparing two value_type keys.
     typedef typename btree_impl::value_compare value_compare;
@@ -152,21 +152,21 @@ public:
 
     /// Default constructor initializing an empty B+ tree with the standard key
     /// comparison function
-    explicit inline btree_set(const allocator_type& alloc = allocator_type())
+    explicit btree_set(const allocator_type& alloc = allocator_type())
         : tree(alloc)
     { }
 
     /// Constructor initializing an empty B+ tree with a special key
     /// comparison object
-    explicit inline btree_set(const key_compare& kcf,
-                              const allocator_type& alloc = allocator_type())
+    explicit btree_set(const key_compare& kcf,
+                       const allocator_type& alloc = allocator_type())
         : tree(kcf, alloc)
     { }
 
     /// Constructor initializing a B+ tree with the range [first,last)
     template <class InputIterator>
-    inline btree_set(InputIterator first, InputIterator last,
-                     const allocator_type& alloc = allocator_type())
+    btree_set(InputIterator first, InputIterator last,
+              const allocator_type& alloc = allocator_type())
         : tree(alloc) {
         insert(first, last);
     }
@@ -174,14 +174,14 @@ public:
     /// Constructor initializing a B+ tree with the range [first,last) and a
     /// special key comparison object
     template <class InputIterator>
-    inline btree_set(InputIterator first, InputIterator last, const key_compare& kcf,
-                     const allocator_type& alloc = allocator_type())
+    btree_set(InputIterator first, InputIterator last, const key_compare& kcf,
+              const allocator_type& alloc = allocator_type())
         : tree(kcf, alloc) {
         insert(first, last);
     }
 
     /// Frees up all used B+ tree memory pages
-    inline ~btree_set()
+    ~btree_set()
     { }
 
     /// Fast swapping of two identical B+ tree objects.
@@ -193,13 +193,13 @@ public:
     // *** Key and Value Comparison Function Objects
 
     /// Constant access to the key comparison object sorting the B+ tree
-    inline key_compare key_comp() const {
+    key_compare key_comp() const {
         return tree.key_comp();
     }
 
     /// Constant access to a constructed value_type comparison object. required
     /// by the STL
-    inline value_compare value_comp() const {
+    value_compare value_comp() const {
         return tree.value_comp();
     }
 
@@ -224,49 +224,49 @@ public:
 
     /// Constructs a read/data-write iterator that points to the first slot in
     /// the first leaf of the B+ tree.
-    inline iterator begin() {
+    iterator begin() {
         return tree.begin();
     }
 
     /// Constructs a read/data-write iterator that points to the first invalid
     /// slot in the last leaf of the B+ tree.
-    inline iterator end() {
+    iterator end() {
         return tree.end();
     }
 
     /// Constructs a read-only constant iterator that points to the first slot
     /// in the first leaf of the B+ tree.
-    inline const_iterator begin() const {
+    const_iterator begin() const {
         return tree.begin();
     }
 
     /// Constructs a read-only constant iterator that points to the first
     /// invalid slot in the last leaf of the B+ tree.
-    inline const_iterator end() const {
+    const_iterator end() const {
         return tree.end();
     }
 
     /// Constructs a read/data-write reverse iterator that points to the first
     /// invalid slot in the last leaf of the B+ tree. Uses STL magic.
-    inline reverse_iterator rbegin() {
+    reverse_iterator rbegin() {
         return tree.rbegin();
     }
 
     /// Constructs a read/data-write reverse iterator that points to the first
     /// slot in the first leaf of the B+ tree. Uses STL magic.
-    inline reverse_iterator rend() {
+    reverse_iterator rend() {
         return tree.rend();
     }
 
     /// Constructs a read-only reverse iterator that points to the first
     /// invalid slot in the last leaf of the B+ tree. Uses STL magic.
-    inline const_reverse_iterator rbegin() const {
+    const_reverse_iterator rbegin() const {
         return tree.rbegin();
     }
 
     /// Constructs a read-only reverse iterator that points to the first slot
     /// in the first leaf of the B+ tree. Uses STL magic.
-    inline const_reverse_iterator rend() const {
+    const_reverse_iterator rend() const {
         return tree.rend();
     }
 
@@ -274,23 +274,23 @@ public:
     // *** Access Functions to the Item Count
 
     /// Return the number of keys in the B+ tree
-    inline size_type size() const {
+    size_type size() const {
         return tree.size();
     }
 
     /// Returns true if there is at least one key in the B+ tree
-    inline bool empty() const {
+    bool empty() const {
         return tree.empty();
     }
 
     /// Returns the largest possible size of the B+ Tree. This is just a
     /// function required by the STL standard, the B+ Tree can hold more items.
-    inline size_type max_size() const {
+    size_type max_size() const {
         return tree.max_size();
     }
 
     /// Return a const reference to the current statistics.
-    inline const tree_stats& get_stats() const {
+    const tree_stats& get_stats() const {
         return tree.get_stats();
     }
 
@@ -349,12 +349,12 @@ public:
     }
 
     /// Searches the B+ tree and returns both lower_bound() and upper_bound().
-    inline std::pair<iterator, iterator> equal_range(const key_type& key) {
+    std::pair<iterator, iterator> equal_range(const key_type& key) {
         return tree.equal_range(key);
     }
 
     /// Searches the B+ tree and returns both lower_bound() and upper_bound().
-    inline std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
+    std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
         return tree.equal_range(key);
     }
 
@@ -363,33 +363,33 @@ public:
 
     /// Equality relation of B+ trees of the same type. B+ trees of the same
     /// size and equal elements are considered equal.
-    inline bool operator == (const self& other) const {
+    bool operator == (const self& other) const {
         return (tree == other.tree);
     }
 
     /// Inequality relation. Based on operator==.
-    inline bool operator != (const self& other) const {
+    bool operator != (const self& other) const {
         return (tree != other.tree);
     }
 
     /// Total ordering relation of B+ trees of the same type. It uses
     /// std::lexicographical_compare() for the actual comparison of elements.
-    inline bool operator < (const self& other) const {
+    bool operator < (const self& other) const {
         return (tree < other.tree);
     }
 
     /// Greater relation. Based on operator<.
-    inline bool operator > (const self& other) const {
+    bool operator > (const self& other) const {
         return (tree > other.tree);
     }
 
     /// Less-equal relation. Based on operator<.
-    inline bool operator <= (const self& other) const {
+    bool operator <= (const self& other) const {
         return (tree <= other.tree);
     }
 
     /// Greater-equal relation. Based on operator<.
-    inline bool operator >= (const self& other) const {
+    bool operator >= (const self& other) const {
         return (tree >= other.tree);
     }
 
@@ -397,7 +397,7 @@ public:
     /// *** Fast Copy: Assign Operator and Copy Constructors
 
     /// Assignment operator. All the keys are copied
-    inline self& operator = (const self& other) {
+    self& operator = (const self& other) {
         if (this != &other)
         {
             tree = other.tree;
@@ -407,7 +407,7 @@ public:
 
     /// Copy constructor. The newly initialized B+ tree object will contain a
     /// copy of all keys.
-    inline btree_set(const self& other)
+    btree_set(const self& other)
         : tree(other.tree)
     { }
 
@@ -416,20 +416,20 @@ public:
 
     /// Attempt to insert a key into the B+ tree. The insert will fail if it is
     /// already present.
-    inline std::pair<iterator, bool> insert(const key_type& x) {
+    std::pair<iterator, bool> insert(const key_type& x) {
         return tree.insert2(x, data_type());
     }
 
     /// Attempt to insert a key into the B+ tree. The iterator hint is
     /// currently ignored by the B+ tree insertion routine.
-    inline iterator insert(iterator hint, const key_type& x) {
+    iterator insert(iterator hint, const key_type& x) {
         return tree.insert2(hint, x, data_type());
     }
 
     /// Attempt to insert the range [first,last) of iterators dereferencing to
     /// key_type into the B+ tree. Each key/data pair is inserted individually.
     template <typename InputIterator>
-    inline void insert(InputIterator first, InputIterator last) {
+    void insert(InputIterator first, InputIterator last) {
         InputIterator iter = first;
         while (iter != last)
         {
@@ -442,7 +442,7 @@ public:
     /// constructs a B-tree above them. The tree must be empty when calling
     /// this function.
     template <typename Iterator>
-    inline void bulk_load(Iterator first, Iterator last) {
+    void bulk_load(Iterator first, Iterator last) {
         return tree.bulk_load(first, last);
     }
 
@@ -519,7 +519,7 @@ public:
     }
 };
 
-} // namespace stx
+} // namespace tlx
 
 #endif // !TLX_BTREE_SET_HEADER
 

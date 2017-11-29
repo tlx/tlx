@@ -21,105 +21,113 @@
 #include <memory>
 #include <ostream>
 
+namespace tlx {
+
+//! \addtogroup tlx_data_structures
+//! \{
+
 // *** Debugging Macros
 
 #ifdef TLX_BTREE_DEBUG
 
 #include <iostream>
 
-/// Print out debug information to std::cout if TLX_BTREE_DEBUG is defined.
+//! Print out debug information to std::cout if TLX_BTREE_DEBUG is defined.
 #define TLX_BTREE_PRINT(x)          do { if (debug) (std::cout << x << std::endl); } while (0)
 
-/// Assertion only if TLX_BTREE_DEBUG is defined. This is not used in verify().
+//! Assertion only if TLX_BTREE_DEBUG is defined. This is not used in verify().
 #define TLX_BTREE_ASSERT(x)         do { assert(x); } while (0)
 
 #else
 
-/// Print out debug information to std::cout if TLX_BTREE_DEBUG is defined.
+//! Print out debug information to std::cout if TLX_BTREE_DEBUG is defined.
 #define TLX_BTREE_PRINT(x)          do { } while (0)
 
-/// Assertion only if TLX_BTREE_DEBUG is defined. This is not used in verify().
+//! Assertion only if TLX_BTREE_DEBUG is defined. This is not used in verify().
 #define TLX_BTREE_ASSERT(x)         do { } while (0)
 
 #endif
 
-/// The maximum of a and b. Used in some compile-time formulas.
+//! The maximum of a and b. Used in some compile-time formulas.
 #define TLX_BTREE_MAX(a, b)          ((a) < (b) ? (b) : (a))
 
 #ifndef TLX_BTREE_FRIENDS
-/// The macro TLX_BTREE_FRIENDS can be used by outside class to access the B+
-/// tree internals. This was added for wxBTreeDemo to be able to draw the
-/// tree.
+//! The macro TLX_BTREE_FRIENDS can be used by outside class to access the B+
+//! tree internals. This was added for wxBTreeDemo to be able to draw the
+//! tree.
 #define TLX_BTREE_FRIENDS           friend class btree_friend;
 #endif
 
-namespace tlx {
-
-/** Generates default traits for a B+ tree used as a set. It estimates leaf and
- * inner node sizes by assuming a cache line size of 256 bytes. */
+/*!
+ * Generates default traits for a B+ tree used as a set. It estimates leaf and
+ * inner node sizes by assuming a cache line size of 256 bytes.
+*/
 template <typename Key>
 struct btree_default_set_traits {
-    /// If true, the tree will self verify it's invariants after each insert()
-    /// or erase(). The header must have been compiled with TLX_BTREE_DEBUG
-    /// defined.
+    //! If true, the tree will self verify it's invariants after each insert()
+    //! or erase(). The header must have been compiled with TLX_BTREE_DEBUG
+    //! defined.
     static const bool   selfverify = false;
 
-    /// If true, the tree will print out debug information and a tree dump
-    /// during insert() or erase() operation. The header must have been
-    /// compiled with TLX_BTREE_DEBUG defined and key_type must be std::ostream
-    /// printable.
+    //! If true, the tree will print out debug information and a tree dump
+    //! during insert() or erase() operation. The header must have been
+    //! compiled with TLX_BTREE_DEBUG defined and key_type must be std::ostream
+    //! printable.
     static const bool   debug = false;
 
-    /// Number of slots in each leaf of the tree. Estimated so that each node
-    /// has a size of about 256 bytes.
+    //! Number of slots in each leaf of the tree. Estimated so that each node
+    //! has a size of about 256 bytes.
     static const int    leafslots =
         TLX_BTREE_MAX(8, 256 / (sizeof(Key)));
 
-    /// Number of slots in each inner node of the tree. Estimated so that each
-    /// node has a size of about 256 bytes.
+    //! Number of slots in each inner node of the tree. Estimated so that each
+    //! node has a size of about 256 bytes.
     static const int    innerslots =
         TLX_BTREE_MAX(8, 256 / (sizeof(Key) + sizeof(void*)));
 
-    /// As of stx-btree-0.9, the code does linear search in find_lower() and
-    /// find_upper() instead of binary_search, unless the node size is larger
-    /// than this threshold. See notes at
-    /// http://panthema.net/2013/0504-STX-B+Tree-Binary-vs-Linear-Search
+    //! As of stx-btree-0.9, the code does linear search in find_lower() and
+    //! find_upper() instead of binary_search, unless the node size is larger
+    //! than this threshold. See notes at
+    //! http://panthema.net/2013/0504-STX-B+Tree-Binary-vs-Linear-Search
     static const size_t binsearch_threshold = 256;
 };
 
-/** Generates default traits for a B+ tree used as a map. It estimates leaf and
- * inner node sizes by assuming a cache line size of 256 bytes. */
+/*!
+ * Generates default traits for a B+ tree used as a map. It estimates leaf and
+ * inner node sizes by assuming a cache line size of 256 bytes.
+*/
 template <typename Key, typename Data>
 struct btree_default_map_traits {
-    /// If true, the tree will self verify it's invariants after each insert()
-    /// or erase(). The header must have been compiled with TLX_BTREE_DEBUG
-    /// defined.
+    //! If true, the tree will self verify it's invariants after each insert()
+    //! or erase(). The header must have been compiled with TLX_BTREE_DEBUG
+    //! defined.
     static const bool   selfverify = false;
 
-    /// If true, the tree will print out debug information and a tree dump
-    /// during insert() or erase() operation. The header must have been
-    /// compiled with TLX_BTREE_DEBUG defined and key_type must be std::ostream
-    /// printable.
+    //! If true, the tree will print out debug information and a tree dump
+    //! during insert() or erase() operation. The header must have been
+    //! compiled with TLX_BTREE_DEBUG defined and key_type must be std::ostream
+    //! printable.
     static const bool   debug = false;
 
-    /// Number of slots in each leaf of the tree. Estimated so that each node
-    /// has a size of about 256 bytes.
+    //! Number of slots in each leaf of the tree. Estimated so that each node
+    //! has a size of about 256 bytes.
     static const int    leafslots =
         TLX_BTREE_MAX(8, 256 / (sizeof(Key) + sizeof(Data)));
 
-    /// Number of slots in each inner node of the tree. Estimated so that each
-    /// node has a size of about 256 bytes.
+    //! Number of slots in each inner node of the tree. Estimated so that each
+    //! node has a size of about 256 bytes.
     static const int    innerslots =
         TLX_BTREE_MAX(8, 256 / (sizeof(Key) + sizeof(void*)));
 
-    /// As of stx-btree-0.9, the code does linear search in find_lower() and
-    /// find_upper() instead of binary_search, unless the node size is larger
-    /// than this threshold. See notes at
-    /// http://panthema.net/2013/0504-STX-B+Tree-Binary-vs-Linear-Search
+    //! As of stx-btree-0.9, the code does linear search in find_lower() and
+    //! find_upper() instead of binary_search, unless the node size is larger
+    //! than this threshold. See notes at
+    //! http://panthema.net/2013/0504-STX-B+Tree-Binary-vs-Linear-Search
     static const size_t binsearch_threshold = 256;
 };
 
-/** @brief Basic class implementing a base B+ tree data structure in memory.
+/*!
+ * Basic class implementing a base B+ tree data structure in memory.
  *
  * The base implementation of a memory B+ tree. It is based on the
  * implementation in Cormen's Introduction into Algorithms, Jan Jannink's paper
@@ -142,42 +150,45 @@ template <typename Key_, typename Data_,
 class btree
 {
 public:
-    // *** Template Parameter Types
+    //! \name Template Parameter Types
+    //! \{
 
-    /// First template parameter: The key type of the B+ tree. This is stored
-    /// in inner nodes and leaves
+    //! First template parameter: The key type of the B+ tree. This is stored
+    //! in inner nodes and leaves
     typedef Key_ key_type;
 
-    /// Second template parameter: The data type associated with each
-    /// key. Stored in the B+ tree's leaves
+    //! Second template parameter: The data type associated with each
+    //! key. Stored in the B+ tree's leaves
     typedef Data_ data_type;
 
-    /// Third template parameter: Composition pair of key and data types, this
-    /// is required by the STL standard. The B+ tree does not store key and
-    /// data together. If value_type == key_type then the B+ tree implements a
-    /// set.
+    //! Third template parameter: Composition pair of key and data types, this
+    //! is required by the STL standard. The B+ tree does not store key and
+    //! data together. If value_type == key_type then the B+ tree implements a
+    //! set.
     typedef Value_ value_type;
 
-    /// Fourth template parameter: Key comparison function object
+    //! Fourth template parameter: Key comparison function object
     typedef Compare_ key_compare;
 
-    /// Fifth template parameter: Traits object used to define more parameters
-    /// of the B+ tree
+    //! Fifth template parameter: Traits object used to define more parameters
+    //! of the B+ tree
     typedef Traits_ traits;
 
-    /// Sixth template parameter: Allow duplicate keys in the B+ tree. Used to
-    /// implement multiset and multimap.
+    //! Sixth template parameter: Allow duplicate keys in the B+ tree. Used to
+    //! implement multiset and multimap.
     static const bool allow_duplicates = Duplicates_;
 
-    /// Seventh template parameter: STL allocator for tree nodes
+    //! Seventh template parameter: STL allocator for tree nodes
     typedef Alloc_ allocator_type;
 
-    /// Eighth template parameter: boolean indicator whether the btree is used
-    /// as a set. In this case all operations on the data arrays are
-    /// omitted. This flag is kind of hacky, but required because
-    /// sizeof(empty_struct) = 1 due to the C standard. Without the flag, lots
-    /// of superfluous copying would occur.
+    //! Eighth template parameter: boolean indicator whether the btree is used
+    //! as a set. In this case all operations on the data arrays are
+    //! omitted. This flag is kind of hacky, but required because
+    //! sizeof(empty_struct) = 1 due to the C standard. Without the flag, lots
+    //! of superfluous copying would occur.
     static const bool used_as_set = UsedAsSet_;
+
+    //! \}
 
     // The macro TLX_BTREE_FRIENDS can be used by outside class to access the B+
     // tree internals. This was added for wxBTreeDemo to be able to draw the
@@ -185,148 +196,155 @@ public:
     TLX_BTREE_FRIENDS
 
 public:
-    // *** Constructed Types
+    //! \name Constructed Types
+    //! \{
 
-    /// Typedef of our own type
+    //! Typedef of our own type
     typedef btree<key_type, data_type, value_type, key_compare,
                   traits, allow_duplicates, allocator_type, used_as_set> btree_self;
 
-    /// Size type used to count keys
+    //! Size type used to count keys
     typedef size_t size_type;
 
-    /// The pair of key_type and data_type, this may be different from
-    /// value_type.
+    //! The pair of key_type and data_type, this may be different from
+    //! value_type.
     typedef std::pair<key_type, data_type> pair_type;
 
-public:
-    // *** Static Constant Options and Values of the B+ Tree
+    //! \}
 
-    /// Base B+ tree parameter: The number of key/data slots in each leaf
+public:
+    //! \name Static Constant Options and Values of the B+ Tree
+    //! \{
+
+    //! Base B+ tree parameter: The number of key/data slots in each leaf
     static const unsigned short leafslotmax = traits::leafslots;
 
-    /// Base B+ tree parameter: The number of key slots in each inner node,
-    /// this can differ from slots in each leaf.
+    //! Base B+ tree parameter: The number of key slots in each inner node,
+    //! this can differ from slots in each leaf.
     static const unsigned short innerslotmax = traits::innerslots;
 
-    /// Computed B+ tree parameter: The minimum number of key/data slots used
-    /// in a leaf. If fewer slots are used, the leaf will be merged or slots
-    /// shifted from it's siblings.
+    //! Computed B+ tree parameter: The minimum number of key/data slots used
+    //! in a leaf. If fewer slots are used, the leaf will be merged or slots
+    //! shifted from it's siblings.
     static const unsigned short minleafslots = (leafslotmax / 2);
 
-    /// Computed B+ tree parameter: The minimum number of key slots used
-    /// in an inner node. If fewer slots are used, the inner node will be
-    /// merged or slots shifted from it's siblings.
+    //! Computed B+ tree parameter: The minimum number of key slots used
+    //! in an inner node. If fewer slots are used, the inner node will be
+    //! merged or slots shifted from it's siblings.
     static const unsigned short mininnerslots = (innerslotmax / 2);
 
-    /// Debug parameter: Enables expensive and thorough checking of the B+ tree
-    /// invariants after each insert/erase operation.
+    //! Debug parameter: Enables expensive and thorough checking of the B+ tree
+    //! invariants after each insert/erase operation.
     static const bool selfverify = traits::selfverify;
 
-    /// Debug parameter: Prints out lots of debug information about how the
-    /// algorithms change the tree. Requires the header file to be compiled
-    /// with TLX_BTREE_DEBUG and the key type must be std::ostream printable.
+    //! Debug parameter: Prints out lots of debug information about how the
+    //! algorithms change the tree. Requires the header file to be compiled
+    //! with TLX_BTREE_DEBUG and the key type must be std::ostream printable.
     static const bool debug = traits::debug;
 
-private:
-    // *** Node Classes for In-Memory Nodes
+    //! \}
 
-    /// The header structure of each node in-memory. This structure is extended
-    /// by inner_node or leaf_node.
+private:
+    //! \name Node Classes for In-Memory Nodes
+    //! \{
+
+    //! The header structure of each node in-memory. This structure is extended
+    //! by inner_node or leaf_node.
     struct node {
-        /// Level in the b-tree, if level == 0 -> leaf node
+        //! Level in the b-tree, if level == 0 -> leaf node
         unsigned short level;
 
-        /// Number of key slotuse use, so number of valid children or data
-        /// pointers
+        //! Number of key slotuse use, so number of valid children or data
+        //! pointers
         unsigned short slotuse;
 
-        /// Delayed initialisation of constructed node
+        //! Delayed initialisation of constructed node
         void           initialize(const unsigned short l) {
             level = l;
             slotuse = 0;
         }
 
-        /// True if this is a leaf node
+        //! True if this is a leaf node
         bool           isleafnode() const {
             return (level == 0);
         }
     };
 
-    /// Extended structure of a inner node in-memory. Contains only keys and no
-    /// data items.
+    //! Extended structure of a inner node in-memory. Contains only keys and no
+    //! data items.
     struct inner_node : public node {
-        /// Define an related allocator for the inner_node structs.
+        //! Define an related allocator for the inner_node structs.
         typedef typename Alloc_::template rebind<inner_node>::other alloc_type;
 
-        /// Keys of children or data pointers
+        //! Keys of children or data pointers
         key_type slotkey[innerslotmax];
 
-        /// Pointers to children
+        //! Pointers to children
         node     * childid[innerslotmax + 1];
 
-        /// Set variables to initial values
+        //! Set variables to initial values
         void initialize(const unsigned short l) {
             node::initialize(l);
         }
 
-        /// True if the node's slots are full
+        //! True if the node's slots are full
         bool isfull() const {
             return (node::slotuse == innerslotmax);
         }
 
-        /// True if few used entries, less than half full
+        //! True if few used entries, less than half full
         bool isfew() const {
             return (node::slotuse <= mininnerslots);
         }
 
-        /// True if node has too few entries
+        //! True if node has too few entries
         bool isunderflow() const {
             return (node::slotuse < mininnerslots);
         }
     };
 
-    /// Extended structure of a leaf node in memory. Contains pairs of keys and
-    /// data items. Key and data slots are kept in separate arrays, because the
-    /// key array is traversed very often compared to accessing the data items.
+    //! Extended structure of a leaf node in memory. Contains pairs of keys and
+    //! data items. Key and data slots are kept in separate arrays, because the
+    //! key array is traversed very often compared to accessing the data items.
     struct leaf_node : public node {
-        /// Define an related allocator for the leaf_node structs.
+        //! Define an related allocator for the leaf_node structs.
         typedef typename Alloc_::template rebind<leaf_node>::other alloc_type;
 
-        /// Double linked list pointers to traverse the leaves
+        //! Double linked list pointers to traverse the leaves
         leaf_node * prevleaf;
 
-        /// Double linked list pointers to traverse the leaves
+        //! Double linked list pointers to traverse the leaves
         leaf_node * nextleaf;
 
-        /// Keys of children or data pointers
+        //! Keys of children or data pointers
         key_type  slotkey[leafslotmax];
 
-        /// Array of data
+        //! Array of data
         data_type slotdata[used_as_set ? 1 : leafslotmax];
 
-        /// Set variables to initial values
+        //! Set variables to initial values
         void initialize() {
             node::initialize(0);
             prevleaf = nextleaf = nullptr;
         }
 
-        /// True if the node's slots are full
+        //! True if the node's slots are full
         bool isfull() const {
             return (node::slotuse == leafslotmax);
         }
 
-        /// True if few used entries, less than half full
+        //! True if few used entries, less than half full
         bool isfew() const {
             return (node::slotuse <= minleafslots);
         }
 
-        /// True if node has too few entries
+        //! True if node has too few entries
         bool isunderflow() const {
             return (node::slotuse < minleafslots);
         }
 
-        /// Set the (key,data) pair in slot. Overloaded function used by
-        /// bulk_load().
+        //! Set the (key,data) pair in slot. Overloaded function used by
+        //! bulk_load().
         void set_slot(unsigned short slot, const pair_type& value) {
             TLX_BTREE_ASSERT(used_as_set == false);
             TLX_BTREE_ASSERT(slot < node::slotuse);
@@ -334,8 +352,8 @@ private:
             slotdata[slot] = value.second;
         }
 
-        /// Set the key pair in slot. Overloaded function used by
-        /// bulk_load().
+        //! Set the key pair in slot. Overloaded function used by
+        //! bulk_load().
         void set_slot(unsigned short slot, const key_type& key) {
             TLX_BTREE_ASSERT(used_as_set == true);
             TLX_BTREE_ASSERT(slot < node::slotuse);
@@ -343,110 +361,116 @@ private:
         }
     };
 
-private:
-    // *** Template Magic to Convert a pair or key/data types to a value_type
+    //! \}
 
-    /// For sets the second pair_type is an empty struct, so the value_type
-    /// should only be the first.
+private:
+    //! \name Template Magic to Convert a pair or key/data types to a value_type
+    //! \{
+
+    //! For sets the second pair_type is an empty struct, so the value_type
+    //! should only be the first.
     template <typename value_type, typename pair_type>
     struct btree_pair_to_value {
-        /// Convert a fake pair type to just the first component
+        //! Convert a fake pair type to just the first component
         value_type operator () (pair_type& p) const {
             return p.first;
         }
-        /// Convert a fake pair type to just the first component
+        //! Convert a fake pair type to just the first component
         value_type operator () (const pair_type& p) const {
             return p.first;
         }
     };
 
-    /// For maps value_type is the same as the pair_type
+    //! For maps value_type is the same as the pair_type
     template <typename value_type>
     struct btree_pair_to_value<value_type, value_type>{
-        /// Identity "convert" a real pair type to just the first component
+        //! Identity "convert" a real pair type to just the first component
         value_type operator () (pair_type& p) const {
             return p;
         }
-        /// Identity "convert" a real pair type to just the first component
+        //! Identity "convert" a real pair type to just the first component
         value_type operator () (const pair_type& p) const {
             return p;
         }
     };
 
-    /// Using template specialization select the correct converter used by the
-    /// iterators
+    //! Using template specialization select the correct converter used by the
+    //! iterators
     typedef btree_pair_to_value<value_type, pair_type> pair_to_value_type;
 
+    //! \}
+
 public:
-    // *** Iterators and Reverse Iterators
+    //! \name Iterators and Reverse Iterators
+    //! \{
 
     class iterator;
     class const_iterator;
     class reverse_iterator;
     class const_reverse_iterator;
 
-    /// STL-like iterator object for B+ tree items. The iterator points to a
-    /// specific slot number in a leaf.
+    //! STL-like iterator object for B+ tree items. The iterator points to a
+    //! specific slot number in a leaf.
     class iterator
     {
     public:
         // *** Types
 
-        /// The key type of the btree. Returned by key().
+        //! The key type of the btree. Returned by key().
         typedef typename btree::key_type key_type;
 
-        /// The data type of the btree. Returned by data().
+        //! The data type of the btree. Returned by data().
         typedef typename btree::data_type data_type;
 
-        /// The value type of the btree. Returned by operator*().
+        //! The value type of the btree. Returned by operator*().
         typedef typename btree::value_type value_type;
 
-        /// The pair type of the btree.
+        //! The pair type of the btree.
         typedef typename btree::pair_type pair_type;
 
-        /// Reference to the value_type. STL required.
+        //! Reference to the value_type. STL required.
         typedef value_type& reference;
 
-        /// Pointer to the value_type. STL required.
+        //! Pointer to the value_type. STL required.
         typedef value_type* pointer;
 
-        /// STL-magic iterator category
+        //! STL-magic iterator category
         typedef std::bidirectional_iterator_tag iterator_category;
 
-        /// STL-magic
+        //! STL-magic
         typedef ptrdiff_t difference_type;
 
-        /// Our own type
+        //! Our own type
         typedef iterator self;
 
     private:
         // *** Members
 
-        /// The currently referenced leaf node of the tree
+        //! The currently referenced leaf node of the tree
         typename btree::leaf_node* currnode;
 
-        /// Current key/data slot referenced
+        //! Current key/data slot referenced
         unsigned short currslot;
 
-        /// Friendly to the const_iterator, so it may access the two data items
-        /// directly.
+        //! Friendly to the const_iterator, so it may access the two data items
+        //! directly.
         friend class const_iterator;
 
-        /// Also friendly to the reverse_iterator, so it may access the two
-        /// data items directly.
+        //! Also friendly to the reverse_iterator, so it may access the two
+        //! data items directly.
         friend class reverse_iterator;
 
-        /// Also friendly to the const_reverse_iterator, so it may access the
-        /// two data items directly.
+        //! Also friendly to the const_reverse_iterator, so it may access the
+        //! two data items directly.
         friend class const_reverse_iterator;
 
-        /// Also friendly to the base btree class, because erase_iter() needs
-        /// to read the currnode and currslot values directly.
+        //! Also friendly to the base btree class, because erase_iter() needs
+        //! to read the currnode and currslot values directly.
         friend class btree<key_type, data_type, value_type, key_compare,
                            traits, allow_duplicates, allocator_type, used_as_set>;
 
-        /// Evil! A temporary value_type to STL-correctly deliver operator* and
-        /// operator->
+        //! Evil! A temporary value_type to STL-correctly deliver operator* and
+        //! operator->
         mutable value_type temp_value;
 
         // The macro TLX_BTREE_FRIENDS can be used by outside class to access
@@ -457,47 +481,47 @@ public:
     public:
         // *** Methods
 
-        /// Default-Constructor of a mutable iterator
+        //! Default-Constructor of a mutable iterator
         iterator()
             : currnode(nullptr), currslot(0)
         { }
 
-        /// Initializing-Constructor of a mutable iterator
+        //! Initializing-Constructor of a mutable iterator
         iterator(typename btree::leaf_node* l, unsigned short s)
             : currnode(l), currslot(s)
         { }
 
-        /// Copy-constructor from a reverse iterator
+        //! Copy-constructor from a reverse iterator
         iterator(const reverse_iterator& it)
             : currnode(it.currnode), currslot(it.currslot)
         { }
 
-        /// Dereference the iterator, this is not a value_type& because key and
-        /// value are not stored together
+        //! Dereference the iterator, this is not a value_type& because key and
+        //! value are not stored together
         reference operator * () const {
             temp_value = pair_to_value_type()(pair_type(key(), data()));
             return temp_value;
         }
 
-        /// Dereference the iterator. Do not use this if possible, use key()
-        /// and data() instead. The B+ tree does not stored key and data
-        /// together.
+        //! Dereference the iterator. Do not use this if possible, use key()
+        //! and data() instead. The B+ tree does not stored key and data
+        //! together.
         pointer operator -> () const {
             temp_value = pair_to_value_type()(pair_type(key(), data()));
             return &temp_value;
         }
 
-        /// Key of the current slot
+        //! Key of the current slot
         const key_type& key() const {
             return currnode->slotkey[currslot];
         }
 
-        /// Writable reference to the current data object
+        //! Writable reference to the current data object
         data_type& data() const {
             return currnode->slotdata[used_as_set ? 0 : currslot];
         }
 
-        /// Prefix++ advance the iterator to the next slot
+        //! Prefix++ advance the iterator to the next slot
         self& operator ++ () {
             if (currslot + 1 < currnode->slotuse) {
                 ++currslot;
@@ -514,7 +538,7 @@ public:
             return *this;
         }
 
-        /// Postfix++ advance the iterator to the next slot
+        //! Postfix++ advance the iterator to the next slot
         self operator ++ (int) {
             self tmp = *this;   // copy ourselves
 
@@ -533,7 +557,7 @@ public:
             return tmp;
         }
 
-        /// Prefix-- backstep the iterator to the last slot
+        //! Prefix-- backstep the iterator to the last slot
         self& operator -- () {
             if (currslot > 0) {
                 --currslot;
@@ -550,7 +574,7 @@ public:
             return *this;
         }
 
-        /// Postfix-- backstep the iterator to the last slot
+        //! Postfix-- backstep the iterator to the last slot
         self operator -- (int) {
             self tmp = *this;   // copy ourselves
 
@@ -569,66 +593,66 @@ public:
             return tmp;
         }
 
-        /// Equality of iterators
+        //! Equality of iterators
         bool operator == (const self& x) const {
             return (x.currnode == currnode) && (x.currslot == currslot);
         }
 
-        /// Inequality of iterators
+        //! Inequality of iterators
         bool operator != (const self& x) const {
             return (x.currnode != currnode) || (x.currslot != currslot);
         }
     };
 
-    /// STL-like read-only iterator object for B+ tree items. The iterator
-    /// points to a specific slot number in a leaf.
+    //! STL-like read-only iterator object for B+ tree items. The iterator
+    //! points to a specific slot number in a leaf.
     class const_iterator
     {
     public:
         // *** Types
 
-        /// The key type of the btree. Returned by key().
+        //! The key type of the btree. Returned by key().
         typedef typename btree::key_type key_type;
 
-        /// The data type of the btree. Returned by data().
+        //! The data type of the btree. Returned by data().
         typedef typename btree::data_type data_type;
 
-        /// The value type of the btree. Returned by operator*().
+        //! The value type of the btree. Returned by operator*().
         typedef typename btree::value_type value_type;
 
-        /// The pair type of the btree.
+        //! The pair type of the btree.
         typedef typename btree::pair_type pair_type;
 
-        /// Reference to the value_type. STL required.
+        //! Reference to the value_type. STL required.
         typedef const value_type& reference;
 
-        /// Pointer to the value_type. STL required.
+        //! Pointer to the value_type. STL required.
         typedef const value_type* pointer;
 
-        /// STL-magic iterator category
+        //! STL-magic iterator category
         typedef std::bidirectional_iterator_tag iterator_category;
 
-        /// STL-magic
+        //! STL-magic
         typedef ptrdiff_t difference_type;
 
-        /// Our own type
+        //! Our own type
         typedef const_iterator self;
 
     private:
         // *** Members
 
-        /// The currently referenced leaf node of the tree
+        //! The currently referenced leaf node of the tree
         const typename btree::leaf_node* currnode;
 
-        /// Current key/data slot referenced
+        //! Current key/data slot referenced
         unsigned short currslot;
 
-        /// Friendly to the reverse_const_iterator, so it may access the two
-        /// data items directly
+        //! Friendly to the reverse_const_iterator, so it may access the two
+        //! data items directly
         friend class const_reverse_iterator;
 
-        /// Evil! A temporary value_type to STL-correctly deliver operator* and
-        /// operator->
+        //! Evil! A temporary value_type to STL-correctly deliver operator* and
+        //! operator->
         mutable value_type temp_value;
 
         // The macro TLX_BTREE_FRIENDS can be used by outside class to access
@@ -639,58 +663,58 @@ public:
     public:
         // *** Methods
 
-        /// Default-Constructor of a const iterator
+        //! Default-Constructor of a const iterator
         const_iterator()
             : currnode(nullptr), currslot(0)
         { }
 
-        /// Initializing-Constructor of a const iterator
+        //! Initializing-Constructor of a const iterator
         const_iterator(const typename btree::leaf_node* l, unsigned short s)
             : currnode(l), currslot(s)
         { }
 
-        /// Copy-constructor from a mutable iterator
+        //! Copy-constructor from a mutable iterator
         const_iterator(const iterator& it)
             : currnode(it.currnode), currslot(it.currslot)
         { }
 
-        /// Copy-constructor from a mutable reverse iterator
+        //! Copy-constructor from a mutable reverse iterator
         const_iterator(const reverse_iterator& it)
             : currnode(it.currnode), currslot(it.currslot)
         { }
 
-        /// Copy-constructor from a const reverse iterator
+        //! Copy-constructor from a const reverse iterator
         const_iterator(const const_reverse_iterator& it)
             : currnode(it.currnode), currslot(it.currslot)
         { }
 
-        /// Dereference the iterator. Do not use this if possible, use key()
-        /// and data() instead. The B+ tree does not stored key and data
-        /// together.
+        //! Dereference the iterator. Do not use this if possible, use key()
+        //! and data() instead. The B+ tree does not stored key and data
+        //! together.
         reference operator * () const {
             temp_value = pair_to_value_type()(pair_type(key(), data()));
             return temp_value;
         }
 
-        /// Dereference the iterator. Do not use this if possible, use key()
-        /// and data() instead. The B+ tree does not stored key and data
-        /// together.
+        //! Dereference the iterator. Do not use this if possible, use key()
+        //! and data() instead. The B+ tree does not stored key and data
+        //! together.
         pointer operator -> () const {
             temp_value = pair_to_value_type()(pair_type(key(), data()));
             return &temp_value;
         }
 
-        /// Key of the current slot
+        //! Key of the current slot
         const key_type& key() const {
             return currnode->slotkey[currslot];
         }
 
-        /// Read-only reference to the current data object
+        //! Read-only reference to the current data object
         const data_type& data() const {
             return currnode->slotdata[used_as_set ? 0 : currslot];
         }
 
-        /// Prefix++ advance the iterator to the next slot
+        //! Prefix++ advance the iterator to the next slot
         self& operator ++ () {
             if (currslot + 1 < currnode->slotuse) {
                 ++currslot;
@@ -707,7 +731,7 @@ public:
             return *this;
         }
 
-        /// Postfix++ advance the iterator to the next slot
+        //! Postfix++ advance the iterator to the next slot
         self operator ++ (int) {
             self tmp = *this;   // copy ourselves
 
@@ -726,7 +750,7 @@ public:
             return tmp;
         }
 
-        /// Prefix-- backstep the iterator to the last slot
+        //! Prefix-- backstep the iterator to the last slot
         self& operator -- () {
             if (currslot > 0) {
                 --currslot;
@@ -743,7 +767,7 @@ public:
             return *this;
         }
 
-        /// Postfix-- backstep the iterator to the last slot
+        //! Postfix-- backstep the iterator to the last slot
         self operator -- (int) {
             self tmp = *this;   // copy ourselves
 
@@ -762,74 +786,74 @@ public:
             return tmp;
         }
 
-        /// Equality of iterators
+        //! Equality of iterators
         bool operator == (const self& x) const {
             return (x.currnode == currnode) && (x.currslot == currslot);
         }
 
-        /// Inequality of iterators
+        //! Inequality of iterators
         bool operator != (const self& x) const {
             return (x.currnode != currnode) || (x.currslot != currslot);
         }
     };
 
-    /// STL-like mutable reverse iterator object for B+ tree items. The
-    /// iterator points to a specific slot number in a leaf.
+    //! STL-like mutable reverse iterator object for B+ tree items. The
+    //! iterator points to a specific slot number in a leaf.
     class reverse_iterator
     {
     public:
         // *** Types
 
-        /// The key type of the btree. Returned by key().
+        //! The key type of the btree. Returned by key().
         typedef typename btree::key_type key_type;
 
-        /// The data type of the btree. Returned by data().
+        //! The data type of the btree. Returned by data().
         typedef typename btree::data_type data_type;
 
-        /// The value type of the btree. Returned by operator*().
+        //! The value type of the btree. Returned by operator*().
         typedef typename btree::value_type value_type;
 
-        /// The pair type of the btree.
+        //! The pair type of the btree.
         typedef typename btree::pair_type pair_type;
 
-        /// Reference to the value_type. STL required.
+        //! Reference to the value_type. STL required.
         typedef value_type& reference;
 
-        /// Pointer to the value_type. STL required.
+        //! Pointer to the value_type. STL required.
         typedef value_type* pointer;
 
-        /// STL-magic iterator category
+        //! STL-magic iterator category
         typedef std::bidirectional_iterator_tag iterator_category;
 
-        /// STL-magic
+        //! STL-magic
         typedef ptrdiff_t difference_type;
 
-        /// Our own type
+        //! Our own type
         typedef reverse_iterator self;
 
     private:
         // *** Members
 
-        /// The currently referenced leaf node of the tree
+        //! The currently referenced leaf node of the tree
         typename btree::leaf_node* currnode;
 
-        /// One slot past the current key/data slot referenced.
+        //! One slot past the current key/data slot referenced.
         unsigned short currslot;
 
-        /// Friendly to the const_iterator, so it may access the two data items
-        /// directly
+        //! Friendly to the const_iterator, so it may access the two data items
+        //! directly
         friend class iterator;
 
-        /// Also friendly to the const_iterator, so it may access the two data
-        /// items directly
+        //! Also friendly to the const_iterator, so it may access the two data
+        //! items directly
         friend class const_iterator;
 
-        /// Also friendly to the const_iterator, so it may access the two data
-        /// items directly
+        //! Also friendly to the const_iterator, so it may access the two data
+        //! items directly
         friend class const_reverse_iterator;
 
-        /// Evil! A temporary value_type to STL-correctly deliver operator* and
-        /// operator->
+        //! Evil! A temporary value_type to STL-correctly deliver operator* and
+        //! operator->
         mutable value_type temp_value;
 
         // The macro TLX_BTREE_FRIENDS can be used by outside class to access
@@ -840,51 +864,51 @@ public:
     public:
         // *** Methods
 
-        /// Default-Constructor of a reverse iterator
+        //! Default-Constructor of a reverse iterator
         reverse_iterator()
             : currnode(nullptr), currslot(0)
         { }
 
-        /// Initializing-Constructor of a mutable reverse iterator
+        //! Initializing-Constructor of a mutable reverse iterator
         reverse_iterator(typename btree::leaf_node* l, unsigned short s)
             : currnode(l), currslot(s)
         { }
 
-        /// Copy-constructor from a mutable iterator
+        //! Copy-constructor from a mutable iterator
         reverse_iterator(const iterator& it)
             : currnode(it.currnode), currslot(it.currslot)
         { }
 
-        /// Dereference the iterator, this is not a value_type& because key and
-        /// value are not stored together
+        //! Dereference the iterator, this is not a value_type& because key and
+        //! value are not stored together
         reference operator * () const {
             TLX_BTREE_ASSERT(currslot > 0);
             temp_value = pair_to_value_type()(pair_type(key(), data()));
             return temp_value;
         }
 
-        /// Dereference the iterator. Do not use this if possible, use key()
-        /// and data() instead. The B+ tree does not stored key and data
-        /// together.
+        //! Dereference the iterator. Do not use this if possible, use key()
+        //! and data() instead. The B+ tree does not stored key and data
+        //! together.
         pointer operator -> () const {
             TLX_BTREE_ASSERT(currslot > 0);
             temp_value = pair_to_value_type()(pair_type(key(), data()));
             return &temp_value;
         }
 
-        /// Key of the current slot
+        //! Key of the current slot
         const key_type& key() const {
             TLX_BTREE_ASSERT(currslot > 0);
             return currnode->slotkey[currslot - 1];
         }
 
-        /// Writable reference to the current data object
+        //! Writable reference to the current data object
         data_type& data() const {
             TLX_BTREE_ASSERT(currslot > 0);
             return currnode->slotdata[used_as_set ? 0 : currslot - 1];
         }
 
-        /// Prefix++ advance the iterator to the next slot
+        //! Prefix++ advance the iterator to the next slot
         self& operator ++ () {
             if (currslot > 1) {
                 --currslot;
@@ -901,7 +925,7 @@ public:
             return *this;
         }
 
-        /// Postfix++ advance the iterator to the next slot
+        //! Postfix++ advance the iterator to the next slot
         self operator ++ (int) {
             self tmp = *this;   // copy ourselves
 
@@ -920,7 +944,7 @@ public:
             return tmp;
         }
 
-        /// Prefix-- backstep the iterator to the last slot
+        //! Prefix-- backstep the iterator to the last slot
         self& operator -- () {
             if (currslot < currnode->slotuse) {
                 ++currslot;
@@ -937,7 +961,7 @@ public:
             return *this;
         }
 
-        /// Postfix-- backstep the iterator to the last slot
+        //! Postfix-- backstep the iterator to the last slot
         self operator -- (int) {
             self tmp = *this;   // copy ourselves
 
@@ -956,66 +980,66 @@ public:
             return tmp;
         }
 
-        /// Equality of iterators
+        //! Equality of iterators
         bool operator == (const self& x) const {
             return (x.currnode == currnode) && (x.currslot == currslot);
         }
 
-        /// Inequality of iterators
+        //! Inequality of iterators
         bool operator != (const self& x) const {
             return (x.currnode != currnode) || (x.currslot != currslot);
         }
     };
 
-    /// STL-like read-only reverse iterator object for B+ tree items. The
-    /// iterator points to a specific slot number in a leaf.
+    //! STL-like read-only reverse iterator object for B+ tree items. The
+    //! iterator points to a specific slot number in a leaf.
     class const_reverse_iterator
     {
     public:
         // *** Types
 
-        /// The key type of the btree. Returned by key().
+        //! The key type of the btree. Returned by key().
         typedef typename btree::key_type key_type;
 
-        /// The data type of the btree. Returned by data().
+        //! The data type of the btree. Returned by data().
         typedef typename btree::data_type data_type;
 
-        /// The value type of the btree. Returned by operator*().
+        //! The value type of the btree. Returned by operator*().
         typedef typename btree::value_type value_type;
 
-        /// The pair type of the btree.
+        //! The pair type of the btree.
         typedef typename btree::pair_type pair_type;
 
-        /// Reference to the value_type. STL required.
+        //! Reference to the value_type. STL required.
         typedef const value_type& reference;
 
-        /// Pointer to the value_type. STL required.
+        //! Pointer to the value_type. STL required.
         typedef const value_type* pointer;
 
-        /// STL-magic iterator category
+        //! STL-magic iterator category
         typedef std::bidirectional_iterator_tag iterator_category;
 
-        /// STL-magic
+        //! STL-magic
         typedef ptrdiff_t difference_type;
 
-        /// Our own type
+        //! Our own type
         typedef const_reverse_iterator self;
 
     private:
         // *** Members
 
-        /// The currently referenced leaf node of the tree
+        //! The currently referenced leaf node of the tree
         const typename btree::leaf_node* currnode;
 
-        /// One slot past the current key/data slot referenced.
+        //! One slot past the current key/data slot referenced.
         unsigned short currslot;
 
-        /// Friendly to the const_iterator, so it may access the two data items
-        /// directly.
+        //! Friendly to the const_iterator, so it may access the two data items
+        //! directly.
         friend class reverse_iterator;
 
-        /// Evil! A temporary value_type to STL-correctly deliver operator* and
-        /// operator->
+        //! Evil! A temporary value_type to STL-correctly deliver operator* and
+        //! operator->
         mutable value_type temp_value;
 
         // The macro TLX_BTREE_FRIENDS can be used by outside class to access
@@ -1026,62 +1050,62 @@ public:
     public:
         // *** Methods
 
-        /// Default-Constructor of a const reverse iterator
+        //! Default-Constructor of a const reverse iterator
         const_reverse_iterator()
             : currnode(nullptr), currslot(0)
         { }
 
-        /// Initializing-Constructor of a const reverse iterator
+        //! Initializing-Constructor of a const reverse iterator
         const_reverse_iterator(const typename btree::leaf_node* l, unsigned short s)
             : currnode(l), currslot(s)
         { }
 
-        /// Copy-constructor from a mutable iterator
+        //! Copy-constructor from a mutable iterator
         const_reverse_iterator(const iterator& it)
             : currnode(it.currnode), currslot(it.currslot)
         { }
 
-        /// Copy-constructor from a const iterator
+        //! Copy-constructor from a const iterator
         const_reverse_iterator(const const_iterator& it)
             : currnode(it.currnode), currslot(it.currslot)
         { }
 
-        /// Copy-constructor from a mutable reverse iterator
+        //! Copy-constructor from a mutable reverse iterator
         const_reverse_iterator(const reverse_iterator& it)
             : currnode(it.currnode), currslot(it.currslot)
         { }
 
-        /// Dereference the iterator. Do not use this if possible, use key()
-        /// and data() instead. The B+ tree does not stored key and data
-        /// together.
+        //! Dereference the iterator. Do not use this if possible, use key()
+        //! and data() instead. The B+ tree does not stored key and data
+        //! together.
         reference operator * () const {
             TLX_BTREE_ASSERT(currslot > 0);
             temp_value = pair_to_value_type()(pair_type(key(), data()));
             return temp_value;
         }
 
-        /// Dereference the iterator. Do not use this if possible, use key()
-        /// and data() instead. The B+ tree does not stored key and data
-        /// together.
+        //! Dereference the iterator. Do not use this if possible, use key()
+        //! and data() instead. The B+ tree does not stored key and data
+        //! together.
         pointer operator -> () const {
             TLX_BTREE_ASSERT(currslot > 0);
             temp_value = pair_to_value_type()(pair_type(key(), data()));
             return &temp_value;
         }
 
-        /// Key of the current slot
+        //! Key of the current slot
         const key_type& key() const {
             TLX_BTREE_ASSERT(currslot > 0);
             return currnode->slotkey[currslot - 1];
         }
 
-        /// Read-only reference to the current data object
+        //! Read-only reference to the current data object
         const data_type& data() const {
             TLX_BTREE_ASSERT(currslot > 0);
             return currnode->slotdata[used_as_set ? 0 : currslot - 1];
         }
 
-        /// Prefix++ advance the iterator to the previous slot
+        //! Prefix++ advance the iterator to the previous slot
         self& operator ++ () {
             if (currslot > 1) {
                 --currslot;
@@ -1098,7 +1122,7 @@ public:
             return *this;
         }
 
-        /// Postfix++ advance the iterator to the previous slot
+        //! Postfix++ advance the iterator to the previous slot
         self operator ++ (int) {
             self tmp = *this;   // copy ourselves
 
@@ -1117,7 +1141,7 @@ public:
             return tmp;
         }
 
-        /// Prefix-- backstep the iterator to the next slot
+        //! Prefix-- backstep the iterator to the next slot
         self& operator -- () {
             if (currslot < currnode->slotuse) {
                 ++currslot;
@@ -1134,7 +1158,7 @@ public:
             return *this;
         }
 
-        /// Postfix-- backstep the iterator to the next slot
+        //! Postfix-- backstep the iterator to the next slot
         self operator -- (int) {
             self tmp = *this;   // copy ourselves
 
@@ -1153,97 +1177,106 @@ public:
             return tmp;
         }
 
-        /// Equality of iterators
+        //! Equality of iterators
         bool operator == (const self& x) const {
             return (x.currnode == currnode) && (x.currslot == currslot);
         }
 
-        /// Inequality of iterators
+        //! Inequality of iterators
         bool operator != (const self& x) const {
             return (x.currnode != currnode) || (x.currslot != currslot);
         }
     };
 
-public:
-    // *** Small Statistics Structure
+    //! \}
 
-    /** A small struct containing basic statistics about the B+ tree. It can be
+public:
+    //! \name Small Statistics Structure
+    //! \{
+
+    /*! A small struct containing basic statistics about the B+ tree. It can be
      * fetched using get_stats(). */
     struct tree_stats {
-        /// Number of items in the B+ tree
+        //! Number of items in the B+ tree
         size_type                   itemcount;
 
-        /// Number of leaves in the B+ tree
+        //! Number of leaves in the B+ tree
         size_type                   leaves;
 
-        /// Number of inner nodes in the B+ tree
+        //! Number of inner nodes in the B+ tree
         size_type                   innernodes;
 
-        /// Base B+ tree parameter: The number of key/data slots in each leaf
+        //! Base B+ tree parameter: The number of key/data slots in each leaf
         static const unsigned short leafslots = btree_self::leafslotmax;
 
-        /// Base B+ tree parameter: The number of key slots in each inner node.
+        //! Base B+ tree parameter: The number of key slots in each inner node.
         static const unsigned short innerslots = btree_self::innerslotmax;
 
-        /// Zero initialized
+        //! Zero initialized
         tree_stats()
             : itemcount(0),
               leaves(0), innernodes(0)
         { }
 
-        /// Return the total number of nodes
+        //! Return the total number of nodes
         size_type                   nodes() const {
             return innernodes + leaves;
         }
 
-        /// Return the average fill of leaves
+        //! Return the average fill of leaves
         double                      avgfill_leaves() const {
             return static_cast<double>(itemcount) / (leaves * leafslots);
         }
     };
 
-private:
-    // *** Tree Object Data Members
+    //! \}
 
-    /// Pointer to the B+ tree's root node, either leaf or inner node
+private:
+    //! \name Tree Object Data Members
+    //! \{
+
+    //! Pointer to the B+ tree's root node, either leaf or inner node
     node* m_root;
 
-    /// Pointer to first leaf in the double linked leaf chain
+    //! Pointer to first leaf in the double linked leaf chain
     leaf_node* m_headleaf;
 
-    /// Pointer to last leaf in the double linked leaf chain
+    //! Pointer to last leaf in the double linked leaf chain
     leaf_node* m_tailleaf;
 
-    /// Other small statistics about the B+ tree
+    //! Other small statistics about the B+ tree
     tree_stats m_stats;
 
-    /// Key comparison object. More comparison functions are generated from
-    /// this < relation.
+    //! Key comparison object. More comparison functions are generated from
+    //! this < relation.
     key_compare m_key_less;
 
-    /// Memory allocator.
+    //! Memory allocator.
     allocator_type m_allocator;
 
-public:
-    // *** Constructors and Destructor
+    //! \}
 
-    /// Default constructor initializing an empty B+ tree with the standard key
-    /// comparison function
+public:
+    //! \name Constructors and Destructor
+    //! \{
+
+    //! Default constructor initializing an empty B+ tree with the standard key
+    //! comparison function
     explicit btree(const allocator_type& alloc = allocator_type())
         : m_root(nullptr), m_headleaf(nullptr), m_tailleaf(nullptr), m_allocator(alloc)
     { }
 
-    /// Constructor initializing an empty B+ tree with a special key
-    /// comparison object
+    //! Constructor initializing an empty B+ tree with a special key
+    //! comparison object
     explicit btree(const key_compare& kcf,
                    const allocator_type& alloc = allocator_type())
         : m_root(nullptr), m_headleaf(nullptr), m_tailleaf(nullptr),
           m_key_less(kcf), m_allocator(alloc)
     { }
 
-    /// Constructor initializing a B+ tree with the range [first,last). The
-    /// range need not be sorted. To create a B+ tree from a sorted range, use
-    /// bulk_load().
+    //! Constructor initializing a B+ tree with the range [first,last). The
+    //! range need not be sorted. To create a B+ tree from a sorted range, use
+    //! bulk_load().
     template <class InputIterator>
     btree(InputIterator first, InputIterator last,
           const allocator_type& alloc = allocator_type())
@@ -1251,9 +1284,9 @@ public:
         insert(first, last);
     }
 
-    /// Constructor initializing a B+ tree with the range [first,last) and a
-    /// special key comparison object.  The range need not be sorted. To create
-    /// a B+ tree from a sorted range, use bulk_load().
+    //! Constructor initializing a B+ tree with the range [first,last) and a
+    //! special key comparison object.  The range need not be sorted. To create
+    //! a B+ tree from a sorted range, use bulk_load().
     template <class InputIterator>
     btree(InputIterator first, InputIterator last, const key_compare& kcf,
           const allocator_type& alloc = allocator_type())
@@ -1262,12 +1295,12 @@ public:
         insert(first, last);
     }
 
-    /// Frees up all used B+ tree memory pages
+    //! Frees up all used B+ tree memory pages
     ~btree() {
         clear();
     }
 
-    /// Fast swapping of two identical B+ tree objects.
+    //! Fast swapping of two identical B+ tree objects.
     void swap(btree_self& from) {
         std::swap(m_root, from.m_root);
         std::swap(m_headleaf, from.m_headleaf);
@@ -1277,94 +1310,106 @@ public:
         std::swap(m_allocator, from.m_allocator);
     }
 
-public:
-    // *** Key and Value Comparison Function Objects
+    //! \}
 
-    /// Function class to compare value_type objects. Required by the STL
+public:
+    //! \name Key and Value Comparison Function Objects
+    //! \{
+
+    //! Function class to compare value_type objects. Required by the STL
     class value_compare
     {
     protected:
-        /// Key comparison function from the template parameter
+        //! Key comparison function from the template parameter
         key_compare key_comp;
 
-        /// Constructor called from btree::value_comp()
+        //! Constructor called from btree::value_comp()
         value_compare(key_compare kc)
             : key_comp(kc)
         { }
 
-        /// Friendly to the btree class so it may call the constructor
+        //! Friendly to the btree class so it may call the constructor
         friend class btree<key_type, data_type, value_type, key_compare,
                            traits, allow_duplicates, allocator_type, used_as_set>;
 
     public:
-        /// Function call "less"-operator resulting in true if x < y.
+        //! Function call "less"-operator resulting in true if x < y.
         bool operator () (const value_type& x, const value_type& y) const {
             return key_comp(x.first, y.first);
         }
     };
 
-    /// Constant access to the key comparison object sorting the B+ tree
+    //! Constant access to the key comparison object sorting the B+ tree
     key_compare key_comp() const {
         return m_key_less;
     }
 
-    /// Constant access to a constructed value_type comparison object. Required
-    /// by the STL
+    //! Constant access to a constructed value_type comparison object. Required
+    //! by the STL
     value_compare value_comp() const {
         return value_compare(m_key_less);
     }
 
-private:
-    // *** Convenient Key Comparison Functions Generated From key_less
+    //! \}
 
-    /// True if a < b ? "constructed" from m_key_less()
+private:
+    //! \name Convenient Key Comparison Functions Generated From key_less
+    //! \{
+
+    //! True if a < b ? "constructed" from m_key_less()
     bool key_less(const key_type& a, const key_type b) const {
         return m_key_less(a, b);
     }
 
-    /// True if a <= b ? constructed from key_less()
+    //! True if a <= b ? constructed from key_less()
     bool key_lessequal(const key_type& a, const key_type b) const {
         return !m_key_less(b, a);
     }
 
-    /// True if a > b ? constructed from key_less()
+    //! True if a > b ? constructed from key_less()
     bool key_greater(const key_type& a, const key_type& b) const {
         return m_key_less(b, a);
     }
 
-    /// True if a >= b ? constructed from key_less()
+    //! True if a >= b ? constructed from key_less()
     bool key_greaterequal(const key_type& a, const key_type b) const {
         return !m_key_less(a, b);
     }
 
-    /// True if a == b ? constructed from key_less(). This requires the <
-    /// relation to be a total order, otherwise the B+ tree cannot be sorted.
+    //! True if a == b ? constructed from key_less(). This requires the <
+    //! relation to be a total order, otherwise the B+ tree cannot be sorted.
     bool key_equal(const key_type& a, const key_type& b) const {
         return !m_key_less(a, b) && !m_key_less(b, a);
     }
 
-public:
-    // *** Allocators
+    //! \}
 
-    /// Return the base node allocator provided during construction.
+public:
+    //! \name Allocators
+    //! \{
+
+    //! Return the base node allocator provided during construction.
     allocator_type get_allocator() const {
         return m_allocator;
     }
 
-private:
-    // *** Node Object Allocation and Deallocation Functions
+    //! \}
 
-    /// Return an allocator for leaf_node objects
+private:
+    //! \name Node Object Allocation and Deallocation Functions
+    //! \{
+
+    //! Return an allocator for leaf_node objects
     typename leaf_node::alloc_type leaf_node_allocator() {
         return typename leaf_node::alloc_type(m_allocator);
     }
 
-    /// Return an allocator for inner_node objects
+    //! Return an allocator for inner_node objects
     typename inner_node::alloc_type inner_node_allocator() {
         return typename inner_node::alloc_type(m_allocator);
     }
 
-    /// Allocate and initialize a leaf node
+    //! Allocate and initialize a leaf node
     leaf_node * allocate_leaf() {
         leaf_node* n = new (leaf_node_allocator().allocate(1)) leaf_node();
         n->initialize();
@@ -1372,7 +1417,7 @@ private:
         return n;
     }
 
-    /// Allocate and initialize an inner node
+    //! Allocate and initialize an inner node
     inner_node * allocate_inner(unsigned short level) {
         inner_node* n = new (inner_node_allocator().allocate(1)) inner_node();
         n->initialize(level);
@@ -1380,8 +1425,8 @@ private:
         return n;
     }
 
-    /// Correctly free either inner or leaf node, destructs all contained key
-    /// and value objects
+    //! Correctly free either inner or leaf node, destructs all contained key
+    //! and value objects
     void free_node(node* n) {
         if (n->isleafnode()) {
             leaf_node* ln = static_cast<leaf_node*>(n);
@@ -1399,8 +1444,8 @@ private:
         }
     }
 
-    /// Convenient template function for conditional copying of slotdata. This
-    /// should be used instead of std::copy for all slotdata manipulations.
+    //! Convenient template function for conditional copying of slotdata. This
+    //! should be used instead of std::copy for all slotdata manipulations.
     template <class InputIterator, class OutputIterator>
     static OutputIterator data_copy(InputIterator first, InputIterator last,
                                     OutputIterator result) {
@@ -1408,8 +1453,8 @@ private:
         else return std::copy(first, last, result);
     }
 
-    /// Convenient template function for conditional copying of slotdata. This
-    /// should be used instead of std::copy for all slotdata manipulations.
+    //! Convenient template function for conditional copying of slotdata. This
+    //! should be used instead of std::copy for all slotdata manipulations.
     template <class InputIterator, class OutputIterator>
     static OutputIterator data_copy_backward(InputIterator first, InputIterator last,
                                              OutputIterator result) {
@@ -1417,10 +1462,13 @@ private:
         else return std::copy_backward(first, last, result);
     }
 
-public:
-    // *** Fast Destruction of the B+ Tree
+    //! \}
 
-    /// Frees all key/data pairs and all nodes of the tree
+public:
+    //! \name Fast Destruction of the B+ Tree
+    //! \{
+
+    //! Frees all key/data pairs and all nodes of the tree
     void clear() {
         if (m_root)
         {
@@ -1437,7 +1485,7 @@ public:
     }
 
 private:
-    /// Recursively free up nodes
+    //! Recursively free up nodes
     void clear_recursive(node* n) {
         if (n->isleafnode())
         {
@@ -1460,64 +1508,70 @@ private:
         }
     }
 
-public:
-    // *** STL Iterator Construction Functions
+    //! \}
 
-    /// Constructs a read/data-write iterator that points to the first slot in
-    /// the first leaf of the B+ tree.
+public:
+    //! \name STL Iterator Construction Functions
+    //! \{
+
+    //! Constructs a read/data-write iterator that points to the first slot in
+    //! the first leaf of the B+ tree.
     iterator begin() {
         return iterator(m_headleaf, 0);
     }
 
-    /// Constructs a read/data-write iterator that points to the first invalid
-    /// slot in the last leaf of the B+ tree.
+    //! Constructs a read/data-write iterator that points to the first invalid
+    //! slot in the last leaf of the B+ tree.
     iterator end() {
         return iterator(m_tailleaf, m_tailleaf ? m_tailleaf->slotuse : 0);
     }
 
-    /// Constructs a read-only constant iterator that points to the first slot
-    /// in the first leaf of the B+ tree.
+    //! Constructs a read-only constant iterator that points to the first slot
+    //! in the first leaf of the B+ tree.
     const_iterator begin() const {
         return const_iterator(m_headleaf, 0);
     }
 
-    /// Constructs a read-only constant iterator that points to the first
-    /// invalid slot in the last leaf of the B+ tree.
+    //! Constructs a read-only constant iterator that points to the first
+    //! invalid slot in the last leaf of the B+ tree.
     const_iterator end() const {
         return const_iterator(m_tailleaf, m_tailleaf ? m_tailleaf->slotuse : 0);
     }
 
-    /// Constructs a read/data-write reverse iterator that points to the first
-    /// invalid slot in the last leaf of the B+ tree. Uses STL magic.
+    //! Constructs a read/data-write reverse iterator that points to the first
+    //! invalid slot in the last leaf of the B+ tree. Uses STL magic.
     reverse_iterator rbegin() {
         return reverse_iterator(end());
     }
 
-    /// Constructs a read/data-write reverse iterator that points to the first
-    /// slot in the first leaf of the B+ tree. Uses STL magic.
+    //! Constructs a read/data-write reverse iterator that points to the first
+    //! slot in the first leaf of the B+ tree. Uses STL magic.
     reverse_iterator rend() {
         return reverse_iterator(begin());
     }
 
-    /// Constructs a read-only reverse iterator that points to the first
-    /// invalid slot in the last leaf of the B+ tree. Uses STL magic.
+    //! Constructs a read-only reverse iterator that points to the first
+    //! invalid slot in the last leaf of the B+ tree. Uses STL magic.
     const_reverse_iterator rbegin() const {
         return const_reverse_iterator(end());
     }
 
-    /// Constructs a read-only reverse iterator that points to the first slot
-    /// in the first leaf of the B+ tree. Uses STL magic.
+    //! Constructs a read-only reverse iterator that points to the first slot
+    //! in the first leaf of the B+ tree. Uses STL magic.
     const_reverse_iterator rend() const {
         return const_reverse_iterator(begin());
     }
 
-private:
-    // *** B+ Tree Node Binary Search Functions
+    //! \}
 
-    /// Searches for the first key in the node n greater or equal to key. Uses
-    /// binary search with an optional linear self-verification. This is a
-    /// template function, because the slotkey array is located at different
-    /// places in leaf_node and inner_node.
+private:
+    //! \name B+ Tree Node Binary Search Functions
+    //! \{
+
+    //! Searches for the first key in the node n greater or equal to key. Uses
+    //! binary search with an optional linear self-verification. This is a
+    //! template function, because the slotkey array is located at different
+    //! places in leaf_node and inner_node.
     template <typename node_type>
     int find_lower(const node_type* n, const key_type& key) const {
         if (sizeof(n->slotkey) > traits::binsearch_threshold)
@@ -1560,10 +1614,10 @@ private:
         }
     }
 
-    /// Searches for the first key in the node n greater than key. Uses binary
-    /// search with an optional linear self-verification. This is a template
-    /// function, because the slotkey array is located at different places in
-    /// leaf_node and inner_node.
+    //! Searches for the first key in the node n greater than key. Uses binary
+    //! search with an optional linear self-verification. This is a template
+    //! function, because the slotkey array is located at different places in
+    //! leaf_node and inner_node.
     template <typename node_type>
     int find_upper(const node_type* n, const key_type& key) const {
         if (sizeof(n->slotkey) > traits::binsearch_threshold)
@@ -1606,35 +1660,41 @@ private:
         }
     }
 
-public:
-    // *** Access Functions to the Item Count
+    //! \}
 
-    /// Return the number of key/data pairs in the B+ tree
+public:
+    //! \name Access Functions to the Item Count
+    //! \{
+
+    //! Return the number of key/data pairs in the B+ tree
     size_type size() const {
         return m_stats.itemcount;
     }
 
-    /// Returns true if there is at least one key/data pair in the B+ tree
+    //! Returns true if there is at least one key/data pair in the B+ tree
     bool empty() const {
         return (size() == size_type(0));
     }
 
-    /// Returns the largest possible size of the B+ Tree. This is just a
-    /// function required by the STL standard, the B+ Tree can hold more items.
+    //! Returns the largest possible size of the B+ Tree. This is just a
+    //! function required by the STL standard, the B+ Tree can hold more items.
     size_type max_size() const {
         return size_type(-1);
     }
 
-    /// Return a const reference to the current statistics.
+    //! Return a const reference to the current statistics.
     const struct tree_stats& get_stats() const {
         return m_stats;
     }
 
-public:
-    // *** Standard Access Functions Querying the Tree by Descending to a Leaf
+    //! \}
 
-    /// Non-STL function checking whether a key is in the B+ tree. The same as
-    /// (find(k) != end()) or (count() != 0).
+public:
+    //! \name STL Access Functions Querying the Tree by Descending to a Leaf
+    //! \{
+
+    //! Non-STL function checking whether a key is in the B+ tree. The same as
+    //! (find(k) != end()) or (count() != 0).
     bool exists(const key_type& key) const {
         const node* n = m_root;
         if (!n) return false;
@@ -1653,8 +1713,8 @@ public:
         return (slot < leaf->slotuse && key_equal(key, leaf->slotkey[slot]));
     }
 
-    /// Tries to locate a key in the B+ tree and returns an iterator to the
-    /// key/data slot if found. If unsuccessful it returns end().
+    //! Tries to locate a key in the B+ tree and returns an iterator to the
+    //! key/data slot if found. If unsuccessful it returns end().
     iterator find(const key_type& key) {
         node* n = m_root;
         if (!n) return end();
@@ -1674,8 +1734,8 @@ public:
                ? iterator(leaf, slot) : end();
     }
 
-    /// Tries to locate a key in the B+ tree and returns an constant iterator
-    /// to the key/data slot if found. If unsuccessful it returns end().
+    //! Tries to locate a key in the B+ tree and returns an constant iterator
+    //! to the key/data slot if found. If unsuccessful it returns end().
     const_iterator find(const key_type& key) const {
         const node* n = m_root;
         if (!n) return end();
@@ -1695,8 +1755,8 @@ public:
                ? const_iterator(leaf, slot) : end();
     }
 
-    /// Tries to locate a key in the B+ tree and returns the number of
-    /// identical key entries found.
+    //! Tries to locate a key in the B+ tree and returns the number of
+    //! identical key entries found.
     size_type count(const key_type& key) const {
         const node* n = m_root;
         if (!n) return 0;
@@ -1727,8 +1787,8 @@ public:
         return num;
     }
 
-    /// Searches the B+ tree and returns an iterator to the first pair
-    /// equal to or greater than key, or end() if all keys are smaller.
+    //! Searches the B+ tree and returns an iterator to the first pair
+    //! equal to or greater than key, or end() if all keys are smaller.
     iterator lower_bound(const key_type& key) {
         node* n = m_root;
         if (!n) return end();
@@ -1747,9 +1807,9 @@ public:
         return iterator(leaf, slot);
     }
 
-    /// Searches the B+ tree and returns a constant iterator to the
-    /// first pair equal to or greater than key, or end() if all keys
-    /// are smaller.
+    //! Searches the B+ tree and returns a constant iterator to the
+    //! first pair equal to or greater than key, or end() if all keys
+    //! are smaller.
     const_iterator lower_bound(const key_type& key) const {
         const node* n = m_root;
         if (!n) return end();
@@ -1768,8 +1828,8 @@ public:
         return const_iterator(leaf, slot);
     }
 
-    /// Searches the B+ tree and returns an iterator to the first pair
-    /// greater than key, or end() if all keys are smaller or equal.
+    //! Searches the B+ tree and returns an iterator to the first pair
+    //! greater than key, or end() if all keys are smaller or equal.
     iterator upper_bound(const key_type& key) {
         node* n = m_root;
         if (!n) return end();
@@ -1788,9 +1848,9 @@ public:
         return iterator(leaf, slot);
     }
 
-    /// Searches the B+ tree and returns a constant iterator to the
-    /// first pair greater than key, or end() if all keys are smaller
-    /// or equal.
+    //! Searches the B+ tree and returns a constant iterator to the
+    //! first pair greater than key, or end() if all keys are smaller
+    //! or equal.
     const_iterator upper_bound(const key_type& key) const {
         const node* n = m_root;
         if (!n) return end();
@@ -1809,56 +1869,62 @@ public:
         return const_iterator(leaf, slot);
     }
 
-    /// Searches the B+ tree and returns both lower_bound() and upper_bound().
+    //! Searches the B+ tree and returns both lower_bound() and upper_bound().
     std::pair<iterator, iterator> equal_range(const key_type& key) {
         return std::pair<iterator, iterator>(lower_bound(key), upper_bound(key));
     }
 
-    /// Searches the B+ tree and returns both lower_bound() and upper_bound().
+    //! Searches the B+ tree and returns both lower_bound() and upper_bound().
     std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
         return std::pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key));
     }
 
-public:
-    // *** B+ Tree Object Comparison Functions
+    //! \}
 
-    /// Equality relation of B+ trees of the same type. B+ trees of the same
-    /// size and equal elements (both key and data) are considered
-    /// equal. Beware of the random ordering of duplicate keys.
+public:
+    //! \name B+ Tree Object Comparison Functions
+    //! \{
+
+    //! Equality relation of B+ trees of the same type. B+ trees of the same
+    //! size and equal elements (both key and data) are considered
+    //! equal. Beware of the random ordering of duplicate keys.
     bool operator == (const btree_self& other) const {
         return (size() == other.size()) && std::equal(begin(), end(), other.begin());
     }
 
-    /// Inequality relation. Based on operator==.
+    //! Inequality relation. Based on operator==.
     bool operator != (const btree_self& other) const {
         return !(*this == other);
     }
 
-    /// Total ordering relation of B+ trees of the same type. It uses
-    /// std::lexicographical_compare() for the actual comparison of elements.
+    //! Total ordering relation of B+ trees of the same type. It uses
+    //! std::lexicographical_compare() for the actual comparison of elements.
     bool operator < (const btree_self& other) const {
         return std::lexicographical_compare(begin(), end(), other.begin(), other.end());
     }
 
-    /// Greater relation. Based on operator<.
+    //! Greater relation. Based on operator<.
     bool operator > (const btree_self& other) const {
         return other < *this;
     }
 
-    /// Less-equal relation. Based on operator<.
+    //! Less-equal relation. Based on operator<.
     bool operator <= (const btree_self& other) const {
         return !(other < *this);
     }
 
-    /// Greater-equal relation. Based on operator<.
+    //! Greater-equal relation. Based on operator<.
     bool operator >= (const btree_self& other) const {
         return !(*this < other);
     }
 
-public:
-    /// *** Fast Copy: Assign Operator and Copy Constructors
+    //! \}
 
-    /// Assignment operator. All the key/data pairs are copied
+public:
+    //! \name Fast Copy: Assign Operator and Copy Constructors
+    //! \{
+
+    //! Assignment operator. All the key/data pairs are copied
     btree_self& operator = (const btree_self& other) {
         if (this != &other)
         {
@@ -1881,8 +1947,8 @@ public:
         return *this;
     }
 
-    /// Copy constructor. The newly initialized B+ tree object will contain a
-    /// copy of all key/data pairs.
+    //! Copy constructor. The newly initialized B+ tree object will contain a
+    //! copy of all key/data pairs.
     btree(const btree_self& other)
         : m_root(nullptr), m_headleaf(nullptr), m_tailleaf(nullptr),
           m_stats(other.m_stats),
@@ -1899,7 +1965,7 @@ public:
     }
 
 private:
-    /// Recursively copy nodes from another B+ tree object
+    //! Recursively copy nodes from another B+ tree object
     struct node * copy_recursive(const node* n) {
         if (n->isleafnode())
         {
@@ -1941,47 +2007,50 @@ private:
         }
     }
 
-public:
-    // *** Public Insertion Functions
+    //! \}
 
-    /// Attempt to insert a key/data pair into the B+ tree. If the tree does not
-    /// allow duplicate keys, then the insert may fail if it is already
-    /// present.
+public:
+    //! \name Public Insertion Functions
+    //! \{
+
+    //! Attempt to insert a key/data pair into the B+ tree. If the tree does not
+    //! allow duplicate keys, then the insert may fail if it is already
+    //! present.
     std::pair<iterator, bool> insert(const pair_type& x) {
         return insert_start(x.first, x.second);
     }
 
-    /// Attempt to insert a key/data pair into the B+ tree. Beware that if
-    /// key_type == data_type, then the template iterator insert() is called
-    /// instead. If the tree does not allow duplicate keys, then the insert may
-    /// fail if it is already present.
+    //! Attempt to insert a key/data pair into the B+ tree. Beware that if
+    //! key_type == data_type, then the template iterator insert() is called
+    //! instead. If the tree does not allow duplicate keys, then the insert may
+    //! fail if it is already present.
     std::pair<iterator, bool> insert(const key_type& key, const data_type& data) {
         return insert_start(key, data);
     }
 
-    /// Attempt to insert a key/data pair into the B+ tree. This function is the
-    /// same as the other insert, however if key_type == data_type then the
-    /// non-template function cannot be called. If the tree does not allow
-    /// duplicate keys, then the insert may fail if it is already present.
+    //! Attempt to insert a key/data pair into the B+ tree. This function is the
+    //! same as the other insert, however if key_type == data_type then the
+    //! non-template function cannot be called. If the tree does not allow
+    //! duplicate keys, then the insert may fail if it is already present.
     std::pair<iterator, bool> insert2(const key_type& key, const data_type& data) {
         return insert_start(key, data);
     }
 
-    /// Attempt to insert a key/data pair into the B+ tree. The iterator hint
-    /// is currently ignored by the B+ tree insertion routine.
+    //! Attempt to insert a key/data pair into the B+ tree. The iterator hint
+    //! is currently ignored by the B+ tree insertion routine.
     iterator insert(iterator /* hint */, const pair_type& x) {
         return insert_start(x.first, x.second).first;
     }
 
-    /// Attempt to insert a key/data pair into the B+ tree. The iterator hint is
-    /// currently ignored by the B+ tree insertion routine.
+    //! Attempt to insert a key/data pair into the B+ tree. The iterator hint is
+    //! currently ignored by the B+ tree insertion routine.
     iterator insert2(iterator /* hint */, const key_type& key, const data_type& data) {
         return insert_start(key, data).first;
     }
 
-    /// Attempt to insert the range [first,last) of value_type pairs into the
-    /// B+ tree. Each key/data pair is inserted individually; to bulk load the
-    /// tree, use a constructor with range.
+    //! Attempt to insert the range [first,last) of value_type pairs into the
+    //! B+ tree. Each key/data pair is inserted individually; to bulk load the
+    //! tree, use a constructor with range.
     template <typename InputIterator>
     void insert(InputIterator first, InputIterator last) {
         InputIterator iter = first;
@@ -1992,11 +2061,14 @@ public:
         }
     }
 
-private:
-    // *** Private Insertion Functions
+    //! \}
 
-    /// Start the insertion descent at the current root and handle root
-    /// splits. Returns true if the item was inserted
+private:
+    //! \name Private Insertion Functions
+    //! \{
+
+    //! Start the insertion descent at the current root and handle root
+    //! splits. Returns true if the item was inserted
     std::pair<iterator, bool> insert_start(const key_type& key, const data_type& value) {
         node* newchild = nullptr;
         key_type newkey = key_type();
@@ -2035,8 +2107,8 @@ private:
         return r;
     }
 
-    /**
-     * @brief Insert an item into the B+ tree.
+    /*!
+     * Insert an item into the B+ tree.
      *
      * Descend down the nodes to a leaf, insert the key/data pair in a free
      * slot. If the node overflows, then it must be split and the new split
@@ -2173,8 +2245,8 @@ private:
         }
     }
 
-    /// Split up a leaf node into two equally-filled sibling leaves. Returns
-    /// the new nodes and it's insertion key in the two parameters.
+    //! Split up a leaf node into two equally-filled sibling leaves. Returns
+    //! the new nodes and it's insertion key in the two parameters.
     void split_leaf_node(leaf_node* leaf, key_type* _newkey, node** _newleaf) {
         TLX_BTREE_ASSERT(leaf->isfull());
 
@@ -2208,10 +2280,10 @@ private:
         *_newleaf = newleaf;
     }
 
-    /// Split up an inner node into two equally-filled sibling nodes. Returns
-    /// the new nodes and it's insertion key in the two parameters. Requires
-    /// the slot of the item will be inserted, so the nodes will be the same
-    /// size after the insert.
+    //! Split up an inner node into two equally-filled sibling nodes. Returns
+    //! the new nodes and it's insertion key in the two parameters. Requires
+    //! the slot of the item will be inserted, so the nodes will be the same
+    //! size after the insert.
     void split_inner_node(inner_node* inner, key_type* _newkey, node** _newinner, unsigned int addslot) {
         TLX_BTREE_ASSERT(inner->isfull());
 
@@ -2243,11 +2315,14 @@ private:
         *_newinner = newinner;
     }
 
-public:
-    // *** Bulk Loader - Construct Tree from Sorted Sequence
+    //! \}
 
-    /// Bulk load a sorted range. Loads items into leaves and constructs a
-    /// B-tree above them. The tree must be empty when calling this function.
+public:
+    //! \name Bulk Loader - Construct Tree from Sorted Sequence
+    //! \{
+
+    //! Bulk load a sorted range. Loads items into leaves and constructs a
+    //! B-tree above them. The tree must be empty when calling this function.
     template <typename Iterator>
     void bulk_load(Iterator ibegin, Iterator iend) {
         TLX_BTREE_ASSERT(empty());
@@ -2377,52 +2452,55 @@ public:
         if (selfverify) verify();
     }
 
-private:
-    // *** Support Class Encapsulating Deletion Results
+    //! \}
 
-    /// Result flags of recursive deletion.
+private:
+    //! \name Support Class Encapsulating Deletion Results
+    //! \{
+
+    //! Result flags of recursive deletion.
     enum result_flags_t {
-        /// Deletion successful and no fix-ups necessary.
+        //! Deletion successful and no fix-ups necessary.
         btree_ok = 0,
 
-        /// Deletion not successful because key was not found.
+        //! Deletion not successful because key was not found.
         btree_not_found = 1,
 
-        /// Deletion successful, the last key was updated so parent slotkeys
-        /// need updates.
+        //! Deletion successful, the last key was updated so parent slotkeys
+        //! need updates.
         btree_update_lastkey = 2,
 
-        /// Deletion successful, children nodes were merged and the parent
-        /// needs to remove the empty node.
+        //! Deletion successful, children nodes were merged and the parent
+        //! needs to remove the empty node.
         btree_fixmerge = 4
     };
 
-    /// B+ tree recursive deletion has much information which is needs to be
-    /// passed upward.
+    //! B+ tree recursive deletion has much information which is needs to be
+    //! passed upward.
     struct result_t {
-        /// Merged result flags
+        //! Merged result flags
         result_flags_t flags;
 
-        /// The key to be updated at the parent's slot
+        //! The key to be updated at the parent's slot
         key_type       lastkey;
 
-        /// Constructor of a result with a specific flag, this can also be used
-        /// as for implicit conversion.
+        //! Constructor of a result with a specific flag, this can also be used
+        //! as for implicit conversion.
         result_t(result_flags_t f = btree_ok)
             : flags(f), lastkey()
         { }
 
-        /// Constructor with a lastkey value.
+        //! Constructor with a lastkey value.
         result_t(result_flags_t f, const key_type& k)
             : flags(f), lastkey(k)
         { }
 
-        /// Test if this result object has a given flag set.
+        //! Test if this result object has a given flag set.
         bool           has(result_flags_t f) const {
             return (flags & f) != 0;
         }
 
-        /// Merge two results OR-ing the result flags and overwriting lastkeys.
+        //! Merge two results OR-ing the result flags and overwriting lastkeys.
         result_t& operator |= (const result_t& other) {
             flags = result_flags_t(flags | other.flags);
 
@@ -2434,11 +2512,14 @@ private:
         }
     };
 
-public:
-    // *** Public Erase Functions
+    //! \}
 
-    /// Erases one (the first) of the key/data pairs associated with the given
-    /// key.
+public:
+    //! \name Public Erase Functions
+    //! \{
+
+    //! Erases one (the first) of the key/data pairs associated with the given
+    //! key.
     bool erase_one(const key_type& key) {
         TLX_BTREE_PRINT("btree::erase_one(" << key << ") on btree size " << size());
 
@@ -2459,8 +2540,8 @@ public:
         return !result.has(btree_not_found);
     }
 
-    /// Erases all the key/data pairs associated with the given key. This is
-    /// implemented using erase_one().
+    //! Erases all the key/data pairs associated with the given key. This is
+    //! implemented using erase_one().
     size_type erase(const key_type& key) {
         size_type c = 0;
 
@@ -2473,7 +2554,7 @@ public:
         return c;
     }
 
-    /// Erase the key/data pair referenced by the iterator.
+    //! Erase the key/data pair referenced by the iterator.
     void erase(iterator iter) {
         TLX_BTREE_PRINT("btree::erase_iter(" << iter.currnode << "," << iter.currslot << ") on btree size " << size());
 
@@ -2493,17 +2574,21 @@ public:
     }
 
 #ifdef BTREE_TODO
-    /// Erase all key/data pairs in the range [first,last). This function is
-    /// currently not implemented by the B+ Tree.
+    //! Erase all key/data pairs in the range [first,last). This function is
+    //! currently not implemented by the B+ Tree.
     void erase(iterator /* first */, iterator /* last */) {
         abort();
     }
 #endif
 
-private:
-    // *** Private Erase Functions
+    //! \}
 
-    /** @brief Erase one (the first) key/data pair in the B+ tree matching key.
+private:
+    //! \name Private Erase Functions
+    //! \{
+
+    /*!
+     * Erase one (the first) key/data pair in the B+ tree matching key.
      *
      * Descends down the tree in search of key. During the descent the parent,
      * left and right siblings and their parents are computed and passed
@@ -2785,8 +2870,8 @@ private:
         }
     }
 
-    /** @brief Erase one key/data pair referenced by an iterator in the B+
-     * tree.
+    /*!
+     * Erase one key/data pair referenced by an iterator in the B+ tree.
      *
      * Descends down the tree in search of an iterator. During the descent the
      * parent, left and right siblings and their parents are computed and
@@ -3096,9 +3181,9 @@ private:
         }
     }
 
-    /// Merge two leaf nodes. The function moves all key/data pairs from right
-    /// to left and sets right's slotuse to zero. The right slot is then
-    /// removed by the calling parent node.
+    //! Merge two leaf nodes. The function moves all key/data pairs from right
+    //! to left and sets right's slotuse to zero. The right slot is then
+    //! removed by the calling parent node.
     result_t merge_leaves(leaf_node* left, leaf_node* right, inner_node* parent) {
         TLX_BTREE_PRINT("Merge leaf nodes " << left << " and " << right << " with common parent " << parent << ".");
         (void)parent;
@@ -3126,9 +3211,9 @@ private:
         return btree_fixmerge;
     }
 
-    /// Merge two inner nodes. The function moves all key/childid pairs from
-    /// right to left and sets right's slotuse to zero. The right slot is then
-    /// removed by the calling parent node.
+    //! Merge two inner nodes. The function moves all key/childid pairs from
+    //! right to left and sets right's slotuse to zero. The right slot is then
+    //! removed by the calling parent node.
     static result_t merge_inner(inner_node* left, inner_node* right, inner_node* parent, unsigned int parentslot) {
         TLX_BTREE_PRINT("Merge inner nodes " << left << " and " << right << " with common parent " << parent << ".");
 
@@ -3169,9 +3254,9 @@ private:
         return btree_fixmerge;
     }
 
-    /// Balance two leaf nodes. The function moves key/data pairs from right to
-    /// left so that both nodes are equally filled. The parent node is updated
-    /// if possible.
+    //! Balance two leaf nodes. The function moves key/data pairs from right to
+    //! left so that both nodes are equally filled. The parent node is updated
+    //! if possible.
     static result_t shift_left_leaf(leaf_node* left, leaf_node* right, inner_node* parent, unsigned int parentslot) {
         TLX_BTREE_ASSERT(left->isleafnode() && right->isleafnode());
         TLX_BTREE_ASSERT(parent->level == 1);
@@ -3216,9 +3301,9 @@ private:
         }
     }
 
-    /// Balance two inner nodes. The function moves key/data pairs from right
-    /// to left so that both nodes are equally filled. The parent node is
-    /// updated if possible.
+    //! Balance two inner nodes. The function moves key/data pairs from right
+    //! to left so that both nodes are equally filled. The parent node is
+    //! updated if possible.
     static void shift_left_inner(inner_node* left, inner_node* right, inner_node* parent, unsigned int parentslot) {
         TLX_BTREE_ASSERT(left->level == right->level);
         TLX_BTREE_ASSERT(parent->level == left->level + 1);
@@ -3273,9 +3358,9 @@ private:
         right->slotuse -= shiftnum;
     }
 
-    /// Balance two leaf nodes. The function moves key/data pairs from left to
-    /// right so that both nodes are equally filled. The parent node is updated
-    /// if possible.
+    //! Balance two leaf nodes. The function moves key/data pairs from left to
+    //! right so that both nodes are equally filled. The parent node is updated
+    //! if possible.
     static void shift_right_leaf(leaf_node* left, leaf_node* right, inner_node* parent, unsigned int parentslot) {
         TLX_BTREE_ASSERT(left->isleafnode() && right->isleafnode());
         TLX_BTREE_ASSERT(parent->level == 1);
@@ -3326,9 +3411,9 @@ private:
         parent->slotkey[parentslot] = left->slotkey[left->slotuse - 1];
     }
 
-    /// Balance two inner nodes. The function moves key/data pairs from left to
-    /// right so that both nodes are equally filled. The parent node is updated
-    /// if possible.
+    //! Balance two inner nodes. The function moves key/data pairs from left to
+    //! right so that both nodes are equally filled. The parent node is updated
+    //! if possible.
     static void shift_right_inner(inner_node* left, inner_node* right, inner_node* parent, unsigned int parentslot) {
         TLX_BTREE_ASSERT(left->level == right->level);
         TLX_BTREE_ASSERT(parent->level == left->level + 1);
@@ -3380,21 +3465,24 @@ private:
         left->slotuse -= shiftnum;
     }
 
+    //! \}
+
 #ifdef TLX_BTREE_DEBUG
 
 public:
-    // *** Debug Printing
+    //! \name Debug Printing
+    //! \{
 
-    /// Print out the B+ tree structure with keys onto the given ostream. This
-    /// function requires that the header is compiled with TLX_BTREE_DEBUG and that
-    /// key_type is printable via std::ostream.
+    //! Print out the B+ tree structure with keys onto the given ostream. This
+    //! function requires that the header is compiled with TLX_BTREE_DEBUG and that
+    //! key_type is printable via std::ostream.
     void print(std::ostream& os) const {
         if (m_root) {
             print_node(os, m_root, 0, true);
         }
     }
 
-    /// Print out only the leaves via the double linked list.
+    //! Print out only the leaves via the double linked list.
     void print_leaves(std::ostream& os) const {
         os << "leaves:" << std::endl;
 
@@ -3409,7 +3497,7 @@ public:
     }
 
 private:
-    /// Recursively descend down the tree and print out nodes.
+    //! Recursively descend down the tree and print out nodes.
     static void print_node(std::ostream& os, const node* node, unsigned int depth = 0, bool recursive = false) {
         for (unsigned int i = 0; i < depth; i++) os << "  ";
 
@@ -3451,13 +3539,16 @@ private:
             }
         }
     }
+
+    //! \}
 #endif
 
 public:
-    // *** Verification of B+ Tree Invariants
+    //! \name Verification of B+ Tree Invariants
+    //! \{
 
-    /// Run a thorough verification of all B+ tree invariants. The program
-    /// aborts via assert() if something is wrong.
+    //! Run a thorough verification of all B+ tree invariants. The program
+    //! aborts via assert() if something is wrong.
     void verify() const {
         key_type minkey, maxkey;
         tree_stats vstats;
@@ -3475,7 +3566,7 @@ public:
     }
 
 private:
-    /// Recursively descend down the tree and verify each node
+    //! Recursively descend down the tree and verify each node
     void verify_node(const node* n, key_type* minkey, key_type* maxkey, tree_stats& vstats) const {
         TLX_BTREE_PRINT("verifynode " << n);
 
@@ -3561,7 +3652,7 @@ private:
         }
     }
 
-    /// Verify the double linked list of leaves.
+    //! Verify the double linked list of leaves.
     void verify_leaflinks() const {
         const leaf_node* n = m_headleaf;
 
@@ -3599,39 +3690,42 @@ private:
         assert(testcount == size());
     }
 
-private:
-    // *** Dump and Restore of B+ Trees
+    //! \}
 
-    /// A header for the binary image containing the base properties of the B+
-    /// tree. These properties have to match the current template
-    /// instantiation.
+private:
+    //! \name Dump and Restore of B+ Trees
+    //! \{
+
+    //! A header for the binary image containing the base properties of the B+
+    //! tree. These properties have to match the current template
+    //! instantiation.
     struct dump_header {
-        /// "stx-btree", just to stop the restore() function from loading garbage
+        //! "stx-btree", just to stop the restore() function from loading garbage
         char           signature[12];
 
-        /// Currently 0
+        //! Currently 0
         unsigned short version;
 
-        /// sizeof(key_type)
+        //! sizeof(key_type)
         unsigned short key_type_size;
 
-        /// sizeof(data_type)
+        //! sizeof(data_type)
         unsigned short data_type_size;
 
-        /// Number of slots in the leaves
+        //! Number of slots in the leaves
         unsigned short leafslots;
 
-        /// Number of slots in the inner nodes
+        //! Number of slots in the inner nodes
         unsigned short innerslots;
 
-        /// Allow duplicates
+        //! Allow duplicates
         bool           allow_duplicates;
 
-        /// The item count of the tree
+        //! The item count of the tree
         size_type      itemcount;
 
-        /// Fill the struct with the current B+ tree's properties, itemcount is
-        /// not filled.
+        //! Fill the struct with the current B+ tree's properties, itemcount is
+        //! not filled.
         void           fill() {
             // don't want to include string.h just for this signature
             signature[0] = 's';
@@ -3655,7 +3749,7 @@ private:
             allow_duplicates = btree_self::allow_duplicates;
         }
 
-        /// Returns true if the headers have the same vital properties
+        //! Returns true if the headers have the same vital properties
         bool same(const struct dump_header& o) const {
             return (signature[0] == 's' && signature[1] == 't' && signature[2] == 'x' && signature[3] == '-' &&
                     signature[4] == 'b' && signature[5] == 't' && signature[6] == 'r' && signature[7] == 'e' &&
@@ -3670,10 +3764,10 @@ private:
     };
 
 public:
-    /// Dump the contents of the B+ tree out onto an ostream as a binary
-    /// image. The image contains memory pointers which will be fixed when the
-    /// image is restored. For this to work your key_type and data_type must be
-    /// integral types and contain no pointers or references.
+    //! Dump the contents of the B+ tree out onto an ostream as a binary
+    //! image. The image contains memory pointers which will be fixed when the
+    //! image is restored. For this to work your key_type and data_type must be
+    //! integral types and contain no pointers or references.
     void dump(std::ostream& os) const {
         struct dump_header header;
         header.fill();
@@ -3686,10 +3780,10 @@ public:
         }
     }
 
-    /// Restore a binary image of a dumped B+ tree from an istream. The B+ tree
-    /// pointers are fixed using the dump order. For dump and restore to work
-    /// your key_type and data_type must be integral types and contain no
-    /// pointers or references. Returns true if the restore was successful.
+    //! Restore a binary image of a dumped B+ tree from an istream. The B+ tree
+    //! pointers are fixed using the dump order. For dump and restore to work
+    //! your key_type and data_type must be integral types and contain no
+    //! pointers or references. Returns true if the restore was successful.
     bool restore(std::istream& is) {
         struct dump_header fileheader;
         is.read(reinterpret_cast<char*>(&fileheader), sizeof(fileheader));
@@ -3724,7 +3818,7 @@ public:
     }
 
 private:
-    /// Recursively descend down the tree and dump each node in a precise order
+    //! Recursively descend down the tree and dump each node in a precise order
     void dump_node(std::ostream& os, const node* n) const {
         TLX_BTREE_PRINT("dump_node " << n << std::endl);
 
@@ -3749,8 +3843,8 @@ private:
         }
     }
 
-    /// Read the dump image and construct a tree from the node order in the
-    /// serialization.
+    //! Read the dump image and construct a tree from the node order in the
+    //! serialization.
     node * restore_node(std::istream& is) {
         union {
             node       top;
@@ -3805,7 +3899,11 @@ private:
             return newinner;
         }
     }
+
+    //! \}
 };
+
+//! \}
 
 } // namespace tlx
 

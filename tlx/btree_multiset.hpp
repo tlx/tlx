@@ -131,8 +131,8 @@ public:
     static const bool selfverify = btree_impl::selfverify;
 
     //! Debug parameter: Prints out lots of debug information about how the
-    //! algorithms change the tree. Requires the header file to be compiled
-    //! with BTREE_DEBUG and the key type must be std::ostream printable.
+    //! algorithms change the tree. Requires the header file to be compiled with
+    //! TLX_BTREE_DEBUG and the key type must be std::ostream printable.
     static const bool debug = btree_impl::debug;
 
     //! Operational parameter: Allow duplicate keys in the btree.
@@ -517,7 +517,7 @@ public:
         return tree.erase(iter);
     }
 
-#ifdef BTREE_TODO
+#ifdef TLX_BTREE_TODO
     //! Erase all keys in the range [first,last). This function is currently
     //! not implemented by the B+ Tree.
     void erase(iterator /* first */, iterator /* last */) {
@@ -527,15 +527,15 @@ public:
 
     //! \}
 
-#ifdef BTREE_DEBUG
+#ifdef TLX_BTREE_DEBUG
 
 public:
     //! \name Debug Printing
     //! \{
 
-    //! Print out the B+ tree structure with keys onto the given ostream. This function
-    //! requires that the header is compiled with BTREE_DEBUG and that key_type
-    //! is printable via std::ostream.
+    //! Print out the B+ tree structure with keys onto the given ostream. This
+    //! function requires that the header is compiled with TLX_BTREE_DEBUG and
+    //! that key_type is printable via std::ostream.
     void print(std::ostream& os) const {
         tree.print(os);
     }
@@ -553,7 +553,7 @@ public:
     //! \{
 
     //! Run a thorough verification of all B+ tree invariants. The program
-    //! aborts via BTREE_ASSERT() if something is wrong.
+    //! aborts via TLX_BTREE_ASSERT() if something is wrong.
     void verify() const {
         tree.verify();
     }

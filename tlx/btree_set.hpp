@@ -39,7 +39,7 @@ namespace tlx {
  */
 template <typename Key_,
           typename Compare_ = std::less<Key_>,
-          typename Traits_ = btree_default_set_traits<Key_>,
+          typename Traits_ = btree_default_traits<Key_, Key_>,
           typename Alloc_ = std::allocator<Key_> >
 class btree_set
 {
@@ -66,7 +66,7 @@ public:
     //! The macro TLX_BTREE_FRIENDS can be used by outside class to access the
     //! B+ tree internals. This was added for wxBTreeDemo to be able to draw the
     //! tree.
-    TLX_BTREE_FRIENDS
+    TLX_BTREE_FRIENDS;
 
 private:
     //! \name The data_type
@@ -90,9 +90,15 @@ public:
     //! Typedef of our own type
     typedef btree_set<key_type, key_compare, traits, allocator_type> self;
 
+    //! Key Extractor Struct
+    struct KeyOfValue {
+        //! pull first out of pair
+        static const key_type& get(const value_type& v) { return v; }
+    };
+
     //! Implementation type of the btree_base
-    typedef btree<key_type, data_type, value_type, key_compare,
-                  traits, false, allocator_type, true> btree_impl;
+    typedef btree<key_type, value_type, KeyOfValue, key_compare,
+                  traits, false, allocator_type> btree_impl;
 
     //! Function class comparing two value_type keys.
     typedef typename btree_impl::value_compare value_compare;
@@ -466,13 +472,13 @@ public:
     //! Attempt to insert a key into the B+ tree. The insert will fail if it is
     //! already present.
     std::pair<iterator, bool> insert(const key_type& x) {
-        return tree.insert2(x, data_type());
+        return tree.insert(x);
     }
 
     //! Attempt to insert a key into the B+ tree. The iterator hint is
     //! currently ignored by the B+ tree insertion routine.
     iterator insert(iterator hint, const key_type& x) {
-        return tree.insert2(hint, x, data_type());
+        return tree.insert(hint, x);
     }
 
     //! Attempt to insert the range [first,last) of iterators dereferencing to

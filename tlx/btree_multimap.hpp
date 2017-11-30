@@ -35,7 +35,7 @@ namespace tlx {
  */
 template <typename Key_, typename Data_,
           typename Compare_ = std::less<Key_>,
-          typename Traits_ = btree_default_map_traits<Key_, Data_>,
+          typename Traits_ = btree_default_traits<Key_, std::pair<Key_, Data_> >,
           typename Alloc_ = std::allocator<std::pair<Key_, Data_> > >
 class btree_multimap
 {
@@ -66,7 +66,7 @@ public:
     // The macro TLX_BTREE_FRIENDS can be used by outside class to access the B+
     // tree internals. This was added for wxBTreeDemo to be able to draw the
     // tree.
-    TLX_BTREE_FRIENDS
+    TLX_BTREE_FRIENDS;
 
 public:
     //! \name Constructed Types
@@ -79,9 +79,15 @@ public:
     //! data types
     typedef std::pair<key_type, data_type> value_type;
 
+    //! Key Extractor Struct
+    struct KeyOfValue {
+        //! pull first out of pair
+        static const key_type& get(const value_type& v) { return v.first; }
+    };
+
     //! Implementation type of the btree_base
-    typedef btree<key_type, data_type, value_type, key_compare,
-                  traits, true, allocator_type, false> btree_impl;
+    typedef btree<key_type, value_type, KeyOfValue, key_compare,
+                  traits, true, allocator_type> btree_impl;
 
     //! Function class comparing two value_type pairs.
     typedef typename btree_impl::value_compare value_compare;
@@ -454,14 +460,7 @@ public:
     //! Attempt to insert a key/data pair into the B+ tree. As this tree allows
     //! duplicates insertion never fails.
     iterator insert(const value_type& x) {
-        return tree.insert2(x.first, x.second).first;
-    }
-
-    //! Attempt to insert a key/data pair into the B+ tree. Beware that if
-    //! key_type == data_type, then the template iterator insert() is called
-    //! instead. As this tree allows duplicates insertion never fails.
-    iterator insert(const key_type& key, const data_type& data) {
-        return tree.insert2(key, data).first;
+        return tree.insert(x).first;
     }
 
     //! Attempt to insert a key/data pair into the B+ tree. This function is the
@@ -469,19 +468,19 @@ public:
     //! non-template function cannot be called.  As this tree allows duplicates
     //! insertion never fails.
     iterator insert2(const key_type& key, const data_type& data) {
-        return tree.insert2(key, data).first;
+        return tree.insert(value_type(key, data)).first;
     }
 
     //! Attempt to insert a key/data pair into the B+ tree. The iterator hint
     //! is currently ignored by the B+ tree insertion routine.
     iterator insert(iterator hint, const value_type& x) {
-        return tree.insert2(hint, x.first, x.second);
+        return tree.insert(hint, x);
     }
 
     //! Attempt to insert a key/data pair into the B+ tree. The iterator hint is
     //! currently ignored by the B+ tree insertion routine.
     iterator insert2(iterator hint, const key_type& key, const data_type& data) {
-        return tree.insert2(hint, key, data);
+        return tree.insert(hint, value_type(key, data));
     }
 
     //! Attempt to insert the range [first,last) of value_type pairs into the B+

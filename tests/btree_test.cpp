@@ -35,7 +35,7 @@ template class tlx::btree_multimap<int, int>;
 template <int Slots>
 struct SimpleTest {
     template <typename KeyType>
-    struct traits_nodebug : tlx::btree_default_set_traits<KeyType>{
+    struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType>{
         static const bool selfverify = true;
         static const bool debug = false;
 
@@ -273,7 +273,7 @@ void test_simple() {
 // Large Test
 
 template <typename KeyType>
-struct traits_nodebug : tlx::btree_default_set_traits<KeyType>{
+struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType>{
     static const bool selfverify = true;
     static const bool debug = false;
 
@@ -1389,11 +1389,11 @@ void test_erase_iterator1() {
             // find iterator
             btree_type::iterator it = map.find(i);
 
-            while (it != map.end() && it.key() == i && it.data() != j)
+            while (it != map.end() && it->first == i && it->second != j)
                 ++it;
 
-            die_unless(it.key() == i);
-            die_unless(it.data() == j);
+            die_unless(it->first == i);
+            die_unless(it->second == j);
 
             unsigned int mapsize = map.size();
             map.erase(it);

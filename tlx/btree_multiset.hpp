@@ -116,25 +116,25 @@ public:
     //! \{
 
     //! Base B+ tree parameter: The number of key/data slots in each leaf
-    static const unsigned short leafslotmax = btree_impl::leafslotmax;
+    static const unsigned short leaf_slotmax = btree_impl::leaf_slotmax;
 
     //! Base B+ tree parameter: The number of key slots in each inner node,
     //! this can differ from slots in each leaf.
-    static const unsigned short innerslotmax = btree_impl::innerslotmax;
+    static const unsigned short inner_slotmax = btree_impl::inner_slotmax;
 
     //! Computed B+ tree parameter: The minimum number of key slots used in a
     //! leaf. If fewer slots are used, the leaf will be merged or slots shifted
     //! from it's siblings.
-    static const unsigned short minleafslots = btree_impl::minleafslots;
+    static const unsigned short leaf_slotmin = btree_impl::leaf_slotmin;
 
     //! Computed B+ tree parameter: The minimum number of key slots used
     //! in an inner node. If fewer slots are used, the inner node will be
     //! merged or slots shifted from it's siblings.
-    static const unsigned short mininnerslots = btree_impl::mininnerslots;
+    static const unsigned short inner_slotmin = btree_impl::inner_slotmin;
 
     //! Debug parameter: Enables expensive and thorough checking of the B+ tree
     //! invariants after each insert/erase operation.
-    static const bool selfverify = btree_impl::selfverify;
+    static const bool self_verify = btree_impl::self_verify;
 
     //! Debug parameter: Prints out lots of debug information about how the
     //! algorithms change the tree. Requires the header file to be compiled with

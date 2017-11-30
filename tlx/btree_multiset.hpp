@@ -559,28 +559,6 @@ public:
     }
 
     //! \}
-
-public:
-    //! \name Dump and Restore of B+ Trees
-    //! \{
-
-    //! Dump the contents of the B+ tree out onto an ostream as a binary
-    //! image. The image contains memory pointers which will be fixed when the
-    //! image is restored. For this to work your key_type must be an integral
-    //! type and contain no pointers or references.
-    void dump(std::ostream& os) const {
-        tree.dump(os);
-    }
-
-    //! Restore a binary image of a dumped B+ tree from an istream. The B+ tree
-    //! pointers are fixed using the dump order. For dump and restore to work
-    //! your key_type must be an integral type and contain no pointers or
-    //! references. Returns true if the restore was successful.
-    bool restore(std::istream& is) {
-        return tree.restore(is);
-    }
-
-    //! \}
 };
 
 //! \}

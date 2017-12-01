@@ -63,13 +63,13 @@ namespace tlx {
 #endif
 
 /*!
- * Generates default traits for a B+ tree used as a map. It estimates leaf and
- * inner node sizes by assuming a cache line size of 256 bytes.
+ * Generates default traits for a B+ tree used as a set or map. It estimates
+ * leaf and inner node sizes by assuming a cache line multiple of 256 bytes.
 */
 template <typename Key, typename Value>
 struct btree_default_traits {
-    //! If true, the tree will self verify it's invariants after each insert()
-    //! or erase(). The header must have been compiled with TLX_BTREE_DEBUG
+    //! If true, the tree will self verify its invariants after each insert() or
+    //! erase(). The header must have been compiled with TLX_BTREE_DEBUG
     //! defined.
     static const bool   self_verify = false;
 
@@ -97,15 +97,16 @@ struct btree_default_traits {
 };
 
 /*!
- * Basic class implementing a base B+ tree data structure in memory.
+ * Basic class implementing a B+ tree data structure in memory.
  *
- * The base implementation of a memory B+ tree. It is based on the
+ * The base implementation of an in-memory B+ tree. It is based on the
  * implementation in Cormen's Introduction into Algorithms, Jan Jannink's paper
  * and other algorithm resources. Almost all STL-required function calls are
  * implemented. The asymptotic time requirements of the STL are not always
- * fulfilled in theory, however in practice this B+ tree performs better than a
- * red-black tree by using more memory. The insertion function splits the nodes
- * on the recursion unroll. Erase is largely based on Jannink's ideas.
+ * fulfilled in theory, however, in practice this B+ tree performs better than a
+ * red-black tree and almost always uses less memory. The insertion function
+ * splits the nodes on the recursion unroll. Erase is largely based on Jannink's
+ * ideas.
  *
  * This class is specialized into btree_set, btree_multiset, btree_map and
  * btree_multimap using default template parameters and facade functions.
@@ -122,18 +123,18 @@ public:
     //! \name Template Parameter Types
     //! \{
 
-    //! First template parameter: The key type of the B+ tree. This is stored
-    //! in inner nodes and leaves
+    //! First template parameter: The key type of the B+ tree. This is stored in
+    //! inner nodes.
     typedef Key_ key_type;
 
     //! Second template parameter: Composition pair of key and data types, or
-    //! just the key for set conatiners.
+    //! just the key for set containers. This data type is stored in the leaves.
     typedef Value_ value_type;
 
     //! Third template: key extractor class to pull key_type from value_type.
     typedef KeyOfValue_ key_of_value;
 
-    //! Fourth template parameter: Key comparison function object
+    //! Fourth template parameter: key_type comparison function object
     typedef Compare_ key_compare;
 
     //! Fifth template parameter: Traits object used to define more parameters
@@ -209,18 +210,18 @@ private:
         //! Level in the b-tree, if level == 0 -> leaf node
         unsigned short level;
 
-        //! Number of key slotuse use, so number of valid children or data
+        //! Number of key slotuse use, so the number of valid children or data
         //! pointers
         unsigned short slotuse;
 
-        //! Delayed initialisation of constructed node
+        //! Delayed initialisation of constructed node.
         void           initialize(const unsigned short l) {
             level = l;
             slotuse = 0;
         }
 
-        //! True if this is a leaf node
-        bool           isleafnode() const {
+        //! True if this is a leaf node.
+        bool           is_leafnode() const {
             return (level == 0);
         }
     };
@@ -237,7 +238,7 @@ private:
         //! Pointers to children
         node            * childid[inner_slotmax + 1];
 
-        //! Set variables to initial values
+        //! Set variables to initial values.
         void initialize(const unsigned short l) {
             node::initialize(l);
         }
@@ -247,25 +248,24 @@ private:
             return slotkey[s];
         }
 
-        //! True if the node's slots are full
+        //! True if the node's slots are full.
         bool is_full() const {
             return (node::slotuse == inner_slotmax);
         }
 
-        //! True if few used entries, less than half full
+        //! True if few used entries, less than half full.
         bool is_few() const {
             return (node::slotuse <= inner_slotmin);
         }
 
-        //! True if node has too few entries
+        //! True if node has too few entries.
         bool is_underflow() const {
             return (node::slotuse < inner_slotmin);
         }
     };
 
     //! Extended structure of a leaf node in memory. Contains pairs of keys and
-    //! data items. Key and data slots are kept in separate arrays, because the
-    //! key array is traversed very often compared to accessing the data items.
+    //! data items. Key and data slots are kept together in value_type.
     struct leaf_node : public node {
         //! Define an related allocator for the leaf_node structs.
         typedef typename Alloc_::template rebind<leaf_node>::other alloc_type;
@@ -285,22 +285,22 @@ private:
             prev_leaf = next_leaf = nullptr;
         }
 
-        //! Return key in slot s
+        //! Return key in slot s.
         const key_type& key(size_t s) const {
             return key_of_value::get(slotdata[s]);
         }
 
-        //! True if the node's slots are full
+        //! True if the node's slots are full.
         bool is_full() const {
             return (node::slotuse == leaf_slotmax);
         }
 
-        //! True if few used entries, less than half full
+        //! True if few used entries, less than half full.
         bool is_few() const {
             return (node::slotuse <= leaf_slotmin);
         }
 
-        //! True if node has too few entries
+        //! True if node has too few entries.
         bool is_underflow() const {
             return (node::slotuse < leaf_slotmin);
         }
@@ -356,7 +356,7 @@ public:
         // *** Members
 
         //! The currently referenced leaf node of the tree
-        typename btree::leaf_node* curr_node;
+        typename btree::leaf_node* curr_leaf;
 
         //! Current key/data slot referenced
         unsigned short curr_slot;
@@ -374,7 +374,7 @@ public:
         friend class const_reverse_iterator;
 
         //! Also friendly to the base btree class, because erase_iter() needs
-        //! to read the curr_node and curr_slot values directly.
+        //! to read the curr_leaf and curr_slot values directly.
         friend class btree<key_type, value_type, key_of_value, key_compare,
                            traits, allow_duplicates, allocator_type>;
 
@@ -388,81 +388,78 @@ public:
 
         //! Default-Constructor of a mutable iterator
         iterator()
-            : curr_node(nullptr), curr_slot(0)
+            : curr_leaf(nullptr), curr_slot(0)
         { }
 
         //! Initializing-Constructor of a mutable iterator
         iterator(typename btree::leaf_node* l, unsigned short s)
-            : curr_node(l), curr_slot(s)
+            : curr_leaf(l), curr_slot(s)
         { }
 
         //! Copy-constructor from a reverse iterator
         iterator(const reverse_iterator& it)
-            : curr_node(it.curr_node), curr_slot(it.curr_slot)
+            : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
-        //! Dereference the iterator, this is not a value_type& because key and
-        //! value are not stored together
+        //! Dereference the iterator.
         reference operator * () const {
-            return curr_node->slotdata[curr_slot];
+            return curr_leaf->slotdata[curr_slot];
         }
 
-        //! Dereference the iterator. Do not use this if possible, use key()
-        //! and data() instead. The B+ tree does not stored key and data
-        //! together.
+        //! Dereference the iterator.
         pointer operator -> () const {
-            return &curr_node->slotdata[curr_slot];
+            return &curr_leaf->slotdata[curr_slot];
         }
 
-        //! Key of the current slot
+        //! Key of the current slot.
         const key_type& key() const {
-            return curr_node->key(curr_slot);
+            return curr_leaf->key(curr_slot);
         }
 
-        //! Prefix++ advance the iterator to the next slot
+        //! Prefix++ advance the iterator to the next slot.
         self& operator ++ () {
-            if (curr_slot + 1u < curr_node->slotuse) {
+            if (curr_slot + 1u < curr_leaf->slotuse) {
                 ++curr_slot;
             }
-            else if (curr_node->next_leaf != nullptr) {
-                curr_node = curr_node->next_leaf;
+            else if (curr_leaf->next_leaf != nullptr) {
+                curr_leaf = curr_leaf->next_leaf;
                 curr_slot = 0;
             }
             else {
                 // this is end()
-                curr_slot = curr_node->slotuse;
+                curr_slot = curr_leaf->slotuse;
             }
 
             return *this;
         }
 
-        //! Postfix++ advance the iterator to the next slot
+        //! Postfix++ advance the iterator to the next slot.
         self operator ++ (int) {
             self tmp = *this;   // copy ourselves
 
-            if (curr_slot + 1u < curr_node->slotuse) {
+            if (curr_slot + 1u < curr_leaf->slotuse) {
                 ++curr_slot;
             }
-            else if (curr_node->next_leaf != nullptr) {
-                curr_node = curr_node->next_leaf;
+            else if (curr_leaf->next_leaf != nullptr) {
+                curr_leaf = curr_leaf->next_leaf;
                 curr_slot = 0;
             }
             else {
                 // this is end()
-                curr_slot = curr_node->slotuse;
+                curr_slot = curr_leaf->slotuse;
             }
 
             return tmp;
         }
 
-        //! Prefix-- backstep the iterator to the last slot
+        //! Prefix-- backstep the iterator to the last slot.
         self& operator -- () {
             if (curr_slot > 0) {
                 --curr_slot;
             }
-            else if (curr_node->prev_leaf != nullptr) {
-                curr_node = curr_node->prev_leaf;
-                curr_slot = curr_node->slotuse - 1;
+            else if (curr_leaf->prev_leaf != nullptr) {
+                curr_leaf = curr_leaf->prev_leaf;
+                curr_slot = curr_leaf->slotuse - 1;
             }
             else {
                 // this is begin()
@@ -472,16 +469,16 @@ public:
             return *this;
         }
 
-        //! Postfix-- backstep the iterator to the last slot
+        //! Postfix-- backstep the iterator to the last slot.
         self operator -- (int) {
             self tmp = *this;   // copy ourselves
 
             if (curr_slot > 0) {
                 --curr_slot;
             }
-            else if (curr_node->prev_leaf != nullptr) {
-                curr_node = curr_node->prev_leaf;
-                curr_slot = curr_node->slotuse - 1;
+            else if (curr_leaf->prev_leaf != nullptr) {
+                curr_leaf = curr_leaf->prev_leaf;
+                curr_slot = curr_leaf->slotuse - 1;
             }
             else {
                 // this is begin()
@@ -491,14 +488,14 @@ public:
             return tmp;
         }
 
-        //! Equality of iterators
+        //! Equality of iterators.
         bool operator == (const self& x) const {
-            return (x.curr_node == curr_node) && (x.curr_slot == curr_slot);
+            return (x.curr_leaf == curr_leaf) && (x.curr_slot == curr_slot);
         }
 
-        //! Inequality of iterators
+        //! Inequality of iterators.
         bool operator != (const self& x) const {
-            return (x.curr_node != curr_node) || (x.curr_slot != curr_slot);
+            return (x.curr_leaf != curr_leaf) || (x.curr_slot != curr_slot);
         }
     };
 
@@ -534,7 +531,7 @@ public:
         // *** Members
 
         //! The currently referenced leaf node of the tree
-        const typename btree::leaf_node* curr_node;
+        const typename btree::leaf_node* curr_leaf;
 
         //! Current key/data slot referenced
         unsigned short curr_slot;
@@ -553,92 +550,88 @@ public:
 
         //! Default-Constructor of a const iterator
         const_iterator()
-            : curr_node(nullptr), curr_slot(0)
+            : curr_leaf(nullptr), curr_slot(0)
         { }
 
         //! Initializing-Constructor of a const iterator
         const_iterator(const typename btree::leaf_node* l, unsigned short s)
-            : curr_node(l), curr_slot(s)
+            : curr_leaf(l), curr_slot(s)
         { }
 
         //! Copy-constructor from a mutable iterator
         const_iterator(const iterator& it)
-            : curr_node(it.curr_node), curr_slot(it.curr_slot)
+            : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
         //! Copy-constructor from a mutable reverse iterator
         const_iterator(const reverse_iterator& it)
-            : curr_node(it.curr_node), curr_slot(it.curr_slot)
+            : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
         //! Copy-constructor from a const reverse iterator
         const_iterator(const const_reverse_iterator& it)
-            : curr_node(it.curr_node), curr_slot(it.curr_slot)
+            : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
-        //! Dereference the iterator. Do not use this if possible, use key()
-        //! and data() instead. The B+ tree does not stored key and data
-        //! together.
+        //! Dereference the iterator.
         reference operator * () const {
-            return curr_node->slotdata[curr_slot];
+            return curr_leaf->slotdata[curr_slot];
         }
 
-        //! Dereference the iterator. Do not use this if possible, use key()
-        //! and data() instead. The B+ tree does not stored key and data
-        //! together.
+        //! Dereference the iterator.
         pointer operator -> () const {
-            return &curr_node->slotdata[curr_slot];
+            return &curr_leaf->slotdata[curr_slot];
         }
 
-        //! Key of the current slot
+        //! Key of the current slot.
         const key_type& key() const {
-            return curr_node->key(curr_slot);
+            return curr_leaf->key(curr_slot);
         }
 
-        //! Prefix++ advance the iterator to the next slot
+        //! Prefix++ advance the iterator to the next slot.
         self& operator ++ () {
-            if (curr_slot + 1u < curr_node->slotuse) {
+            if (curr_slot + 1u < curr_leaf->slotuse) {
                 ++curr_slot;
             }
-            else if (curr_node->next_leaf != nullptr) {
-                curr_node = curr_node->next_leaf;
+            else if (curr_leaf->next_leaf != nullptr) {
+                curr_leaf = curr_leaf->next_leaf;
                 curr_slot = 0;
             }
             else {
                 // this is end()
-                curr_slot = curr_node->slotuse;
+                curr_slot = curr_leaf->slotuse;
             }
 
             return *this;
         }
 
-        //! Postfix++ advance the iterator to the next slot
+        //! Postfix++ advance the iterator to the next slot.
         self operator ++ (int) {
             self tmp = *this;   // copy ourselves
 
-            if (curr_slot + 1u < curr_node->slotuse) {
+            if (curr_slot + 1u < curr_leaf->slotuse) {
                 ++curr_slot;
             }
-            else if (curr_node->next_leaf != nullptr) {
-                curr_node = curr_node->next_leaf;
+            else if (curr_leaf->next_leaf != nullptr) {
+                curr_leaf = curr_leaf->next_leaf;
                 curr_slot = 0;
             }
             else {
                 // this is end()
-                curr_slot = curr_node->slotuse;
+                curr_slot = curr_leaf->slotuse;
             }
 
             return tmp;
         }
 
-        //! Prefix-- backstep the iterator to the last slot
+        //! Prefix-- backstep the iterator to the last slot.
         self& operator -- () {
             if (curr_slot > 0) {
                 --curr_slot;
             }
-            else if (curr_node->prev_leaf != nullptr) {
-                curr_node = curr_node->prev_leaf;
-                curr_slot = curr_node->slotuse - 1;
+            else if (curr_leaf->prev_leaf != nullptr) {
+                curr_leaf = curr_leaf->prev_leaf;
+                curr_slot = curr_leaf->slotuse - 1;
             }
             else {
                 // this is begin()
@@ -648,16 +641,16 @@ public:
             return *this;
         }
 
-        //! Postfix-- backstep the iterator to the last slot
+        //! Postfix-- backstep the iterator to the last slot.
         self operator -- (int) {
             self tmp = *this;   // copy ourselves
 
             if (curr_slot > 0) {
                 --curr_slot;
             }
-            else if (curr_node->prev_leaf != nullptr) {
-                curr_node = curr_node->prev_leaf;
-                curr_slot = curr_node->slotuse - 1;
+            else if (curr_leaf->prev_leaf != nullptr) {
+                curr_leaf = curr_leaf->prev_leaf;
+                curr_slot = curr_leaf->slotuse - 1;
             }
             else {
                 // this is begin()
@@ -667,14 +660,14 @@ public:
             return tmp;
         }
 
-        //! Equality of iterators
+        //! Equality of iterators.
         bool operator == (const self& x) const {
-            return (x.curr_node == curr_node) && (x.curr_slot == curr_slot);
+            return (x.curr_leaf == curr_leaf) && (x.curr_slot == curr_slot);
         }
 
-        //! Inequality of iterators
+        //! Inequality of iterators.
         bool operator != (const self& x) const {
-            return (x.curr_node != curr_node) || (x.curr_slot != curr_slot);
+            return (x.curr_leaf != curr_leaf) || (x.curr_slot != curr_slot);
         }
     };
 
@@ -710,7 +703,7 @@ public:
         // *** Members
 
         //! The currently referenced leaf node of the tree
-        typename btree::leaf_node* curr_node;
+        typename btree::leaf_node* curr_leaf;
 
         //! One slot past the current key/data slot referenced.
         unsigned short curr_slot;
@@ -737,48 +730,45 @@ public:
 
         //! Default-Constructor of a reverse iterator
         reverse_iterator()
-            : curr_node(nullptr), curr_slot(0)
+            : curr_leaf(nullptr), curr_slot(0)
         { }
 
         //! Initializing-Constructor of a mutable reverse iterator
         reverse_iterator(typename btree::leaf_node* l, unsigned short s)
-            : curr_node(l), curr_slot(s)
+            : curr_leaf(l), curr_slot(s)
         { }
 
         //! Copy-constructor from a mutable iterator
         reverse_iterator(const iterator& it)
-            : curr_node(it.curr_node), curr_slot(it.curr_slot)
+            : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
-        //! Dereference the iterator, this is not a value_type& because key and
-        //! value are not stored together
+        //! Dereference the iterator.
         reference operator * () const {
             TLX_BTREE_ASSERT(curr_slot > 0);
-            return curr_node->slotdata[curr_slot - 1];
+            return curr_leaf->slotdata[curr_slot - 1];
         }
 
-        //! Dereference the iterator. Do not use this if possible, use key()
-        //! and data() instead. The B+ tree does not stored key and data
-        //! together.
+        //! Dereference the iterator.
         pointer operator -> () const {
             TLX_BTREE_ASSERT(curr_slot > 0);
-            return &curr_node->slotdata[curr_slot - 1];
+            return &curr_leaf->slotdata[curr_slot - 1];
         }
 
-        //! Key of the current slot
+        //! Key of the current slot.
         const key_type& key() const {
             TLX_BTREE_ASSERT(curr_slot > 0);
-            return curr_node->key(curr_slot - 1);
+            return curr_leaf->key(curr_slot - 1);
         }
 
-        //! Prefix++ advance the iterator to the next slot
+        //! Prefix++ advance the iterator to the next slot.
         self& operator ++ () {
             if (curr_slot > 1) {
                 --curr_slot;
             }
-            else if (curr_node->prev_leaf != nullptr) {
-                curr_node = curr_node->prev_leaf;
-                curr_slot = curr_node->slotuse;
+            else if (curr_leaf->prev_leaf != nullptr) {
+                curr_leaf = curr_leaf->prev_leaf;
+                curr_slot = curr_leaf->slotuse;
             }
             else {
                 // this is begin() == rend()
@@ -788,16 +778,16 @@ public:
             return *this;
         }
 
-        //! Postfix++ advance the iterator to the next slot
+        //! Postfix++ advance the iterator to the next slot.
         self operator ++ (int) {
             self tmp = *this;   // copy ourselves
 
             if (curr_slot > 1) {
                 --curr_slot;
             }
-            else if (curr_node->prev_leaf != nullptr) {
-                curr_node = curr_node->prev_leaf;
-                curr_slot = curr_node->slotuse;
+            else if (curr_leaf->prev_leaf != nullptr) {
+                curr_leaf = curr_leaf->prev_leaf;
+                curr_slot = curr_leaf->slotuse;
             }
             else {
                 // this is begin() == rend()
@@ -807,50 +797,50 @@ public:
             return tmp;
         }
 
-        //! Prefix-- backstep the iterator to the last slot
+        //! Prefix-- backstep the iterator to the last slot.
         self& operator -- () {
-            if (curr_slot < curr_node->slotuse) {
+            if (curr_slot < curr_leaf->slotuse) {
                 ++curr_slot;
             }
-            else if (curr_node->next_leaf != nullptr) {
-                curr_node = curr_node->next_leaf;
+            else if (curr_leaf->next_leaf != nullptr) {
+                curr_leaf = curr_leaf->next_leaf;
                 curr_slot = 1;
             }
             else {
                 // this is end() == rbegin()
-                curr_slot = curr_node->slotuse;
+                curr_slot = curr_leaf->slotuse;
             }
 
             return *this;
         }
 
-        //! Postfix-- backstep the iterator to the last slot
+        //! Postfix-- backstep the iterator to the last slot.
         self operator -- (int) {
             self tmp = *this;   // copy ourselves
 
-            if (curr_slot < curr_node->slotuse) {
+            if (curr_slot < curr_leaf->slotuse) {
                 ++curr_slot;
             }
-            else if (curr_node->next_leaf != nullptr) {
-                curr_node = curr_node->next_leaf;
+            else if (curr_leaf->next_leaf != nullptr) {
+                curr_leaf = curr_leaf->next_leaf;
                 curr_slot = 1;
             }
             else {
                 // this is end() == rbegin()
-                curr_slot = curr_node->slotuse;
+                curr_slot = curr_leaf->slotuse;
             }
 
             return tmp;
         }
 
-        //! Equality of iterators
+        //! Equality of iterators.
         bool operator == (const self& x) const {
-            return (x.curr_node == curr_node) && (x.curr_slot == curr_slot);
+            return (x.curr_leaf == curr_leaf) && (x.curr_slot == curr_slot);
         }
 
-        //! Inequality of iterators
+        //! Inequality of iterators.
         bool operator != (const self& x) const {
-            return (x.curr_node != curr_node) || (x.curr_slot != curr_slot);
+            return (x.curr_leaf != curr_leaf) || (x.curr_slot != curr_slot);
         }
     };
 
@@ -886,7 +876,7 @@ public:
         // *** Members
 
         //! The currently referenced leaf node of the tree
-        const typename btree::leaf_node* curr_node;
+        const typename btree::leaf_node* curr_leaf;
 
         //! One slot past the current key/data slot referenced.
         unsigned short curr_slot;
@@ -903,62 +893,58 @@ public:
     public:
         // *** Methods
 
-        //! Default-Constructor of a const reverse iterator
+        //! Default-Constructor of a const reverse iterator.
         const_reverse_iterator()
-            : curr_node(nullptr), curr_slot(0)
+            : curr_leaf(nullptr), curr_slot(0)
         { }
 
-        //! Initializing-Constructor of a const reverse iterator
+        //! Initializing-Constructor of a const reverse iterator.
         const_reverse_iterator(
             const typename btree::leaf_node* l, unsigned short s)
-            : curr_node(l), curr_slot(s)
+            : curr_leaf(l), curr_slot(s)
         { }
 
-        //! Copy-constructor from a mutable iterator
+        //! Copy-constructor from a mutable iterator.
         const_reverse_iterator(const iterator& it)
-            : curr_node(it.curr_node), curr_slot(it.curr_slot)
+            : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
-        //! Copy-constructor from a const iterator
+        //! Copy-constructor from a const iterator.
         const_reverse_iterator(const const_iterator& it)
-            : curr_node(it.curr_node), curr_slot(it.curr_slot)
+            : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
-        //! Copy-constructor from a mutable reverse iterator
+        //! Copy-constructor from a mutable reverse iterator.
         const_reverse_iterator(const reverse_iterator& it)
-            : curr_node(it.curr_node), curr_slot(it.curr_slot)
+            : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
-        //! Dereference the iterator. Do not use this if possible, use key()
-        //! and data() instead. The B+ tree does not stored key and data
-        //! together.
+        //! Dereference the iterator.
         reference operator * () const {
             TLX_BTREE_ASSERT(curr_slot > 0);
-            return curr_node->slotdata[curr_slot - 1];
+            return curr_leaf->slotdata[curr_slot - 1];
         }
 
-        //! Dereference the iterator. Do not use this if possible, use key()
-        //! and data() instead. The B+ tree does not stored key and data
-        //! together.
+        //! Dereference the iterator.
         pointer operator -> () const {
             TLX_BTREE_ASSERT(curr_slot > 0);
-            return &curr_node->slotdata[curr_slot - 1];
+            return &curr_leaf->slotdata[curr_slot - 1];
         }
 
-        //! Key of the current slot
+        //! Key of the current slot.
         const key_type& key() const {
             TLX_BTREE_ASSERT(curr_slot > 0);
-            return curr_node->key(curr_slot - 1);
+            return curr_leaf->key(curr_slot - 1);
         }
 
-        //! Prefix++ advance the iterator to the previous slot
+        //! Prefix++ advance the iterator to the previous slot.
         self& operator ++ () {
             if (curr_slot > 1) {
                 --curr_slot;
             }
-            else if (curr_node->prev_leaf != nullptr) {
-                curr_node = curr_node->prev_leaf;
-                curr_slot = curr_node->slotuse;
+            else if (curr_leaf->prev_leaf != nullptr) {
+                curr_leaf = curr_leaf->prev_leaf;
+                curr_slot = curr_leaf->slotuse;
             }
             else {
                 // this is begin() == rend()
@@ -968,16 +954,16 @@ public:
             return *this;
         }
 
-        //! Postfix++ advance the iterator to the previous slot
+        //! Postfix++ advance the iterator to the previous slot.
         self operator ++ (int) {
             self tmp = *this;   // copy ourselves
 
             if (curr_slot > 1) {
                 --curr_slot;
             }
-            else if (curr_node->prev_leaf != nullptr) {
-                curr_node = curr_node->prev_leaf;
-                curr_slot = curr_node->slotuse;
+            else if (curr_leaf->prev_leaf != nullptr) {
+                curr_leaf = curr_leaf->prev_leaf;
+                curr_slot = curr_leaf->slotuse;
             }
             else {
                 // this is begin() == rend()
@@ -987,50 +973,50 @@ public:
             return tmp;
         }
 
-        //! Prefix-- backstep the iterator to the next slot
+        //! Prefix-- backstep the iterator to the next slot.
         self& operator -- () {
-            if (curr_slot < curr_node->slotuse) {
+            if (curr_slot < curr_leaf->slotuse) {
                 ++curr_slot;
             }
-            else if (curr_node->next_leaf != nullptr) {
-                curr_node = curr_node->next_leaf;
+            else if (curr_leaf->next_leaf != nullptr) {
+                curr_leaf = curr_leaf->next_leaf;
                 curr_slot = 1;
             }
             else {
                 // this is end() == rbegin()
-                curr_slot = curr_node->slotuse;
+                curr_slot = curr_leaf->slotuse;
             }
 
             return *this;
         }
 
-        //! Postfix-- backstep the iterator to the next slot
+        //! Postfix-- backstep the iterator to the next slot.
         self operator -- (int) {
             self tmp = *this;   // copy ourselves
 
-            if (curr_slot < curr_node->slotuse) {
+            if (curr_slot < curr_leaf->slotuse) {
                 ++curr_slot;
             }
-            else if (curr_node->next_leaf != nullptr) {
-                curr_node = curr_node->next_leaf;
+            else if (curr_leaf->next_leaf != nullptr) {
+                curr_leaf = curr_leaf->next_leaf;
                 curr_slot = 1;
             }
             else {
                 // this is end() == rbegin()
-                curr_slot = curr_node->slotuse;
+                curr_slot = curr_leaf->slotuse;
             }
 
             return tmp;
         }
 
-        //! Equality of iterators
+        //! Equality of iterators.
         bool operator == (const self& x) const {
-            return (x.curr_node == curr_node) && (x.curr_slot == curr_slot);
+            return (x.curr_leaf == curr_leaf) && (x.curr_slot == curr_slot);
         }
 
-        //! Inequality of iterators
+        //! Inequality of iterators.
         bool operator != (const self& x) const {
-            return (x.curr_node != curr_node) || (x.curr_slot != curr_slot);
+            return (x.curr_leaf != curr_leaf) || (x.curr_slot != curr_slot);
         }
     };
 
@@ -1040,8 +1026,10 @@ public:
     //! \name Small Statistics Structure
     //! \{
 
-    /*! A small struct containing basic statistics about the B+ tree. It can be
-     * fetched using get_stats(). */
+    /*!
+     * A small struct containing basic statistics about the B+ tree. It can be
+     * fetched using get_stats().
+     */
     struct tree_stats {
         //! Number of items in the B+ tree
         size_type                   size;
@@ -1081,16 +1069,16 @@ private:
     //! \name Tree Object Data Members
     //! \{
 
-    //! Pointer to the B+ tree's root node, either leaf or inner node
+    //! Pointer to the B+ tree's root node, either leaf or inner node.
     node* root_;
 
-    //! Pointer to first leaf in the double linked leaf chain
-    leaf_node* headleaf_;
+    //! Pointer to first leaf in the double linked leaf chain.
+    leaf_node* head_leaf_;
 
-    //! Pointer to last leaf in the double linked leaf chain
-    leaf_node* tailleaf_;
+    //! Pointer to last leaf in the double linked leaf chain.
+    leaf_node* tail_leaf_;
 
-    //! Other small statistics about the B+ tree
+    //! Other small statistics about the B+ tree.
     tree_stats stats_;
 
     //! Key comparison object. More comparison functions are generated from
@@ -1107,17 +1095,17 @@ public:
     //! \{
 
     //! Default constructor initializing an empty B+ tree with the standard key
-    //! comparison function
+    //! comparison function.
     explicit btree(const allocator_type& alloc = allocator_type())
-        : root_(nullptr), headleaf_(nullptr), tailleaf_(nullptr),
+        : root_(nullptr), head_leaf_(nullptr), tail_leaf_(nullptr),
           allocator_(alloc)
     { }
 
     //! Constructor initializing an empty B+ tree with a special key
-    //! comparison object
+    //! comparison object.
     explicit btree(const key_compare& kcf,
                    const allocator_type& alloc = allocator_type())
-        : root_(nullptr), headleaf_(nullptr), tailleaf_(nullptr),
+        : root_(nullptr), head_leaf_(nullptr), tail_leaf_(nullptr),
           key_less_(kcf), allocator_(alloc)
     { }
 
@@ -1127,7 +1115,7 @@ public:
     template <class InputIterator>
     btree(InputIterator first, InputIterator last,
           const allocator_type& alloc = allocator_type())
-        : root_(nullptr), headleaf_(nullptr), tailleaf_(nullptr),
+        : root_(nullptr), head_leaf_(nullptr), tail_leaf_(nullptr),
           allocator_(alloc) {
         insert(first, last);
     }
@@ -1138,7 +1126,7 @@ public:
     template <class InputIterator>
     btree(InputIterator first, InputIterator last, const key_compare& kcf,
           const allocator_type& alloc = allocator_type())
-        : root_(nullptr), headleaf_(nullptr), tailleaf_(nullptr),
+        : root_(nullptr), head_leaf_(nullptr), tail_leaf_(nullptr),
           key_less_(kcf), allocator_(alloc) {
         insert(first, last);
     }
@@ -1151,8 +1139,8 @@ public:
     //! Fast swapping of two identical B+ tree objects.
     void swap(btree_self& from) {
         std::swap(root_, from.root_);
-        std::swap(headleaf_, from.headleaf_);
-        std::swap(tailleaf_, from.tailleaf_);
+        std::swap(head_leaf_, from.head_leaf_);
+        std::swap(tail_leaf_, from.tail_leaf_);
         std::swap(stats_, from.stats_);
         std::swap(key_less_, from.key_less_);
         std::swap(allocator_, from.allocator_);
@@ -1187,13 +1175,13 @@ public:
         }
     };
 
-    //! Constant access to the key comparison object sorting the B+ tree
+    //! Constant access to the key comparison object sorting the B+ tree.
     key_compare key_comp() const {
         return key_less_;
     }
 
     //! Constant access to a constructed value_type comparison object. Required
-    //! by the STL
+    //! by the STL.
     value_compare value_comp() const {
         return value_compare(key_less_);
     }
@@ -1247,12 +1235,12 @@ private:
     //! \name Node Object Allocation and Deallocation Functions
     //! \{
 
-    //! Return an allocator for leaf_node objects
+    //! Return an allocator for leaf_node objects.
     typename leaf_node::alloc_type leaf_node_allocator() {
         return typename leaf_node::alloc_type(allocator_);
     }
 
-    //! Return an allocator for inner_node objects
+    //! Return an allocator for inner_node objects.
     typename inner_node::alloc_type inner_node_allocator() {
         return typename inner_node::alloc_type(allocator_);
     }
@@ -1274,9 +1262,9 @@ private:
     }
 
     //! Correctly free either inner or leaf node, destructs all contained key
-    //! and value objects
+    //! and value objects.
     void free_node(node* n) {
-        if (n->isleafnode()) {
+        if (n->is_leafnode()) {
             leaf_node* ln = static_cast<leaf_node*>(n);
             typename leaf_node::alloc_type a(leaf_node_allocator());
             a.destroy(ln);
@@ -1298,7 +1286,7 @@ public:
     //! \name Fast Destruction of the B+ Tree
     //! \{
 
-    //! Frees all key/data pairs and all nodes of the tree
+    //! Frees all key/data pairs and all nodes of the tree.
     void clear() {
         if (root_)
         {
@@ -1306,7 +1294,7 @@ public:
             free_node(root_);
 
             root_ = nullptr;
-            headleaf_ = tailleaf_ = nullptr;
+            head_leaf_ = tail_leaf_ = nullptr;
 
             stats_ = tree_stats();
         }
@@ -1315,9 +1303,9 @@ public:
     }
 
 private:
-    //! Recursively free up nodes
+    //! Recursively free up nodes.
     void clear_recursive(node* n) {
-        if (n->isleafnode())
+        if (n->is_leafnode())
         {
             leaf_node* leafnode = static_cast<leaf_node*>(n);
 
@@ -1347,25 +1335,25 @@ public:
     //! Constructs a read/data-write iterator that points to the first slot in
     //! the first leaf of the B+ tree.
     iterator begin() {
-        return iterator(headleaf_, 0);
+        return iterator(head_leaf_, 0);
     }
 
     //! Constructs a read/data-write iterator that points to the first invalid
     //! slot in the last leaf of the B+ tree.
     iterator end() {
-        return iterator(tailleaf_, tailleaf_ ? tailleaf_->slotuse : 0);
+        return iterator(tail_leaf_, tail_leaf_ ? tail_leaf_->slotuse : 0);
     }
 
     //! Constructs a read-only constant iterator that points to the first slot
     //! in the first leaf of the B+ tree.
     const_iterator begin() const {
-        return const_iterator(headleaf_, 0);
+        return const_iterator(head_leaf_, 0);
     }
 
     //! Constructs a read-only constant iterator that points to the first
     //! invalid slot in the last leaf of the B+ tree.
     const_iterator end() const {
-        return const_iterator(tailleaf_, tailleaf_ ? tailleaf_->slotuse : 0);
+        return const_iterator(tail_leaf_, tail_leaf_ ? tail_leaf_->slotuse : 0);
     }
 
     //! Constructs a read/data-write reverse iterator that points to the first
@@ -1531,7 +1519,7 @@ public:
         const node* n = root_;
         if (!n) return false;
 
-        while (!n->isleafnode())
+        while (!n->is_leafnode())
         {
             const inner_node* inner = static_cast<const inner_node*>(n);
             int slot = find_lower(inner, key);
@@ -1551,7 +1539,7 @@ public:
         node* n = root_;
         if (!n) return end();
 
-        while (!n->isleafnode())
+        while (!n->is_leafnode())
         {
             const inner_node* inner = static_cast<const inner_node*>(n);
             int slot = find_lower(inner, key);
@@ -1566,13 +1554,13 @@ public:
                ? iterator(leaf, slot) : end();
     }
 
-    //! Tries to locate a key in the B+ tree and returns an constant iterator
-    //! to the key/data slot if found. If unsuccessful it returns end().
+    //! Tries to locate a key in the B+ tree and returns an constant iterator to
+    //! the key/data slot if found. If unsuccessful it returns end().
     const_iterator find(const key_type& key) const {
         const node* n = root_;
         if (!n) return end();
 
-        while (!n->isleafnode())
+        while (!n->is_leafnode())
         {
             const inner_node* inner = static_cast<const inner_node*>(n);
             int slot = find_lower(inner, key);
@@ -1587,13 +1575,13 @@ public:
                ? const_iterator(leaf, slot) : end();
     }
 
-    //! Tries to locate a key in the B+ tree and returns the number of
-    //! identical key entries found.
+    //! Tries to locate a key in the B+ tree and returns the number of identical
+    //! key entries found.
     size_type count(const key_type& key) const {
         const node* n = root_;
         if (!n) return 0;
 
-        while (!n->isleafnode())
+        while (!n->is_leafnode())
         {
             const inner_node* inner = static_cast<const inner_node*>(n);
             int slot = find_lower(inner, key);
@@ -1619,13 +1607,13 @@ public:
         return num;
     }
 
-    //! Searches the B+ tree and returns an iterator to the first pair
-    //! equal to or greater than key, or end() if all keys are smaller.
+    //! Searches the B+ tree and returns an iterator to the first pair equal to
+    //! or greater than key, or end() if all keys are smaller.
     iterator lower_bound(const key_type& key) {
         node* n = root_;
         if (!n) return end();
 
-        while (!n->isleafnode())
+        while (!n->is_leafnode())
         {
             const inner_node* inner = static_cast<const inner_node*>(n);
             int slot = find_lower(inner, key);
@@ -1639,14 +1627,13 @@ public:
         return iterator(leaf, slot);
     }
 
-    //! Searches the B+ tree and returns a constant iterator to the
-    //! first pair equal to or greater than key, or end() if all keys
-    //! are smaller.
+    //! Searches the B+ tree and returns a constant iterator to the first pair
+    //! equal to or greater than key, or end() if all keys are smaller.
     const_iterator lower_bound(const key_type& key) const {
         const node* n = root_;
         if (!n) return end();
 
-        while (!n->isleafnode())
+        while (!n->is_leafnode())
         {
             const inner_node* inner = static_cast<const inner_node*>(n);
             int slot = find_lower(inner, key);
@@ -1660,13 +1647,13 @@ public:
         return const_iterator(leaf, slot);
     }
 
-    //! Searches the B+ tree and returns an iterator to the first pair
-    //! greater than key, or end() if all keys are smaller or equal.
+    //! Searches the B+ tree and returns an iterator to the first pair greater
+    //! than key, or end() if all keys are smaller or equal.
     iterator upper_bound(const key_type& key) {
         node* n = root_;
         if (!n) return end();
 
-        while (!n->isleafnode())
+        while (!n->is_leafnode())
         {
             const inner_node* inner = static_cast<const inner_node*>(n);
             int slot = find_upper(inner, key);
@@ -1680,14 +1667,13 @@ public:
         return iterator(leaf, slot);
     }
 
-    //! Searches the B+ tree and returns a constant iterator to the
-    //! first pair greater than key, or end() if all keys are smaller
-    //! or equal.
+    //! Searches the B+ tree and returns a constant iterator to the first pair
+    //! greater than key, or end() if all keys are smaller or equal.
     const_iterator upper_bound(const key_type& key) const {
         const node* n = root_;
         if (!n) return end();
 
-        while (!n->isleafnode())
+        while (!n->is_leafnode())
         {
             const inner_node* inner = static_cast<const inner_node*>(n);
             int slot = find_upper(inner, key);
@@ -1721,8 +1707,8 @@ public:
     //! \{
 
     //! Equality relation of B+ trees of the same type. B+ trees of the same
-    //! size and equal elements (both key and data) are considered
-    //! equal. Beware of the random ordering of duplicate keys.
+    //! size and equal elements (both key and data) are considered equal. Beware
+    //! of the random ordering of duplicate keys.
     bool operator == (const btree_self& other) const {
         return (size() == other.size()) &&
                std::equal(begin(), end(), other.begin());
@@ -1761,7 +1747,7 @@ public:
     //! \name Fast Copy: Assign Operator and Copy Constructors
     //! \{
 
-    //! Assignment operator. All the key/data pairs are copied
+    //! Assignment operator. All the key/data pairs are copied.
     btree_self& operator = (const btree_self& other) {
         if (this != &other)
         {
@@ -1787,7 +1773,7 @@ public:
     //! Copy constructor. The newly initialized B+ tree object will contain a
     //! copy of all key/data pairs.
     btree(const btree_self& other)
-        : root_(nullptr), headleaf_(nullptr), tailleaf_(nullptr),
+        : root_(nullptr), head_leaf_(nullptr), tail_leaf_(nullptr),
           stats_(other.stats_),
           key_less_(other.key_comp()),
           allocator_(other.get_allocator()) {
@@ -1804,7 +1790,7 @@ public:
 private:
     //! Recursively copy nodes from another B+ tree object
     struct node * copy_recursive(const node* n) {
-        if (n->isleafnode())
+        if (n->is_leafnode())
         {
             const leaf_node* leaf = static_cast<const leaf_node*>(n);
             leaf_node* newleaf = allocate_leaf();
@@ -1813,16 +1799,16 @@ private:
             std::copy(leaf->slotdata, leaf->slotdata + leaf->slotuse,
                       newleaf->slotdata);
 
-            if (headleaf_ == nullptr)
+            if (head_leaf_ == nullptr)
             {
-                headleaf_ = tailleaf_ = newleaf;
+                head_leaf_ = tail_leaf_ = newleaf;
                 newleaf->prev_leaf = newleaf->next_leaf = nullptr;
             }
             else
             {
-                newleaf->prev_leaf = tailleaf_;
-                tailleaf_->next_leaf = newleaf;
-                tailleaf_ = newleaf;
+                newleaf->prev_leaf = tail_leaf_;
+                tail_leaf_->next_leaf = newleaf;
+                tail_leaf_ = newleaf;
             }
 
             return newleaf;
@@ -1852,20 +1838,19 @@ public:
     //! \{
 
     //! Attempt to insert a key/data pair into the B+ tree. If the tree does not
-    //! allow duplicate keys, then the insert may fail if it is already
-    //! present.
+    //! allow duplicate keys, then the insert may fail if it is already present.
     std::pair<iterator, bool> insert(const value_type& x) {
         return insert_start(key_of_value::get(x), x);
     }
 
-    //! Attempt to insert a key/data pair into the B+ tree. The iterator hint
-    //! is currently ignored by the B+ tree insertion routine.
+    //! Attempt to insert a key/data pair into the B+ tree. The iterator hint is
+    //! currently ignored by the B+ tree insertion routine.
     iterator insert(iterator /* hint */, const value_type& x) {
         return insert_start(key_of_value::get(x), x).first;
     }
 
-    //! Attempt to insert the range [first,last) of value_type pairs into the
-    //! B+ tree. Each key/data pair is inserted individually; to bulk load the
+    //! Attempt to insert the range [first,last) of value_type pairs into the B+
+    //! tree. Each key/data pair is inserted individually; to bulk load the
     //! tree, use a constructor with range.
     template <typename InputIterator>
     void insert(InputIterator first, InputIterator last) {
@@ -1883,8 +1868,8 @@ private:
     //! \name Private Insertion Functions
     //! \{
 
-    //! Start the insertion descent at the current root and handle root
-    //! splits. Returns true if the item was inserted
+    //! Start the insertion descent at the current root and handle root splits.
+    //! Returns true if the item was inserted
     std::pair<iterator, bool>
     insert_start(const key_type& key, const value_type& value) {
 
@@ -1892,7 +1877,7 @@ private:
         key_type newkey = key_type();
 
         if (root_ == nullptr) {
-            root_ = headleaf_ = tailleaf_ = allocate_leaf();
+            root_ = head_leaf_ = tail_leaf_ = allocate_leaf();
         }
 
         std::pair<iterator, bool> r =
@@ -1930,14 +1915,14 @@ private:
      * Insert an item into the B+ tree.
      *
      * Descend down the nodes to a leaf, insert the key/data pair in a free
-     * slot. If the node overflows, then it must be split and the new split
-     * node inserted into the parent. Unroll / this splitting up to the root.
+     * slot. If the node overflows, then it must be split and the new split node
+     * inserted into the parent. Unroll / this splitting up to the root.
     */
     std::pair<iterator, bool> insert_descend(
         node* n, const key_type& key, const value_type& value,
         key_type* splitkey, node** splitnode) {
 
-        if (!n->isleafnode())
+        if (!n->is_leafnode())
         {
             inner_node* inner = static_cast<inner_node*>(n);
 
@@ -2026,7 +2011,7 @@ private:
 
             return r;
         }
-        else // n->isleafnode() == true
+        else // n->is_leafnode() == true
         {
             leaf_node* leaf = static_cast<leaf_node*>(n);
 
@@ -2060,8 +2045,7 @@ private:
             if (splitnode && leaf != *splitnode && slot == leaf->slotuse - 1)
             {
                 // special case: the node was split, and the insert is at the
-                // last slot of the old node. then the splitkey must be
-                // updated.
+                // last slot of the old node. then the splitkey must be updated.
                 *splitkey = key;
             }
 
@@ -2069,8 +2053,8 @@ private:
         }
     }
 
-    //! Split up a leaf node into two equally-filled sibling leaves. Returns
-    //! the new nodes and it's insertion key in the two parameters.
+    //! Split up a leaf node into two equally-filled sibling leaves. Returns the
+    //! new nodes and it's insertion key in the two parameters.
     void split_leaf_node(leaf_node* leaf, key_type* out_newkey, node** out_newleaf) {
         TLX_BTREE_ASSERT(leaf->is_full());
 
@@ -2084,8 +2068,8 @@ private:
 
         newleaf->next_leaf = leaf->next_leaf;
         if (newleaf->next_leaf == nullptr) {
-            TLX_BTREE_ASSERT(leaf == tailleaf_);
-            tailleaf_ = newleaf;
+            TLX_BTREE_ASSERT(leaf == tail_leaf_);
+            tail_leaf_ = newleaf;
         }
         else {
             newleaf->next_leaf->prev_leaf = newleaf;
@@ -2103,10 +2087,11 @@ private:
     }
 
     //! Split up an inner node into two equally-filled sibling nodes. Returns
-    //! the new nodes and it's insertion key in the two parameters. Requires
-    //! the slot of the item will be inserted, so the nodes will be the same
-    //! size after the insert.
-    void split_inner_node(inner_node* inner, key_type* out_newkey, node** out_newinner, unsigned int addslot) {
+    //! the new nodes and it's insertion key in the two parameters. Requires the
+    //! slot of the item will be inserted, so the nodes will be the same size
+    //! after the insert.
+    void split_inner_node(inner_node* inner, key_type* out_newkey,
+                          node** out_newinner, unsigned int addslot) {
         TLX_BTREE_ASSERT(inner->is_full());
 
         unsigned int mid = (inner->slotuse >> 1);
@@ -2169,14 +2154,14 @@ public:
             for (size_t s = 0; s < leaf->slotuse; ++s, ++it)
                 leaf->set_slot(s, *it);
 
-            if (tailleaf_ != nullptr) {
-                tailleaf_->next_leaf = leaf;
-                leaf->prev_leaf = tailleaf_;
+            if (tail_leaf_ != nullptr) {
+                tail_leaf_->next_leaf = leaf;
+                leaf->prev_leaf = tail_leaf_;
             }
             else {
-                headleaf_ = leaf;
+                head_leaf_ = leaf;
             }
-            tailleaf_ = leaf;
+            tail_leaf_ = leaf;
 
             num_items -= leaf->slotuse;
         }
@@ -2184,8 +2169,8 @@ public:
         TLX_BTREE_ASSERT(it == iend && num_items == 0);
 
         // if the btree is so small to fit into one leaf, then we're done.
-        if (headleaf_ == tailleaf_) {
-            root_ = headleaf_;
+        if (head_leaf_ == tail_leaf_) {
+            root_ = head_leaf_;
             return;
         }
 
@@ -2200,7 +2185,7 @@ public:
         typedef std::pair<inner_node*, const key_type*> nextlevel_type;
         nextlevel_type* nextlevel = new nextlevel_type[num_parents];
 
-        leaf_node* leaf = headleaf_;
+        leaf_node* leaf = head_leaf_;
         for (size_t i = 0; i < num_parents; ++i)
         {
             // allocate new inner node at level 1
@@ -2292,8 +2277,8 @@ private:
         //! need updates.
         btree_update_lastkey = 2,
 
-        //! Deletion successful, children nodes were merged and the parent
-        //! needs to remove the empty node.
+        //! Deletion successful, children nodes were merged and the parent needs
+        //! to remove the empty node.
         btree_fixmerge = 4
     };
 
@@ -2378,7 +2363,7 @@ public:
 
     //! Erase the key/data pair referenced by the iterator.
     void erase(iterator iter) {
-        TLX_BTREE_PRINT("btree::erase_iter(" << iter.curr_node << "," << iter.curr_slot << ") on btree size " << size());
+        TLX_BTREE_PRINT("btree::erase_iter(" << iter.curr_leaf << "," << iter.curr_slot << ") on btree size " << size());
 
         if (self_verify) verify();
 
@@ -2424,7 +2409,7 @@ private:
                                node* left, node* right,
                                inner_node* left_parent, inner_node* right_parent,
                                inner_node* parent, unsigned int parentslot) {
-        if (curr->isleafnode())
+        if (curr->is_leafnode())
         {
             leaf_node* leaf = static_cast<leaf_node*>(curr);
             leaf_node* left_leaf = static_cast<leaf_node*>(left);
@@ -2485,7 +2470,7 @@ private:
                     free_node(root_);
 
                     root_ = leaf = nullptr;
-                    headleaf_ = tailleaf_ = nullptr;
+                    head_leaf_ = tail_leaf_ = nullptr;
 
                     // will be decremented soon by insert_start()
                     TLX_BTREE_ASSERT(stats_.size == 1);
@@ -2494,9 +2479,9 @@ private:
 
                     return btree_ok;
                 }
-                // case : if both left and right leaves would underflow in case of
-                // a shift, then merging is necessary. choose the more local merger
-                // with our parent
+                // case : if both left and right leaves would underflow in case
+                // of a shift, then merging is necessary. choose the more local
+                // merger with our parent
                 else if ((left_leaf == nullptr || left_leaf->is_few()) && (right_leaf == nullptr || right_leaf->is_few()))
                 {
                     if (left_parent == parent)
@@ -2504,7 +2489,8 @@ private:
                     else
                         myres |= merge_leaves(leaf, right_leaf, right_parent);
                 }
-                // case : the right leaf has extra data, so balance right with current
+                // case : the right leaf has extra data, so balance right with
+                // current
                 else if ((left_leaf != nullptr && left_leaf->is_few()) && (right_leaf != nullptr && !right_leaf->is_few()))
                 {
                     if (right_parent == parent)
@@ -2512,7 +2498,8 @@ private:
                     else
                         myres |= merge_leaves(left_leaf, leaf, left_parent);
                 }
-                // case : the left leaf has extra data, so balance left with current
+                // case : the left leaf has extra data, so balance left with
+                // current
                 else if ((left_leaf != nullptr && !left_leaf->is_few()) && (right_leaf != nullptr && right_leaf->is_few()))
                 {
                     if (left_parent == parent)
@@ -2540,7 +2527,7 @@ private:
 
             return myres;
         }
-        else // !curr->isleafnode()
+        else // !curr->is_leafnode()
         {
             inner_node* inner = static_cast<inner_node*>(curr);
             inner_node* left_inner = static_cast<inner_node*>(left);
@@ -2642,9 +2629,9 @@ private:
 
                     return btree_ok;
                 }
-                // case : if both left and right leaves would underflow in case of
-                // a shift, then merging is necessary. choose the more local merger
-                // with our parent
+                // case : if both left and right leaves would underflow in case
+                // of a shift, then merging is necessary. choose the more local
+                // merger with our parent
                 else if ((left_inner == nullptr || left_inner->is_few()) && (right_inner == nullptr || right_inner->is_few()))
                 {
                     if (left_parent == parent)
@@ -2652,7 +2639,8 @@ private:
                     else
                         myres |= merge_inner(inner, right_inner, right_parent, parentslot);
                 }
-                // case : the right leaf has extra data, so balance right with current
+                // case : the right leaf has extra data, so balance right with
+                // current
                 else if ((left_inner != nullptr && left_inner->is_few()) && (right_inner != nullptr && !right_inner->is_few()))
                 {
                     if (right_parent == parent)
@@ -2660,7 +2648,8 @@ private:
                     else
                         myres |= merge_inner(left_inner, inner, left_parent, parentslot - 1);
                 }
-                // case : the left leaf has extra data, so balance left with current
+                // case : the left leaf has extra data, so balance left with
+                // current
                 else if ((left_inner != nullptr && !left_inner->is_few()) && (right_inner != nullptr && right_inner->is_few()))
                 {
                     if (left_parent == parent)
@@ -2694,13 +2683,12 @@ private:
      * Erase one key/data pair referenced by an iterator in the B+ tree.
      *
      * Descends down the tree in search of an iterator. During the descent the
-     * parent, left and right siblings and their parents are computed and
-     * passed down. The difficulty is that the iterator contains only a pointer
-     * to a leaf_node, which means that this function must do a recursive depth
-     * first search for that leaf node in the subtree containing all pairs of
-     * the same key. This subtree can be very large, even the whole tree,
-     * though in practice it would not make sense to have so many duplicate
-     * keys.
+     * parent, left and right siblings and their parents are computed and passed
+     * down. The difficulty is that the iterator contains only a pointer to a
+     * leaf_node, which means that this function must do a recursive depth first
+     * search for that leaf node in the subtree containing all pairs of the same
+     * key. This subtree can be very large, even the whole tree, though in
+     * practice it would not make sense to have so many duplicate keys.
      *
      * Once the referenced key/data pair is found, it is removed from the leaf
      * and the same underflow cases are handled as in erase_one_descend.
@@ -2710,7 +2698,7 @@ private:
                                 node* left, node* right,
                                 inner_node* left_parent, inner_node* right_parent,
                                 inner_node* parent, unsigned int parentslot) {
-        if (curr->isleafnode())
+        if (curr->is_leafnode())
         {
             leaf_node* leaf = static_cast<leaf_node*>(curr);
             leaf_node* left_leaf = static_cast<leaf_node*>(left);
@@ -2718,14 +2706,14 @@ private:
 
             // if this is not the correct leaf, get next step in recursive
             // search
-            if (leaf != iter.curr_node)
+            if (leaf != iter.curr_leaf)
             {
                 return btree_not_found;
             }
 
             if (iter.curr_slot >= leaf->slotuse)
             {
-                TLX_BTREE_PRINT("Could not find iterator (" << iter.curr_node << "," << iter.curr_slot << ") to erase. Invalid leaf node?");
+                TLX_BTREE_PRINT("Could not find iterator (" << iter.curr_leaf << "," << iter.curr_slot << ") to erase. Invalid leaf node?");
 
                 return btree_not_found;
             }
@@ -2778,7 +2766,7 @@ private:
                     free_node(root_);
 
                     root_ = leaf = nullptr;
-                    headleaf_ = tailleaf_ = nullptr;
+                    head_leaf_ = tail_leaf_ = nullptr;
 
                     // will be decremented soon by insert_start()
                     TLX_BTREE_ASSERT(stats_.size == 1);
@@ -2787,9 +2775,9 @@ private:
 
                     return btree_ok;
                 }
-                // case : if both left and right leaves would underflow in case of
-                // a shift, then merging is necessary. choose the more local merger
-                // with our parent
+                // case : if both left and right leaves would underflow in case
+                // of a shift, then merging is necessary. choose the more local
+                // merger with our parent
                 else if ((left_leaf == nullptr || left_leaf->is_few()) && (right_leaf == nullptr || right_leaf->is_few()))
                 {
                     if (left_parent == parent)
@@ -2797,7 +2785,8 @@ private:
                     else
                         myres |= merge_leaves(leaf, right_leaf, right_parent);
                 }
-                // case : the right leaf has extra data, so balance right with current
+                // case : the right leaf has extra data, so balance right with
+                // current
                 else if ((left_leaf != nullptr && left_leaf->is_few()) && (right_leaf != nullptr && !right_leaf->is_few()))
                 {
                     if (right_parent == parent)
@@ -2805,7 +2794,8 @@ private:
                     else
                         myres |= merge_leaves(left_leaf, leaf, left_parent);
                 }
-                // case : the left leaf has extra data, so balance left with current
+                // case : the left leaf has extra data, so balance left with
+                // current
                 else if ((left_leaf != nullptr && !left_leaf->is_few()) && (right_leaf != nullptr && right_leaf->is_few()))
                 {
                     if (left_parent == parent)
@@ -2833,7 +2823,7 @@ private:
 
             return myres;
         }
-        else // !curr->isleafnode()
+        else // !curr->is_leafnode()
         {
             inner_node* inner = static_cast<inner_node*>(curr);
             inner_node* left_inner = static_cast<inner_node*>(left);
@@ -2951,9 +2941,9 @@ private:
 
                     return btree_ok;
                 }
-                // case : if both left and right leaves would underflow in case of
-                // a shift, then merging is necessary. choose the more local merger
-                // with our parent
+                // case : if both left and right leaves would underflow in case
+                // of a shift, then merging is necessary. choose the more local
+                // merger with our parent
                 else if ((left_inner == nullptr || left_inner->is_few()) && (right_inner == nullptr || right_inner->is_few()))
                 {
                     if (left_parent == parent)
@@ -2961,7 +2951,8 @@ private:
                     else
                         myres |= merge_inner(inner, right_inner, right_parent, parentslot);
                 }
-                // case : the right leaf has extra data, so balance right with current
+                // case : the right leaf has extra data, so balance right with
+                // current
                 else if ((left_inner != nullptr && left_inner->is_few()) && (right_inner != nullptr && !right_inner->is_few()))
                 {
                     if (right_parent == parent)
@@ -2969,7 +2960,8 @@ private:
                     else
                         myres |= merge_inner(left_inner, inner, left_parent, parentslot - 1);
                 }
-                // case : the left leaf has extra data, so balance left with current
+                // case : the left leaf has extra data, so balance left with
+                // current
                 else if ((left_inner != nullptr && !left_inner->is_few()) && (right_inner != nullptr && right_inner->is_few()))
                 {
                     if (left_parent == parent)
@@ -3000,14 +2992,14 @@ private:
     }
 
     //! Merge two leaf nodes. The function moves all key/data pairs from right
-    //! to left and sets right's slotuse to zero. The right slot is then
-    //! removed by the calling parent node.
+    //! to left and sets right's slotuse to zero. The right slot is then removed
+    //! by the calling parent node.
     result_t merge_leaves(leaf_node* left, leaf_node* right,
                           inner_node* parent) {
         TLX_BTREE_PRINT("Merge leaf nodes " << left << " and " << right << " with common parent " << parent << ".");
         (void)parent;
 
-        TLX_BTREE_ASSERT(left->isleafnode() && right->isleafnode());
+        TLX_BTREE_ASSERT(left->is_leafnode() && right->is_leafnode());
         TLX_BTREE_ASSERT(parent->level == 1);
 
         TLX_BTREE_ASSERT(left->slotuse + right->slotuse < leaf_slotmax);
@@ -3021,7 +3013,7 @@ private:
         if (left->next_leaf)
             left->next_leaf->prev_leaf = left;
         else
-            tailleaf_ = left;
+            tail_leaf_ = left;
 
         right->slotuse = 0;
 
@@ -3077,7 +3069,7 @@ private:
     //! if possible.
     static result_t shift_left_leaf(leaf_node* left, leaf_node* right,
                                     inner_node* parent, unsigned int parentslot) {
-        TLX_BTREE_ASSERT(left->isleafnode() && right->isleafnode());
+        TLX_BTREE_ASSERT(left->is_leafnode() && right->is_leafnode());
         TLX_BTREE_ASSERT(parent->level == 1);
 
         TLX_BTREE_ASSERT(left->next_leaf == right);
@@ -3116,9 +3108,9 @@ private:
         }
     }
 
-    //! Balance two inner nodes. The function moves key/data pairs from right
-    //! to left so that both nodes are equally filled. The parent node is
-    //! updated if possible.
+    //! Balance two inner nodes. The function moves key/data pairs from right to
+    //! left so that both nodes are equally filled. The parent node is updated
+    //! if possible.
     static void shift_left_inner(inner_node* left, inner_node* right,
                                  inner_node* parent, unsigned int parentslot) {
         TLX_BTREE_ASSERT(left->level == right->level);
@@ -3135,7 +3127,8 @@ private:
 
         if (self_verify)
         {
-            // find the left node's slot in the parent's children and compare to parentslot
+            // find the left node's slot in the parent's children and compare to
+            // parentslot
 
             unsigned int leftslot = 0;
             while (leftslot <= parent->slotuse && parent->childid[leftslot] != left)
@@ -3148,12 +3141,13 @@ private:
             TLX_BTREE_ASSERT(leftslot == parentslot);
         }
 
-        // copy the parent's decision slotkey and childid to the first new key on the left
+        // copy the parent's decision slotkey and childid to the first new key
+        // on the left
         left->slotkey[left->slotuse] = parent->slotkey[parentslot];
         left->slotuse++;
 
-        // copy the other items from the right node to the last slots in the left node.
-
+        // copy the other items from the right node to the last slots in the
+        // left node.
         std::copy(right->slotkey, right->slotkey + shiftnum - 1,
                   left->slotkey + left->slotuse);
         std::copy(right->childid, right->childid + shiftnum,
@@ -3165,7 +3159,6 @@ private:
         parent->slotkey[parentslot] = right->slotkey[shiftnum - 1];
 
         // shift all slots in the right node
-
         std::copy(right->slotkey + shiftnum, right->slotkey + right->slotuse,
                   right->slotkey);
         std::copy(right->childid + shiftnum, right->childid + right->slotuse + 1,
@@ -3179,7 +3172,7 @@ private:
     //! if possible.
     static void shift_right_leaf(leaf_node* left, leaf_node* right,
                                  inner_node* parent, unsigned int parentslot) {
-        TLX_BTREE_ASSERT(left->isleafnode() && right->isleafnode());
+        TLX_BTREE_ASSERT(left->is_leafnode() && right->is_leafnode());
         TLX_BTREE_ASSERT(parent->level == 1);
 
         TLX_BTREE_ASSERT(left->next_leaf == right);
@@ -3215,7 +3208,8 @@ private:
 
         right->slotuse += shiftnum;
 
-        // copy the last items from the left node to the first slot in the right node.
+        // copy the last items from the left node to the first slot in the right
+        // node.
         std::copy(left->slotdata + left->slotuse - shiftnum, left->slotdata + left->slotuse,
                   right->slotdata);
 
@@ -3263,16 +3257,19 @@ private:
 
         right->slotuse += shiftnum;
 
-        // copy the parent's decision slotkey and childid to the last new key on the right
+        // copy the parent's decision slotkey and childid to the last new key on
+        // the right
         right->slotkey[shiftnum - 1] = parent->slotkey[parentslot];
 
-        // copy the remaining last items from the left node to the first slot in the right node.
+        // copy the remaining last items from the left node to the first slot in
+        // the right node.
         std::copy(left->slotkey + left->slotuse - shiftnum + 1, left->slotkey + left->slotuse,
                   right->slotkey);
         std::copy(left->childid + left->slotuse - shiftnum + 1, left->childid + left->slotuse + 1,
                   right->childid);
 
-        // copy the first to-be-removed key from the left node to the parent's decision slot
+        // copy the first to-be-removed key from the left node to the parent's
+        // decision slot
         parent->slotkey[parentslot] = left->slotkey[left->slotuse - shiftnum];
 
         left->slotuse -= shiftnum;
@@ -3299,7 +3296,7 @@ public:
     void print_leaves(std::ostream& os) const {
         os << "leaves:" << std::endl;
 
-        const leaf_node* n = headleaf_;
+        const leaf_node* n = head_leaf_;
 
         while (n)
         {
@@ -3311,12 +3308,13 @@ public:
 
 private:
     //! Recursively descend down the tree and print out nodes.
-    static void print_node(std::ostream& os, const node* node, unsigned int depth = 0, bool recursive = false) {
+    static void print_node(std::ostream& os, const node* node,
+                           unsigned int depth = 0, bool recursive = false) {
         for (unsigned int i = 0; i < depth; i++) os << "  ";
 
         os << "node " << node << " level " << node->level << " slotuse " << node->slotuse << std::endl;
 
-        if (node->isleafnode())
+        if (node->is_leafnode())
         {
             const leaf_node* leafnode = static_cast<const leaf_node*>(node);
 
@@ -3380,10 +3378,11 @@ public:
 
 private:
     //! Recursively descend down the tree and verify each node
-    void verify_node(const node* n, key_type* minkey, key_type* maxkey, tree_stats& vstats) const {
+    void verify_node(const node* n, key_type* minkey, key_type* maxkey,
+                     tree_stats& vstats) const {
         TLX_BTREE_PRINT("verifynode " << n);
 
-        if (n->isleafnode())
+        if (n->is_leafnode())
         {
             const leaf_node* leaf = static_cast<const leaf_node*>(n);
 
@@ -3401,7 +3400,7 @@ private:
             vstats.leaves++;
             vstats.size += leaf->slotuse;
         }
-        else // !n->isleafnode()
+        else // !n->is_leafnode()
         {
             const inner_node* inner = static_cast<const inner_node*>(n);
             vstats.inner_nodes++;
@@ -3463,7 +3462,7 @@ private:
 
     //! Verify the double linked list of leaves.
     void verify_leaflinks() const {
-        const leaf_node* n = headleaf_;
+        const leaf_node* n = head_leaf_;
 
         die_unless(n->level == 0);
         die_unless(!n || n->prev_leaf == nullptr);
@@ -3490,7 +3489,7 @@ private:
             }
             else
             {
-                die_unless(tailleaf_ == n);
+                die_unless(tail_leaf_ == n);
             }
 
             n = n->next_leaf;

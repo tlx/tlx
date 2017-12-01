@@ -58,6 +58,7 @@ endmacro(tlx_build_test)
 
 ### list of tests in subdirectories
 
+tlx_build_only(btree_speedtest)
 tlx_build_only(cmdline_parser_example)
 
 tlx_build_test(backtrace_test)

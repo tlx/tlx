@@ -35,10 +35,6 @@ const size_t max_items = 1024000 * 64;
 
 const int randseed = 34234235;
 
-/// b+ tree slot range to test
-const int min_nodeslots = 4;
-const int max_nodeslots = 256;
-
 /// Time is measured using gettimeofday()
 static double timestamp() {
     struct timeval tv;

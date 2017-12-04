@@ -8,9 +8,7 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <cassert>
 #include <cstdlib>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -25,13 +23,15 @@
 #include <tlx/btree_multimap.hpp>
 #include <unordered_map>
 
+#include <tlx/die.hpp>
+
 // *** Settings
 
 /// starting number of items to insert
-const size_t minitems = 125;
+const size_t min_items = 125;
 
 /// maximum number of items to insert
-const size_t maxitems = 1024000 * 64;
+const size_t max_items = 1024000 * 64;
 
 const int randseed = 34234235;
 
@@ -40,7 +40,7 @@ const int min_nodeslots = 4;
 const int max_nodeslots = 256;
 
 /// Time is measured using gettimeofday()
-static inline double timestamp() {
+static double timestamp() {
     struct timeval tv;
     gettimeofday(&tv, nullptr);
     return tv.tv_sec + tv.tv_usec * 0.000001;
@@ -49,11 +49,11 @@ static inline double timestamp() {
 /// Traits used for the speed tests, BTREE_DEBUG is not defined.
 template <int InnerSlots_, int LeafSlots_>
 struct btree_traits_speed : tlx::btree_default_traits<size_t, size_t>{
-    static const bool   selfverify = false;
+    static const bool   self_verify = false;
     static const bool   debug = false;
 
-    static const int    leafslots = InnerSlots_;
-    static const int    innerslots = LeafSlots_;
+    static const int    leaf_slots = InnerSlots_;
+    static const int    inner_slots = LeafSlots_;
 
     static const size_t binsearch_threshold = 256 * 1024 * 1024; // never
 };
@@ -62,33 +62,41 @@ struct btree_traits_speed : tlx::btree_default_traits<size_t, size_t>{
 
 /// Test a generic set type with insertions
 template <typename SetType>
-struct Test_Set_Insert {
+class Test_Set_Insert
+{
+public:
     Test_Set_Insert(size_t) { }
 
-    inline void run(size_t items) {
+    static const char * op() { return "set_insert"; }
+
+    void run(size_t items) {
         SetType set;
 
         srand(randseed);
         for (size_t i = 0; i < items; i++)
             set.insert(rand());
 
-        assert(set.size() == items);
+        die_unless(set.size() == items);
     }
 };
 
 /// Test a generic set type with insert, find and delete sequences
 template <typename SetType>
-struct Test_Set_InsertFindDelete {
+class Test_Set_InsertFindDelete
+{
+public:
     Test_Set_InsertFindDelete(size_t) { }
 
-    inline void run(size_t items) {
+    static const char * op() { return "set_insert_find_delete"; }
+
+    void run(size_t items) {
         SetType set;
 
         srand(randseed);
         for (size_t i = 0; i < items; i++)
             set.insert(rand());
 
-        assert(set.size() == items);
+        die_unless(set.size() == items);
 
         srand(randseed);
         for (size_t i = 0; i < items; i++)
@@ -98,24 +106,28 @@ struct Test_Set_InsertFindDelete {
         for (size_t i = 0; i < items; i++)
             set.erase(set.find(rand()));
 
-        assert(set.empty());
+        die_unless(set.empty());
     }
 };
 
 /// Test a generic set type with insert, find and delete sequences
 template <typename SetType>
-struct Test_Set_Find {
+class Test_Set_Find
+{
+public:
     SetType set;
+
+    static const char * op() { return "set_find"; }
 
     Test_Set_Find(size_t items) {
         srand(randseed);
         for (size_t i = 0; i < items; i++)
             set.insert(rand());
 
-        assert(set.size() == items);
+        die_unless(set.size() == items);
     }
 
-    void    run(size_t items) {
+    void run(size_t items) {
         srand(randseed);
         for (size_t i = 0; i < items; i++)
             set.find(rand());
@@ -144,17 +156,21 @@ struct TestFactory_Set {
     };
 
     /// Run tests on all set types
-    void call_testrunner(std::ostream& os, size_t items);
+    void call_testrunner(size_t items);
 };
 
 // -----------------------------------------------------------------------------
 
 /// Test a generic map type with insertions
 template <typename MapType>
-struct Test_Map_Insert {
+class Test_Map_Insert
+{
+public:
     Test_Map_Insert(size_t) { }
 
-    inline void run(size_t items) {
+    static const char * op() { return "map_insert"; }
+
+    void run(size_t items) {
         MapType map;
 
         srand(randseed);
@@ -163,16 +179,20 @@ struct Test_Map_Insert {
             map.insert(std::make_pair(r, r));
         }
 
-        assert(map.size() == items);
+        die_unless(map.size() == items);
     }
 };
 
 /// Test a generic map type with insert, find and delete sequences
 template <typename MapType>
-struct Test_Map_InsertFindDelete {
+class Test_Map_InsertFindDelete
+{
+public:
     Test_Map_InsertFindDelete(size_t) { }
 
-    inline void run(size_t items) {
+    static const char * op() { return "map_insert_find_delete"; }
+
+    void run(size_t items) {
         MapType map;
 
         srand(randseed);
@@ -181,7 +201,7 @@ struct Test_Map_InsertFindDelete {
             map.insert(std::make_pair(r, r));
         }
 
-        assert(map.size() == items);
+        die_unless(map.size() == items);
 
         srand(randseed);
         for (size_t i = 0; i < items; i++)
@@ -191,14 +211,18 @@ struct Test_Map_InsertFindDelete {
         for (size_t i = 0; i < items; i++)
             map.erase(map.find(rand()));
 
-        assert(map.empty());
+        die_unless(map.empty());
     }
 };
 
 /// Test a generic map type with insert, find and delete sequences
 template <typename MapType>
-struct Test_Map_Find {
+class Test_Map_Find
+{
+public:
     MapType map;
+
+    static const char * op() { return "map_find"; }
 
     Test_Map_Find(size_t items) {
         srand(randseed);
@@ -207,10 +231,10 @@ struct Test_Map_Find {
             map.insert(std::make_pair(r, r));
         }
 
-        assert(map.size() == items);
+        die_unless(map.size() == items);
     }
 
-    void    run(size_t items) {
+    void run(size_t items) {
         srand(randseed);
         for (size_t i = 0; i < items; i++)
             map.find(rand());
@@ -239,23 +263,24 @@ struct TestFactory_Map {
     };
 
     /// Run tests on all map types
-    void call_testrunner(std::ostream& os, size_t items);
+    void call_testrunner(size_t items);
 };
 
 // -----------------------------------------------------------------------------
 
-size_t repeatuntil;
+size_t repeat_until;
 
-/// Repeat (short) tests until enough time elapsed and divide by the runs.
+/// Repeat (short) tests until enough time elapsed and divide by the repeat.
 template <typename TestClass>
-void testrunner_loop(std::ostream& os, size_t items) {
-    size_t runs = 0;
+void testrunner_loop(size_t items, const std::string& container_name) {
+
+    size_t repeat = 0;
     double ts1, ts2;
 
     do
     {
         // count repetition of timed tests
-        runs = 0;
+        repeat = 0;
 
         {
             // initialize test structures
@@ -263,179 +288,167 @@ void testrunner_loop(std::ostream& os, size_t items) {
 
             ts1 = timestamp();
 
-            for (size_t r = 0; r <= repeatuntil; r += items)
+            for (size_t r = 0; r <= repeat_until; r += items)
             {
                 // run timed test procedure
                 test.run(items);
-                ++runs;
+                ++repeat;
             }
 
             ts2 = timestamp();
         }
 
-        std::cerr << "Insert " << items << " repeat " << (repeatuntil / items)
+        std::cout << "Insert " << items << " repeat " << (repeat_until / items)
                   << " time " << (ts2 - ts1) << "\n";
 
         // discard and repeat if test took less than one second.
-        if ((ts2 - ts1) < 1.0) repeatuntil *= 2;
+        if ((ts2 - ts1) < 1.0) repeat_until *= 2;
     }
     while ((ts2 - ts1) < 1.0);
 
-    os << std::fixed << std::setprecision(10) << ((ts2 - ts1) / runs) << " " << std::flush;
+    std::cout << "RESULT"
+              << " container=" << container_name
+              << " op=" << TestClass::op()
+              << " items=" << items
+              << " repeat=" << repeat
+              << " time_total=" << (ts2 - ts1)
+              << " time="
+              << std::fixed << std::setprecision(10) << ((ts2 - ts1) / repeat)
+              << std::endl;
 }
 
 // Template magic to emulate a for_each slots. These templates will roll-out
 // btree instantiations for each of the Low-High leaf/inner slot numbers.
-template <template <int Slots> class functional, int Low, int High>
+template <template <int Slots> class Functional, int Low, int High>
 struct btree_range {
-    inline void operator () (std::ostream& os, size_t items) {
-        testrunner_loop<functional<Low> >(os, items);
-        btree_range<functional, Low + 2, High>()(os, items);
+    void operator () (size_t items, const std::string& container_name) {
+        testrunner_loop<Functional<Low> >(
+            items, container_name + "<" + std::to_string(Low) + ">"
+            " slots=" + std::to_string(Low));
+        btree_range<Functional, Low + 2, High>()(items, container_name);
     }
 };
 
-template <template <int Slots> class functional, int Low>
-struct btree_range<functional, Low, Low>{
-    inline void operator () (std::ostream& os, size_t items) {
-        testrunner_loop<functional<Low> >(os, items);
+template <template <int Slots> class Functional, int Low>
+struct btree_range<Functional, Low, Low>{
+    void operator () (size_t items, const std::string& container_name) {
+        testrunner_loop<Functional<Low> >(
+            items, container_name + "<" + std::to_string(Low) + ">"
+            " slots=" + std::to_string(Low));
     }
 };
 
 template <template <typename Type> class TestClass>
-void TestFactory_Set<TestClass>::call_testrunner(std::ostream& os, size_t items) {
-    os << items << " " << std::flush;
+void TestFactory_Set<TestClass>::call_testrunner(size_t items) {
 
-    testrunner_loop<StdSet>(os, items);
-    testrunner_loop<UnorderedSet>(os, items);
+    testrunner_loop<StdSet>(items, "std::multiset");
+    testrunner_loop<UnorderedSet>(items, "std::unordered_multiset");
 
 #if 0
-    btree_range<BtreeSet, min_nodeslots, max_nodeslots>()(os, items);
+    btree_range<BtreeSet, min_nodeslots, max_nodeslots>()(
+        items, "tlx::btree_multiset");
 #else
     // just pick a few node sizes for quicker tests
-    testrunner_loop<BtreeSet<4> >(os, items);
-    for (int i = 6; i < 8; i += 2) os << "0 ";
-    testrunner_loop<BtreeSet<8> >(os, items);
-    for (int i = 10; i < 16; i += 2) os << "0 ";
-    testrunner_loop<BtreeSet<16> >(os, items);
-    for (int i = 18; i < 32; i += 2) os << "0 ";
-    testrunner_loop<BtreeSet<32> >(os, items);
-    for (int i = 34; i < 64; i += 2) os << "0 ";
-    testrunner_loop<BtreeSet<64> >(os, items);
-    for (int i = 66; i < 128; i += 2) os << "0 ";
-    testrunner_loop<BtreeSet<128> >(os, items);
-    for (int i = 130; i < 256; i += 2) os << "0 ";
-    testrunner_loop<BtreeSet<256> >(os, items);
+    testrunner_loop<BtreeSet<4> >(items, "tlx::btree_multiset<4> slots=4");
+    testrunner_loop<BtreeSet<8> >(items, "tlx::btree_multiset<8> slots=8");
+    testrunner_loop<BtreeSet<16> >(items, "tlx::btree_multiset<16> slots=16");
+    testrunner_loop<BtreeSet<32> >(items, "tlx::btree_multiset<32> slots=32");
+    testrunner_loop<BtreeSet<64> >(items, "tlx::btree_multiset<64> slots=64");
+    testrunner_loop<BtreeSet<128> >(
+        items, "tlx::btree_multiset<128> slots=128");
+    testrunner_loop<BtreeSet<256> >(
+        items, "tlx::btree_multiset<256> slots=256");
 #endif
-
-    os << "\n" << std::flush;
 }
 
 template <template <typename Type> class TestClass>
-void TestFactory_Map<TestClass>::call_testrunner(std::ostream& os, size_t items) {
-    os << items << " " << std::flush;
+void TestFactory_Map<TestClass>::call_testrunner(size_t items) {
 
-    testrunner_loop<StdMap>(os, items);
-    testrunner_loop<UnorderedMap>(os, items);
+    testrunner_loop<StdMap>(items, "std::multimap");
+    testrunner_loop<UnorderedMap>(items, "std::unordered_multimap");
 
 #if 0
-    btree_range<BtreeMap, min_nodeslots, max_nodeslots>()(os, items);
+    btree_range<BtreeMap, min_nodeslots, max_nodeslots>()(
+        items, "tlx::btree_multimap");
 #else
     // just pick a few node sizes for quicker tests
-    testrunner_loop<BtreeMap<4> >(os, items);
-    for (int i = 6; i < 8; i += 2) os << "0 ";
-    testrunner_loop<BtreeMap<8> >(os, items);
-    for (int i = 10; i < 16; i += 2) os << "0 ";
-    testrunner_loop<BtreeMap<16> >(os, items);
-    for (int i = 18; i < 32; i += 2) os << "0 ";
-    testrunner_loop<BtreeMap<32> >(os, items);
-    for (int i = 34; i < 64; i += 2) os << "0 ";
-    testrunner_loop<BtreeMap<64> >(os, items);
-    for (int i = 66; i < 128; i += 2) os << "0 ";
-    testrunner_loop<BtreeMap<128> >(os, items);
-    for (int i = 130; i < 256; i += 2) os << "0 ";
-    testrunner_loop<BtreeMap<256> >(os, items);
+    testrunner_loop<BtreeMap<4> >(items, "tlx::btree_multimap<4> slots=4");
+    testrunner_loop<BtreeMap<8> >(items, "tlx::btree_multimap<8> slots=8");
+    testrunner_loop<BtreeMap<16> >(items, "tlx::btree_multimap<16> slots=16");
+    testrunner_loop<BtreeMap<32> >(items, "tlx::btree_multimap<32> slots=32");
+    testrunner_loop<BtreeMap<64> >(items, "tlx::btree_multimap<64> slots=64");
+    testrunner_loop<BtreeMap<128> >(
+        items, "tlx::btree_multimap<128> slots=128");
+    testrunner_loop<BtreeMap<256> >(
+        items, "tlx::btree_multimap<256> slots=256");
 #endif
-
-    os << "\n" << std::flush;
 }
 
 /// Speed test them!
 int main() {
     {   // Set - speed test only insertion
 
-        std::ofstream os("speed-set-insert.txt");
+        repeat_until = min_items;
 
-        repeatuntil = minitems;
-
-        for (size_t items = minitems; items <= maxitems; items *= 2)
+        for (size_t items = min_items; items <= max_items; items *= 2)
         {
-            std::cerr << "set: insert " << items << "\n";
-            TestFactory_Set<Test_Set_Insert>().call_testrunner(os, items);
+            std::cout << "set: insert " << items << "\n";
+            TestFactory_Set<Test_Set_Insert>().call_testrunner(items);
         }
     }
 
     {   // Set - speed test insert, find and delete
 
-        std::ofstream os("speed-set-all.txt");
+        repeat_until = min_items;
 
-        repeatuntil = minitems;
-
-        for (size_t items = minitems; items <= maxitems; items *= 2)
+        for (size_t items = min_items; items <= max_items; items *= 2)
         {
-            std::cerr << "set: insert, find, delete " << items << "\n";
-            TestFactory_Set<Test_Set_InsertFindDelete>().call_testrunner(os, items);
+            std::cout << "set: insert, find, delete " << items << "\n";
+            TestFactory_Set<Test_Set_InsertFindDelete>().call_testrunner(items);
         }
     }
 
     {   // Set - speed test find only
 
-        std::ofstream os("speed-set-find.txt");
+        repeat_until = min_items;
 
-        repeatuntil = minitems;
-
-        for (size_t items = minitems; items <= maxitems; items *= 2)
+        for (size_t items = min_items; items <= max_items; items *= 2)
         {
-            std::cerr << "set: find " << items << "\n";
-            TestFactory_Set<Test_Set_Find>().call_testrunner(os, items);
+            std::cout << "set: find " << items << "\n";
+            TestFactory_Set<Test_Set_Find>().call_testrunner(items);
         }
     }
 
     {   // Map - speed test only insertion
 
-        std::ofstream os("speed-map-insert.txt");
+        repeat_until = min_items;
 
-        repeatuntil = minitems;
-
-        for (size_t items = minitems; items <= maxitems; items *= 2)
+        for (size_t items = min_items; items <= max_items; items *= 2)
         {
-            std::cerr << "map: insert " << items << "\n";
-            TestFactory_Map<Test_Map_Insert>().call_testrunner(os, items);
+            std::cout << "map: insert " << items << "\n";
+            TestFactory_Map<Test_Map_Insert>().call_testrunner(items);
         }
     }
 
     {   // Map - speed test insert, find and delete
 
-        std::ofstream os("speed-map-all.txt");
+        repeat_until = min_items;
 
-        repeatuntil = minitems;
-
-        for (size_t items = minitems; items <= maxitems; items *= 2)
+        for (size_t items = min_items; items <= max_items; items *= 2)
         {
-            std::cerr << "map: insert, find, delete " << items << "\n";
-            TestFactory_Map<Test_Map_InsertFindDelete>().call_testrunner(os, items);
+            std::cout << "map: insert, find, delete " << items << "\n";
+            TestFactory_Map<Test_Map_InsertFindDelete>().call_testrunner(items);
         }
     }
 
     {   // Map - speed test find only
 
-        std::ofstream os("speed-map-find.txt");
+        repeat_until = min_items;
 
-        repeatuntil = minitems;
-
-        for (size_t items = minitems; items <= maxitems; items *= 2)
+        for (size_t items = min_items; items <= max_items; items *= 2)
         {
-            std::cerr << "map: find " << items << "\n";
-            TestFactory_Map<Test_Map_Find>().call_testrunner(os, items);
+            std::cout << "map: find " << items << "\n";
+            TestFactory_Map<Test_Map_Find>().call_testrunner(items);
         }
     }
 

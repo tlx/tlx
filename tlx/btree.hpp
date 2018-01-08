@@ -27,6 +27,9 @@ namespace tlx {
 
 //! \addtogroup tlx_data_structures
 //! \{
+//! \defgroup tlx_data_structures_btree B+ Trees
+//! B+ tree variants
+//! \{
 
 // *** Debugging Macros
 
@@ -3501,6 +3504,7 @@ private:
     //! \}
 };
 
+//! \}
 //! \}
 
 } // namespace tlx

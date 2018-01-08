@@ -15,7 +15,7 @@
 
 namespace tlx {
 
-//! \addtogroup tlx_data_structures
+//! \addtogroup tlx_data_structures_btree
 //! \{
 
 /*!

@@ -27,10 +27,13 @@ namespace tlx {
 
 void print_raw_backtrace(FILE* out, unsigned int max_frames,
                          const char* fmt, ...) {
+    char buffer[1024];
+    size_t p = 0;
+
     va_list args;
     va_start(args, fmt);
 
-    vfprintf(out, fmt, args);
+    p += vsnprintf(buffer + p, sizeof(buffer) - p - 1, fmt, args);
 
 #if __linux__
 
@@ -45,10 +48,11 @@ void print_raw_backtrace(FILE* out, unsigned int max_frames,
         if (addrlist[i] == nullptr)
             break;
 
-        fprintf(out, " %p", addrlist[i]);
+        p += snprintf(buffer + p, sizeof(buffer) - p - 1, " %p", addrlist[i]);
     }
 
-    fprintf(out, "\n");
+    buffer[p + 1] = 0;
+    fprintf(out, "%s\n", buffer);
 
 #else
 

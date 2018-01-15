@@ -41,6 +41,12 @@ TLX_ATTRIBUTE_FORMAT_PRINTF(3, 4);
  */
 void print_cxx_backtrace(FILE* out = stderr, unsigned int max_frames = 63);
 
+/*!
+ * Install SIGSEGV signal handler and output backtrace on segmentation fault.
+ * Compile with `-rdynamic` for more useful output.
+ */
+void enable_segv_backtrace();
+
 //! \}
 
 } // namespace tlx

@@ -20,6 +20,8 @@
 
 #include <cxxabi.h>
 #include <execinfo.h>
+#include <signal.h>
+#include <unistd.h>
 
 #endif
 
@@ -154,6 +156,31 @@ void print_cxx_backtrace(FILE* out, unsigned int max_frames) {
     fprintf(out, " (not supported on this platform)\n");
     tlx::unused(max_frames);
 
+#endif
+}
+
+#if __linux__
+
+static void segv_backtrace_handler(int sig) {
+    tlx::unused(sig);
+
+    void* addr[16];
+    size_t size;
+
+    size = backtrace(addr, 16);
+
+    fprintf(stderr, "Caught SIGSEGV (segmentation fault). Backtrace:\n");
+    backtrace_symbols_fd(addr + 1, size - 1, STDERR_FILENO);
+    exit(1);
+}
+
+#endif
+
+void enable_segv_backtrace() {
+#if __linux__
+    signal(SIGSEGV, segv_backtrace_handler);
+#else
+    printf("enable_segv_backtrace(): not supported on this platform.\n");
 #endif
 }
 

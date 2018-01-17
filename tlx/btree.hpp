@@ -62,7 +62,7 @@ namespace tlx {
 //! The macro TLX_BTREE_FRIENDS can be used by outside class to access the B+
 //! tree internals. This was added for wxBTreeDemo to be able to draw the
 //! tree.
-#define TLX_BTREE_FRIENDS           friend class btree_friend;
+#define TLX_BTREE_FRIENDS           friend class btree_friend
 #endif
 
 /*!
@@ -156,7 +156,7 @@ public:
     // The macro TLX_BTREE_FRIENDS can be used by outside class to access the B+
     // tree internals. This was added for wxBTreeDemo to be able to draw the
     // tree.
-    TLX_BTREE_FRIENDS
+    TLX_BTREE_FRIENDS;
 
 public:
     //! \name Constructed Types
@@ -384,7 +384,7 @@ public:
         // The macro TLX_BTREE_FRIENDS can be used by outside class to access
         // the B+ tree internals. This was added for wxBTreeDemo to be able to
         // draw the tree.
-        TLX_BTREE_FRIENDS
+        TLX_BTREE_FRIENDS;
 
     public:
         // *** Methods
@@ -546,7 +546,7 @@ public:
         // The macro TLX_BTREE_FRIENDS can be used by outside class to access
         // the B+ tree internals. This was added for wxBTreeDemo to be able to
         // draw the tree.
-        TLX_BTREE_FRIENDS
+        TLX_BTREE_FRIENDS;
 
     public:
         // *** Methods
@@ -726,7 +726,7 @@ public:
         // The macro TLX_BTREE_FRIENDS can be used by outside class to access
         // the B+ tree internals. This was added for wxBTreeDemo to be able to
         // draw the tree.
-        TLX_BTREE_FRIENDS
+        TLX_BTREE_FRIENDS;
 
     public:
         // *** Methods

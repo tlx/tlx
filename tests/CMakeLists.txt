@@ -66,6 +66,7 @@ tlx_build_test(btree_test)
 tlx_build_test(cmdline_parser_test)
 tlx_build_test(counting_ptr_test)
 tlx_build_test(delegate_test)
+tlx_build_test(deprecated_test)
 tlx_build_test(die_test)
 if(TLX_CXX_HAS_CXX14)
   tlx_build_test(function_chain_test)
@@ -92,6 +93,10 @@ if(NOT MSVC)
   set_source_files_properties(
     function_chain_test.cpp  function_stack_test.cpp
     PROPERTIES COMPILE_FLAGS "-Wno-shadow")
+
+  set_source_files_properties(
+    deprecated_test.cpp
+    PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
 
 ################################################################################

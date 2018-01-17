@@ -18,10 +18,11 @@
 #elif defined(_MSC_VER)
   #define TLX_DEPRECATED(x) __declspec(deprecated) x
 #elif defined(__clang__) || defined(__GNUG__)
-  #define TLX_DEPRECATED(x) x __attribute__((deprecated))
+  #define TLX_DEPRECATED(x) x __attribute__ ((deprecated))
 #endif
 
 #define TLX_DEPRECATED_FUNC_DEF(x) TLX_DEPRECATED(x); x
 
 #endif // !TLX_DEFINE_DEPRECATED_HEADER
 
+/******************************************************************************/

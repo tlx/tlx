@@ -57,6 +57,16 @@ void die_with_message(const std::string& msg, const char* file, size_t line);
         }                                                                 \
     } while (false)
 
+//! Check condition X and die miserably if false. Same as die_unless()
+//! except user additionally pass message
+#define die_with_message_unless(X, msg)                                   \
+    do {                                                                  \
+        if (!(X)) {                                                       \
+            die_with_sstream(                                             \
+                "DIE: Assertion \"" #X "\" failed!\n " << msg << "\n");   \
+        }                                                                 \
+    } while (false)
+
 //! Check condition X and die miserably if true. Opposite of assert() except
 //! this is also active in Release mode.
 #define die_if(X)                                                            \
@@ -66,6 +76,18 @@ void die_with_message(const std::string& msg, const char* file, size_t line);
                 "DIE: Assertion \"" #X "\" succeeded!", __FILE__, __LINE__); \
         }                                                                    \
     } while (false)
+
+//! Check condition X and die miserably if false. Same as die_if()
+//! except user additionally pass message
+#define die_with_message_if(X, msg)                                         \
+    do {                                                                    \
+        if ((X)) {                                                          \
+            die_with_sstream(                                               \
+                "DIE: Assertion \"" #X "\" succeeded!\n " << msg << "\n");  \
+        }                                                                   \
+    } while (false)
+
+
 
 /******************************************************************************/
 // die_unequal()

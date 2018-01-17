@@ -19,6 +19,7 @@ print "#include <$_>\n" foreach sort glob("tlx/define/"."*.hpp");
 #include <tlx/define/attribute_format_printf.hpp>
 #include <tlx/define/attribute_packed.hpp>
 #include <tlx/define/attribute_warn_unused_result.hpp>
+#include <tlx/define/deprecated.hpp>
 #include <tlx/define/likely.hpp>
 // [[[end]]]
 

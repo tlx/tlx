@@ -10,6 +10,8 @@
 
 cmake_minimum_required(VERSION 2.8.12)
 
+if(NOT TARGET tlx)
+
 # custom cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake)
 
@@ -397,5 +399,9 @@ if(TLX_INSTALL_PKGCONFIG_DIR)
   install(FILES ${PROJECT_BINARY_DIR}/${TLX_LIBNAME}.pc
     DESTINATION ${TLX_INSTALL_PKGCONFIG_DIR})
 endif()
+
+################################################################################
+
+endif(NOT TARGET tlx)
 
 ################################################################################

@@ -8,6 +8,7 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <iterator>
 #include <vector>
 
 #include <tlx/algorithm.hpp>

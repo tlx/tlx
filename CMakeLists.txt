@@ -46,7 +46,7 @@ option(TLX_TRY_COMPILE_HEADERS
   "Test header files for self-sufficiency: try to compile them." OFF)
 
 option(TLX_MORE_TESTS
-  "Run more extensive test." ON)
+  "Run more extensive test." OFF)
 
 ### building shared and/or static libraries
 

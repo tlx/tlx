@@ -98,5 +98,9 @@ if(NOT MSVC)
     deprecated_test.cpp
     PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
+if(MSVC)
+  # requires /bigobj flag to build
+  set_target_properties(tlx_btree_test PROPERTIES COMPILE_FLAGS /bigobj)
+endif()
 
 ################################################################################

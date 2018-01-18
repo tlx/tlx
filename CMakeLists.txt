@@ -45,6 +45,9 @@ option(TLX_USE_GCOV
 option(TLX_TRY_COMPILE_HEADERS
   "Test header files for self-sufficiency: try to compile them." OFF)
 
+option(TLX_MORE_TESTS
+  "Run more extensive test." ON)
+
 ### building shared and/or static libraries
 
 # by default we currently only build a static library, since we do not aim to
@@ -77,6 +80,10 @@ set(TLX_INSTALL_CMAKE_DIR "${TLX_DEFAULT_INSTALL_CMAKE_DIR}"
 set(TLX_DEFINITIONS "")
 set(TLX_INCLUDE_DIRS "")
 set(TLX_LINK_LIBRARIES "")
+
+if(TLX_MORE_TESTS)
+  list(APPEND TLX_DEFINITIONS "TLX_MORE_TESTS")
+endif()
 
 if(NOT MSVC)
   ### Linux/Unix-like Build Environment ########################################

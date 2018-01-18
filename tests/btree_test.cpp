@@ -21,6 +21,12 @@
 #include <set>
 #include <vector>
 
+#if TLX_MORE_TESTS
+static const bool tlx_more_tests = true;
+#else
+static const bool tlx_more_tests = false;
+#endif
+
 /******************************************************************************/
 // Instantiation Tests
 
@@ -245,28 +251,32 @@ struct SimpleTest {
 
 void test_simple() {
     // test binary search on different slot sizes
-    SimpleTest<8>();
-    SimpleTest<9>();
-    SimpleTest<10>();
-    SimpleTest<11>();
-    SimpleTest<12>();
-    SimpleTest<13>();
-    SimpleTest<14>();
-    SimpleTest<15>();
+    if (tlx_more_tests) {
+        SimpleTest<8>();
+        SimpleTest<9>();
+        SimpleTest<10>();
+        SimpleTest<11>();
+        SimpleTest<12>();
+        SimpleTest<13>();
+        SimpleTest<14>();
+        SimpleTest<15>();
+    }
     SimpleTest<16>();
-    SimpleTest<17>();
-    SimpleTest<19>();
-    SimpleTest<20>();
-    SimpleTest<21>();
-    SimpleTest<23>();
-    SimpleTest<24>();
-    SimpleTest<32>();
-    SimpleTest<48>();
-    SimpleTest<63>();
-    SimpleTest<64>();
-    SimpleTest<65>();
-    SimpleTest<101>();
-    SimpleTest<203>();
+    if (tlx_more_tests) {
+        SimpleTest<17>();
+        SimpleTest<19>();
+        SimpleTest<20>();
+        SimpleTest<21>();
+        SimpleTest<23>();
+        SimpleTest<24>();
+        SimpleTest<32>();
+        SimpleTest<48>();
+        SimpleTest<63>();
+        SimpleTest<64>();
+        SimpleTest<65>();
+        SimpleTest<101>();
+        SimpleTest<203>();
+    }
 }
 
 /******************************************************************************/
@@ -1589,13 +1599,15 @@ void test_bulkload() {
 int main() {
 
     test_simple();
-    test_large();
-    test_large_sequence();
-    test_bounds();
-    test_iterators();
-    test_struct();
-    test_relations();
-    test_bulkload();
+    if (tlx_more_tests) {
+        test_large();
+        test_large_sequence();
+        test_bounds();
+        test_iterators();
+        test_struct();
+        test_relations();
+        test_bulkload();
+    }
 
     return 0;
 }

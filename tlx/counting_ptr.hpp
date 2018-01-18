@@ -375,6 +375,7 @@ The \ref CountingPtr can generally be used like a usual pointer or \c
 std::shared_ptr (see the docs for more).
 
 */
+
 } // namespace tlx
 
 #endif // !TLX_COUNTING_PTR_HEADER

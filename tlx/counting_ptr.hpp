@@ -49,9 +49,9 @@ public:
  * data object determines that it's internal count is zero, then it must destroy
  * itself.
  *
- * Accompanying the CountingPtr is a class ReferenceCounter, from which reference
- * counted classes may be derive from. The class ReferenceCounter implement all
- * methods required for reference counting.
+ * Accompanying the CountingPtr is a class ReferenceCounter, from which
+ * reference counted classes may be derive from. The class ReferenceCounter
+ * implement all methods required for reference counting.
  *
  * The whole method is more similar to boost's instrusive_ptr, but also yields
  * something resembling std::shared_ptr. However, compared to std::shared_ptr,
@@ -331,6 +331,50 @@ public:
 //! make alias due to CountingPtr's similarity with std::shared_ptr<T>
 using reference_counter = ReferenceCounter;
 
+/** \page tlx_counting_ptr CountingPtr – an intrusive reference counting pointer
+
+\brief \ref CountingPtr is an implementation of <b>intrusive reference counting</b>.
+This is similar, but not identical to boost or C++ TR1's \c
+shared_ptr. Intrusive reference counting requires the counted class to contain
+the counter, which is not required by <tt>std::shared_ptr</tt>.
+
+Intrusive counting is often faster due to fewer cache faults. Furthermore, \ref
+CountingPtr is a <b>single pointer</b>, whereas <tt>std::shared_ptr</tt>
+actually contains (at least) two pointers. \ref CountingPtr also creates a lot
+less debug info due to reduced complexity.
+
+\ref CountingPtr is accompanied by \ref ReferenceCounter, which contains the
+actual reference counter (a single integer). A reference counted object must
+derive from \ref ReferenceCounter :
+
+\code
+struct Something : public tlx::ReferenceCounter
+{
+};
+\endcode
+
+Code that now wishes to use pointers referencing this object, will typedef an
+\ref CountingPtr, which is used to increment and decrement the included
+reference counter automatically.
+
+\code
+using SomethingPtr = tlx::CountingPtr<Something>;
+{
+    // create new instance of something
+    SomethingPtr p1 = new something;
+    {
+        // create a new reference to the same instance (no deep copy!)
+        SomethingPtr p2 = p1;
+        // this block end will decrement the reference count, but not delete the object
+    }
+    // this block end will delete the object
+}
+\endcode
+
+The \ref CountingPtr can generally be used like a usual pointer or \c
+std::shared_ptr (see the docs for more).
+
+*/
 } // namespace tlx
 
 #endif // !TLX_COUNTING_PTR_HEADER

@@ -103,5 +103,10 @@ if(MSVC)
   # requires /bigobj flag to build
   set_target_properties(tlx_btree_test PROPERTIES COMPILE_FLAGS /bigobj)
 endif()
+if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
+  # failed with a weird exception without -pthreads
+  set_target_properties(tlx_semaphore_test PROPERTIES COMPILE_FLAGS -pthread)
+  set_target_properties(tlx_semaphore_test PROPERTIES LINK_FLAGS -pthread)
+endif()
 
 ################################################################################

@@ -3,17 +3,16 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2008-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2008-2018 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <chrono>
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <string>
-
-#include <sys/time.h>
 
 #include <set>
 #include <tlx/btree_multiset.hpp>
@@ -27,22 +26,21 @@
 
 // *** Settings
 
-/// starting number of items to insert
+//! starting number of items to insert
 const size_t min_items = 125;
 
-/// maximum number of items to insert
+//! maximum number of items to insert
 const size_t max_items = 1024000 * 64;
 
 const int randseed = 34234235;
 
-/// Time is measured using gettimeofday()
+//! Time is measured using chrono::steady_clock
 static double timestamp() {
-    struct timeval tv;
-    gettimeofday(&tv, nullptr);
-    return tv.tv_sec + tv.tv_usec * 0.000001;
+    return std::chrono::duration_cast<std::chrono::duration<double> >(
+        std::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
-/// Traits used for the speed tests, BTREE_DEBUG is not defined.
+//! Traits used for the speed tests, BTREE_DEBUG is not defined.
 template <int InnerSlots_, int LeafSlots_>
 struct btree_traits_speed : tlx::btree_default_traits<size_t, size_t>{
     static const bool   self_verify = false;
@@ -56,7 +54,7 @@ struct btree_traits_speed : tlx::btree_default_traits<size_t, size_t>{
 
 // -----------------------------------------------------------------------------
 
-/// Test a generic set type with insertions
+//! Test a generic set type with insertions
 template <typename SetType>
 class Test_Set_Insert
 {
@@ -76,7 +74,7 @@ public:
     }
 };
 
-/// Test a generic set type with insert, find and delete sequences
+//! Test a generic set type with insert, find and delete sequences
 template <typename SetType>
 class Test_Set_InsertFindDelete
 {
@@ -106,7 +104,7 @@ public:
     }
 };
 
-/// Test a generic set type with insert, find and delete sequences
+//! Test a generic set type with insert, find and delete sequences
 template <typename SetType>
 class Test_Set_Find
 {
@@ -130,16 +128,16 @@ public:
     }
 };
 
-/// Construct different set types for a generic test class
+//! Construct different set types for a generic test class
 template <template <typename SetType> class TestClass>
 struct TestFactory_Set {
-    /// Test the multiset red-black tree from STL
+    //! Test the multiset red-black tree from STL
     typedef TestClass<std::multiset<size_t> > StdSet;
 
-    /// Test the unordered_set from STL TR1
+    //! Test the unordered_set from STL TR1
     typedef TestClass<std::unordered_multiset<size_t> > UnorderedSet;
 
-    /// Test the B+ tree with a specific leaf/inner slots
+    //! Test the B+ tree with a specific leaf/inner slots
     template <int Slots>
     struct BtreeSet
         : TestClass<tlx::btree_multiset<
@@ -151,13 +149,13 @@ struct TestFactory_Set {
                             struct btree_traits_speed<Slots, Slots> > >(n) { }
     };
 
-    /// Run tests on all set types
+    //! Run tests on all set types
     void call_testrunner(size_t items);
 };
 
 // -----------------------------------------------------------------------------
 
-/// Test a generic map type with insertions
+//! Test a generic map type with insertions
 template <typename MapType>
 class Test_Map_Insert
 {
@@ -179,7 +177,7 @@ public:
     }
 };
 
-/// Test a generic map type with insert, find and delete sequences
+//! Test a generic map type with insert, find and delete sequences
 template <typename MapType>
 class Test_Map_InsertFindDelete
 {
@@ -211,7 +209,7 @@ public:
     }
 };
 
-/// Test a generic map type with insert, find and delete sequences
+//! Test a generic map type with insert, find and delete sequences
 template <typename MapType>
 class Test_Map_Find
 {
@@ -237,16 +235,16 @@ public:
     }
 };
 
-/// Construct different map types for a generic test class
+//! Construct different map types for a generic test class
 template <template <typename MapType> class TestClass>
 struct TestFactory_Map {
-    /// Test the multimap red-black tree from STL
+    //! Test the multimap red-black tree from STL
     typedef TestClass<std::multimap<size_t, size_t> > StdMap;
 
-    /// Test the unordered_map from STL
+    //! Test the unordered_map from STL
     typedef TestClass<std::unordered_multimap<size_t, size_t> > UnorderedMap;
 
-    /// Test the B+ tree with a specific leaf/inner slots
+    //! Test the B+ tree with a specific leaf/inner slots
     template <int Slots>
     struct BtreeMap
         : TestClass<tlx::btree_multimap<
@@ -258,7 +256,7 @@ struct TestFactory_Map {
                             struct btree_traits_speed<Slots, Slots> > >(n) { }
     };
 
-    /// Run tests on all map types
+    //! Run tests on all map types
     void call_testrunner(size_t items);
 };
 
@@ -266,7 +264,7 @@ struct TestFactory_Map {
 
 size_t repeat_until;
 
-/// Repeat (short) tests until enough time elapsed and divide by the repeat.
+//! Repeat (short) tests until enough time elapsed and divide by the repeat.
 template <typename TestClass>
 void testrunner_loop(size_t items, const std::string& container_name) {
 
@@ -380,7 +378,7 @@ void TestFactory_Map<TestClass>::call_testrunner(size_t items) {
 #endif
 }
 
-/// Speed test them!
+//! Speed test them!
 int main() {
     {   // Set - speed test only insertion
 

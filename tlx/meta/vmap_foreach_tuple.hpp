@@ -12,6 +12,7 @@
 #define TLX_META_VMAP_FOREACH_TUPLE_HEADER
 
 #include <tlx/meta/index_sequence.hpp>
+#include <tuple>
 
 namespace tlx {
 

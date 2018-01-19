@@ -40,7 +40,7 @@ void test_vmap_foreach_run(std::ostream& os, const Args& ... args) {
             os << a << '\n';
             return a + 1;
         },
-        args...);
+        tuple_args);
 
     die_unequal(std::tuple_size<decltype(r1)>::value, 3u);
     die_unequal(std::get<0>(r1), 43);

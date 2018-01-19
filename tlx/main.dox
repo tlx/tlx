@@ -27,15 +27,28 @@ found in the STL.
 The most important design goals and conventions are:
 - high modularity with as little dependencies between modules as possible.
 - attempt to never break existing interfaces.
-- compile on all platforms with C++ -- smartphones, supercomputers, etc.
+- compile on all platforms with C++ -- smartphones, supercomputers, windows, etc.
+- warning and bug-freeness.
+- keep bloat down -- small overall size such that is can be included without overhead.
 
 List of the most commonly use components:
 
 - \subpage tlx_counting_ptr
-- \subpage tlx_die
-- \ref tlx_math
-- \ref tlx_string
-- \ref tlx_meta
+- \subpage tlx_die : \ref die(), \ref die_unless(), \ref die_if(), \ref die_unequal().
+- \ref logger.hpp : \ref LOG, \ref LOG1, \ref LOGC, \ref sLOG.
+- \ref unused.hpp : \ref unused.
+- \ref tlx_algorithm : \ref merge_combine().
+- \ref tlx_data_structures : \ref RingBuffer, \ref SimpleVector, \ref tlx_data_structures_btree, \ref tlx_data_structures_loser_tree
+- \ref tlx_define : \ref TLX_LIKELY, \ref TLX_UNLIKELY, \ref TLX_ATTRIBUTE_PACKED, \ref TLX_ATTRIBUTE_ALWAYS_INLINE, \ref TLX_ATTRIBUTE_FORMAT_PRINTF, \ref TLX_DEPRECATED_FUNC_DEF.
+- \ref tlx_math : \ref integer_log2_floor(), \ref is_power_of_two(), \ref round_up_to_power_of_two(), \ref round_down_to_power_of_two(), \ref ffs(), \ref clz(), \ref abs_diff().
+- \ref tlx_string : \ref starts_with(), \ref ends_with(), \ref contains(), \ref contains_word(), \ref trim(), \ref replace_all(), \ref erase_all(), \ref join(), \ref split(), \ref split_words(), \ref union_words(), \ref to_lower(), \ref hexdump(), \ref word_wrap(), \ref escape_html(), \ref parse_si_iec_units(), \ref format_iec_units().
+- \ref tlx_meta : \ref call_foreach(), \ref apply_tuple(), \ref vmap_foreach(), \ref Log2Floor, \ref FunctionChain, \ref FunctionStack, \ref is_std_pair, \ref is_std_tuple, \ref is_std_vector, \ref is_std_array, \ref TLX_MAKE_HAS_MEMBER.
+- \ref backtrace.hpp "Backtrace Printing" : \ref print_cxx_backtrace().
+- \ref cmdline_parser.hpp "Command Line Parsing" : \ref CmdlineParser.
+- \ref delegate.hpp "Fast Delegates" : \ref Delegate.
+- \ref siphash.hpp "SipHash" : simple string hashing
+- \ref stack_allocator.hpp "StackAllocator" : stack-local allocations
+- Threading : \ref ThreadPool, \ref Semaphore.
 
 \author Timo Bingmann (2018)
 
@@ -49,6 +62,7 @@ List of the most commonly use components:
 
 \defgroup tlx_algorithm Algorithms
 \defgroup tlx_data_structures Data Structures
+\defgroup tlx_define Defines and Macros
 \defgroup tlx_math Math Functions
 \defgroup tlx_meta Meta-Template Programming
 \defgroup tlx_string String Algorithms
@@ -58,7 +72,7 @@ List of the most commonly use components:
 */
 
 //! \defgroup tlx_data_structures Data Structures
-//! data structures
+//! Data structures
 
 } // namespace tlx
 

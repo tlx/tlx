@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_define
+//! \{
+
 /******************************************************************************/
 // __attribute__ ((warn_unused_result))
 
@@ -21,6 +24,8 @@ namespace tlx {
 #else
 #define TLX_ATTRIBUTE_WARN_UNUSED_RESULT
 #endif
+
+//! \}
 
 } // namespace tlx
 

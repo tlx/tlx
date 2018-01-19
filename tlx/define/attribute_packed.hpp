@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_define
+//! \{
+
 /******************************************************************************/
 // __attribute__ ((packed))
 
@@ -21,6 +24,8 @@ namespace tlx {
 #else
 #define TLX_ATTRIBUTE_PACKED
 #endif
+
+//! \}
 
 } // namespace tlx
 

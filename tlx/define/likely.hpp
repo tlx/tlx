@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_define
+//! \{
+
 #if defined(__GNUC__) || defined(__clang__)
 #define TLX_LIKELY(c)   __builtin_expect((c), 1)
 #define TLX_UNLIKELY(c) __builtin_expect((c), 0)
@@ -20,6 +23,8 @@ namespace tlx {
 #define TLX_LIKELY(c)   c
 #define TLX_UNLIKELY(c) c
 #endif
+
+//! \}
 
 } // namespace tlx
 

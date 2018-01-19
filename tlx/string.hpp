@@ -12,7 +12,7 @@
 #define TLX_STRING_HEADER
 
 //! \defgroup tlx_string String Algorithms
-//! simple string manipulations
+//! Simple string manipulations
 
 /*[[[perl
 print "#include <$_>\n" foreach sort glob("tlx/string/"."*.hpp");

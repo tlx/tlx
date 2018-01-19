@@ -11,6 +11,9 @@
 #ifndef TLX_DEFINE_HEADER
 #define TLX_DEFINE_HEADER
 
+//! \defgroup tlx_define Defines and Macros
+//! Attribute macros and other defines
+
 /*[[[perl
 print "#include <$_>\n" foreach sort glob("tlx/define/"."*.hpp");
 ]]]*/

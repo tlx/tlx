@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_define
+//! \{
+
 /******************************************************************************/
 // __attribute__ ((fallthrough))
 
@@ -23,6 +26,8 @@ namespace tlx {
 #else
 #define TLX_ATTRIBUTE_FALLTHROUGH
 #endif
+
+//! \}
 
 } // namespace tlx
 

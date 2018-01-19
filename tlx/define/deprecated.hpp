@@ -13,6 +13,11 @@
 #ifndef TLX_DEFINE_DEPRECATED_HEADER
 #define TLX_DEFINE_DEPRECATED_HEADER
 
+namespace tlx {
+
+//! \addtogroup tlx_define
+//! \{
+
 #if TLX_NO_DEPRECATED
   #define TLX_DEPRECATED(x) x
 #elif defined(_MSC_VER)
@@ -22,6 +27,10 @@
 #endif
 
 #define TLX_DEPRECATED_FUNC_DEF(x) TLX_DEPRECATED(x); x
+
+//! \}
+
+} // namespace tlx
 
 #endif // !TLX_DEFINE_DEPRECATED_HEADER
 

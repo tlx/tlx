@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_define
+//! \{
+
 /******************************************************************************/
 // __attribute__ ((format(printf, #, #))
 
@@ -22,6 +25,8 @@ namespace tlx {
 #else
 #define TLX_ATTRIBUTE_FORMAT_PRINTF(X, Y)
 #endif
+
+//! \}
 
 } // namespace tlx
 

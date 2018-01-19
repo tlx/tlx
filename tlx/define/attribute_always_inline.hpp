@@ -13,6 +13,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_define
+//! \{
+
 /******************************************************************************/
 // __attribute__ ((always_inline))
 
@@ -21,6 +24,8 @@ namespace tlx {
 #else
 #define TLX_ATTRIBUTE_ALWAYS_INLINE
 #endif
+
+//! \}
 
 } // namespace tlx
 

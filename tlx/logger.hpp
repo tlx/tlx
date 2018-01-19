@@ -5,7 +5,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2018 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -15,8 +15,14 @@
 
 #include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
 namespace tlx {
+
+//! template class for formatting. contains a print() method.
+template <typename AnyType, typename Enable = void>
+class LoggerFormatter;
 
 /*!
 
@@ -76,15 +82,10 @@ private:
     std::ostringstream oss_;
 
 public:
-    //! mutex synchronized output to std::cout
-    static void Output(const char* str);
-    //! mutex synchronized output to std::cout
-    static void Output(const std::string& str);
-
     //! output any type, including io manipulators
     template <typename AnyType>
     Logger& operator << (const AnyType& at) {
-        oss_ << at;
+        LoggerFormatter<AnyType>::print(oss_, at);
         return *this;
     }
 
@@ -111,9 +112,7 @@ public:
     SpacingLogger& operator << (const AnyType& at) {
         if (!first_) oss_ << ' ';
         else first_ = false;
-
-        oss_ << at;
-
+        LoggerFormatter<AnyType>::print(oss_, at);
         return *this;
     }
 
@@ -149,6 +148,94 @@ public:
 //! Override default output: never or always output log.
 #define sLOG0 sLOGC(false)
 #define sLOG1 sLOGC(true)
+
+/******************************************************************************/
+// Hook to collect logger output
+
+//! Abstract class to implement output hooks for logging
+class LoggerOutputHook
+{
+public:
+    //! virtual destructor
+    virtual ~LoggerOutputHook();
+
+    //! method the receive log lines
+    virtual void append_log_line(const std::string& line) = 0;
+};
+
+//! Set new LoggerOutputHook instance to receive global log lines. Returns the
+//! old hook.
+LoggerOutputHook * set_logger_output_hook(LoggerOutputHook* hook);
+
+/*----------------------------------------------------------------------------*/
+
+//! Class to hook logger output in the local thread
+class LoggerCollectOutput : public LoggerOutputHook
+{
+public:
+    LoggerCollectOutput(bool echo = false);
+    ~LoggerCollectOutput();
+
+    //! return transcript of log
+    std::string get();
+
+    //! clear transcript
+    void clear();
+
+    //! method the receive log lines
+    void append_log_line(const std::string& line) final;
+
+protected:
+    //! previous logger, will be restored by destructor
+    LoggerOutputHook* next_;
+
+    //! whether to echo each line to next logger output
+    bool echo_;
+
+    //! string stream collecting
+    std::ostringstream oss_;
+};
+
+/******************************************************************************/
+// Formatters
+
+template <typename AnyType>
+class LoggerFormatter<AnyType>
+{
+public:
+    static void print(std::ostream& os, const AnyType& t) {
+        os << t;
+    }
+};
+
+template <typename A, typename B>
+class LoggerFormatter<std::pair<A, B> >
+{
+public:
+    static void print(std::ostream& os, const std::pair<A, B>& p) {
+        os << '(';
+        LoggerFormatter<A>::print(os, p.first);
+        os << ',';
+        LoggerFormatter<B>::print(os, p.second);
+        os << ')';
+    }
+};
+
+template <typename T, class A>
+class LoggerFormatter<std::vector<T, A> >
+{
+public:
+    static void print(std::ostream& os, const std::vector<T, A>& data) {
+        os << '[';
+        for (typename std::vector<T>::const_iterator it = data.begin();
+             it != data.end(); ++it)
+        {
+            if (it != data.begin()) os << ',';
+            LoggerFormatter<T>::print(os, *it);
+        }
+        os << ']';
+    }
+};
 
 } // namespace tlx
 

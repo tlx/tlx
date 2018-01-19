@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/meta/vmap_foreach.hpp
+ * tlx/meta/vmap_foreach_tuple.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,8 +8,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_META_VMAP_FOREACH_TUPLE_H
-#define TLX_META_VMAP_FOREACH_TUPLE_H
+#ifndef TLX_META_VMAP_FOREACH_TUPLE_HEADER
+#define TLX_META_VMAP_FOREACH_TUPLE_HEADER
 
 #include <tlx/meta/index_sequence.hpp>
 
@@ -65,4 +65,4 @@ auto vmap_foreach_tuple(Functor&& f, Tuple&& t)
 
 } // namespace tlx
 
-#endif // !TLX_META_VMAP_FOREACH_TUPLE_H
+#endif // !TLX_META_VMAP_FOREACH_TUPLE_HEADER

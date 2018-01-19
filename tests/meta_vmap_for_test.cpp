@@ -16,7 +16,7 @@
 #include <tlx/die.hpp>
 #include <tlx/meta/vmap_for_range.hpp>
 #include <tlx/meta/vmap_foreach.hpp>
-#include <tlx/meta/vmap_foreach_tuple.h>
+#include <tlx/meta/vmap_foreach_tuple.hpp>
 #include <tlx/meta/vmap_foreach_with_index.hpp>
 
 /******************************************************************************/

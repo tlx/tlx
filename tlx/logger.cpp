@@ -61,8 +61,9 @@ LoggerPrefixHook * set_logger_prefix_hook(LoggerPrefixHook* hook) {
 /******************************************************************************/
 
 Logger::Logger() {
-    if (s_logger_prefix_hook)
-        (*s_logger_prefix_hook).add_log_prefix(oss_);
+    LoggerPrefixHook* prefix_hook = s_logger_prefix_hook.load();
+    if (prefix_hook)
+        prefix_hook->add_log_prefix(oss_);
 }
 
 Logger::~Logger() {
@@ -71,8 +72,9 @@ Logger::~Logger() {
 }
 
 SpacingLogger::SpacingLogger() {
-    if (s_logger_prefix_hook)
-        (*s_logger_prefix_hook).add_log_prefix(oss_);
+    LoggerPrefixHook* prefix_hook = s_logger_prefix_hook.load();
+    if (prefix_hook)
+        prefix_hook->add_log_prefix(oss_);
 }
 
 SpacingLogger::~SpacingLogger() {

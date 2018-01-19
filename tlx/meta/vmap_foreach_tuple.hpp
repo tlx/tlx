@@ -38,7 +38,7 @@ template <typename Functor, typename Arg, typename... MoreArgs>
 auto vmap_foreach_tuple_impl(Functor&& f, Arg&& arg, MoreArgs&&... rest)
 {
     return std::tuple_cat(std::make_tuple(std::forward<Functor>(f)(std::forward<Arg>(arg))),
-                          vmap_collect_impl(std::forward<Functor>(f), std::forward<MoreArgs>(rest) ...)
+                          vmap_foreach_tuple_impl(std::forward<Functor>(f), std::forward<MoreArgs>(rest) ...)
     );
 }
 

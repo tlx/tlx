@@ -11,6 +11,7 @@
 #ifndef TLX_META_APPLY_TUPLE_HEADER
 #define TLX_META_APPLY_TUPLE_HEADER
 
+#include <tuple>
 #include <utility>
 
 #include <tlx/meta/index_sequence.hpp>

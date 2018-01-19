@@ -71,21 +71,21 @@ static void test_vmap_foreach() {
 template <typename... Args>
 void test_vmap_foreach_tuple_run(std::ostream& os, const Args& ... args) {
 
-    auto tuple_args = std::make_tuple(args...);
+    auto my_tuple = std::make_tuple(args...);
 
     auto r1 = tlx::vmap_foreach_tuple(
         [&os](auto a) {
             os << a << '\n';
             return a + 1;
         },
-        tuple_args);
+        my_tuple);
 
     die_unequal(std::tuple_size<decltype(r1)>::value, 3u);
     die_unequal(std::get<0>(r1), 43);
     die_unequal(std::get<1>(r1), 6.0);
     die_unequal(std::get<2>(r1), std::string("ello"));
 
-    auto r2 = tlx::vmap_foreach(SimpleMapFunctor(os), args...);
+    auto r2 = tlx::vmap_foreach(SimpleMapFunctor(os), my_tuple);
 
     die_unequal(std::tuple_size<decltype(r2)>::value, 3u);
     die_unequal(std::get<0>(r2), 43);

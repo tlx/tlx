@@ -28,7 +28,7 @@ namespace detail {
 
 //! helper for vmap_foreach_tuple_with_index_impl: base case
 template <typename Functor, typename Arg>
-auto vmap_foreach_tuple_impl(Functor&& f, Arg&& arg)
+auto vmap_foreach_tuple_impl(Functor&& f, Arg&& arg) -> std::tuple<decltype(f(arg))>
 {
     return std::make_tuple(std::forward<Functor>(f)(std::forward<Arg>(arg)));
 }

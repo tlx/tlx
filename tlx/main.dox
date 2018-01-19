@@ -47,6 +47,7 @@ List of the most commonly use components:
 \defgroup tlx tlx - C++ Extensions and Utilities
 \{
 
+\defgroup tlx_algorithm Algorithms
 \defgroup tlx_data_structures Data Structures
 \defgroup tlx_math Math Functions
 \defgroup tlx_meta Meta-Template Programming

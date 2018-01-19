@@ -27,13 +27,18 @@ static void test_merge_combine() {
 
     std::vector<Pair> out;
 
+    auto comp = [](const Pair& a, const Pair& b) {
+                    return a.first - b.first;
+                };
+
+    die_unless(tlx::is_sorted_cmp(vec1.begin(), vec1.end(), comp));
+    die_unless(tlx::is_sorted_cmp(vec2.begin(), vec2.end(), comp));
+
     tlx::merge_combine(
         vec1.begin(), vec1.end(),
         vec2.begin(), vec2.end(),
         std::back_inserter(out),
-        [](const Pair& a, const Pair& b) {
-            return a.first - b.first;
-        },
+        comp,
         [](const Pair& a, const Pair& b) {
             return Pair(a.first, a.second + b.second);
         });
@@ -46,6 +51,8 @@ static void test_merge_combine() {
     for (size_t i = 0; i < out.size(); ++i) {
         sLOG0 << out[i].first << out[i].second;
     }
+
+    die_unless(tlx::is_sorted_cmp(out.begin(), out.end(), comp));
 
     die_unequal(result.size(), out.size());
     for (size_t i = 0; i < out.size(); ++i) {

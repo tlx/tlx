@@ -11,12 +11,13 @@
 #ifndef TLX_ALGORITHM_HEADER
 #define TLX_ALGORITHM_HEADER
 
-//! \defgroup tlx_algorithm Algorithms for Iterators
-//! algorithms for iterators and ranges
+//! \defgroup tlx_algorithm Algorithms
+//! Algorithms for iterators and ranges
 
 /*[[[perl
 print "#include <$_>\n" foreach sort glob("tlx/algorithm/"."*.hpp");
 ]]]*/
+#include <tlx/algorithm/is_sorted_cmp.hpp>
 #include <tlx/algorithm/merge_combine.hpp>
 // [[[end]]]
 

@@ -69,35 +69,45 @@ int main() {
 
     check("[42,5,31]\n[42,5,31]\n",
           []() {
-              std::vector<int> v { 42, 5, 31 };
+              std::vector<int> v {
+                  { 42, 5, 31 }
+              };
               LOG1 << v;
               sLOG1 << v;
           });
 
     check("[42,5,31]\n[42,5,31]\n",
           []() {
-              std::array<int, 3> a { 42, 5, 31 };
+              std::array<int, 3> a {
+                  { 42, 5, 31 }
+              };
               LOG1 << a;
               sLOG1 << a;
           });
 
     check("[42,5,31]\n[42,5,31]\n",
           []() {
-              std::deque<int> d { 42, 5, 31 };
+              std::deque<int> d {
+                  { 42, 5, 31 }
+              };
               LOG1 << d;
               sLOG1 << d;
           });
 
     check("{5,31,42}\n{5,31,42}\n",
           []() {
-              std::set<int> s { 42, 5, 31 };
+              std::set<int> s {
+                  { 42, 5, 31 }
+              };
               LOG1 << s;
               sLOG1 << s;
           });
 
     check("{5,5,31,42}\n{5,5,31,42}\n",
           []() {
-              std::multiset<int> s { 42, 5, 31, 5 };
+              std::multiset<int> s {
+                  { 42, 5, 31, 5 }
+              };
               LOG1 << s;
               sLOG1 << s;
           });

@@ -82,6 +82,9 @@ private:
     std::ostringstream oss_;
 
 public:
+    //! construction: add prefix if desired
+    Logger();
+
     //! output any type, including io manipulators
     template <typename AnyType>
     Logger& operator << (const AnyType& at) {
@@ -107,6 +110,9 @@ private:
     std::ostringstream oss_;
 
 public:
+    //! construction: add prefix if desired
+    SpacingLogger();
+
     //! output any type, including io manipulators
     template <typename AnyType>
     SpacingLogger& operator << (const AnyType& at) {
@@ -148,6 +154,24 @@ public:
 //! Override default output: never or always output log.
 #define sLOG0 sLOGC(false)
 #define sLOG1 sLOGC(true)
+
+/******************************************************************************/
+// Hook to add prefixes to log lines
+
+//! Abstract class to implement prefix output hooks for logging
+class LoggerPrefixHook
+{
+public:
+    //! virtual destructor
+    virtual ~LoggerPrefixHook();
+
+    //! method to add prefix to log lines
+    virtual void add_log_prefix(std::ostream& os) = 0;
+};
+
+//! Set new LoggerPrefixHook instance to prefix global log lines. Returns the
+//! old hook.
+LoggerPrefixHook * set_logger_prefix_hook(LoggerPrefixHook* hook);
 
 /******************************************************************************/
 // Hook to collect logger output

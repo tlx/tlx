@@ -40,26 +40,49 @@ class DefaultLoggerOutput : public LoggerOutputHook
 //! default logger singleton
 static DefaultLoggerOutput s_default_logger;
 
-//! global logger hook
-static std::atomic<LoggerOutputHook*> s_logger_hook {
+//! global logger output hook
+static std::atomic<LoggerOutputHook*> s_logger_output_hook {
     &s_default_logger
 };
 
 LoggerOutputHook * set_logger_output_hook(LoggerOutputHook* hook) {
-    return s_logger_hook.exchange(hook);
+    return s_logger_output_hook.exchange(hook);
+}
+
+//! global logger prefix hook
+static std::atomic<LoggerPrefixHook*> s_logger_prefix_hook {
+    nullptr
+};
+
+LoggerPrefixHook * set_logger_prefix_hook(LoggerPrefixHook* hook) {
+    return s_logger_prefix_hook.exchange(hook);
 }
 
 /******************************************************************************/
 
+Logger::Logger() {
+    if (s_logger_prefix_hook)
+        (*s_logger_prefix_hook).add_log_prefix(oss_);
+}
+
 Logger::~Logger() {
     oss_ << '\n';
-    (*s_logger_hook).append_log_line(oss_.str());
+    (*s_logger_output_hook).append_log_line(oss_.str());
+}
+
+SpacingLogger::SpacingLogger() {
+    if (s_logger_prefix_hook)
+        (*s_logger_prefix_hook).add_log_prefix(oss_);
 }
 
 SpacingLogger::~SpacingLogger() {
     oss_ << '\n';
-    (*s_logger_hook).append_log_line(oss_.str());
+    (*s_logger_output_hook).append_log_line(oss_.str());
 }
+
+/******************************************************************************/
+
+LoggerPrefixHook::~LoggerPrefixHook() { }
 
 /******************************************************************************/
 

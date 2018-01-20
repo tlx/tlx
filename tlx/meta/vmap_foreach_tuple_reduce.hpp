@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/meta/vmap_foreach_reduce_tuple.hpp
+ * tlx/meta/vmap_foreach_tuple_reduce.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *

@@ -316,13 +316,13 @@ sub process_cpp {
         }
 
         # check for double underscore identifiers
-        if ($data[$i] =~ m@\s__(?!(attribute__|sync_|builtin_|has_feature|FILE__|LINE__|FUNCTION__|PRETTY_FUNCTION__|GNUC__|linux__|APPLE__|FreeBSD__|clang__|STDC_WANT_SECURE_LIB__|BYTE_ORDER__|ORDER_LITTLE_ENDIAN__|ORDER_BIG_ENDIAN__))@ && $data[$i] !~ /NOLINT/) {
+        if ($data[$i] =~ m@\s__(?!(attribute__|sync_|builtin_|has_feature|FILE__|LINE__|FUNCTION__|PRETTY_FUNCTION__|GNUC__|linux__|APPLE__|FreeBSD__|clang__|STDC_WANT_SECURE_LIB__|BYTE_ORDER__|ORDER_LITTLE_ENDIAN__|ORDER_BIG_ENDIAN__|SSE2__|cxa_demangle|declspec|m128i))@ && $data[$i] !~ /NOLINT/) {
             print("double underscore identifier found in $path:$i\n");
             print("$data[$i]\n");
         }
 
         # check for single underscore + uppercase identifiers
-        if ($data[$i] =~ m@\s_(?!(GNU_SOURCE|WIN32|MSC_VER|UNICODE|DEBUG|ASSERTE|LIBCPP_VERSION|S_))[A-Z]@) {
+        if ($data[$i] =~ m@\s_(?!(GNU_SOURCE|WIN32|MSC_VER|UNICODE|DEBUG|ASSERTE|LIBCPP_VERSION|MM_[A-Z]+|S_))[A-Z]@) {
             print("underscore + uppercase identifier found in $path:$i\n");
             print("$data[$i]\n");
         }

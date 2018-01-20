@@ -11,7 +11,9 @@
 #ifndef TLX_ALGORITHM_MERGE_COMBINE_HEADER
 #define TLX_ALGORITHM_MERGE_COMBINE_HEADER
 
+#include <algorithm>
 #include <functional>
+#include <iterator>
 
 namespace tlx {
 

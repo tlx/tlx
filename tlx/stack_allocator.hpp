@@ -33,8 +33,24 @@ class StackArena
 {
     static constexpr size_t alignment = 16;
 
-    //! stack memory area used for allocations.
-    alignas(alignment) char buf_[Size];
+    //! union to enforce alignment of buffer area
+    union AlignmentHelper {
+        int i;
+        long l;
+        long long ll;
+        long double ld;
+        double d;
+        void* p;
+        void (* pf)();
+        AlignmentHelper* ps;
+    };
+
+    union {
+        //! stack memory area used for allocations.
+        char            buf_[Size];
+        //! enforce alignment
+        AlignmentHelper dummy_for_alignment_;
+    };
 
     //! pointer into free bytes in buf_
     char* ptr_;
@@ -130,7 +146,7 @@ public:
 
 #if !defined(_MSC_VER)
     //! copy-assignment: default
-    StackAllocator& operator = (StackAllocator&) noexcept = default;
+    StackAllocator& operator = (const StackAllocator&) noexcept = default;
 
     //! move-constructor: default
     StackAllocator(StackAllocator&&) noexcept = default;

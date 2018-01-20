@@ -89,7 +89,9 @@ tlx_build_test(simple_vector_test)
 tlx_build_test(siphash_test)
 tlx_build_test(stack_allocator_test)
 tlx_build_test(string_test)
-tlx_build_test(thread_pool_test)
+if(NOT(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8))
+  tlx_build_test(thread_pool_test)
+endif()
 
 # disable -Wshadow on source with FunctionStack or FunctionChain
 if(NOT MSVC)

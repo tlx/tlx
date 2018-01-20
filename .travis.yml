@@ -164,10 +164,8 @@ before_script:
   - $CMAKE_CXX --version
   - cmake --version
 
-  # enable -Werror on tlx/tlx master branch
-  - if [ "$TRAVIS_BRANCH" == "master" -a "$TRAVIS_REPO_SLUG" == "tlx/tlx" ]; then
-      COMPILER_FLAGS="$COMPILER_FLAGS -Werror";
-    fi
+  # enable -Werror on all ci builds
+  - COMPILER_FLAGS="$COMPILER_FLAGS -Werror"
 
   # configure
   - mkdir build

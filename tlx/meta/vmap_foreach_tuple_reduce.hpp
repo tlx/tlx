@@ -8,8 +8,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_META_VMAP_FOREACH_REDUCE_TUPLE_HEADER
-#define TLX_META_VMAP_FOREACH_REDUCE_TUPLE_HEADER
+#ifndef TLX_META_VMAP_FOREACH_TUPLE_REDUCE_HEADER
+#define TLX_META_VMAP_FOREACH_TUPLE_REDUCE_HEADER
 
 #include <tlx/meta/index_sequence.hpp>
 #include <tlx/unused.hpp>
@@ -73,6 +73,6 @@ auto vmap_foreach_tuple_reduce(Functor&& f, Combine&& c, Tuple&& t)
 
 } // namespace tlx
 
-#endif // !TLX_META_VMAP_FOREACH_REDUCE_TUPLE_HEADER
+#endif // !TLX_META_VMAP_FOREACH_TUPLE_REDUCE_HEADER
 
 /******************************************************************************/

@@ -88,13 +88,17 @@ void test_vmap_foreach_tuple_reduce_run(std::ostream& os, const Args& ... args) 
             os << a << '\n';
             return a + 1;
         },
-        std::plus<>(),
+        [](auto a, auto b) {
+            return a + b;
+        },
         my_tuple);
 
     die_unequal(r1, 51.0);
 
     auto r2 = tlx::vmap_foreach_tuple_reduce(SimpleMapFunctor(os),
-                                             std::plus<>(), my_tuple);
+                                             [](auto a, auto b) {
+                                                 return a + b;
+                                             }, my_tuple);
 
     die_unequal(r2, 51.0);
 

@@ -39,7 +39,7 @@ auto vmap_foreach_tuple_impl(Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
         std::make_tuple(std::forward<Functor>(f)(std::forward<Arg>(arg))),
         vmap_foreach_tuple_impl(
             std::forward<Functor>(f), std::forward<MoreArgs>(rest) ...)
-    );
+        );
 }
 
 //! helper for vmap_foreach_tuple: forwards tuple entries
@@ -57,7 +57,7 @@ auto vmap_foreach_tuple_with_index_impl(
 template <typename Functor, typename Tuple>
 auto vmap_foreach_tuple(Functor&& f, Tuple&& t) {
     using Indices = tlx::make_index_sequence<
-        std::tuple_size<typename std::decay<Tuple>::type>::value>;
+              std::tuple_size<typename std::decay<Tuple>::type>::value>;
     return detail::vmap_foreach_tuple_with_index_impl(
         std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }

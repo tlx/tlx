@@ -16,7 +16,7 @@
 #include <tlx/die.hpp>
 #include <tlx/meta/vmap_for_range.hpp>
 #include <tlx/meta/vmap_foreach.hpp>
-#include <tlx/meta/vmap_foreach_reduce_tuple.hpp>
+#include <tlx/meta/vmap_foreach_tuple_reduce.hpp>
 #include <tlx/meta/vmap_foreach_tuple.hpp>
 #include <tlx/meta/vmap_foreach_with_index.hpp>
 
@@ -79,11 +79,11 @@ struct TakeLeftFunctor {
 };
 
 template <typename... Args>
-void test_vmap_foreach_reduce_tuple_run(std::ostream& os, const Args& ... args) {
+void test_vmap_foreach_tuple_reduce_run(std::ostream& os, const Args& ... args) {
 
     auto my_tuple = std::make_tuple(args...);
 
-    auto r1 = tlx::vmap_foreach_reduce_tuple_foldr(
+    auto r1 = tlx::vmap_foreach_tuple_reduce(
         [&os](auto a) {
             os << a << '\n';
             return a + 1;
@@ -93,21 +93,21 @@ void test_vmap_foreach_reduce_tuple_run(std::ostream& os, const Args& ... args) 
 
     die_unequal(r1, 51.0);
 
-    auto r2 = tlx::vmap_foreach_reduce_tuple_foldr(SimpleMapFunctor(os),
+    auto r2 = tlx::vmap_foreach_tuple_reduce(SimpleMapFunctor(os),
                                              std::plus<>(), my_tuple);
 
     die_unequal(r2, 51.0);
 
-    auto r3 = tlx::vmap_foreach_reduce_tuple_foldr(SimpleMapFunctor(os), TakeLeftFunctor(), my_tuple);
+    auto r3 = tlx::vmap_foreach_tuple_reduce(SimpleMapFunctor(os), TakeLeftFunctor(), my_tuple);
 
     die_unequal(r3, 43);
 }
 
-static void test_vmap_foreach_reduce_tuple() {
+static void test_vmap_foreach_tuple_reduce() {
 
     std::ostringstream oss;
 
-    test_vmap_foreach_reduce_tuple_run(
+    test_vmap_foreach_tuple_reduce_run(
         oss, static_cast<int>(42), static_cast<double>(5), true);
 
     die_unequal("42\n5\n1\n42\n5\n1\n42\n5\n1\n", oss.str());
@@ -239,8 +239,8 @@ int main() {
 
     test_vmap_for_range();
     test_vmap_foreach();
-    test_vmap_foreach_reduce_tuple();
     test_vmap_foreach_tuple();
+    test_vmap_foreach_tuple_reduce();
     test_vmap_foreach_with_index();
 
     return 0;

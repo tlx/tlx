@@ -22,8 +22,8 @@ namespace tlx {
 
 /******************************************************************************/
 // Variadic Template Expander: run a generic templated functor (like a generic
-// lambda) for each component of a tuple and reduce (binary operation) in either
-// foldl or foldr order without generating an intermediate std::tuple<>.
+// lambda) for each component of a tuple and reduce (binary operation) without
+// generating an intermediate std::tuple<>.
 
 namespace detail {
 
@@ -56,8 +56,8 @@ auto vmap_foreach_tuple_reduce_with_index_impl(Functor&& f, Combine&& c, Tuple&&
 
 } // namespace detail
 
-//! Call a generic functor (like a generic lambda) for each variadic template
-//! argument and reduce with given binary operation.
+//! Call a generic functor (like a generic lambda) for each tuple component and
+//! reduce with given binary operation.
 template <typename Functor, typename Combine, typename Tuple>
 auto vmap_foreach_tuple_reduce(Functor&& f, Combine&& c, Tuple&& t)
 {

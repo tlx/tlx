@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2017-2018 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -25,6 +25,11 @@ int main() {
     die_unless(!tlx::die_equal_compare(INFINITY, -INFINITY));
 
     die_unless(tlx::die_equal_compare(10, 10));
+
+    // test die with exception
+    tlx::set_die_with_exception(true);
+
+    die_unless_throws(die("hello"), tlx::DieException);
 
     return 0;
 }

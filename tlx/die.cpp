@@ -3,21 +3,37 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2016-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2016-2018 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
 #include <tlx/die.hpp>
 
+#include <atomic>
 #include <iostream>
 #include <sstream>
 
 namespace tlx {
 
+/******************************************************************************/
+
+static std::atomic<bool> s_die_with_exception {
+#if TLX_DIE_WITH_EXCEPTION
+    true
+#else
+    false
+#endif
+};
+
 void die_with_message(const std::string& msg) {
-    std::cerr << msg << std::endl;
-    std::terminate();
+    if (s_die_with_exception) {
+        throw DieException(msg);
+    }
+    else {
+        std::cerr << msg << std::endl;
+        std::terminate();
+    }
 }
 
 void die_with_message(const char* msg, const char* file, size_t line) {
@@ -28,6 +44,13 @@ void die_with_message(const char* msg, const char* file, size_t line) {
 
 void die_with_message(const std::string& msg, const char* file, size_t line) {
     return die_with_message(msg.c_str(), file, line);
+}
+
+DieException::DieException(const std::string& message)
+    : std::runtime_error(message) { }
+
+bool set_die_with_exception(bool b) {
+    return s_die_with_exception.exchange(b);
 }
 
 /******************************************************************************/
@@ -47,6 +70,10 @@ Furthermore, some additional assert macros are also available. These are only
 active in Debug mode, if NDEBUG is defined they are compiled out.
 
 - `assert_equal(a,b)` - checks if a == b.
+
+tlx die macros can also be modified to throw a DieException instead of calling
+std::terminate. Either call `set_die_with_exception(true)` to define
+TLX_DIE_WITH_EXCEPTION=1 using the preprocessor.
 
  */
 

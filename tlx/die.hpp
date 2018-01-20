@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2016-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2016-2018 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -13,6 +13,7 @@
 
 #include <cstring>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace tlx {
@@ -20,29 +21,39 @@ namespace tlx {
 /******************************************************************************/
 // die macros
 
-//! die with message - either throw an exception or die via abort()
+//! die with message - either throw an exception or die via std::terminate()
 void die_with_message(const std::string& msg);
 
-//! die with message - either throw an exception or die via abort()
+//! die with message - either throw an exception or die via std::terminate()
 void die_with_message(const char* msg, const char* file, size_t line);
 
-//! die with message - either throw an exception or die via abort()
+//! die with message - either throw an exception or die via std::terminate()
 void die_with_message(const std::string& msg, const char* file, size_t line);
 
-//! Instead of abort(), throw the output the message via an exception.
-#define die_with_sstream(msg)                                 \
-    do {                                                      \
-        std::ostringstream oss__;                             \
-        oss__ << msg << " @ " << __FILE__ << ':' << __LINE__; \
-        ::tlx::die_with_message(oss__.str());                 \
-        std::terminate();                                     \
+//! Instead of std::terminate(), throw the output the message via an exception.
+#define die_with_sstream(msg)                                    \
+    do {                                                         \
+        std::ostringstream oss__;                                \
+        oss__ << msg << " @ " << __FILE__ << ':' << __LINE__;    \
+        ::tlx::die_with_message(oss__.str());                    \
+        std::terminate(); /* tell compiler this never returns */ \
     } while (false)
 
-//! Instead of abort(), throw the output the message via an exception.
+//! Instead of std::terminate(), throw the output the message via an exception.
 #define die(msg)                          \
     do {                                  \
         die_with_sstream("DIE: " << msg); \
     } while (false)
+
+//! Exception thrown by die_with_message() if
+class DieException : public std::runtime_error
+{
+public:
+    explicit DieException(const std::string& message);
+};
+
+//! Switch between dying via std::terminate() and throwing an exception
+bool set_die_with_exception(bool b);
 
 /******************************************************************************/
 // die_unless() and die_if()

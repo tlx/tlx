@@ -16,6 +16,7 @@
 #include <tlx/die.hpp>
 #include <tlx/meta/vmap_for_range.hpp>
 #include <tlx/meta/vmap_foreach.hpp>
+#include <tlx/meta/vmap_foreach_reduce_tuple.hpp>
 #include <tlx/meta/vmap_foreach_tuple.hpp>
 #include <tlx/meta/vmap_foreach_with_index.hpp>
 
@@ -61,6 +62,40 @@ static void test_vmap_foreach() {
 
     test_vmap_foreach_run(
         oss, static_cast<int>(42), static_cast<double>(5), "hello");
+
+    die_unequal("42\n5\nhello\n42\n5\nhello\n", oss.str());
+}
+
+/******************************************************************************/
+// vmap_foreach_tuple
+
+template <typename... Args>
+void test_vmap_foreach_reduce_tuple_run(std::ostream& os, const Args& ... args) {
+
+    auto my_tuple = std::make_tuple(args...);
+
+    auto r1 = tlx::vmap_foreach_reduce_tuple(
+        [&os](auto a) {
+            os << a << '\n';
+            return a + 1;
+        },
+        std::plus<>(),
+        my_tuple);
+
+    die_unequal(r1, 50.0);
+
+    auto r2 = tlx::vmap_foreach_reduce_tuple(SimpleMapFunctor(os),
+                                             std::plus<>(), my_tuple);
+
+    die_unequal(r2, 50.0);
+}
+
+static void test_vmap_foreach_reduce_tuple() {
+
+    std::ostringstream oss;
+
+    test_vmap_foreach_reduce_tuple_run(
+        oss, static_cast<int>(42), static_cast<double>(5), true);
 
     die_unequal("42\n5\nhello\n42\n5\nhello\n", oss.str());
 }
@@ -191,6 +226,7 @@ int main() {
 
     test_vmap_for_range();
     test_vmap_foreach();
+    test_vmap_foreach_reduce_tuple();
     test_vmap_foreach_tuple();
     test_vmap_foreach_with_index();
 

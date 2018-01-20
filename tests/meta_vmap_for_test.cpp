@@ -67,14 +67,23 @@ static void test_vmap_foreach() {
 }
 
 /******************************************************************************/
-// vmap_foreach_tuple
+// vmap_foreach_reduce_tuple_foldl and vmap_foreach_reduce_tuple_foldr
+
+struct TakeLeftFunctor {
+    TakeLeftFunctor() = default;
+    template <typename Arg1, typename Arg2>
+    auto operator () (const Arg1& a, const Arg2& b) const {
+        tlx::unused(b);
+        return a;
+    }
+};
 
 template <typename... Args>
-void test_vmap_foreach_reduce_tuple_run(std::ostream& os, const Args& ... args) {
+void test_vmap_foreach_reduce_tuple_foldl_run(std::ostream& os, const Args& ... args) {
 
     auto my_tuple = std::make_tuple(args...);
 
-    auto r1 = tlx::vmap_foreach_reduce_tuple(
+    auto r1 = tlx::vmap_foreach_reduce_tuple_foldl(
         [&os](auto a) {
             os << a << '\n';
             return a + 1;
@@ -82,22 +91,53 @@ void test_vmap_foreach_reduce_tuple_run(std::ostream& os, const Args& ... args) 
         std::plus<>(),
         my_tuple);
 
-    die_unequal(r1, 50.0);
+    die_unequal(r1, 51.0);
 
-    auto r2 = tlx::vmap_foreach_reduce_tuple(SimpleMapFunctor(os),
+    auto r2 = tlx::vmap_foreach_reduce_tuple_foldl(SimpleMapFunctor(os),
+                                                   std::plus<>(), my_tuple);
+
+    die_unequal(r2, 51.0);
+}
+
+template <typename... Args>
+void test_vmap_foreach_reduce_tuple_foldr_run(std::ostream& os, const Args& ... args) {
+
+    auto my_tuple = std::make_tuple(args...);
+
+    auto r1 = tlx::vmap_foreach_reduce_tuple_foldr(
+        [&os](auto a) {
+            os << a << '\n';
+            return a + 1;
+        },
+        std::plus<>(),
+        my_tuple);
+
+    die_unequal(r1, 51.0);
+
+    auto r2 = tlx::vmap_foreach_reduce_tuple_foldr(SimpleMapFunctor(os),
                                              std::plus<>(), my_tuple);
 
-    die_unequal(r2, 50.0);
+    die_unequal(r2, 51.0);
+
+    auto r3 = tlx::vmap_foreach_reduce_tuple_foldr(SimpleMapFunctor(os), TakeLeftFunctor(), my_tuple);
+
+    die_unequal(r3, 43);
 }
 
 static void test_vmap_foreach_reduce_tuple() {
 
     std::ostringstream oss;
 
-    test_vmap_foreach_reduce_tuple_run(
+    /*test_vmap_foreach_reduce_tuple_foldl_run(
         oss, static_cast<int>(42), static_cast<double>(5), true);
 
-    die_unequal("42\n5\nhello\n42\n5\nhello\n", oss.str());
+    die_unequal("42\n5\n1\n42\n5\n1\n", oss.str());
+     */
+
+    test_vmap_foreach_reduce_tuple_foldr_run(
+        oss, static_cast<int>(42), static_cast<double>(5), true);
+
+    die_unequal("1\n5\n42\n1\n5\n42\n", oss.str());
 }
 
 /******************************************************************************/
@@ -135,7 +175,7 @@ static void test_vmap_foreach_tuple() {
     test_vmap_foreach_tuple_run(
         oss, static_cast<int>(42), static_cast<double>(5), "hello");
 
-    die_unequal("42\n5\nhello\n42\n5\nhello\n", oss.str());
+    die_unequal("hello\n5\n42\nhello\n5\n42\n", oss.str());
 }
 
 /******************************************************************************/

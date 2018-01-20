@@ -67,7 +67,7 @@ static void test_vmap_foreach() {
 }
 
 /******************************************************************************/
-// vmap_foreach_reduce_tuple
+// vmap_foreach_tuple_reduce
 
 struct TakeLeftFunctor {
     TakeLeftFunctor() = default;
@@ -148,7 +148,7 @@ static void test_vmap_foreach_tuple() {
     test_vmap_foreach_tuple_run(
         oss, static_cast<int>(42), static_cast<double>(5), "hello");
 
-    die_unequal("hello\n5\n42\nhello\n5\n42\n", oss.str());
+    die_unequal("42\n5\nhello\n42\n5\nhello\n", oss.str());
 }
 
 /******************************************************************************/

@@ -12,6 +12,7 @@
 #define TLX_META_VMAP_FOREACH_TUPLE_HEADER
 
 #include <tlx/meta/index_sequence.hpp>
+#include <tlx/meta/vmap_foreach.hpp>
 #include <tuple>
 
 namespace tlx {
@@ -26,27 +27,11 @@ namespace tlx {
 
 namespace detail {
 
-//! helper for vmap_foreach_tuple_with_index_impl: base case
-template <typename Functor, typename Arg>
-auto vmap_foreach_tuple_impl(Functor&& f, Arg&& arg) {
-    return std::make_tuple(std::forward<Functor>(f)(std::forward<Arg>(arg)));
-}
-
-//! helper for vmap_foreach_tuple_with_index_impl: general recursive case
-template <typename Functor, typename Arg, typename... MoreArgs>
-auto vmap_foreach_tuple_impl(Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
-    auto x = std::forward<Functor>(f)(std::forward<Arg>(arg));
-    return std::tuple_cat(std::make_tuple(std::move(x)),
-        vmap_foreach_tuple_impl(std::forward<Functor>(f),
-                                std::forward<MoreArgs>(rest) ...));
-}
-
 //! helper for vmap_foreach_tuple: forwards tuple entries
 template <typename Functor, typename Tuple, std::size_t... Is>
 auto vmap_foreach_tuple_with_index_impl(
     Functor&& f, Tuple&& t, tlx::index_sequence<Is...>) {
-    return vmap_foreach_tuple_impl(
-        std::forward<Functor>(f), std::get<Is>(std::forward<Tuple>(t)) ...);
+    return vmap_foreach(std::forward<Functor>(f), std::get<Is>(std::forward<Tuple>(t)) ...);
 }
 
 } // namespace detail

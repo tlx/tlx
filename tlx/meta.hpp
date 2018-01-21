@@ -37,9 +37,10 @@ print "#include <$_>\n" foreach sort glob("tlx/meta/"."*.hpp");
 #include <tlx/meta/vexpand.hpp>
 #include <tlx/meta/vmap_for_range.hpp>
 #include <tlx/meta/vmap_foreach.hpp>
-#include <tlx/meta/vmap_foreach_tuple_reduce.hpp>
 #include <tlx/meta/vmap_foreach_tuple.hpp>
 #include <tlx/meta/vmap_foreach_with_index.hpp>
+#include <tlx/meta/vreduce.hpp>
+#include <tlx/meta/vreduce_tuple.hpp>
 // [[[end]]]
 
 #endif // !TLX_META_HEADER

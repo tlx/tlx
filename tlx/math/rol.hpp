@@ -46,7 +46,7 @@ static inline uint32_t rol32(const uint32_t& x, int i) {
 
 //! rol32 - MSVC intrinsic
 static inline uint32_t rol32(const uint32_t& x, int i) {
-    return _lrotl(x, i);
+    return _rotl(x, i);
 }
 
 #else
@@ -80,7 +80,7 @@ static inline uint64_t rol64(const uint64_t& x, int i) {
 
 //! rol64 - MSVC intrinsic
 static inline uint64_t rol64(const uint64_t& x, int i) {
-    return _lrotl64(x, i);
+    return _rotl64(x, i);
 }
 
 #else

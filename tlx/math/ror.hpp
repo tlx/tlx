@@ -46,7 +46,7 @@ static inline uint32_t ror32(const uint32_t& x, int i) {
 
 //! ror32 - MSVC intrinsic
 static inline uint32_t ror32(const uint32_t& x, int i) {
-    return _lrotr(x, i);
+    return _rotr(x, i);
 }
 
 #else
@@ -80,7 +80,7 @@ static inline uint64_t ror64(const uint64_t& x, int i) {
 
 //! ror64 - MSVC intrinsic
 static inline uint64_t ror64(const uint64_t& x, int i) {
-    return _lrotr64(x, i);
+    return _rotr64(x, i);
 }
 
 #else

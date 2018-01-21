@@ -29,10 +29,11 @@ namespace tlx {
 
 //! ror32 - generic implementation
 static inline uint32_t ror32_generic(const uint32_t& x, int i) {
-    return (x >> (uint32_t)(i & 31)) | (x << (uint32_t)((32 - (i & 31)) & 31));
+    return (x >> static_cast<uint32_t>(i & 31)) |
+           (x << static_cast<uint32_t>((32 - (i & 31)) & 31));
 }
 
-#if defined(__GNUC__) || defined(__clang__)
+#if (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(__x86_64__))
 
 //! ror32 - gcc/clang assembler
 static inline uint32_t ror32(const uint32_t& x, int i) {
@@ -62,10 +63,11 @@ static inline uint32_t ror32(const uint32_t& x, int i) {
 
 //! ror64 - generic implementation
 static inline uint64_t ror64_generic(const uint64_t& x, int i) {
-    return (x >> (uint64_t)(i & 63)) | (x << (uint64_t)((64 - (i & 63)) & 63));
+    return (x >> static_cast<uint64_t>(i & 63)) |
+           (x << static_cast<uint64_t>((64 - (i & 63)) & 63));
 }
 
-#if defined(__GNUC__) || defined(__clang__)
+#if (defined(__GNUC__) || defined(__clang__)) && defined(__x86_64__)
 
 //! ror64 - gcc/clang assembler
 static inline uint64_t ror64(const uint64_t& x, int i) {

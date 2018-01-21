@@ -53,7 +53,7 @@ public:
 
     //! Constructs an element object on the location pointed by p.
     void construct(pointer p, const_reference value) {
-        ::new ((void*)p)Type(value); // NOLINT
+        ::new (static_cast<void*>(p))Type(value); // NOLINT
     }
 
 #if defined(_MSC_VER)
@@ -72,7 +72,7 @@ public:
     //! Constructs an element object on the location pointed by p.
     template <typename SubType, typename... Args>
     void construct(SubType* p, Args&& ... args) {
-        ::new ((void*)p)SubType(std::forward<Args>(args) ...); // NOLINT
+        ::new (static_cast<void*>(p))SubType(std::forward<Args>(args) ...); // NOLINT
     }
 
     //! Destroys in-place the object pointed by p.

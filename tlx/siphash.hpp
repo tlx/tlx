@@ -56,7 +56,7 @@ uint64_t siphash_plain(const uint8_t key[16], const uint8_t* m, size_t len) {
     v2 = k0 ^ 0x6c7967656e657261ull;
     v3 = k1 ^ 0x7465646279746573ull;
 
-    last7 = (uint64_t)(len & 0xff) << 56;
+    last7 = static_cast<uint64_t>(len & 0xff) << 56;
 
 #define sipcompress()    \
     v0 += v1; v2 += v3;  \
@@ -80,25 +80,25 @@ uint64_t siphash_plain(const uint8_t key[16], const uint8_t* m, size_t len) {
 
     switch (len - blocks) {
     case 7:
-        last7 |= (uint64_t)m[i + 6] << 48;
+        last7 |= static_cast<uint64_t>(m[i + 6]) << 48;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 6:
-        last7 |= (uint64_t)m[i + 5] << 40;
+        last7 |= static_cast<uint64_t>(m[i + 5]) << 40;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 5:
-        last7 |= (uint64_t)m[i + 4] << 32;
+        last7 |= static_cast<uint64_t>(m[i + 4]) << 32;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 4:
-        last7 |= (uint64_t)m[i + 3] << 24;
+        last7 |= static_cast<uint64_t>(m[i + 3]) << 24;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 3:
-        last7 |= (uint64_t)m[i + 2] << 16;
+        last7 |= static_cast<uint64_t>(m[i + 2]) << 16;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 2:
-        last7 |= (uint64_t)m[i + 1] << 8;
+        last7 |= static_cast<uint64_t>(m[i + 1]) << 8;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 1:
-        last7 |= (uint64_t)m[i + 0];
+        last7 |= static_cast<uint64_t>(m[i + 0]);
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 0:
     default:;
@@ -151,13 +151,13 @@ uint64_t siphash_sse2(const uint8_t key[16], const uint8_t* m, size_t len) {
     uint32_t lo, hi;
     size_t i, blocks;
 
-    k = _mm_loadu_si128((const __m128i*)(key + 0));
+    k = _mm_loadu_si128(reinterpret_cast<const __m128i*>(key + 0));
     v02 = siphash_init[0].v;
     v13 = siphash_init[1].v;
     v02 = _mm_xor_si128(v02, _mm_unpacklo_epi64(k, k));
     v13 = _mm_xor_si128(v13, _mm_unpackhi_epi64(k, k));
 
-    last7 = (uint64_t)(len & 0xff) << 56;
+    last7 = static_cast<uint64_t>(len & 0xff) << 56;
 
 #define sipcompress()                                                          \
     v11 = v13;                                                                 \
@@ -178,7 +178,7 @@ uint64_t siphash_sse2(const uint8_t key[16], const uint8_t* m, size_t len) {
     v13 = _mm_xor_si128(v13, v20);
 
     for (i = 0, blocks = (len & ~7); i < blocks; i += 8) {
-        mi = _mm_loadl_epi64((const __m128i*)(m + i));
+        mi = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(m + i));
         v13 = _mm_xor_si128(v13, _mm_slli_si128(mi, 8));
         sipcompress();
         sipcompress();
@@ -187,32 +187,33 @@ uint64_t siphash_sse2(const uint8_t key[16], const uint8_t* m, size_t len) {
 
     switch (len - blocks) {
     case 7:
-        last7 |= (uint64_t)m[i + 6] << 48;
+        last7 |= static_cast<uint64_t>(m[i + 6]) << 48;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 6:
-        last7 |= (uint64_t)m[i + 5] << 40;
+        last7 |= static_cast<uint64_t>(m[i + 5]) << 40;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 5:
-        last7 |= (uint64_t)m[i + 4] << 32;
+        last7 |= static_cast<uint64_t>(m[i + 4]) << 32;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 4:
-        last7 |= (uint64_t)m[i + 3] << 24;
+        last7 |= static_cast<uint64_t>(m[i + 3]) << 24;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 3:
-        last7 |= (uint64_t)m[i + 2] << 16;
+        last7 |= static_cast<uint64_t>(m[i + 2]) << 16;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 2:
-        last7 |= (uint64_t)m[i + 1] << 8;
+        last7 |= static_cast<uint64_t>(m[i + 1]) << 8;
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 1:
-        last7 |= (uint64_t)m[i + 0];
+        last7 |= static_cast<uint64_t>(m[i + 0]);
         TLX_ATTRIBUTE_FALLTHROUGH;
     case 0:
     default:;
     }
 
     mi = _mm_unpacklo_epi32(
-        _mm_cvtsi32_si128((uint32_t)last7), _mm_cvtsi32_si128((uint32_t)(last7 >> 32)));
+        _mm_cvtsi32_si128(static_cast<uint32_t>(last7)),
+        _mm_cvtsi32_si128(static_cast<uint32_t>(last7 >> 32)));
     v13 = _mm_xor_si128(v13, _mm_slli_si128(mi, 8));
     sipcompress();
     sipcompress();
@@ -230,7 +231,7 @@ uint64_t siphash_sse2(const uint8_t key[16], const uint8_t* m, size_t len) {
 
 #undef sipcompress
 
-    return ((uint64_t)hi << 32) | lo;
+    return (static_cast<uint64_t>(hi) << 32) | lo;
 }
 
 #endif  // defined(__SSE2__)

@@ -31,6 +31,8 @@ namespace tlx {
 typedef uint32_t u32;
 typedef uint64_t u64;
 
+namespace {
+
 static const u64 K[80] =
 {
     0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL, 0xb5c0fbcfec4d3b2fULL,
@@ -144,6 +146,8 @@ static void sha512_compress(uint64_t state[8], const uint8_t* buf) {
     for (int i = 0; i < 8; i++)
         state[i] = state[i] + S[i];
 }
+
+} // namespace
 
 SHA512::SHA512() {
     curlen_ = 0;

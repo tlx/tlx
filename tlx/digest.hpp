@@ -11,7 +11,7 @@
 #ifndef TLX_DIGEST_HEADER
 #define TLX_DIGEST_HEADER
 
-//! \defgroup tlx_digest Message Digest Hashes
+//! \defgroup tlx_digest Message Digests
 //! Message Digests: MD-5, SHA-256, and SHA-512.
 
 /*[[[perl

@@ -31,6 +31,8 @@ namespace tlx {
 typedef uint32_t u32;
 typedef uint64_t u64;
 
+namespace {
+
 static inline u32 min(u32 x, u32 y) {
     return x < y ? x : y;
 }
@@ -159,6 +161,8 @@ static void md5_compress(uint32_t state[4], const uint8_t* buf) {
     state[2] = state[2] + c;
     state[3] = state[3] + d;
 }
+
+} // namespace
 
 MD5::MD5() {
     curlen_ = 0;

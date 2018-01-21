@@ -19,6 +19,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_digest
+//! \{
+
 /*!
  * MD-5 processor without external dependencies.
  */
@@ -66,6 +69,8 @@ std::string MD5_hex(const std::string& str);
 std::string MD5_hex_uc(const void* data, uint32_t size);
 //! process data and return 16 byte (128 bit) digest upper-case hex encoded
 std::string MD5_hex_uc(const std::string& str);
+
+//! \}
 
 } // namespace tlx
 

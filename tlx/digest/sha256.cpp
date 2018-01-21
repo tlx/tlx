@@ -31,6 +31,8 @@ namespace tlx {
 typedef uint32_t u32;
 typedef uint64_t u64;
 
+namespace {
+
 static const u32 K[64] =
 {
     0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
@@ -134,6 +136,8 @@ static void sha256_compress(uint32_t state[8], const uint8_t* buf) {
     for (size_t i = 0; i < 8; i++)
         state[i] = state[i] + S[i];
 }
+
+} // namespace
 
 SHA256::SHA256() {
     curlen_ = 0;

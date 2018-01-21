@@ -85,7 +85,7 @@ void test_vmap_foreach_tuple_run(std::ostream& os, const Args& ... args) {
     die_unequal(std::get<1>(r1), 6.0);
     die_unequal(std::get<2>(r1), std::string("ello"));
 
-    auto r2 = tlx::vmap_foreach(SimpleMapFunctor(os), my_tuple);
+    auto r2 = tlx::vmap_foreach_tuple(SimpleMapFunctor(os), my_tuple);
 
     die_unequal(std::tuple_size<decltype(r2)>::value, 3u);
     die_unequal(std::get<0>(r2), 43);
@@ -97,7 +97,7 @@ static void test_vmap_foreach_tuple() {
 
     std::ostringstream oss;
 
-    test_vmap_foreach_run(
+    test_vmap_foreach_tuple_run(
         oss, static_cast<int>(42), static_cast<double>(5), "hello");
 
     die_unequal("42\n5\nhello\n42\n5\nhello\n", oss.str());

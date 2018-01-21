@@ -13,6 +13,7 @@
 
 #include <tlx/digest/sha256.hpp>
 
+#include <tlx/math/ror.hpp>
 #include <tlx/string/hexdump.hpp>
 
 #include <algorithm>
@@ -33,8 +34,7 @@ typedef uint64_t u64;
 
 namespace {
 
-static const u32 K[64] =
-{
+static const u32 K[64] = {
     0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
     0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
     0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
@@ -55,14 +55,13 @@ static inline u32 min(u32 x, u32 y) {
 }
 
 static inline u32 load32(const uint8_t* y) {
-    return (u32(y[0]) << 24) | (u32(y[1]) << 16) | (u32(y[2]) << 8) | (u32(y[3]) << 0);
+    return (u32(y[0]) << 24) | (u32(y[1]) << 16) |
+           (u32(y[2]) << 8) | (u32(y[3]) << 0);
 }
-
 static inline void store64(u64 x, uint8_t* y) {
     for (int i = 0; i != 8; ++i)
         y[i] = (x >> ((7 - i) * 8)) & 255;
 }
-
 static inline void store32(u32 x, uint8_t* y) {
     for (int i = 0; i != 4; ++i)
         y[i] = (x >> ((3 - i) * 8)) & 255;
@@ -74,23 +73,20 @@ static inline u32 Ch(u32 x, u32 y, u32 z) {
 static inline u32 Maj(u32 x, u32 y, u32 z) {
     return ((x | y) & z) | (x & y);
 }
-static inline u32 Rot(u32 x, u32 n) {
-    return (x >> (n & 31)) | (x << (32 - (n & 31)));
-}
 static inline u32 Sh(u32 x, u32 n) {
     return x >> n;
 }
 static inline u32 Sigma0(u32 x) {
-    return Rot(x, 2) ^ Rot(x, 13) ^ Rot(x, 22);
+    return ror32(x, 2) ^ ror32(x, 13) ^ ror32(x, 22);
 }
 static inline u32 Sigma1(u32 x) {
-    return Rot(x, 6) ^ Rot(x, 11) ^ Rot(x, 25);
+    return ror32(x, 6) ^ ror32(x, 11) ^ ror32(x, 25);
 }
 static inline u32 Gamma0(u32 x) {
-    return Rot(x, 7) ^ Rot(x, 18) ^ Sh(x, 3);
+    return ror32(x, 7) ^ ror32(x, 18) ^ Sh(x, 3);
 }
 static inline u32 Gamma1(u32 x) {
-    return Rot(x, 17) ^ Rot(x, 19) ^ Sh(x, 10);
+    return ror32(x, 17) ^ ror32(x, 19) ^ Sh(x, 10);
 }
 
 static void sha256_compress(uint32_t state[8], const uint8_t* buf) {
@@ -121,15 +117,8 @@ static void sha256_compress(uint32_t state[8], const uint8_t* buf) {
     for (size_t i = 0; i < 64; ++i)
     {
         RND(S[0], S[1], S[2], S[3], S[4], S[5], S[6], S[7], i);
-        t = S[7];
-        S[7] = S[6];
-        S[6] = S[5];
-        S[5] = S[4];
-        S[4] = S[3];
-        S[3] = S[2];
-        S[2] = S[1];
-        S[1] = S[0];
-        S[0] = t;
+        t = S[7], S[7] = S[6], S[6] = S[5], S[5] = S[4],
+        S[4] = S[3], S[3] = S[2], S[2] = S[1], S[1] = S[0], S[0] = t;
     }
 
     // Feedback

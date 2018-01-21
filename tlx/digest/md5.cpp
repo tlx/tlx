@@ -13,6 +13,7 @@
 
 #include <tlx/digest/md5.hpp>
 
+#include <tlx/math/rol.hpp>
 #include <tlx/string/hexdump.hpp>
 
 #include <algorithm>
@@ -54,11 +55,6 @@ static inline void store64l(u64 x, uint8_t* y) {
         y[i] = (x >> (i * 8)) & 255;
 }
 
-static inline u32 ROL(const u32& x, const u32& y) {
-    return ((((u32)(x) << (u32)((y) & 31)) |
-             (((u32)(x) & 0xFFFFFFFFUL) >> (u32)((32 - ((y) & 31)) & 31))) & 0xFFFFFFFFUL);
-}
-
 static inline u32 F(const u32& x, const u32& y, const u32& z) {
     return (z ^ (x & (y ^ z)));
 }
@@ -74,22 +70,22 @@ static inline u32 I(const u32& x, const u32& y, const u32& z) {
 
 static inline void FF(u32& a, u32& b, u32& c, u32& d, u32 M, u32 s, u32 t) {
     a = (a + F(b, c, d) + M + t);
-    a = ROL(a, s) + b;
+    a = rol32(a, s) + b;
 }
 
 static inline void GG(u32& a, u32& b, u32& c, u32& d, u32 M, u32 s, u32 t) {
     a = (a + G(b, c, d) + M + t);
-    a = ROL(a, s) + b;
+    a = rol32(a, s) + b;
 }
 
 static inline void HH(u32& a, u32& b, u32& c, u32& d, u32 M, u32 s, u32 t) {
     a = (a + H(b, c, d) + M + t);
-    a = ROL(a, s) + b;
+    a = rol32(a, s) + b;
 }
 
 static inline void II(u32& a, u32& b, u32& c, u32& d, u32 M, u32 s, u32 t) {
     a = (a + I(b, c, d) + M + t);
-    a = ROL(a, s) + b;
+    a = rol32(a, s) + b;
 }
 
 static const uint8_t Worder[64] = {

@@ -107,6 +107,52 @@ static void test_is_power_of_two() {
     }
 }
 
+static void test_rol() {
+    die_unequal(tlx::rol32_generic(0x12345678u, 1), 0x2468ACF0u);
+    die_unequal(tlx::rol32(0x12345678u, 1), 0x2468ACF0u);
+
+    die_unequal(tlx::rol32_generic(0x12345678u, 3), 0x91A2B3C0u);
+    die_unequal(tlx::rol32(0x12345678u, 3), 0x91A2B3C0u);
+
+    die_unequal(tlx::rol32_generic(0x12345678u, 8), 0x34567812u);
+    die_unequal(tlx::rol32(0x12345678u, 8), 0x34567812u);
+
+    die_unequal(tlx::rol64_generic(0x1234567812345678llu, 1),
+                0x2468ACF02468ACF0llu);
+    die_unequal(tlx::rol64(0x1234567812345678llu, 1), 0x2468ACF02468ACF0llu);
+
+    die_unequal(tlx::rol64_generic(0x1234567812345678llu, 3),
+                0x91A2B3C091A2B3C0llu);
+    die_unequal(tlx::rol64(0x1234567812345678llu, 3), 0x91A2B3C091A2B3C0llu);
+
+    die_unequal(tlx::rol64_generic(0x1234567812345678llu, 8),
+                0x3456781234567812llu);
+    die_unequal(tlx::rol64(0x1234567812345678llu, 8), 0x3456781234567812llu);
+}
+
+static void test_ror() {
+    die_unequal(tlx::ror32_generic(0x12345678u, 1), 0x91A2B3Cu);
+    die_unequal(tlx::ror32(0x12345678u, 1), 0x91A2B3Cu);
+
+    die_unequal(tlx::ror32_generic(0x12345678u, 3), 0x2468ACFu);
+    die_unequal(tlx::ror32(0x12345678u, 3), 0x2468ACFu);
+
+    die_unequal(tlx::ror32_generic(0x12345678u, 8), 0x78123456u);
+    die_unequal(tlx::ror32(0x12345678u, 8), 0x78123456u);
+
+    die_unequal(tlx::ror64_generic(0x1234567812345678llu, 1),
+                0x91A2B3C091A2B3Cllu);
+    die_unequal(tlx::ror64(0x1234567812345678llu, 1), 0x91A2B3C091A2B3Cllu);
+
+    die_unequal(tlx::ror64_generic(0x1234567812345678llu, 3),
+                0x2468ACF02468ACFllu);
+    die_unequal(tlx::ror64(0x1234567812345678llu, 3), 0x2468ACF02468ACFllu);
+
+    die_unequal(tlx::ror64_generic(0x1234567812345678llu, 8),
+                0x7812345678123456llu);
+    die_unequal(tlx::ror64(0x1234567812345678llu, 8), 0x7812345678123456llu);
+}
+
 static void test_round_to_power_of_two() {
 
     unsigned power = 0;
@@ -132,6 +178,8 @@ int main() {
     test_clz();
     test_ffs();
     test_integer_log2();
+    test_rol();
+    test_ror();
     test_round_to_power_of_two();
     test_is_power_of_two();
 

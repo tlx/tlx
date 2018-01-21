@@ -13,6 +13,7 @@
 
 #include <tlx/digest/sha512.hpp>
 
+#include <tlx/math/ror.hpp>
 #include <tlx/string/hexdump.hpp>
 
 #include <algorithm>
@@ -33,8 +34,7 @@ typedef uint64_t u64;
 
 namespace {
 
-static const u64 K[80] =
-{
+static const u64 K[80] = {
     0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL, 0xb5c0fbcfec4d3b2fULL,
     0xe9b5dba58189dbbcULL, 0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL,
     0x923f82a4af194f9bULL, 0xab1c5ed5da6d8118ULL, 0xd807aa98a3030242ULL,
@@ -72,7 +72,6 @@ static inline void store64(u64 x, unsigned char* y) {
     for (int i = 0; i != 8; ++i)
         y[i] = (x >> ((7 - i) * 8)) & 255;
 }
-
 static inline u64 load64(const unsigned char* y) {
     u64 res = 0;
     for (int i = 0; i != 8; ++i)
@@ -86,23 +85,20 @@ static inline u64 Ch(u64 x, u64 y, u64 z) {
 static inline u64 Maj(u64 x, u64 y, u64 z) {
     return ((x | y) & z) | (x & y);
 }
-static inline u64 Rot(u64 x, u64 n) {
-    return (x >> (n & 63)) | (x << (64 - (n & 63)));
-}
 static inline u64 Sh(u64 x, u64 n) {
     return x >> n;
 }
 static inline u64 Sigma0(u64 x) {
-    return Rot(x, 28) ^ Rot(x, 34) ^ Rot(x, 39);
+    return ror64(x, 28) ^ ror64(x, 34) ^ ror64(x, 39);
 }
 static inline u64 Sigma1(u64 x) {
-    return Rot(x, 14) ^ Rot(x, 18) ^ Rot(x, 41);
+    return ror64(x, 14) ^ ror64(x, 18) ^ ror64(x, 41);
 }
 static inline u64 Gamma0(u64 x) {
-    return Rot(x, 1) ^ Rot(x, 8) ^ Sh(x, 7);
+    return ror64(x, 1) ^ ror64(x, 8) ^ Sh(x, 7);
 }
 static inline u64 Gamma1(u64 x) {
-    return Rot(x, 19) ^ Rot(x, 61) ^ Sh(x, 6);
+    return ror64(x, 19) ^ ror64(x, 61) ^ Sh(x, 6);
 }
 
 static void sha512_compress(uint64_t state[8], const uint8_t* buf) {

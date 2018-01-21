@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2018 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -14,6 +14,15 @@
 
 #include <tlx/die.hpp>
 #include <tlx/math.hpp>
+
+static void test_bswap() {
+    die_unequal(tlx::bswap32_generic(0x12345678u), 0x78563412u);
+    die_unequal(tlx::bswap32(0x12345678u), 0x78563412u);
+
+    die_unequal(tlx::bswap64_generic(0x1234567812345678llu),
+                0x7856341278563412llu);
+    die_unequal(tlx::bswap64(0x1234567812345678llu), 0x7856341278563412llu);
+}
 
 static void test_clz() {
 
@@ -119,6 +128,7 @@ static void test_round_to_power_of_two() {
 
 int main() {
 
+    test_bswap();
     test_clz();
     test_ffs();
     test_integer_log2();

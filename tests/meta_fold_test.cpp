@@ -66,7 +66,7 @@ static void test_foldl() {
 
     test_foldl_run(oss, static_cast<int>(42), static_cast<double>(5), true);
 
-    // (0 + (42 + (5 + 1))) where left operand is expected
+    // (((0 + 42) + 5) + 1)) where left operand is expected
     die_unequal("0\n42\n47\n0\n42\n47\n", oss.str());
 }
 
@@ -102,7 +102,7 @@ static void test_foldl_tuple() {
     test_foldl_tuple_run(
         oss, static_cast<int>(42), static_cast<double>(5), true);
 
-    // (0 + (42 + (5 + 1))) where left operand is expected
+    // (((0 + 42) + 5) + 1)) where left operand is expected
     die_unequal("0\n42\n47\n0\n42\n47\n", oss.str());
 }
 

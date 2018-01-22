@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/meta/foldl_tuple.hpp
+ * tlx/meta/fold_right_tuple.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,10 +8,10 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_META_FOLDL_TUPLE_HEADER
-#define TLX_META_FOLDL_TUPLE_HEADER
+#ifndef TLX_META_FOLD_RIGHT_TUPLE_HEADER
+#define TLX_META_FOLD_RIGHT_TUPLE_HEADER
 
-#include <tlx/meta/foldl.hpp>
+#include <tlx/meta/fold_right.hpp>
 #include <tlx/meta/index_sequence.hpp>
 #include <tuple>
 
@@ -21,30 +21,29 @@ namespace tlx {
 //! \{
 
 /******************************************************************************/
-// Variadic Template Expander: Implements foldl on the components of a tuple.
+// Variadic Template Expander: Implements fold_right() on the components of a
+// tuple.
 
 namespace detail {
 
-//! helper for foldl_tuple: forwards tuple entries
+//! helper for fold_right_tuple: forwards tuple entries
 template <typename Reduce, typename Initial, typename Tuple, std::size_t... Is>
-auto foldl_tuple_impl(Reduce&& r, Initial&& init, Tuple&& t,
-                      index_sequence<Is...>) {
-    return foldl(
-        std::forward<Reduce>(r),
-        std::forward<Initial>(init),
-        std::get<Is>(std::forward<Tuple>(t)) ...);
+auto fold_right_tuple_impl(Reduce&& r, Initial&& init, Tuple&& t,
+                           index_sequence<Is...>) {
+    return fold_right(std::forward<Reduce>(r), std::forward<Initial>(init),
+                      std::get<Is>(std::forward<Tuple>(t)) ...);
 }
 
 } // namespace detail
 
-//! Implements foldl with binary Reduce operation and initial value on a tuple.
+//! Implements fold_right() -- (a * (b * c)) -- with a binary Reduce operation
+//! and initial value on a tuple.
 template <typename Reduce, typename Initial, typename Tuple>
-auto foldl_tuple(Reduce&& r, Initial&& init, Tuple&& t) {
+auto fold_right_tuple(Reduce&& r, Initial&& init, Tuple&& t) {
     using Indices = make_index_sequence<
               std::tuple_size<typename std::decay<Tuple>::type>::value>;
-    return detail::foldl_tuple_impl(
-        std::forward<Reduce>(r),
-        std::forward<Initial>(init),
+    return detail::fold_right_tuple_impl(
+        std::forward<Reduce>(r), std::forward<Initial>(init),
         std::forward<Tuple>(t), Indices());
 }
 
@@ -52,6 +51,6 @@ auto foldl_tuple(Reduce&& r, Initial&& init, Tuple&& t) {
 
 } // namespace tlx
 
-#endif // !TLX_META_FOLDL_TUPLE_HEADER
+#endif // !TLX_META_FOLD_RIGHT_TUPLE_HEADER
 
 /******************************************************************************/

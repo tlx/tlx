@@ -14,13 +14,14 @@
 #include <sstream>
 
 #include <tlx/die.hpp>
-#include <tlx/meta/foldl.hpp>
-#include <tlx/meta/foldl_tuple.hpp>
-#include <tlx/meta/foldr.hpp>
-#include <tlx/meta/foldr_tuple.hpp>
+#include <tlx/meta/fold_left.hpp>
+#include <tlx/meta/fold_left_tuple.hpp>
+#include <tlx/meta/fold_right.hpp>
+#include <tlx/meta/fold_right_tuple.hpp>
+#include <tlx/unused.hpp>
 
 /******************************************************************************/
-// foldl
+// fold_left
 
 struct TakeLeftFunctor {
     TakeLeftFunctor() = default;
@@ -43,24 +44,26 @@ struct TakeRightFunctor {
 template <typename... Args>
 void test_foldl_run(std::ostream& os, const Args& ... args) {
 
-    auto r1 = tlx::foldl([&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, args...);
+    auto r1 = tlx::fold_left(
+        [&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, args...);
 
     die_unequal(r1, 48.0);
 
-    auto r2 = tlx::foldl([&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, args...);
+    auto r2 = tlx::fold_left(
+        [&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, args...);
 
     die_unequal(r2, 48.0);
 
-    auto r3 = tlx::foldl(TakeLeftFunctor(), 0, args...);
+    auto r3 = tlx::fold_left(TakeLeftFunctor(), 0, args...);
 
     die_unequal(r3, 0);
 
-    auto r4 = tlx::foldl(TakeRightFunctor(), 0, args...);
+    auto r4 = tlx::fold_left(TakeRightFunctor(), 0, args...);
 
     die_unequal(r4, true);
 }
 
-static void test_foldl() {
+static void test_fold_left() {
 
     std::ostringstream oss;
 
@@ -71,31 +74,33 @@ static void test_foldl() {
 }
 
 /******************************************************************************/
-// foldl_tuple
+// fold_left_tuple
 
 template <typename... Args>
 void test_foldl_tuple_run(std::ostream& os, const Args& ... args) {
 
     auto my_tuple = std::make_tuple(args...);
 
-    auto r1 = tlx::foldl_tuple([&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, my_tuple);
+    auto r1 = tlx::fold_left_tuple(
+        [&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, my_tuple);
 
     die_unequal(r1, 48.0);
 
-    auto r2 = tlx::foldl_tuple([&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, my_tuple);
+    auto r2 = tlx::fold_left_tuple(
+        [&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, my_tuple);
 
     die_unequal(r2, 48.0);
 
-    auto r3 = tlx::foldl_tuple(TakeLeftFunctor(), 0, my_tuple);
+    auto r3 = tlx::fold_left_tuple(TakeLeftFunctor(), 0, my_tuple);
 
     die_unequal(r3, 0);
 
-    auto r4 = tlx::foldl_tuple(TakeRightFunctor(), 0, my_tuple);
+    auto r4 = tlx::fold_left_tuple(TakeRightFunctor(), 0, my_tuple);
 
     die_unequal(r4, true);
 }
 
-static void test_foldl_tuple() {
+static void test_fold_left_tuple() {
 
     std::ostringstream oss;
 
@@ -107,29 +112,31 @@ static void test_foldl_tuple() {
 }
 
 /******************************************************************************/
-// foldr
+// fold_right
 
 template <typename... Args>
 void test_foldr_run(std::ostream& os, const Args& ... args) {
 
-    auto r1 = tlx::foldr([&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, args...);
+    auto r1 = tlx::fold_right(
+        [&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, args...);
 
     die_unequal(r1, 48.0);
 
-    auto r2 = tlx::foldr([&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, args...);
+    auto r2 = tlx::fold_right(
+        [&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, args...);
 
     die_unequal(r2, 48.0);
 
-    auto r3 = tlx::foldr(TakeLeftFunctor(), 0, args...);
+    auto r3 = tlx::fold_right(TakeLeftFunctor(), 0, args...);
 
     die_unequal(r3, 42);
 
-    auto r4 = tlx::foldr(TakeRightFunctor(), 0, args...);
+    auto r4 = tlx::fold_right(TakeRightFunctor(), 0, args...);
 
     die_unequal(r4, 0);
 }
 
-static void test_foldr() {
+static void test_fold_right() {
 
     std::ostringstream oss;
 
@@ -140,31 +147,33 @@ static void test_foldr() {
 }
 
 /******************************************************************************/
-// foldr_tuple
+// fold_right_tuple
 
 template <typename... Args>
 void test_foldr_tuple_run(std::ostream& os, const Args& ... args) {
 
     auto my_tuple = std::make_tuple(args...);
 
-    auto r1 = tlx::foldr_tuple([&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, my_tuple);
+    auto r1 = tlx::fold_right_tuple(
+        [&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, my_tuple);
 
     die_unequal(r1, 48.0);
 
-    auto r2 = tlx::foldr_tuple([&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, my_tuple);
+    auto r2 = tlx::fold_right_tuple(
+        [&os](auto a, auto b) { os << a << '\n'; return a + b; }, 0, my_tuple);
 
     die_unequal(r2, 48.0);
 
-    auto r3 = tlx::foldr_tuple(TakeLeftFunctor(), 0, my_tuple);
+    auto r3 = tlx::fold_right_tuple(TakeLeftFunctor(), 0, my_tuple);
 
     die_unequal(r3, 42);
 
-    auto r4 = tlx::foldr_tuple(TakeRightFunctor(), 0, my_tuple);
+    auto r4 = tlx::fold_right_tuple(TakeRightFunctor(), 0, my_tuple);
 
     die_unequal(r4, 0);
 }
 
-static void test_foldr_tuple() {
+static void test_fold_right_tuple() {
 
     std::ostringstream oss;
 
@@ -179,10 +188,10 @@ static void test_foldr_tuple() {
 
 int main() {
 
-    test_foldl();
-    test_foldl_tuple();
-    test_foldr();
-    test_foldr_tuple();
+    test_fold_left();
+    test_fold_left_tuple();
+    test_fold_right();
+    test_fold_right_tuple();
 
     return 0;
 }

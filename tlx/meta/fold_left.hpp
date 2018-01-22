@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/meta/foldr.hpp
+ * tlx/meta/fold_left.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,11 +8,10 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_META_FOLDR_HEADER
-#define TLX_META_FOLDR_HEADER
+#ifndef TLX_META_FOLD_LEFT_HEADER
+#define TLX_META_FOLD_LEFT_HEADER
 
 #include <tlx/meta/index_sequence.hpp>
-#include <tlx/unused.hpp>
 #include <tuple>
 
 namespace tlx {
@@ -21,34 +20,36 @@ namespace tlx {
 //! \{
 
 /******************************************************************************/
-// Variadic Template Expander: Implements foldr on the variadic template
-// arguments. Implements (pack ... op ... init) of C++17.
+// Variadic Template Expander: Implements fold_left() on the variadic template
+// arguments. Implements (init ... op ... pack) of C++17.
 
 namespace detail {
 
-//! helper for foldr: base case
+//! helper for fold_left(): base case
 template <typename Reduce, typename Initial, typename Arg>
-auto foldr_impl(Reduce&& r, Initial&& init, Arg&& arg) {
+auto fold_left_impl(Reduce&& r, Initial&& init, Arg&& arg) {
     return std::forward<Reduce>(r)(
-        std::forward<Arg>(arg), std::forward<Initial>(init));
+        std::forward<Initial>(init), std::forward<Arg>(arg));
 }
 
-//! helper for foldr: general recursive case
+//! helper for fold_left(): general recursive case
 template <typename Reduce, typename Initial, typename Arg, typename... MoreArgs>
-auto foldr_impl(Reduce&& r, Initial&& init, Arg&& arg, MoreArgs&& ... rest) {
-    return std::forward<Reduce>(r)(
-        std::forward<Arg>(arg),
-        foldr_impl(std::forward<Reduce>(r),
-                   std::forward<Initial>(init),
-                   std::forward<MoreArgs>(rest) ...));
+auto fold_left_impl(Reduce&& r, Initial&& init,
+                    Arg&& arg, MoreArgs&& ... rest) {
+    return fold_left_impl(
+        std::forward<Reduce>(r),
+        std::forward<Reduce>(r)(
+            std::forward<Initial>(init), std::forward<Arg>(arg)),
+        std::forward<MoreArgs>(rest) ...);
 }
 
 } // namespace detail
 
-//! Implements foldr with binary Reduce operation and initial value.
+//! Implements fold_left() -- ((a * b) * c) -- with a binary Reduce operation
+//! and initial value.
 template <typename Reduce, typename Initial, typename... Args>
-auto foldr(Reduce&& r, Initial&& init, Args&& ... args) {
-    return detail::foldr_impl(
+auto fold_left(Reduce&& r, Initial&& init, Args&& ... args) {
+    return detail::fold_left_impl(
         std::forward<Reduce>(r), std::forward<Initial>(init),
         std::forward<Args>(args) ...);
 }
@@ -57,6 +58,6 @@ auto foldr(Reduce&& r, Initial&& init, Args&& ... args) {
 
 } // namespace tlx
 
-#endif // !TLX_META_FOLDR_HEADER
+#endif // !TLX_META_FOLD_LEFT_HEADER
 
 /******************************************************************************/

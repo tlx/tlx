@@ -17,6 +17,7 @@
 #include <tlx/meta/vmap_for_range.hpp>
 #include <tlx/meta/vmap_foreach.hpp>
 #include <tlx/meta/vmap_foreach_tuple.hpp>
+#include <tlx/meta/vmap_foreach_tuple_with_index.hpp>
 #include <tlx/meta/vmap_foreach_with_index.hpp>
 
 /******************************************************************************/
@@ -135,8 +136,8 @@ void test_vmap_foreach_with_index_run(std::ostream& os, const Args& ... args) {
     die_unequal(std::get<1>(r1), 6.0);
     die_unequal(std::get<2>(r1), std::string("ello"));
 
-    auto r2 =
-        tlx::vmap_foreach_with_index(SimpleMapFunctorWithIndex(os), args...);
+    auto r2 = tlx::vmap_foreach_with_index(
+        SimpleMapFunctorWithIndex(os), args...);
 
     die_unequal(std::tuple_size<decltype(r2)>::value, 3u);
     die_unequal(std::get<0>(r2), 43);
@@ -150,6 +151,49 @@ static void test_vmap_foreach_with_index() {
 
     test_vmap_foreach_with_index_run(
         oss, static_cast<int>(42), static_cast<double>(5), "hello");
+
+    die_unequal("0 42 1\n1 5 x\n2 hello abc\n"
+                "0 42\n1 5\n2 hello\n", oss.str());
+}
+
+/******************************************************************************/
+// vmap_foreach_tuple_with_index
+
+template <typename Tuple>
+void test_vmap_foreach_tuple_with_index_run(std::ostream& os, const Tuple& tuple) {
+
+    // a variadic tuple to get indexes from using the compile-time index param
+    auto my_tuple = std::make_tuple(1, 'x', "abc");
+
+    auto r1 = tlx::vmap_foreach_tuple_with_index(
+        [&os, &my_tuple](auto index, auto a) {
+            os << index << ' ' << a << ' '
+               << std::get<decltype(index)::index>(my_tuple) << '\n';
+            return a + 1;
+        },
+        tuple);
+
+    die_unequal(std::tuple_size<decltype(r1)>::value, 3u);
+    die_unequal(std::get<0>(r1), 43);
+    die_unequal(std::get<1>(r1), 6.0);
+    die_unequal(std::get<2>(r1), std::string("ello"));
+
+    auto r2 = tlx::vmap_foreach_tuple_with_index(
+        SimpleMapFunctorWithIndex(os), tuple);
+
+    die_unequal(std::tuple_size<decltype(r2)>::value, 3u);
+    die_unequal(std::get<0>(r2), 43);
+    die_unequal(std::get<1>(r2), 6.0);
+    die_unequal(std::get<2>(r2), std::string("ello"));
+}
+
+static void test_vmap_foreach_tuple_with_index() {
+
+    std::ostringstream oss;
+
+    test_vmap_foreach_tuple_with_index_run(
+        oss,
+        std::make_tuple(static_cast<int>(42), static_cast<double>(5), "hello"));
 
     die_unequal("0 42 1\n1 5 x\n2 hello abc\n"
                 "0 42\n1 5\n2 hello\n", oss.str());
@@ -193,6 +237,7 @@ int main() {
     test_vmap_foreach();
     test_vmap_foreach_tuple();
     test_vmap_foreach_with_index();
+    test_vmap_foreach_tuple_with_index();
 
     return 0;
 }

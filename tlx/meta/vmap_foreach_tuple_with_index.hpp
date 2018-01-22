@@ -1,18 +1,18 @@
 /*******************************************************************************
- * tlx/meta/vmap_foreach_tuple.hpp
+ * tlx/meta/vmap_foreach_tuple_with_index.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2018 Hung Tran <hung@ae.cs.uni-frankfurt.de>
+ * Copyright (C) 2018 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_META_VMAP_FOREACH_TUPLE_HEADER
-#define TLX_META_VMAP_FOREACH_TUPLE_HEADER
+#ifndef TLX_META_VMAP_FOREACH_TUPLE_WITH_INDEX_HEADER
+#define TLX_META_VMAP_FOREACH_TUPLE_WITH_INDEX_HEADER
 
 #include <tlx/meta/index_sequence.hpp>
-#include <tlx/meta/vmap_foreach.hpp>
+#include <tlx/meta/vmap_foreach_with_index.hpp>
 #include <tuple>
 
 namespace tlx {
@@ -24,15 +24,17 @@ namespace tlx {
 // Variadic Template Expander: run a generic templated functor (like a generic
 // lambda) for each component of a tuple, and collect the returned values in a
 // generic std::tuple.
+//
+// Called with func(StaticIndex<> index, Argument arg).
 
 namespace detail {
 
-//! helper for vmap_foreach_tuple: forwards tuple entries
+//! helper for vmap_foreach_tuple_with_index: forwards tuple entries
 template <typename Functor, typename Tuple, std::size_t... Is>
-auto vmap_foreach_tuple_impl(
+auto vmap_foreach_tuple_with_index_impl(
     Functor&& f, Tuple&& t, index_sequence<Is...>) {
-    return vmap_foreach(std::forward<Functor>(f),
-                        std::get<Is>(std::forward<Tuple>(t)) ...);
+    return vmap_foreach_with_index(std::forward<Functor>(f),
+                                   std::get<Is>(std::forward<Tuple>(t)) ...);
 }
 
 } // namespace detail
@@ -40,10 +42,10 @@ auto vmap_foreach_tuple_impl(
 //! Call a generic functor (like a generic lambda) for each variadic template
 //! argument and collect the result in a std::tuple<>.
 template <typename Functor, typename Tuple>
-auto vmap_foreach_tuple(Functor&& f, Tuple&& t) {
+auto vmap_foreach_tuple_with_index(Functor&& f, Tuple&& t) {
     using Indices = make_index_sequence<
               std::tuple_size<typename std::decay<Tuple>::type>::value>;
-    return detail::vmap_foreach_tuple_impl(
+    return detail::vmap_foreach_tuple_with_index_impl(
         std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }
 
@@ -51,6 +53,6 @@ auto vmap_foreach_tuple(Functor&& f, Tuple&& t) {
 
 } // namespace tlx
 
-#endif // !TLX_META_VMAP_FOREACH_TUPLE_HEADER
+#endif // !TLX_META_VMAP_FOREACH_TUPLE_WITH_INDEX_HEADER
 
 /******************************************************************************/

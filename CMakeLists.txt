@@ -344,6 +344,7 @@ if(TLX_TRY_COMPILE_HEADERS)
     list(REMOVE_ITEM header_files "tlx/meta/vmap_foreach.hpp")
     list(REMOVE_ITEM header_files "tlx/meta/vmap_foreach_tuple.hpp")
     list(REMOVE_ITEM header_files "tlx/meta/vmap_foreach_with_index.hpp")
+    list(REMOVE_ITEM header_files "tlx/meta/vmap_foreach_tuple_with_index.hpp")
     list(REMOVE_ITEM header_files "tlx/meta/vmap_for_range.hpp")
   endif()
 

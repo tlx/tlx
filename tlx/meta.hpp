@@ -23,6 +23,10 @@ print "#include <$_>\n" foreach sort glob("tlx/meta/"."*.hpp");
 #include <tlx/meta/call_foreach_tuple.hpp>
 #include <tlx/meta/call_foreach_tuple_with_index.hpp>
 #include <tlx/meta/call_foreach_with_index.hpp>
+#include <tlx/meta/fold_left.hpp>
+#include <tlx/meta/fold_left_tuple.hpp>
+#include <tlx/meta/fold_right.hpp>
+#include <tlx/meta/fold_right_tuple.hpp>
 #include <tlx/meta/function_chain.hpp>
 #include <tlx/meta/function_stack.hpp>
 #include <tlx/meta/has_member.hpp>
@@ -38,6 +42,7 @@ print "#include <$_>\n" foreach sort glob("tlx/meta/"."*.hpp");
 #include <tlx/meta/vmap_for_range.hpp>
 #include <tlx/meta/vmap_foreach.hpp>
 #include <tlx/meta/vmap_foreach_tuple.hpp>
+#include <tlx/meta/vmap_foreach_tuple_with_index.hpp>
 #include <tlx/meta/vmap_foreach_with_index.hpp>
 // [[[end]]]
 

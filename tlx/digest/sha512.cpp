@@ -79,10 +79,10 @@ static inline u64 load64(const unsigned char* y) {
     return res;
 }
 
-static inline u64 Ch(u64 x, u64 y, u64 z) {
+static inline u64 Ch(const u64& x, const u64& y, const u64& z) {
     return z ^ (x & (y ^ z));
 }
-static inline u64 Maj(u64 x, u64 y, u64 z) {
+static inline u64 Maj(const u64& x, const u64& y, const u64& z) {
     return ((x | y) & z) | (x & y);
 }
 static inline u64 Sh(u64 x, u64 n) {

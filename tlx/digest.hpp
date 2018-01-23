@@ -18,6 +18,7 @@
 print "#include <$_>\n" foreach sort glob("tlx/digest/"."*.hpp");
 ]]]*/
 #include <tlx/digest/md5.hpp>
+#include <tlx/digest/sha1.hpp>
 #include <tlx/digest/sha256.hpp>
 #include <tlx/digest/sha512.hpp>
 // [[[end]]]

@@ -13,6 +13,7 @@ set(LIBTLX_SOURCES
   cmdline_parser.cpp
   die.cpp
   digest/md5.cpp
+  digest/sha1.cpp
   digest/sha256.cpp
   digest/sha512.cpp
   logger.cpp

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * tlx/digest/md5.hpp
  *
- * Public domain implementation of SHA-256 (SHA-2) processor. Copied from
- * https://github.com/kalven/sha-2, which is based on LibTomCrypt.
+ * Public domain implementation of MD-5 processor. Based on LibTomCrypt from
+ * https://github.com/libtom/libtomcrypt.git
  *
  * Part of tlx - http://panthema.net/tlx
  *

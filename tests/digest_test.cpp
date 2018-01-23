@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include <tlx/digest/md5.hpp>
+#include <tlx/digest/sha1.hpp>
 #include <tlx/digest/sha256.hpp>
 #include <tlx/digest/sha512.hpp>
 
@@ -366,10 +367,26 @@ void test_md5() {
         "57edf4a22be3c955ac49da2e2107b67a");
 }
 
+void test_sha1() {
+    die_unequal(
+        SHA1_hex(""),
+        "da39a3ee5e6b4b0d3255bfef95601890afd80709");
+    die_unequal(
+        SHA1_hex("abc"),
+        "a9993e364706816aba3e25717850c26c9cd0d89d");
+    die_unequal(
+        SHA1_hex("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"),
+        "761c457bf73b14d27e9e9265c46f4b4dda11f940");
+    die_unequal(
+        SHA1_hex("12345678901234567890123456789012345678901234567890123456789012345678901234567890"),
+        "50abf5706a150990a08b2c5ea40fa0e585554732");
+}
+
 int main() {
     test_sha256();
     test_sha512();
     test_md5();
+    test_sha1();
 
     return 0;
 }

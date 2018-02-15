@@ -20,6 +20,7 @@ set(LIBTLX_SOURCES
   math/integer_log2.cpp
   math/is_power_of_two.cpp
   math/round_to_power_of_two.cpp
+  sort/strings.cpp
   string/base64.cpp
   string/compare_icase.cpp
   string/contains.cpp

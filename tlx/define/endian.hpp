@@ -35,7 +35,8 @@ namespace tlx {
     defined(__ARMEL__) ||                                                     \
     defined(__THUMBEL__) ||                                                   \
     defined(__AARCH64EL__) ||                                                 \
-    defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__)
+    defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) ||           \
+    defined(_MSC_VER)
 
 // It's a little-endian target architecture
 #define TLX_LITTLE_ENDIAN 1

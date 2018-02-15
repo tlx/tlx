@@ -25,6 +25,37 @@ namespace tlx {
 //! \{
 
 /******************************************************************************/
+// bswap16() - swap 16-bit integers
+
+//! bswap16 - generic implementation
+static inline uint16_t bswap16_generic(const uint16_t& x) {
+    return ((x >> 8) & 0x00FFUL) | ((x << 8) & 0xFF00UL);
+}
+
+#if defined(__GNUC__) || defined(__clang__)
+
+//! bswap16 - gcc/clang intrinsic
+static inline uint16_t bswap16(const uint16_t& v) {
+    return __builtin_bswap16(v);
+}
+
+#elif defined(_MSC_VER)
+
+//! bswap16 - MSVC intrinsic
+static inline uint16_t bswap16(const uint16_t& v) {
+    return _byteswap_ushort(v);
+}
+
+#else
+
+//! bswap16 - generic
+static inline uint16_t bswap16(const uint16_t& v) {
+    return bswap16_generic(v);
+}
+
+#endif
+
+/******************************************************************************/
 // bswap32() - swap 32-bit integers
 
 //! bswap32 - generic implementation

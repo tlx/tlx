@@ -16,6 +16,9 @@
 #include <tlx/math.hpp>
 
 static void test_bswap() {
+    die_unequal(tlx::bswap16_generic(0x1234u), 0x3412u);
+    die_unequal(tlx::bswap16(0x1234u), 0x3412u);
+
     die_unequal(tlx::bswap32_generic(0x12345678u), 0x78563412u);
     die_unequal(tlx::bswap32(0x12345678u), 0x78563412u);
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * tlx/math/bswap.hpp
  *
- * bswap32() and bswap64() to swap bytes - mainly for portability.
+ * bswap16(), bswap32(), and bswap64() to swap bytes - mainly for portability.
  *
  * Part of tlx - http://panthema.net/tlx
  *

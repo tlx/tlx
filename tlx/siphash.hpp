@@ -15,6 +15,7 @@
 #define TLX_SIPHASH_HEADER
 
 #include <tlx/define/attribute_fallthrough.hpp>
+#include <tlx/math/bswap_le.hpp>
 
 #include <cstdint>
 #include <cstdlib>
@@ -49,8 +50,8 @@ uint64_t siphash_plain(const uint8_t key[16], const uint8_t* m, size_t len) {
     uint64_t last7;
     size_t i, blocks;
 
-    k0 = *reinterpret_cast<const uint64_t*>(key + 0);
-    k1 = *reinterpret_cast<const uint64_t*>(key + 8);
+    k0 = bswap64_le(*reinterpret_cast<const uint64_t*>(key + 0));
+    k1 = bswap64_le(*reinterpret_cast<const uint64_t*>(key + 8));
     v0 = k0 ^ 0x736f6d6570736575ull;
     v1 = k1 ^ 0x646f72616e646f6dull;
     v2 = k0 ^ 0x6c7967656e657261ull;
@@ -71,7 +72,7 @@ uint64_t siphash_plain(const uint8_t key[16], const uint8_t* m, size_t len) {
     v2 = ROTL64(v2, 32);
 
     for (i = 0, blocks = (len & ~7); i < blocks; i += 8) {
-        mi = *reinterpret_cast<const uint64_t*>(m + i);
+        mi = bswap64_le(*reinterpret_cast<const uint64_t*>(m + i));
         v3 ^= mi;
         sipcompress();
         sipcompress();

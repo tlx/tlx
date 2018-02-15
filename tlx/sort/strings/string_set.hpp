@@ -113,6 +113,12 @@ public:
 
     //! \}
 
+    //! Subset this string set using index range.
+    StringSet subi(size_t begin, size_t end) const {
+        const StringSet& ss = *static_cast<const StringSet*>(this);
+        return ss.sub(ss.begin() + begin, ss.begin() + end);
+    }
+
     bool check_order(const typename Traits::String& s1,
                      const typename Traits::String& s2) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
@@ -636,6 +642,71 @@ protected:
 
     //! iterators inside the output suffix array.
     Iterator begin_, end_;
+};
+
+/******************************************************************************/
+
+//! Objectified string array pointer and shadow pointer array for out-of-place
+//! swapping of pointers.
+template <typename StringSet_>
+class StringShadowPtr
+{
+public:
+    typedef StringSet_ StringSet;
+    typedef typename StringSet::String String;
+    typedef typename StringSet::Iterator Iterator;
+
+protected:
+    //! strings (front) and temporary shadow (back) array
+    StringSet active_, shadow_;
+
+    //! false if active_ is original, true if shadow_ is original
+    bool flipped_;
+
+public:
+    //! constructor specifying all attributes
+    StringShadowPtr(const StringSet& original, const StringSet& shadow,
+                    bool flipped = false)
+        : active_(original), shadow_(shadow), flipped_(flipped)
+    { }
+
+    //! return currently active array
+    const StringSet& active() const { return active_; }
+
+    //! return current shadow array
+    const StringSet& shadow() const { return shadow_; }
+
+    //! true if flipped to back array
+    bool flipped() const { return flipped_; }
+
+    //! return valid length
+    size_t size() const { return active_.size(); }
+
+    //! construct a StringShadowPtr object specifying a sub-array with flipping
+    //! to other array.
+    StringShadowPtr flip(size_t begin, size_t end) const {
+        assert(end <= size());
+        return StringShadowPtr(shadow_.subi(begin, end),
+                               active_.subi(begin, end), !flipped_);
+    }
+
+    //! construct a StringShadowPtr object specifying a sub-array with flipping
+    //! to other array.
+    StringShadowPtr flip() const {
+        return StringShadowPtr(shadow_, active_, !flipped_);
+    }
+
+    //! return subarray pointer to n strings in original array, might copy from
+    //! shadow before returning.
+    StringShadowPtr copy_back() const {
+        if (!flipped_) {
+            return *this;
+        }
+        else {
+            std::move(active_.begin(), active_.end(), shadow_.begin());
+            return flip();
+        }
+    }
 };
 
 } // namespace sort_strings_detail

@@ -68,8 +68,8 @@ static void exclusive_scan() {
         std::vector<int> vec2(1);
         int init = 1;
         const auto res1 = tlx::exclusive_scan(vec1.begin(), vec1.end(), vec2.begin(), init);
-        std::cout << vec2.end() - res1 << std::endl;
-        std::cout << vec2.front() << std::endl;
+        LOG0 << vec2.end() - res1;
+        LOG0 << vec2.front();
         die_unless(res1 == vec2.end());
         die_unless(vec2.front() == init);
     }

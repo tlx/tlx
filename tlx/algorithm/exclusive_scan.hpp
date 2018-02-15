@@ -11,41 +11,23 @@
 #ifndef TLX_ALGORITHM_EXCLUSIVE_SCAN_HEADER
 #define TLX_ALGORITHM_EXCLUSIVE_SCAN_HEADER
 
+#include <functional>
 #include <iterator>
 
 namespace tlx {
 
-template <typename InputIterator,
-          typename OutputIterator,
-          typename T,
-          typename BinaryOperation>
+template <typename InputIterator, typename OutputIterator,
+          typename T, typename BinaryOperation = std::plus<T> >
 OutputIterator exclusive_scan(InputIterator first, InputIterator last,
-                              OutputIterator result,
-                              T init, BinaryOperation binary_op) {
+                              OutputIterator result, T init,
+                              BinaryOperation binary_op = BinaryOperation()) {
     *result++ = init;
-    if (first == last) {
+    if (first != last) {
         typename std::iterator_traits<InputIterator>::value_type value =
             binary_op(init, *first);
         *result = value;
         while (++first != last) {
             value = binary_op(value, *first);
-            *++result = value;
-        }
-        ++result;
-    }
-    return result;
-}
-
-template <typename InputIterator, typename OutputIterator, typename T>
-OutputIterator exclusive_scan(InputIterator first, InputIterator last,
-                              OutputIterator result, T init) {
-    *result++ = init;
-    if (first != last) {
-        typename std::iterator_traits<InputIterator>::value_type value =
-            init + *first;
-        *result = value;
-        while (++first != last) {
-            value = value + *first;
             *++result = value;
         }
         ++result;

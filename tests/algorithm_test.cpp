@@ -8,9 +8,9 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <functional>
 #include <iterator>
 #include <vector>
-#include <functional>
 
 #include <tlx/algorithm.hpp>
 #include <tlx/die.hpp>
@@ -75,9 +75,9 @@ static void exclusive_scan() {
     }
 
     {
-        const std::vector<int> vec1 = {1,2,3};
+        const std::vector<int> vec1 = { 1, 2, 3 };
         std::vector<int> vec2(5);
-        const std::vector<int> vec_res = {1, 2, 4, 7};
+        const std::vector<int> vec_res = { 1, 2, 4, 7 };
         int init = 1;
         const auto res1 = tlx::exclusive_scan(vec1.begin(), vec1.end(), vec2.begin(), init);
         die_unless(res1 == vec2.begin() + 4);
@@ -85,9 +85,9 @@ static void exclusive_scan() {
     }
 
     {
-        const std::vector<int> vec1 = {1,2,3};
+        const std::vector<int> vec1 = { 1, 2, 3 };
         std::vector<int> vec2(5);
-        const std::vector<int> vec_res = {1, 0, -2, -5};
+        const std::vector<int> vec_res = { 1, 0, -2, -5 };
         int init = 1;
         const auto binary_op = std::minus<int>();
         const auto res1 = tlx::exclusive_scan(vec1.begin(), vec1.end(), vec2.begin(), init, binary_op);

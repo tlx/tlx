@@ -192,7 +192,7 @@ before_script:
       $CMAKE_ARGS ..
 
 script:
-  - make -j2 && ctest
+  - make -j2 && ctest -V
 
 # Generate and deploy documentation
 after_success:

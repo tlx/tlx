@@ -25,6 +25,8 @@
 
 #include <tlx/sort/strings/insertion_sort.hpp>
 
+#include <algorithm>
+
 namespace tlx {
 namespace sort_strings_detail {
 

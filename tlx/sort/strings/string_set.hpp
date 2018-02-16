@@ -25,6 +25,7 @@
 #include <cassert>
 #include <cstdint>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include <tlx/logger.hpp>
@@ -42,12 +43,6 @@ template <typename StringSet, typename Traits>
 class StringSetBase
 {
 public:
-    //! index-based array access (readable and writable) to String objects.
-    typename Traits::String& at(size_t i) const {
-        const StringSet& ss = *static_cast<const StringSet*>(this);
-        return *(ss.begin() + i);
-    }
-
     //! \name CharIterator Comparisons
     //! \{
 
@@ -83,7 +78,7 @@ public:
 
     //! Return up to 1 characters of string s at iterator i packed into a
     //! uint8_t (only works correctly for 8-bit characters)
-    uint8_t get_char_uint8_simple(
+    uint8_t get_uint8(
         const typename Traits::String& s, typename Traits::CharIterator i) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
 
@@ -93,7 +88,7 @@ public:
 
     //! Return up to 2 characters of string s at iterator i packed into a
     //! uint16_t (only works correctly for 8-bit characters)
-    uint16_t get_char_uint16_simple(
+    uint16_t get_uint16(
         const typename Traits::String& s, typename Traits::CharIterator i) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
 
@@ -108,7 +103,12 @@ public:
 
     uint8_t get_uint8(const typename Traits::String& s, size_t depth) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
-        return get_char_uint8_simple(s, ss.get_chars(s, depth));
+        return get_uint8(s, ss.get_chars(s, depth));
+    }
+
+    uint16_t get_uint16(const typename Traits::String& s, size_t depth) const {
+        const StringSet& ss = *static_cast<const StringSet*>(this);
+        return get_uint16(s, ss.get_chars(s, depth));
     }
 
     //! \}
@@ -129,10 +129,7 @@ public:
         while (ss.is_equal(s1, c1, s2, c2))
             ++c1, ++c2;
 
-        if (!ss.is_leq(s1, c2, s2, c2))
-            return false;
-
-        return true;
+        return ss.is_leq(s1, c1, s2, c2);
     }
 
     bool check_order() const {
@@ -144,7 +141,6 @@ public:
             if (!check_order(ss[pi - 1], ss[pi]))
                 return false;
         }
-
         return true;
     }
 };
@@ -558,7 +554,7 @@ public:
     typedef std::string::const_iterator CharIterator;
 
     //! exported alias for assumed string container
-    typedef std::tuple<Text, std::vector<String> > Container;
+    typedef std::pair<Text, std::vector<String> > Container;
 };
 
 /*!
@@ -615,16 +611,16 @@ public:
 
     //! Allocate a new temporary string container with n empty Strings
     Container allocate(size_t n) const
-    { return std::make_tuple(*text_, std::vector<String>(n)); }
+    { return std::make_pair(*text_, std::vector<String>(n)); }
 
     //! Deallocate a temporary string container
     static void deallocate(Container& c)
-    { std::vector<String> v; v.swap(std::get<1>(c)); }
+    { std::vector<String> v; v.swap(c.second); }
 
     //! Construct from a string container
     explicit StringSuffixSet(Container& c)
-        : text_(&std::get<0>(c)),
-          begin_(std::get<1>(c).begin()), end_(std::get<1>(c).end())
+        : text_(&c.first),
+          begin_(c.second.begin()), end_(c.second.end())
     { }
 
     void print() const {
@@ -698,13 +694,13 @@ public:
 
     //! return subarray pointer to n strings in original array, might copy from
     //! shadow before returning.
-    StringShadowPtr copy_back() const {
+    const StringSet& copy_back() const {
         if (!flipped_) {
-            return *this;
+            return active_;
         }
         else {
             std::move(active_.begin(), active_.end(), shadow_.begin());
-            return flip();
+            return shadow_;
         }
     }
 };

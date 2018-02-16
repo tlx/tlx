@@ -192,8 +192,11 @@ void test_all(const size_t num_strings) {
         run_tests(insertion_sort);
     }
     run_tests(multikey_quicksort);
-    run_tests(radix_sort_outofplace);
-    run_tests(radix_sort_inplace);
+    run_tests(bingmann_msd_CE0_sb);
+    run_tests(bingmann_msd_CE2_sb);
+    run_tests(bingmann_msd_CE3_sb);
+    run_tests(bingmann_msd_CI2_sb);
+    run_tests(bingmann_msd_CI3_sb);
 }
 
 int main() {

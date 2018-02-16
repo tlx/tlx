@@ -14,11 +14,14 @@
 #include <tlx/sort/strings/radix_sort.hpp>
 #include <tlx/sort/strings/string_set.hpp>
 
+#include <tlx/unused.hpp>
+
 namespace tlx {
 
 namespace ss = tlx::sort_strings_detail;
 
 void sort_strings(unsigned char** strings, size_t size, size_t memory) {
+    tlx::unused(memory);
     ss::multikey_quicksort(
         ss::UCharStringSet(strings, strings + size), /* depth */ 0);
 }
@@ -29,6 +32,7 @@ void sort_strings(char** strings, size_t size, size_t memory) {
 }
 
 void sort_strings(std::string* strings, size_t size, size_t memory) {
+    tlx::unused(memory);
     ss::multikey_quicksort(
         ss::StdStringSet(strings, strings + size), /* depth */ 0);
 }

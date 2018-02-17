@@ -16,9 +16,9 @@ namespace tlx {
 /*!
 
 \if TLX_MAINPAGE
-  \mainpage tlx - C++ Extensions and Helpers Library
+  \mainpage tlx - Collection of C++ Data Structures, Algorithms, and Miscellaneous Helpers
 \else
-  \page tlx tlx - C++ Extensions and Helpers Library
+  \page tlx tlx - Collection of C++ Data Structures, Algorithms, and Miscellaneous Helpers
 \endif
 
 tlx is a collection of C++ helpers and extensions universally needed, but not

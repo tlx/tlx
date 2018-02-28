@@ -34,11 +34,13 @@ set(LIBTLX_SOURCES
   string/hexdump.cpp
   string/index_of.cpp
   string/join.cpp
+  string/join_quoted.cpp
   string/less_icase.cpp
   string/pad.cpp
   string/parse_si_iec_units.cpp
   string/replace.cpp
   string/split.cpp
+  string/split_quoted.cpp
   string/split_words.cpp
   string/starts_with.cpp
   string/to_lower.cpp

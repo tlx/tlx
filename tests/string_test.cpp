@@ -346,6 +346,68 @@ static void test_split() {
     die_unequal(sv[4], "");
 }
 
+static void test_split_join_quoted() {
+    // simple whitespace split
+    std::vector<std::string> sv = tlx::split_quoted("  ab c df  fdlk f  ");
+
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    die_unequal(tlx::join_quoted(sv), "ab c df fdlk f");
+
+    // simple whitespace split
+
+    sv = tlx::split_quoted("ab c df  fdlk f  ");
+
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    die_unequal(tlx::join_quoted(sv), "ab c df fdlk f");
+
+    // simple whitespace split
+
+    sv = tlx::split_quoted("ab c df  fdlk f");
+
+    die_unequal(sv.size(), 5u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    die_unequal(tlx::join_quoted(sv), "ab c df fdlk f");
+
+    // with quoted entry
+    sv = tlx::split_quoted("ab c \"df  fdlk \" f  ");
+
+    die_unequal(sv.size(), 4u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df  fdlk ");
+    die_unequal(sv[3], "f");
+
+    die_unequal(tlx::join_quoted(sv), "ab c \"df  fdlk \" f");
+
+    // with quoted entry containing quote
+    sv = tlx::split_quoted("ab c \"d\\\\f\\n  \\\"fdlk \" f  ");
+
+    die_unequal(sv.size(), 4u);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "d\\f\n  \"fdlk ");
+    die_unequal(sv[3], "f");
+
+    die_unequal(tlx::join_quoted(sv), "ab c \"d\\\\f\\n  \\\"fdlk \" f");
+}
+
 static void test_split_words() {
     // simple whitespace split
     std::vector<std::string> sv = tlx::split_words("  ab c df  fdlk f  ");
@@ -674,6 +736,7 @@ int main() {
     test_parse_si_iec_units();
     test_replace();
     test_split();
+    test_split_join_quoted();
     test_split_words();
     test_starts_with_ends_with();
     test_toupper_tolower();

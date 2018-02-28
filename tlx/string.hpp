@@ -32,11 +32,13 @@ print "#include <$_>\n" foreach sort glob("tlx/string/"."*.hpp");
 #include <tlx/string/index_of.hpp>
 #include <tlx/string/join.hpp>
 #include <tlx/string/join_generic.hpp>
+#include <tlx/string/join_quoted.hpp>
 #include <tlx/string/less_icase.hpp>
 #include <tlx/string/pad.hpp>
 #include <tlx/string/parse_si_iec_units.hpp>
 #include <tlx/string/replace.hpp>
 #include <tlx/string/split.hpp>
+#include <tlx/string/split_quoted.hpp>
 #include <tlx/string/split_words.hpp>
 #include <tlx/string/starts_with.hpp>
 #include <tlx/string/to_lower.hpp>

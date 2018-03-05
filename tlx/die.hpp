@@ -52,7 +52,8 @@ public:
     explicit DieException(const std::string& message);
 };
 
-//! Switch between dying via std::terminate() and throwing an exception
+//! Switch between dying via std::terminate() and throwing an exception.
+//! Alternatively define the macro TLX_DIE_WITH_EXCEPTION=1
 bool set_die_with_exception(bool b);
 
 /******************************************************************************/
@@ -123,6 +124,39 @@ inline bool die_equal_compare(double a, double b) {
 #else
 #define assert_equal(X, Y)  die_unequal(X, Y)
 #endif
+
+/******************************************************************************/
+// die_unequal_eps()
+
+//! simple replacement for std::abs
+template <typename Type>
+inline Type die_unequal_eps_abs(const Type& t) {
+    return t < 0 ? -t : t;
+}
+
+//! helper method to compare two values in die_unequal_eps()
+template <typename TypeA, typename TypeB>
+inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps) {
+    // special case for NAN
+    return x != x ? y != y : die_unequal_eps_abs(x - y) <= eps;
+}
+
+//! Check that ABS(X - Y) <= eps or die miserably, but output the values of X
+//! and Y for better debugging.
+#define die_unequal_eps(X, Y, eps)                                       \
+    do {                                                                 \
+        auto x__ = (X);                                     /* NOLINT */ \
+        auto y__ = (Y);                                     /* NOLINT */ \
+        if (!::tlx::die_equal_eps_compare(x__, y__, eps))                \
+            die("DIE-UNEQUAL-EPS: " #X " != " #Y " : "                   \
+                << std::setprecision(18)                                 \
+                << "\"" << x__ << "\" != \"" << y__ << "\"");            \
+    } while (false)
+
+//! Check that ABS(X - Y) <= 0.000001 or die miserably, but output the values of
+//! X and Y for better debugging.
+#define die_unequal_eps6(X, Y) \
+    die_unequal_eps(X, Y, 1e-6)
 
 /******************************************************************************/
 // die_unless_throws()

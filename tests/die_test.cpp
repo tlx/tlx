@@ -11,6 +11,7 @@
 #include <tlx/die.hpp>
 
 #include <cmath>
+#include <iomanip>
 
 int main() {
 
@@ -30,6 +31,12 @@ int main() {
     tlx::set_die_with_exception(true);
 
     die_unless_throws(die("hello"), tlx::DieException);
+
+    die_unless_throws(die_unequal_eps6(0.01, -0.01), tlx::DieException);
+    die_unequal_eps6(0.0000001, -0.0000001);
+    die_unless_throws(die_unequal_eps6(NAN, -0.0001), tlx::DieException);
+    die_unless_throws(die_unequal_eps6(-0.0001, NAN), tlx::DieException);
+    die_unequal_eps6(NAN, NAN);
 
     return 0;
 }

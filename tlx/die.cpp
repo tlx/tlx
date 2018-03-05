@@ -64,6 +64,7 @@ file/line information where it occurred.
 - `die_unless(condition)` - terminates if condition is false
 - `die_if(condition)` - terminates if condition is true
 - `die_unequal(a,b)` - terminates unless a == b.
+- `die_unequal_eps6(a,b)` - terminates unless abs(a - b) < 1e-6 for approximate equality .
 - `die_unless_throws(code,exception)` - terminate if code does not throw the exception
 
 Furthermore, some additional assert macros are also available. These are only

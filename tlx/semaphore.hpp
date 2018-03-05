@@ -16,7 +16,6 @@
 
 #ifndef TLX_SEMAPHORE_HEADER
 #define TLX_SEMAPHORE_HEADER
-#pragma once
 
 #include <condition_variable>
 #include <mutex>

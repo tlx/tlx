@@ -66,7 +66,6 @@ template <typename StringSet>
 static inline void multikey_quicksort(
     const StringSet& ss, size_t depth, size_t memory) {
     typedef typename StringSet::Iterator Iterator;
-    typedef typename StringSet::Char Char;
 
     const Iterator a = ss.begin();
     size_t n = ss.size();
@@ -95,15 +94,15 @@ static inline void multikey_quicksort(
         }
         pm = med3func(ss, pl, pm, pn, depth);
         std::swap(*a, *pm);
-        Char pivot = ss.get_char(*a, depth);
+        int pivot = ss.get_char(*a, depth);
         pa = pb = a + 1;
         pc = pd = a + n - 1;
         for ( ; ; ) {
-            while (pb <= pc && (r = ss.get_char(*pb, depth) - pivot) <= 0) {
+            while (pb <= pc && (r = static_cast<int>(ss.get_char(*pb, depth)) - pivot) <= 0) {
                 if (r == 0) std::swap(*pa++, *pb);
                 pb++;
             }
-            while (pb <= pc && (r = ss.get_char(*pc, depth) - pivot) >= 0) {
+            while (pb <= pc && (r = static_cast<int>(ss.get_char(*pc, depth)) - pivot) >= 0) {
                 if (r == 0) std::swap(*pc, *pd--);
                 pc--;
             }

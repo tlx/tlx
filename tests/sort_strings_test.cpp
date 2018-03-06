@@ -14,8 +14,11 @@
 #include <tlx/sort/strings/multikey_quicksort.hpp>
 #include <tlx/sort/strings/radix_sort.hpp>
 
+#include <tlx/sort/strings.hpp>
+
 #include <tlx/logger.hpp>
 
+#include <chrono>
 #include <random>
 
 #if TLX_MORE_TESTS
@@ -25,6 +28,8 @@ static const bool tlx_more_tests = false;
 #endif
 
 using namespace tlx::sort_strings_detail;
+
+static const size_t seed = 1234567;
 
 template <typename Set>
 using StringSorter = void (*)(const Set&, size_t, size_t);
@@ -36,12 +41,19 @@ void fill_random(Random& rng, const std::string& letters,
         *i = letters[(rng() / 100) % letters.size()];
 }
 
+//! Returns number of seconds since the epoch, high resolution.
+static inline double timestamp() {
+    return static_cast<double>(
+        std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::steady_clock::now().time_since_epoch()).count()) / 1e6;
+}
+
 template <typename StringSet, StringSorter<StringSet> sorter>
 void TestUCharString(const char* name,
                      const size_t num_strings, const size_t num_chars,
                      const std::string& letters) {
 
-    std::default_random_engine rng(123456);
+    std::default_random_engine rng(seed);
 
     LOG1 << "Running " << name << " on " << num_strings
          << " uint8_t* strings";
@@ -60,9 +72,14 @@ void TestUCharString(const char* name,
     }
 
     // run sorting algorithm
+    double ts1 = timestamp();
+
     UCharStringSet ss(cstrings, cstrings + num_strings);
     sorter(ss, /* depth */ 0, /* memory */ 0);
     if (0) ss.print();
+
+    double ts2 = timestamp();
+    LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
     // check result
     if (!ss.check_order()) {
@@ -82,7 +99,7 @@ void TestVectorString(const char* name,
                       const size_t num_strings, const size_t num_chars,
                       const std::string& letters) {
 
-    std::default_random_engine rng(123456);
+    std::default_random_engine rng(seed);
 
     LOG1 << "Running " << name << " on " << num_strings
          << " std::vector<std::string> strings";
@@ -100,9 +117,14 @@ void TestVectorString(const char* name,
     }
 
     // run sorting algorithm
+    double ts1 = timestamp();
+
     StdStringSet ss(strings.data(), strings.data() + strings.size());
     sorter(ss, /* depth */ 0, /* memory */ 0);
     if (0) ss.print();
+
+    double ts2 = timestamp();
+    LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
     // check result
     if (!ss.check_order()) {
@@ -116,7 +138,7 @@ void TestVectorPtrString(const char* name,
                          const size_t num_strings, const size_t num_chars,
                          const std::string& letters) {
 
-    std::default_random_engine rng(123456);
+    std::default_random_engine rng(seed);
 
     LOG1 << "Running " << name << " on " << num_strings
          << " std::vector<std::unique_ptr<std::string>> strings";
@@ -135,9 +157,14 @@ void TestVectorPtrString(const char* name,
     }
 
     // run sorting algorithm
+    double ts1 = timestamp();
+
     VectorStringUPtrSet ss(strings.begin(), strings.end());
     sorter(ss, /* depth */ 0, /* memory */ 0);
     if (0) ss.print();
+
+    double ts2 = timestamp();
+    LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
     // check result
     if (!ss.check_order()) {
@@ -150,7 +177,7 @@ template <typename StringSet, StringSorter<StringSet> sorter>
 void TestStringSuffixString(const char* name, const size_t num_chars,
                             const std::string& letters) {
 
-    std::default_random_engine rng(123456);
+    std::default_random_engine rng(seed);
 
     LOG1 << "Running " << name << " on " << num_chars
          << " std::vector<size_t> suffixes";
@@ -163,8 +190,13 @@ void TestStringSuffixString(const char* name, const size_t num_chars,
     auto ss = StringSuffixSet::Initialize(text, suffixarray);
 
     // run sorting algorithm
+    double ts1 = timestamp();
+
     sorter(ss, /* depth */ 0, /* memory */ 0);
     if (0) ss.print();
+
+    double ts2 = timestamp();
+    LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
     // check result
     if (!ss.check_order()) {
@@ -173,8 +205,51 @@ void TestStringSuffixString(const char* name, const size_t num_chars,
     }
 }
 
+void TestFrontend(const size_t num_strings, const size_t num_chars,
+                  const std::string& letters) {
+
+    std::default_random_engine rng(seed);
+
+    LOG1 << "Running sort_strings() on " << num_strings
+         << " uint8_t* strings";
+
+    // array of string pointers
+    uint8_t** cstrings = new uint8_t*[num_strings];
+
+    // generate random strings of length num_chars
+    for (size_t i = 0; i < num_strings; ++i)
+    {
+        size_t slen = num_chars + (rng() >> 8) % (num_chars / 4);
+
+        cstrings[i] = new uint8_t[slen + 1];
+        fill_random(rng, letters, cstrings[i], cstrings[i] + slen);
+        cstrings[i][slen] = 0;
+    }
+
+    // run sorting algorithm
+    double ts1 = timestamp();
+
+    tlx::sort_strings(cstrings, num_strings, /* memory */ 0);
+
+    double ts2 = timestamp();
+    LOG1 << "sorting took " << ts2 - ts1 << " seconds";
+
+    // check result
+    if (!UCharStringSet(cstrings, cstrings + num_strings).check_order()) {
+        LOG1 << "Result is not sorted!";
+        abort();
+    }
+
+    // free memory.
+    for (size_t i = 0; i < num_strings; ++i)
+        delete[] cstrings[i];
+
+    delete[] cstrings;
+}
+
 static const char* letters_alnum
-    = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+      "\xE0\xE1\xE2\xE3\xE4\xE5\xE6\xE7\xE8\xE9\xEA\xEB\xEC\xED\xEE\xEF";
 
 // use macro because one cannot pass template functions as template parameters:
 #define run_tests(func)                             \
@@ -197,6 +272,8 @@ void test_all(const size_t num_strings) {
     run_tests(radixsort_CE3);
     run_tests(radixsort_CI2);
     run_tests(radixsort_CI3);
+
+    TestFrontend(num_strings, 16, letters_alnum);
 }
 
 int main() {

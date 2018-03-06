@@ -138,8 +138,10 @@ public:
         for (typename Traits::Iterator pi = ss.begin() + 1;
              pi != ss.end(); ++pi)
         {
-            if (!check_order(ss[pi - 1], ss[pi]))
+            if (!check_order(ss[pi - 1], ss[pi])) {
+                LOG1 << "check_order() failed at position " << pi - ss.begin();
                 return false;
+            }
         }
         return true;
     }
@@ -260,7 +262,7 @@ class StdStringSetTraits
 {
 public:
     //! exported alias for character type
-    typedef std::string::value_type Char;
+    typedef uint8_t Char;
 
     //! String reference: std::string, which should be reference counted.
     typedef std::string String;
@@ -306,11 +308,11 @@ public:
 
     //! Return CharIterator for referenced string, which belongs to this set.
     CharIterator get_chars(const String& s, size_t depth) const
-    { return s.data() + depth; }
+    { return reinterpret_cast<CharIterator>(s.data()) + depth; }
 
     //! Returns true if CharIterator is at end of the given String
     bool is_end(const String& s, const CharIterator& i) const
-    { return (i >= s.data() + s.size()); }
+    { return (i >= reinterpret_cast<CharIterator>(s.data()) + s.size()); }
 
     //! Return complete string (for debugging purposes)
     std::string get_string(const String& s, size_t depth = 0) const
@@ -355,7 +357,7 @@ public:
     typedef std::vector<std::string> Container;
 
     //! exported alias for character type
-    typedef std::string::value_type Char;
+    typedef uint8_t Char;
 
     //! String reference: std::string, which should be reference counted.
     typedef typename Container::value_type String;
@@ -364,7 +366,7 @@ public:
     typedef typename Container::iterator Iterator;
 
     //! iterator of characters in a string
-    typedef std::string::const_iterator CharIterator;
+    typedef const Char* CharIterator;
 };
 
 /*!
@@ -394,11 +396,11 @@ public:
 
     //! Return CharIterator for referenced string, which belongs to this set.
     CharIterator get_chars(const String& s, size_t depth) const
-    { return s.begin() + depth; }
+    { return reinterpret_cast<CharIterator>(s.data()) + depth; }
 
     //! Returns true if CharIterator is at end of the given String
     bool is_end(const String& s, const CharIterator& i) const
-    { return (i >= s.end()); }
+    { return (i >= reinterpret_cast<CharIterator>(s.data()) + s.size()); }
 
     //! Return complete string (for debugging purposes)
     std::string get_string(const String& s, size_t depth = 0) const
@@ -448,7 +450,7 @@ public:
     typedef std::vector<std::unique_ptr<std::string> > Container;
 
     //! exported alias for character type
-    typedef std::string::value_type Char;
+    typedef uint8_t Char;
 
     //! String reference: std::string, which should be reference counted.
     typedef typename Container::value_type String;
@@ -457,7 +459,7 @@ public:
     typedef typename Container::iterator Iterator;
 
     //! iterator of characters in a string
-    typedef std::string::const_iterator CharIterator;
+    typedef const Char* CharIterator;
 };
 
 /*!
@@ -487,11 +489,11 @@ public:
 
     //! Return CharIterator for referenced string, which belongs to this set.
     CharIterator get_chars(const String& s, size_t depth) const
-    { return s->begin() + depth; }
+    { return reinterpret_cast<CharIterator>(s->data()) + depth; }
 
     //! Returns true if CharIterator is at end of the given String
     bool is_end(const String& s, const CharIterator& i) const
-    { return (i >= s->end()); }
+    { return (i >= reinterpret_cast<CharIterator>(s->data()) + s->size()); }
 
     //! Return complete string (for debugging purposes)
     std::string get_string(const String& s, size_t depth = 0) const
@@ -541,7 +543,7 @@ public:
     typedef std::string Text;
 
     //! exported alias for character type
-    typedef std::string::value_type Char;
+    typedef uint8_t Char;
 
     //! String reference: suffix index of the text.
     typedef typename Text::size_type String;
@@ -551,7 +553,7 @@ public:
     typedef typename std::vector<String>::iterator Iterator;
 
     //! iterator of characters in a string
-    typedef std::string::const_iterator CharIterator;
+    typedef const Char* CharIterator;
 
     //! exported alias for assumed string container
     typedef std::pair<Text, std::vector<String> > Container;
@@ -595,11 +597,11 @@ public:
 
     //! Return CharIterator for referenced string, which belongs to this set.
     CharIterator get_chars(const String& s, size_t depth) const
-    { return text_->begin() + s + depth; }
+    { return reinterpret_cast<CharIterator>(text_->data()) + s + depth; }
 
     //! Returns true if CharIterator is at end of the given String
     bool is_end(const String&, const CharIterator& i) const
-    { return (i >= text_->end()); }
+    { return (i >= reinterpret_cast<CharIterator>(text_->data()) + text_->size()); }
 
     //! Return complete string (for debugging purposes)
     std::string get_string(const String& s, size_t depth = 0) const

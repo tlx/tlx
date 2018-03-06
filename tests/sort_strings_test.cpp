@@ -27,7 +27,7 @@ static const bool tlx_more_tests = false;
 using namespace tlx::sort_strings_detail;
 
 template <typename Set>
-using StringSorter = void (*)(const Set&, size_t);
+using StringSorter = void (*)(const Set&, size_t, size_t);
 
 template <typename Random, typename Iterator>
 void fill_random(Random& rng, const std::string& letters,
@@ -61,7 +61,7 @@ void TestUCharString(const char* name,
 
     // run sorting algorithm
     UCharStringSet ss(cstrings, cstrings + num_strings);
-    sorter(ss, 0);
+    sorter(ss, /* depth */ 0, /* memory */ 0);
     if (0) ss.print();
 
     // check result
@@ -101,7 +101,7 @@ void TestVectorString(const char* name,
 
     // run sorting algorithm
     StdStringSet ss(strings.data(), strings.data() + strings.size());
-    sorter(ss, 0);
+    sorter(ss, /* depth */ 0, /* memory */ 0);
     if (0) ss.print();
 
     // check result
@@ -136,7 +136,7 @@ void TestVectorPtrString(const char* name,
 
     // run sorting algorithm
     VectorStringUPtrSet ss(strings.begin(), strings.end());
-    sorter(ss, 0);
+    sorter(ss, /* depth */ 0, /* memory */ 0);
     if (0) ss.print();
 
     // check result
@@ -163,7 +163,7 @@ void TestStringSuffixString(const char* name, const size_t num_chars,
     auto ss = StringSuffixSet::Initialize(text, suffixarray);
 
     // run sorting algorithm
-    sorter(ss, 0);
+    sorter(ss, /* depth */ 0, /* memory */ 0);
     if (0) ss.print();
 
     // check result
@@ -192,11 +192,11 @@ void test_all(const size_t num_strings) {
         run_tests(insertion_sort);
     }
     run_tests(multikey_quicksort);
-    run_tests(bingmann_msd_CE0_sb);
-    run_tests(bingmann_msd_CE2_sb);
-    run_tests(bingmann_msd_CE3_sb);
-    run_tests(bingmann_msd_CI2_sb);
-    run_tests(bingmann_msd_CI3_sb);
+    run_tests(radixsort_CE0);
+    run_tests(radixsort_CE2);
+    run_tests(radixsort_CE3);
+    run_tests(radixsort_CI2);
+    run_tests(radixsort_CI3);
 }
 
 int main() {

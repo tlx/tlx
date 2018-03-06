@@ -5,6 +5,12 @@
  * implementation header, see tlx/sort/strings.hpp for public front-end
  * functions.
  *
+ * These are explicit stack-based most-significant-digit radix sort
+ * implementations. All implementations were written by Timo Bingmann, and are
+ * based on work by Juha Kärkkäinen, and Rantala Tommi. "Engineering radix sort
+ * for strings."  International Symposium on String Processing and Information
+ * Retrieval. Springer, 2008.
+ *
  * Part of tlx - http://panthema.net/tlx
  *
  * Copyright (C) 2015-2018 Timo Bingmann <tb@panthema.net>
@@ -16,6 +22,7 @@
 #define TLX_SORT_STRINGS_RADIX_SORT_HEADER
 
 #include <tlx/define/likely.hpp>
+#include <tlx/sort/strings/multikey_quicksort.hpp>
 #include <tlx/sort/strings/string_set.hpp>
 
 #include <string.h>
@@ -169,14 +176,14 @@ static inline void radix_sort_inplace(const StringSet& ss, size_t depth) {
 /******************************************************************************/
 
 template <typename StringSet>
-struct RadixStep_CE0_sb {
+struct RadixStep_CE0 {
     StringShadowPtr<StringSet> strptr;
     size_t                     idx, pos;
     size_t                     bkt_size[256];
 
     typedef typename StringSet::Iterator Iterator;
 
-    RadixStep_CE0_sb(const StringShadowPtr<StringSet>& in_strptr, size_t depth)
+    RadixStep_CE0(const StringShadowPtr<StringSet>& in_strptr, size_t depth)
         : strptr(in_strptr) {
 
         const StringSet& ss = strptr.active();
@@ -204,17 +211,29 @@ struct RadixStep_CE0_sb {
     }
 };
 
+/*
+ * Out-of-place 8-bit radix-sort WITHOUT character caching.
+ */
 template <typename StringSet>
 static inline void
-bingmann_msd_CE0_sb(const StringSet& ss, size_t depth) {
+radixsort_CE0(const StringSet& ss, size_t depth, size_t memory) {
 
     if (ss.size() < g_inssort_threshold)
-        return insertion_sort(ss, depth);
+        return insertion_sort(ss, depth, memory);
+
+    typedef RadixStep_CE0<StringSet> RadixStep;
+
+    // try to estimate the amount of memory used
+    size_t memory_use =
+        2 * sizeof(size_t) + sizeof(StringSet)
+        + ss.size() * sizeof(typename StringSet::String);
+    size_t memory_slack = 3 * sizeof(RadixStep);
+
+    if (memory != 0 && memory < memory_use + memory_slack + 1)
+        return multikey_quicksort(ss, depth, memory);
 
     typename StringSet::Container shadow = ss.allocate(ss.size());
     StringShadowPtr<StringSet> strptr(ss, StringSet(shadow));
-
-    typedef RadixStep_CE0_sb<StringSet> RadixStep;
 
     std::stack<RadixStep, std::vector<RadixStep> > radixstack;
     radixstack.emplace(strptr, depth);
@@ -234,7 +253,17 @@ bingmann_msd_CE0_sb(const StringSet& ss, size_t depth) {
             else if (bkt_size < g_inssort_threshold) {
                 insertion_sort(
                     rs.strptr.flip(rs.pos, rs.pos + bkt_size).copy_back(),
-                    depth + radixstack.size());
+                    depth + radixstack.size(),
+                    memory - sizeof(RadixStep) * radixstack.size());
+                rs.pos += bkt_size;
+            }
+            else if (TLX_UNLIKELY(memory != 0 &&
+                                  memory < sizeof(RadixStep) * radixstack.size() + 1))
+            {
+                multikey_quicksort(
+                    rs.strptr.flip(rs.pos, rs.pos + bkt_size).copy_back(),
+                    depth + radixstack.size(),
+                    memory - sizeof(RadixStep) * radixstack.size());
                 rs.pos += bkt_size;
             }
             else
@@ -254,15 +283,15 @@ bingmann_msd_CE0_sb(const StringSet& ss, size_t depth) {
 /******************************************************************************/
 
 template <typename StringSet>
-struct RadixStep_CE2_sb {
+struct RadixStep_CE2 {
     StringShadowPtr<StringSet> strptr;
     size_t                     idx, pos;
     size_t                     bkt_size[256];
 
     typedef typename StringSet::Iterator Iterator;
 
-    RadixStep_CE2_sb(const StringShadowPtr<StringSet>& in_strptr, size_t depth,
-                     uint8_t* charcache) : strptr(in_strptr) {
+    RadixStep_CE2(const StringShadowPtr<StringSet>& in_strptr, size_t depth,
+                  uint8_t* charcache) : strptr(in_strptr) {
 
         const StringSet& ss = strptr.active();
         const size_t n = ss.size();
@@ -294,12 +323,15 @@ struct RadixStep_CE2_sb {
     }
 };
 
+/*
+ * Out-of-place 8-bit radix-sort with character caching.
+ */
 template <typename StringSet>
 static inline void
-bingmann_msd_CE2_sb(const StringShadowPtr<StringSet>& strptr,
-                    uint8_t* charcache, size_t depth) {
+radixsort_CE2(const StringShadowPtr<StringSet>& strptr,
+              uint8_t* charcache, size_t depth, size_t memory) {
 
-    typedef RadixStep_CE2_sb<StringSet> RadixStep;
+    typedef RadixStep_CE2<StringSet> RadixStep;
 
     std::stack<RadixStep, std::vector<RadixStep> > radixstack;
     radixstack.emplace(strptr, depth, charcache);
@@ -319,7 +351,17 @@ bingmann_msd_CE2_sb(const StringShadowPtr<StringSet>& strptr,
             else if (bkt_size < g_inssort_threshold) {
                 insertion_sort(
                     rs.strptr.flip(rs.pos, rs.pos + bkt_size).copy_back(),
-                    depth + radixstack.size());
+                    depth + radixstack.size(),
+                    memory - sizeof(RadixStep) * radixstack.size());
+                rs.pos += bkt_size;
+            }
+            else if (TLX_UNLIKELY(memory != 0 &&
+                                  memory < sizeof(RadixStep) * radixstack.size() + 1))
+            {
+                multikey_quicksort(
+                    rs.strptr.flip(rs.pos, rs.pos + bkt_size).copy_back(),
+                    depth + radixstack.size(),
+                    memory - sizeof(RadixStep) * radixstack.size());
                 rs.pos += bkt_size;
             }
             else
@@ -336,17 +378,36 @@ bingmann_msd_CE2_sb(const StringShadowPtr<StringSet>& strptr,
 
 template <typename StringSet>
 static inline void
-bingmann_msd_CE2_sb(const StringSet& ss, size_t depth) {
+radixsort_CI3(const StringSet& ss, size_t depth, size_t memory);
+
+/*
+ * Out-of-place 8-bit radix-sort with character caching.
+ */
+template <typename StringSet>
+static inline void
+radixsort_CE2(const StringSet& ss, size_t depth, size_t memory) {
 
     if (ss.size() < g_inssort_threshold)
-        return insertion_sort(ss, depth);
+        return insertion_sort(ss, depth, memory);
+
+    typedef RadixStep_CE2<StringSet> RadixStep;
+
+    // try to estimate the amount of memory used
+    size_t memory_use =
+        2 * sizeof(size_t) + sizeof(StringSet) + ss.size() * sizeof(uint8_t)
+        + ss.size() * sizeof(typename StringSet::String);
+    size_t memory_slack = 3 * sizeof(RadixStep);
+
+    if (memory != 0 && memory < memory_use + memory_slack + 1)
+        return radixsort_CI3(ss, depth, memory);
 
     typename StringSet::Container shadow = ss.allocate(ss.size());
     StringShadowPtr<StringSet> strptr(ss, StringSet(shadow));
 
     uint8_t* charcache = new uint8_t[ss.size()];
 
-    bingmann_msd_CE2_sb<StringSet>(strptr, charcache, depth);
+    radixsort_CE2<StringSet>(
+        strptr, charcache, depth, memory - memory_use);
 
     delete[] charcache;
     StringSet::deallocate(shadow);
@@ -355,7 +416,7 @@ bingmann_msd_CE2_sb(const StringSet& ss, size_t depth) {
 /******************************************************************************/
 
 template <typename StringSet>
-struct RadixStep_CE3_sb {
+struct RadixStep_CE3 {
     static const size_t        RADIX = 0x10000;
 
     StringShadowPtr<StringSet> strptr;
@@ -364,8 +425,8 @@ struct RadixStep_CE3_sb {
 
     typedef typename StringSet::Iterator Iterator;
 
-    RadixStep_CE3_sb(const StringShadowPtr<StringSet>& in_strptr, size_t depth,
-                     uint16_t* charcache) : strptr(in_strptr) {
+    RadixStep_CE3(const StringShadowPtr<StringSet>& in_strptr, size_t depth,
+                  uint16_t* charcache) : strptr(in_strptr) {
 
         const StringSet& ss = strptr.active();
         const size_t n = ss.size();
@@ -397,23 +458,36 @@ struct RadixStep_CE3_sb {
     }
 };
 
+/*
+ * Out-of-place adaptive radix-sort with character caching which starts with
+ * 16-bit radix sort and then switching to 8-bit for smaller string sets.
+ */
 template <typename StringSet>
 static inline void
-bingmann_msd_CE3_sb(const StringSet& ss, size_t depth) {
+radixsort_CE3(const StringSet& ss, size_t depth, size_t memory) {
     static const size_t RADIX = 0x10000;
 
     if (ss.size() < g_inssort_threshold)
-        return insertion_sort(ss, depth);
+        return insertion_sort(ss, depth, memory);
 
     if (ss.size() < RADIX)
-        return bingmann_msd_CE2_sb(ss, depth);
+        return radixsort_CE2(ss, depth, memory);
+
+    typedef RadixStep_CE3<StringSet> RadixStep;
+
+    // try to estimate the amount of memory used
+    size_t memory_use =
+        2 * sizeof(size_t) + sizeof(StringSet) + ss.size() * sizeof(uint16_t)
+        + ss.size() * sizeof(typename StringSet::String);
+    size_t memory_slack = 3 * sizeof(RadixStep);
+
+    if (memory != 0 && memory < memory_use + memory_slack + 1)
+        return radixsort_CE2(ss, depth, memory);
 
     typename StringSet::Container shadow = ss.allocate(ss.size());
     StringShadowPtr<StringSet> strptr(ss, StringSet(shadow));
 
     uint16_t* charcache = new uint16_t[ss.size()];
-
-    typedef RadixStep_CE3_sb<StringSet> RadixStep;
 
     typedef std::stack<RadixStep, std::vector<RadixStep> > radixstack_type;
     radixstack_type radixstack;
@@ -439,14 +513,26 @@ bingmann_msd_CE3_sb(const StringSet& ss, size_t depth) {
             {
                 insertion_sort(
                     rs.strptr.flip(rs.pos, rs.pos + bkt_size).copy_back(),
-                    depth + 2 * radixstack.size());
+                    depth + 2 * radixstack.size(),
+                    memory - memory_use - sizeof(RadixStep) * radixstack.size());
                 rs.pos += bkt_size;
             }
             else if (bkt_size < RADIX)
             {
-                bingmann_msd_CE2_sb(rs.strptr.flip(rs.pos, rs.pos + bkt_size),
-                                    reinterpret_cast<uint8_t*>(charcache),
-                                    depth + 2 * radixstack.size());
+                radixsort_CE2(
+                    rs.strptr.flip(rs.pos, rs.pos + bkt_size),
+                    reinterpret_cast<uint8_t*>(charcache),
+                    depth + 2 * radixstack.size(),
+                    memory - memory_use - sizeof(RadixStep) * radixstack.size());
+                rs.pos += bkt_size;
+            }
+            else if (TLX_UNLIKELY(memory != 0 &&
+                                  memory < memory_use + sizeof(RadixStep) * radixstack.size() + 1))
+            {
+                multikey_quicksort(
+                    rs.strptr.flip(rs.pos, rs.pos + bkt_size).copy_back(),
+                    depth + 2 * radixstack.size(),
+                    memory - memory_use - sizeof(RadixStep) * radixstack.size());
                 rs.pos += bkt_size;
             }
             else
@@ -468,7 +554,7 @@ bingmann_msd_CE3_sb(const StringSet& ss, size_t depth) {
 /******************************************************************************/
 
 template <typename StringSet>
-struct RadixStep_CI2_sb {
+struct RadixStep_CI2 {
 
     typedef typename StringSet::Iterator Iterator;
     typedef typename StringSet::String String;
@@ -477,7 +563,7 @@ struct RadixStep_CI2_sb {
     Iterator pos;
     size_t   bkt_size[256];
 
-    RadixStep_CI2_sb(const StringSet& ss, size_t depth, uint8_t* charcache) {
+    RadixStep_CI2(const StringSet& ss, size_t depth, uint8_t* charcache) {
         const size_t n = ss.size();
 
         // read characters and count character occurrences
@@ -516,11 +602,15 @@ struct RadixStep_CI2_sb {
     }
 };
 
+/*
+ * In-place 8-bit radix-sort with character caching.
+ */
 template <typename StringSet>
 static inline void
-bingmann_msd_CI2_sb(const StringSet& ss, uint8_t* charcache, size_t depth) {
+radixsort_CI2(const StringSet& ss, uint8_t* charcache,
+              size_t depth, size_t memory) {
 
-    typedef RadixStep_CI2_sb<StringSet> RadixStep;
+    typedef RadixStep_CI2<StringSet> RadixStep;
 
     std::stack<RadixStep, std::vector<RadixStep> > radixstack;
     radixstack.emplace(ss, depth, charcache);
@@ -541,7 +631,17 @@ bingmann_msd_CI2_sb(const StringSet& ss, uint8_t* charcache, size_t depth) {
             else if (bkt_size < g_inssort_threshold) {
                 insertion_sort(
                     ss.sub(rs.pos, rs.pos + bkt_size),
-                    depth + radixstack.size());
+                    depth + radixstack.size(),
+                    memory - sizeof(RadixStep) * radixstack.size());
+                rs.pos += bkt_size;
+            }
+            else if (TLX_UNLIKELY(memory != 0 &&
+                                  memory < sizeof(RadixStep) * radixstack.size() + 1))
+            {
+                multikey_quicksort(
+                    ss.sub(rs.pos, rs.pos + bkt_size),
+                    depth + radixstack.size(),
+                    memory - sizeof(RadixStep) * radixstack.size());
                 rs.pos += bkt_size;
             }
             else
@@ -556,16 +656,29 @@ bingmann_msd_CI2_sb(const StringSet& ss, uint8_t* charcache, size_t depth) {
     }
 }
 
+/*
+ * In-place 8-bit radix-sort with character caching.
+ */
 template <typename StringSet>
 static inline void
-bingmann_msd_CI2_sb(const StringSet& ss, size_t depth) {
+radixsort_CI2(const StringSet& ss, size_t depth, size_t memory) {
 
     if (ss.size() < g_inssort_threshold)
-        return insertion_sort(ss, depth);
+        return insertion_sort(ss, depth, memory);
+
+    typedef RadixStep_CI2<StringSet> RadixStep;
+
+    // try to estimate the amount of memory used
+    size_t memory_use =
+        2 * sizeof(size_t) + sizeof(StringSet) + ss.size() * sizeof(uint8_t);
+    size_t memory_slack = 3 * sizeof(RadixStep);
+
+    if (memory != 0 && memory < memory_use + memory_slack + 1)
+        return multikey_quicksort(ss, depth, memory);
 
     uint8_t* charcache = new uint8_t[ss.size()];
 
-    bingmann_msd_CI2_sb<StringSet>(ss, charcache, depth);
+    radixsort_CI2<StringSet>(ss, charcache, depth, memory - memory_use);
 
     delete[] charcache;
 }
@@ -573,7 +686,7 @@ bingmann_msd_CI2_sb(const StringSet& ss, size_t depth) {
 /******************************************************************************/
 
 template <typename StringSet>
-struct RadixStep_CI3_sb {
+struct RadixStep_CI3 {
     static const size_t RADIX = 0x10000;
 
     typedef typename StringSet::Iterator Iterator;
@@ -583,7 +696,7 @@ struct RadixStep_CI3_sb {
     Iterator            pos;
     size_t              bkt_size[RADIX];
 
-    RadixStep_CI3_sb(const StringSet& ss, size_t depth, uint16_t* charcache) {
+    RadixStep_CI3(const StringSet& ss, size_t depth, uint16_t* charcache) {
         const size_t n = ss.size();
 
         // read characters and count character occurrences
@@ -623,18 +736,30 @@ struct RadixStep_CI3_sb {
     }
 };
 
+/*
+ * In-place adaptive radix-sort with character caching which starts with 16-bit
+ * radix sort and then switching to 8-bit for smaller string sets.
+ */
 template <typename StringSet>
 static inline void
-bingmann_msd_CI3_sb(const StringSet& ss, size_t depth) {
+radixsort_CI3(const StringSet& ss, size_t depth, size_t memory) {
     static const size_t RADIX = 0x10000;
 
     if (ss.size() < g_inssort_threshold)
-        return insertion_sort(ss, depth);
+        return insertion_sort(ss, depth, memory);
 
     if (ss.size() < RADIX)
-        return bingmann_msd_CI2_sb(ss, depth);
+        return radixsort_CI2(ss, depth, memory);
 
-    typedef RadixStep_CI3_sb<StringSet> RadixStep;
+    typedef RadixStep_CI3<StringSet> RadixStep;
+
+    // try to estimate the amount of memory used
+    size_t memory_use =
+        2 * sizeof(size_t) + sizeof(StringSet) + ss.size() * sizeof(uint16_t);
+    size_t memory_slack = 3 * sizeof(RadixStep);
+
+    if (memory != 0 && memory < memory_use + memory_slack + 1)
+        return radixsort_CI2(ss, depth, memory);
 
     uint16_t* charcache = new uint16_t[ss.size()];
 
@@ -661,14 +786,25 @@ bingmann_msd_CI3_sb(const StringSet& ss, size_t depth) {
             {
                 insertion_sort(
                     ss.sub(rs.pos, rs.pos + bkt_size),
-                    depth + 2 * radixstack.size());
+                    depth + 2 * radixstack.size(),
+                    memory - memory_use - sizeof(RadixStep) * radixstack.size());
                 rs.pos += bkt_size;
             }
             else if (bkt_size < RADIX)
             {
-                bingmann_msd_CI2_sb(ss.sub(rs.pos, rs.pos + bkt_size),
-                                    reinterpret_cast<uint8_t*>(charcache),
-                                    depth + 2 * radixstack.size());
+                radixsort_CI2(ss.sub(rs.pos, rs.pos + bkt_size),
+                              reinterpret_cast<uint8_t*>(charcache),
+                              depth + 2 * radixstack.size(),
+                              memory - memory_use - sizeof(RadixStep) * radixstack.size());
+                rs.pos += bkt_size;
+            }
+            else if (TLX_UNLIKELY(memory != 0 &&
+                                  memory < memory_use + sizeof(RadixStep) * radixstack.size() + 1))
+            {
+                multikey_quicksort(
+                    ss.sub(rs.pos, rs.pos + bkt_size),
+                    depth + 2 * radixstack.size(),
+                    memory - memory_use - sizeof(RadixStep) * radixstack.size());
                 rs.pos += bkt_size;
             }
             else

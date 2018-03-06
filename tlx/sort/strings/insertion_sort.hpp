@@ -22,9 +22,11 @@ namespace sort_strings_detail {
 
 /******************************************************************************/
 
-//! Generic insertion sort for abstract string sets
+//! Generic insertion sort for abstract string sets. This method only requires
+//! O(1) additional memory for sorting n strings, but runs in time O(nD).
 template <typename StringSet>
-static inline void insertion_sort(const StringSet& ss, size_t depth) {
+static inline void insertion_sort(
+    const StringSet& ss, size_t depth, size_t /* memory */) {
     typedef typename StringSet::Iterator Iterator;
     typedef typename StringSet::String String;
     typedef typename StringSet::CharIterator CharIterator;

@@ -83,7 +83,7 @@ matrix:
       addons: *gcc5_32
 
     # gcc 6.x, Debug & Release, Debug with UndefinedBehaviorSanitizer
-    - env: CMAKE_CC="gcc-6" CMAKE_CXX="g++-6" BUILD_TYPE="Debug" COMPILER_FLAGS="-fsanitize=undefined"
+    - env: CMAKE_CC="gcc-6" CMAKE_CXX="g++-6" BUILD_TYPE="Debug" COMPILER_FLAGS=""
       os: linux
       addons: &gcc6
         apt:
@@ -101,7 +101,7 @@ matrix:
       addons: *gcc6
 
     # gcc 7.x, Debug & Release, Debug with UndefinedBehaviorSanitizer
-    - env: CMAKE_CC="gcc-7" CMAKE_CXX="g++-7" BUILD_TYPE="Debug" COMPILER_FLAGS="-fsanitize=undefined"
+    - env: CMAKE_CC="gcc-7" CMAKE_CXX="g++-7" BUILD_TYPE="Debug" COMPILER_FLAGS=""
       os: linux
       addons: &gcc7
         apt:

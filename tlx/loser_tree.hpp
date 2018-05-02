@@ -154,7 +154,11 @@ public:
         }
     }
 
-    void init() { losers_[0] = losers_[init_winner(1)]; }
+    void init() {
+        if (TLX_UNLIKELY(k_ == 0))
+            return;
+        losers_[0] = losers_[init_winner(1)];
+    }
 };
 
 /*!
@@ -388,7 +392,11 @@ public:
         }
     }
 
-    void init() { losers_[0] = losers_[init_winner(1)]; }
+    void init() {
+        if (TLX_UNLIKELY(k_ == 0))
+            return;
+        losers_[0] = losers_[init_winner(1)];
+    }
 };
 
 /*!
@@ -585,7 +593,11 @@ public:
         }
     }
 
-    void init() { losers_[0] = losers_[init_winner(1)]; }
+    void init() {
+        if (TLX_UNLIKELY(k_ == 0))
+            return;
+        losers_[0] = losers_[init_winner(1)];
+    }
 };
 
 template <bool Stable /* == false */, typename ValueType,
@@ -755,7 +767,11 @@ public:
         }
     }
 
-    void init() { losers_[0] = losers_[init_winner(1)]; }
+    void init() {
+        if (TLX_UNLIKELY(k_ == 0))
+            return;
+        losers_[0] = losers_[init_winner(1)];
+    }
 };
 
 template <bool Stable /* == false */, typename ValueType,

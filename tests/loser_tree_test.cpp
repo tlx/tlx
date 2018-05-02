@@ -197,6 +197,7 @@ void test_losertree(bool stable, size_t num_vectors) {
 template <typename LoserTree>
 static inline void test_losertree(bool stable) {
 
+    test_losertree<LoserTree>(stable, 0);
     test_losertree<LoserTree>(stable, 1);
     test_losertree<LoserTree>(stable, 2);
     test_losertree<LoserTree>(stable, 3);

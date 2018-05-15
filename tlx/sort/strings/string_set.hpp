@@ -253,6 +253,9 @@ protected:
 typedef GenericCharStringSet<char> CharStringSet;
 typedef GenericCharStringSet<unsigned char> UCharStringSet;
 
+typedef GenericCharStringSet<const char> CCharStringSet;
+typedef GenericCharStringSet<const unsigned char> CUCharStringSet;
+
 /******************************************************************************/
 
 /*!

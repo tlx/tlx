@@ -6,10 +6,10 @@
  * functions.
  *
  * These are explicit stack-based most-significant-digit radix sort
- * implementations. All implementations were written by Timo Bingmann, and are
- * based on work by Juha Kärkkäinen, and Rantala Tommi. "Engineering radix sort
- * for strings."  International Symposium on String Processing and Information
- * Retrieval. Springer, 2008.
+ * implementations. All implementations were written by Timo Bingmann and are
+ * based on work by Juha Kärkkäinen and Tommi Rantala. "Engineering Radix Sort
+ * for Strings."  International Symposium on String Processing and Information
+ * Retrieval (SPIRE). Springer, 2008.
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -24,8 +24,6 @@
 #include <tlx/define/likely.hpp>
 #include <tlx/sort/strings/multikey_quicksort.hpp>
 #include <tlx/sort/strings/string_set.hpp>
-
-#include <string.h>
 
 #include <stack>
 
@@ -53,7 +51,7 @@ struct RadixStep_CE0 {
         const StringSet& ss = strptr.active();
 
         // count character occurrences
-        memset(bkt_size, 0, sizeof(bkt_size));
+        std::fill(bkt_size, bkt_size + 256, 0);
         for (Iterator i = ss.begin(); i != ss.end(); ++i)
             ++bkt_size[ss.get_uint8(ss[i], depth)];
 
@@ -162,7 +160,7 @@ struct RadixStep_CE2 {
         const size_t n = ss.size();
 
         // read characters and count character occurrences
-        memset(bkt_size, 0, sizeof(bkt_size));
+        std::fill(bkt_size, bkt_size + 256, 0);
         uint8_t* cc = charcache;
         for (Iterator i = ss.begin(); i != ss.end(); ++i, ++cc)
             *cc = ss.get_uint8(ss[i], depth);
@@ -298,7 +296,7 @@ struct RadixStep_CE3 {
         const size_t n = ss.size();
 
         // read characters and count character occurrences
-        memset(bkt_size, 0, sizeof(bkt_size));
+        std::fill(bkt_size, bkt_size + RADIX, 0);
         uint16_t* cc = charcache;
         for (Iterator i = ss.begin(); i != ss.end(); ++i, ++cc)
             *cc = ss.get_uint16(ss[i], depth);
@@ -434,7 +432,7 @@ struct RadixStep_CI2 {
         const size_t n = ss.size();
 
         // read characters and count character occurrences
-        memset(bkt_size, 0, sizeof(bkt_size));
+        std::fill(bkt_size, bkt_size + 256, 0);
         uint8_t* cc = charcache;
         for (Iterator i = ss.begin(); i != ss.end(); ++i, ++cc)
             *cc = ss.get_uint8(ss[i], depth);
@@ -568,7 +566,7 @@ struct RadixStep_CI3 {
         const size_t n = ss.size();
 
         // read characters and count character occurrences
-        memset(bkt_size, 0, sizeof(bkt_size));
+        std::fill(bkt_size, bkt_size + RADIX, 0);
         uint16_t* cc = charcache;
         for (Iterator i = ss.begin(); i != ss.end(); ++i, ++cc)
             *cc = ss.get_uint16(ss[i], depth);

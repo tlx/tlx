@@ -7,8 +7,8 @@
  * Based on multikey quicksort, a quick sort algorithm for arrays of character
  * strings by Bentley and Sedgewick.
  *
- * J. Bentley and R. Sedgewick. Fast algorithms for sorting and searching
- * strings. In Proceedings of 8th Annual ACM-SIAM Symposium on Discrete
+ * J. Bentley and R. Sedgewick. "Fast Algorithms for Sorting and Searching
+ * Strings." In Proceedings of 8th Annual ACM-SIAM Symposium on Discrete
  * Algorithms, 1997.
  *
  * http://www.cs.princeton.edu/~rs/strings/index.html
@@ -42,10 +42,12 @@ static inline typename StringSet::Iterator med3func(
     const StringSet& ss,
     typename StringSet::Iterator a, typename StringSet::Iterator b,
     typename StringSet::Iterator c, size_t depth) {
-    typename StringSet::Char va, vb, vc;
-    if ((va = ss.get_char(*a, depth)) == (vb = ss.get_char(*b, depth)))
+    typename StringSet::Char va = ss.get_char(*a, depth);
+    typename StringSet::Char vb = ss.get_char(*b, depth);
+    if (va == vb)
         return a;
-    if ((vc = ss.get_char(*c, depth)) == va || vc == vb)
+    typename StringSet::Char vc = ss.get_char(*c, depth);
+    if (vc == va || vc == vb)
         return c;
     return va < vb
            ? (vb < vc ? b : (va < vc ? c : a))
@@ -56,7 +58,7 @@ static inline typename StringSet::Iterator med3func(
  * Generic multikey quicksort for strings. Based on multikey quicksort, a quick
  * sort algorithm for arrays of character strings by Bentley and Sedgewick. This
  * method requires up to O(maxlcp) memory due to the recursion stack and it runs
- * in time O(D + n log n).
+ * in expected time O(D + n log n) and worst-case time O(D + n^2).
  *
  * J. Bentley and R. Sedgewick. Fast algorithms for sorting and searching
  * strings. In Proceedings of 8th Annual ACM-SIAM Symposium on Discrete

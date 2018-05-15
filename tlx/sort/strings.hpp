@@ -37,6 +37,63 @@ void sort_strings(char** strings, size_t size, size_t memory = 0);
 void sort_strings(unsigned char** strings, size_t size, size_t memory = 0);
 
 /*!
+ * Sort a set of strings represented by C-style char* in place.
+ *
+ * The strings are sorted as _unsigned_ 8-bit characters, not signed characters!
+ * If the memory limit is non zero, possibly slower algorithms will be selected
+ * to stay within the memory limit.
+ */
+void sort_strings(const char** strings, size_t size, size_t memory = 0);
+
+/*!
+ * Sort a set of strings represented by C-style uint8_t* in place.
+ *
+ * If the memory limit is non zero, possibly slower algorithms will be selected
+ * to stay within the memory limit.
+ */
+void sort_strings(
+    const unsigned char** strings, size_t size, size_t memory = 0);
+
+/******************************************************************************/
+
+/*!
+ * Sort a set of strings represented by C-style char* in place.
+ *
+ * The strings are sorted as _unsigned_ 8-bit characters, not signed characters!
+ * If the memory limit is non zero, possibly slower algorithms will be selected
+ * to stay within the memory limit.
+ */
+void sort_strings(std::vector<char*>& strings, size_t memory = 0);
+
+/*!
+ * Sort a set of strings represented by C-style uint8_t* in place.
+ *
+ * If the memory limit is non zero, possibly slower algorithms will be selected
+ * to stay within the memory limit.
+ */
+void sort_strings(std::vector<unsigned char>& strings, size_t memory = 0);
+
+/*!
+ * Sort a set of strings represented by C-style char* in place.
+ *
+ * The strings are sorted as _unsigned_ 8-bit characters, not signed characters!
+ * If the memory limit is non zero, possibly slower algorithms will be selected
+ * to stay within the memory limit.
+ */
+void sort_strings(std::vector<const char*>& strings, size_t memory = 0);
+
+/*!
+ * Sort a set of strings represented by C-style uint8_t* in place.
+ *
+ * If the memory limit is non zero, possibly slower algorithms will be selected
+ * to stay within the memory limit.
+ */
+void sort_strings(
+    std::vector<const unsigned char*>& strings, size_t memory = 0);
+
+/******************************************************************************/
+
+/*!
  * Sort a set of std::strings in place.
  *
  * The strings are sorted as _unsigned_ 8-bit characters, not signed characters!

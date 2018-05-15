@@ -227,17 +227,41 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
     }
 
     // run sorting algorithm
-    double ts1 = timestamp();
+    {
+        double ts1 = timestamp();
 
-    tlx::sort_strings(cstrings, num_strings, /* memory */ 0);
+        tlx::sort_strings(cstrings, num_strings, /* memory */ 0);
 
-    double ts2 = timestamp();
-    LOG1 << "sorting took " << ts2 - ts1 << " seconds";
+        double ts2 = timestamp();
+        LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
-    // check result
-    if (!UCharStringSet(cstrings, cstrings + num_strings).check_order()) {
-        LOG1 << "Result is not sorted!";
-        abort();
+        // check result
+        if (!UCharStringSet(cstrings, cstrings + num_strings).check_order()) {
+            LOG1 << "Result is not sorted!";
+            abort();
+        }
+    }
+
+    // array of const string pointers
+    const uint8_t** ccstrings = new const uint8_t*[num_strings];
+
+    for (size_t i = 0; i < num_strings; ++i)
+        ccstrings[i] = cstrings[i];
+
+    // run sorting algorithm
+    {
+        double ts1 = timestamp();
+
+        tlx::sort_strings(ccstrings, num_strings, /* memory */ 0);
+
+        double ts2 = timestamp();
+        LOG1 << "sorting took " << ts2 - ts1 << " seconds";
+
+        // check result
+        if (!CUCharStringSet(ccstrings, ccstrings + num_strings).check_order()) {
+            LOG1 << "Result is not sorted!";
+            abort();
+        }
     }
 
     // free memory.

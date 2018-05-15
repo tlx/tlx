@@ -17,6 +17,8 @@ namespace tlx {
 
 //! \addtogroup tlx_string
 //! \{
+//! \name Search and Replace
+//! \{
 
 /******************************************************************************/
 // replace_first() in-place
@@ -283,6 +285,7 @@ std::string replace_all(
  */
 std::string replace_all(const std::string& str, char needle, char instead);
 
+//! \}
 //! \}
 
 } // namespace tlx

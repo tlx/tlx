@@ -18,6 +18,8 @@ namespace tlx {
 
 //! \addtogroup tlx_string
 //! \{
+//! \name Split and Join
+//! \{
 
 /******************************************************************************/
 // join()
@@ -55,6 +57,7 @@ std::string join(
 std::string join(
     const std::string& glue, const std::vector<std::string>& parts);
 
+//! \}
 //! \}
 
 } // namespace tlx

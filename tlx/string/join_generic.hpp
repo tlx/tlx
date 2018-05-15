@@ -18,6 +18,8 @@ namespace tlx {
 
 //! \addtogroup tlx_string
 //! \{
+//! \name Split and Join
+//! \{
 
 /*!
  * Join a sequence of strings by some glue string between each pair from the
@@ -89,6 +91,7 @@ std::string join(const std::string& glue, const Container& parts) {
     return join(glue, parts.begin(), parts.end());
 }
 
+//! \}
 //! \}
 
 } // namespace tlx

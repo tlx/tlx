@@ -17,6 +17,8 @@ namespace tlx {
 
 //! \addtogroup tlx_string
 //! \{
+//! \name Trim
+//! \{
 
 /******************************************************************************/
 
@@ -198,6 +200,7 @@ std::string trim_left(const std::string& str, const char* drop);
  */
 std::string trim_left(const std::string& str, const std::string& drop);
 
+//! \}
 //! \}
 
 } // namespace tlx

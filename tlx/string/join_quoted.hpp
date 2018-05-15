@@ -18,6 +18,8 @@ namespace tlx {
 
 //! \addtogroup tlx_string
 //! \{
+//! \name Split and Join
+//! \{
 
 /*!
  * Join a vector of strings using a separator character. If any string contains
@@ -34,6 +36,7 @@ std::string join_quoted(
  */
 std::string join_quoted(const std::vector<std::string>& str);
 
+//! \}
 //! \}
 
 } // namespace tlx

@@ -18,6 +18,8 @@ namespace tlx {
 
 //! \addtogroup tlx_string
 //! \{
+//! \name Split and Join
+//! \{
 
 /*!
  * Split the given string at each separator character into distinct
@@ -36,6 +38,7 @@ std::vector<std::string> split_quoted(
  */
 std::vector<std::string> split_quoted(const std::string& str);
 
+//! \}
 //! \}
 
 } // namespace tlx

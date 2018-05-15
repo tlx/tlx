@@ -18,6 +18,8 @@ namespace tlx {
 
 //! \addtogroup tlx_string
 //! \{
+//! \name Split and Join
+//! \{
 
 /******************************************************************************/
 // split() returning std::vector<std::string>
@@ -223,6 +225,7 @@ std::vector<std::string>& split(
     const std::string& sep, const std::string& str,
     std::string::size_type min_fields, std::string::size_type limit);
 
+//! \}
 //! \}
 
 } // namespace tlx

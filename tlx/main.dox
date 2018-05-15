@@ -44,6 +44,7 @@ List of the most commonly use components:
 - \ref tlx_math : \ref integer_log2_floor(), \ref is_power_of_two(), \ref round_up_to_power_of_two(), \ref round_down_to_power_of_two(), \ref ffs(), \ref clz(), \ref abs_diff().
 - \ref tlx_string : \ref starts_with(), \ref ends_with(), \ref contains(), \ref contains_word(), \ref trim(), \ref replace_all(), \ref erase_all(), \ref join(), \ref split(), \ref split_words(), \ref union_words(), \ref to_lower(), \ref hexdump(), \ref word_wrap(), \ref escape_html(), \ref parse_si_iec_units(), \ref format_iec_units().
 - \ref tlx_meta : \ref call_foreach(), \ref apply_tuple(), \ref vmap_foreach(), \ref Log2Floor, \ref FunctionChain, \ref FunctionStack, \ref is_std_pair, \ref is_std_tuple, \ref is_std_vector, \ref is_std_array, \ref TLX_MAKE_HAS_MEMBER.
+- \ref tlx_sort : \ref sort_strings().
 - \ref backtrace.hpp "Backtrace Printing" : \ref print_cxx_backtrace().
 - \ref cmdline_parser.hpp "Command Line Parsing" : \ref CmdlineParser.
 - \ref delegate.hpp "Fast Delegates" : \ref Delegate.
@@ -67,6 +68,7 @@ List of the most commonly use components:
 \defgroup tlx_digest Message Digests
 \defgroup tlx_math Math Functions
 \defgroup tlx_meta Meta-Template Programming
+\defgroup tlx_sort Sorting Algorithms
 \defgroup tlx_string String Algorithms
 
 \}

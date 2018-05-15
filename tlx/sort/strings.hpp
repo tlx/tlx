@@ -19,6 +19,11 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_sort
+//! \{
+//! \name String Sorting Algorithms
+//! \{
+
 /*!
  * Sort a set of strings represented by C-style char* in place.
  *
@@ -110,6 +115,9 @@ void sort_strings(std::string* strings, size_t size, size_t memory = 0);
  * to stay within the memory limit.
  */
 void sort_strings(std::vector<std::string>& strings, size_t memory = 0);
+
+//! \}
+//! \}
 
 } // namespace tlx
 

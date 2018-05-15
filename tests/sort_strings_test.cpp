@@ -95,9 +95,9 @@ void TestUCharString(const char* name,
 }
 
 template <typename StringSet, StringSorter<StringSet> sorter>
-void TestVectorString(const char* name,
-                      const size_t num_strings, const size_t num_chars,
-                      const std::string& letters) {
+void TestVectorStdString(const char* name,
+                         const size_t num_strings, const size_t num_chars,
+                         const std::string& letters) {
 
     std::default_random_engine rng(seed);
 
@@ -134,9 +134,9 @@ void TestVectorString(const char* name,
 }
 
 template <typename StringSet, StringSorter<StringSet> sorter>
-void TestVectorPtrString(const char* name,
-                         const size_t num_strings, const size_t num_chars,
-                         const std::string& letters) {
+void TestUPtrStdString(const char* name,
+                       const size_t num_strings, const size_t num_chars,
+                       const std::string& letters) {
 
     std::default_random_engine rng(seed);
 
@@ -159,7 +159,7 @@ void TestVectorPtrString(const char* name,
     // run sorting algorithm
     double ts1 = timestamp();
 
-    VectorStringUPtrSet ss(strings.begin(), strings.end());
+    UPtrStdStringSet ss(strings.data(), strings.data() + strings.size());
     sorter(ss, /* depth */ 0, /* memory */ 0);
     if (0) ss.print();
 
@@ -276,15 +276,15 @@ static const char* letters_alnum
       "\xE0\xE1\xE2\xE3\xE4\xE5\xE6\xE7\xE8\xE9\xEA\xEB\xEC\xED\xEE\xEF";
 
 // use macro because one cannot pass template functions as template parameters:
-#define run_tests(func)                             \
-    TestUCharString<UCharStringSet, func>(          \
-        #func, num_strings, 16, letters_alnum);     \
-    TestVectorString<StdStringSet, func>(           \
-        #func, num_strings, 16, letters_alnum);     \
-    TestVectorPtrString<VectorStringUPtrSet, func>( \
-        #func, num_strings, 16, letters_alnum);     \
-    TestStringSuffixString<StringSuffixSet, func>(  \
-        #func, num_strings, letters_alnum);         \
+#define run_tests(func)                            \
+    TestUCharString<UCharStringSet, func>(         \
+        #func, num_strings, 16, letters_alnum);    \
+    TestVectorStdString<StdStringSet, func>(       \
+        #func, num_strings, 16, letters_alnum);    \
+    TestUPtrStdString<UPtrStdStringSet, func>(     \
+        #func, num_strings, 16, letters_alnum);    \
+    TestStringSuffixString<StringSuffixSet, func>( \
+        #func, num_strings, letters_alnum);        \
 
 void test_all(const size_t num_strings) {
     if (num_strings <= 1024) {

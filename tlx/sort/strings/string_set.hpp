@@ -6,10 +6,9 @@
  *
  * A StringSet abstracts from arrays of strings, we provide six abstractions:
  *
- * - UCharStringSet: const unsigned char**
+ * - UCharStringSet: (const) unsigned char**
  * - StdStringSet: std::string*
- * - VectorStringSet: std::vector<std::string>
- * - VectorStringUPtrSet: std::vector<std::unique_ptr<std::string>>
+ * - UPtrStdStringSet: std::unique_ptr<std::string>*
  * - StringSuffixSet: suffix sorting indexes of a std::string text
  *
  * Part of tlx - http://panthema.net/tlx
@@ -26,7 +25,6 @@
 #include <cstdint>
 #include <memory>
 #include <utility>
-#include <vector>
 
 #include <tlx/logger.hpp>
 #include <tlx/math/bswap.hpp>
@@ -145,6 +143,16 @@ public:
         }
         return true;
     }
+
+    void print() const {
+        const StringSet& ss = *static_cast<const StringSet*>(this);
+        size_t i = 0;
+        for (typename Traits::Iterator pi = ss.begin(); pi != ss.end(); ++pi)
+        {
+            LOG1 << "[" << i++ << "] = " << *pi
+                 << " = " << ss.get_string(*pi, 0);
+        }
+    }
 };
 
 /******************************************************************************/
@@ -236,15 +244,6 @@ public:
     static void deallocate(Container& c)
     { delete[] c.first; c.first = nullptr; }
 
-    void print() const {
-        size_t i = 0;
-        for (Iterator pi = begin(); pi != end(); ++pi)
-        {
-            LOG1 << "[" << i++ << "] = " << *pi
-                 << " = " << get_string(*pi, 0);
-        }
-    }
-
 protected:
     //! array of string pointers
     Iterator begin_, end_;
@@ -270,7 +269,7 @@ public:
     //! String reference: std::string, which should be reference counted.
     typedef std::string String;
 
-    //! Iterator over string references: using std::vector's iterator
+    //! Iterator over string references: pointer to std::string.
     typedef String* Iterator;
 
     //! iterator of characters in a string
@@ -333,150 +332,53 @@ public:
     static void deallocate(Container& c)
     { delete[] c.first; c.first = nullptr; }
 
-    void print() const {
-        size_t i = 0;
-        for (Iterator pi = begin(); pi != end(); ++pi)
-        {
-            LOG1 << "[" << i++ << "] = " << *pi
-                 << " = " << get_string(*pi, 0);
-        }
-    }
-
 protected:
-    //! vector of std::string objects
+    //! pointers to std::string objects
     Iterator begin_, end_;
 };
 
 /******************************************************************************/
 
 /*!
- * Class implementing StringSet concept for a std::vector containing std::string
- * objects.
+ * Class implementing StringSet concept for a std::unique_ptr<std::string
+ * objects, which are non-copyable.
  */
-class VectorStringSetTraits
+class UPtrStdStringSetTraits
 {
 public:
-    //! exported alias for assumed string container
-    typedef std::vector<std::string> Container;
-
     //! exported alias for character type
     typedef uint8_t Char;
 
     //! String reference: std::string, which should be reference counted.
-    typedef typename Container::value_type String;
+    typedef std::unique_ptr<std::string> String;
 
     //! Iterator over string references: using std::vector's iterator
-    typedef typename Container::iterator Iterator;
+    typedef String* Iterator;
 
     //! iterator of characters in a string
     typedef const Char* CharIterator;
+
+    //! exported alias for assumed string container
+    typedef std::pair<Iterator, size_t> Container;
 };
 
 /*!
  * Class implementing StringSet concept for a std::vector containing std::string
  * objects.
  */
-class VectorStringSet
-    : public VectorStringSetTraits,
-      public StringSetBase<VectorStringSet, VectorStringSetTraits>
+class UPtrStdStringSet
+    : public UPtrStdStringSetTraits,
+      public StringSetBase<UPtrStdStringSet, UPtrStdStringSetTraits>
 {
 public:
     //! Construct from begin and end string pointers
-    VectorStringSet(const Iterator& begin, const Iterator& end)
+    UPtrStdStringSet(const Iterator& begin, const Iterator& end)
         : begin_(begin), end_(end)
     { }
-
-    //! Return size of string array
-    size_t size() const { return end_ - begin_; }
-    //! Iterator representing first String position
-    Iterator begin() const { return begin_; }
-    //! Iterator representing beyond last String position
-    Iterator end() const { return end_; }
-
-    //! Array access (readable and writable) to String objects.
-    String& operator [] (const Iterator& i) const
-    { return *i; }
-
-    //! Return CharIterator for referenced string, which belongs to this set.
-    CharIterator get_chars(const String& s, size_t depth) const
-    { return reinterpret_cast<CharIterator>(s.data()) + depth; }
-
-    //! Returns true if CharIterator is at end of the given String
-    bool is_end(const String& s, const CharIterator& i) const
-    { return (i >= reinterpret_cast<CharIterator>(s.data()) + s.size()); }
-
-    //! Return complete string (for debugging purposes)
-    std::string get_string(const String& s, size_t depth = 0) const
-    { return s.substr(depth); }
-
-    //! Subset this string set using iterator range.
-    VectorStringSet sub(Iterator begin, Iterator end) const
-    { return VectorStringSet(begin, end); }
-
-    //! Allocate a new temporary string container with n empty Strings
-    static Container allocate(size_t n)
-    { return Container(n); }
-
-    //! Deallocate a temporary string container
-    static void deallocate(Container& c)
-    { Container v; v.swap(c); }
 
     //! Construct from a string container
-    explicit VectorStringSet(Container& c)
-        : begin_(c.begin()), end_(c.end())
-    { }
-
-    void print() const {
-        size_t i = 0;
-        for (Iterator pi = begin(); pi != end(); ++pi)
-        {
-            LOG1 << "[" << i++ << "] = " << *pi
-                 << " = " << get_string(*pi, 0);
-        }
-    }
-
-protected:
-    //! vector of std::string objects
-    Iterator begin_, end_;
-};
-
-/******************************************************************************/
-
-/*!
- * Class implementing StringSet concept for a std::vector containing
- * std::unique_ptr<std::string> objects, which are non-copyable.
- */
-class VectorPtrStringSetTraits
-{
-public:
-    //! exported alias for assumed string container
-    typedef std::vector<std::unique_ptr<std::string> > Container;
-
-    //! exported alias for character type
-    typedef uint8_t Char;
-
-    //! String reference: std::string, which should be reference counted.
-    typedef typename Container::value_type String;
-
-    //! Iterator over string references: using std::vector's iterator
-    typedef typename Container::iterator Iterator;
-
-    //! iterator of characters in a string
-    typedef const Char* CharIterator;
-};
-
-/*!
- * Class implementing StringSet concept for a std::vector containing std::string
- * objects.
- */
-class VectorStringUPtrSet
-    : public VectorPtrStringSetTraits,
-      public StringSetBase<VectorStringUPtrSet, VectorPtrStringSetTraits>
-{
-public:
-    //! Construct from begin and end string pointers
-    VectorStringUPtrSet(const Iterator& begin, const Iterator& end)
-        : begin_(begin), end_(end)
+    explicit UPtrStdStringSet(Container& c)
+        : begin_(c.first), end_(c.first + c.second)
     { }
 
     //! Return size of string array
@@ -503,21 +405,16 @@ public:
     { return s->substr(depth); }
 
     //! Subset this string set using iterator range.
-    VectorStringUPtrSet sub(Iterator begin, Iterator end) const
-    { return VectorStringUPtrSet(begin, end); }
+    UPtrStdStringSet sub(Iterator begin, Iterator end) const
+    { return UPtrStdStringSet(begin, end); }
 
     //! Allocate a new temporary string container with n empty Strings
     static Container allocate(size_t n)
-    { return Container(n); }
+    { return std::make_pair(new String[n], n); }
 
     //! Deallocate a temporary string container
     static void deallocate(Container& c)
-    { Container v; v.swap(c); }
-
-    //! Construct from a string container
-    explicit VectorStringUPtrSet(Container& c)
-        : begin_(c.begin()), end_(c.end())
-    { }
+    { delete[] c.first; c.first = nullptr; }
 
     void print() const {
         size_t i = 0;
@@ -627,15 +524,6 @@ public:
         : text_(&c.first),
           begin_(c.second.begin()), end_(c.second.end())
     { }
-
-    void print() const {
-        size_t i = 0;
-        for (Iterator pi = begin(); pi != end(); ++pi)
-        {
-            LOG1 << "[" << i++ << "] = " << *pi
-                 << " = " << get_string(*pi, 0);
-        }
-    }
 
 protected:
     //! reference to base text

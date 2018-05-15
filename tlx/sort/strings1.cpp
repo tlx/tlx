@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/sort/strings.cpp
+ * tlx/sort/strings1.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *

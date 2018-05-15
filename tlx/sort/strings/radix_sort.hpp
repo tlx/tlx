@@ -22,6 +22,7 @@
 #define TLX_SORT_STRINGS_RADIX_SORT_HEADER
 
 #include <tlx/define/likely.hpp>
+#include <tlx/simple_vector.hpp>
 #include <tlx/sort/strings/multikey_quicksort.hpp>
 #include <tlx/sort/strings/string_set.hpp>
 
@@ -40,8 +41,7 @@ static const size_t g_inssort_threshold = 32;
 template <typename StringSet>
 struct RadixStep_CE0 {
     StringShadowPtr<StringSet> strptr;
-    size_t                     idx, pos;
-    size_t                     bkt_size[256];
+    size_t                     idx, pos, bkt_size[256];
 
     typedef typename StringSet::Iterator Iterator;
 
@@ -148,8 +148,7 @@ radixsort_CE0(const StringSet& ss, size_t depth, size_t memory) {
 template <typename StringSet>
 struct RadixStep_CE2 {
     StringShadowPtr<StringSet> strptr;
-    size_t                     idx, pos;
-    size_t                     bkt_size[256];
+    size_t                     idx, pos, bkt_size[256];
 
     typedef typename StringSet::Iterator Iterator;
 
@@ -281,11 +280,10 @@ radixsort_CE2(const StringSet& ss, size_t depth, size_t memory) {
 
 template <typename StringSet>
 struct RadixStep_CE3 {
-    static const size_t        RADIX = 0x10000;
+    enum { RADIX = 0x10000 };
 
     StringShadowPtr<StringSet> strptr;
-    size_t                     idx, pos;
-    size_t                     bkt_size[RADIX];
+    size_t                     idx, pos, bkt_size[RADIX];
 
     typedef typename StringSet::Iterator Iterator;
 
@@ -304,7 +302,7 @@ struct RadixStep_CE3 {
             ++bkt_size[static_cast<uint16_t>(*cc)];
 
         // prefix sum
-        Iterator bkt_index[RADIX];
+        simple_vector<Iterator> bkt_index(RADIX);
         bkt_index[0] = strptr.shadow().begin();
         for (size_t i = 1; i < RADIX; ++i)
             bkt_index[i] = bkt_index[i - 1] + bkt_size[i - 1];
@@ -329,7 +327,7 @@ struct RadixStep_CE3 {
 template <typename StringSet>
 static inline void
 radixsort_CE3(const StringSet& ss, size_t depth, size_t memory) {
-    static const size_t RADIX = 0x10000;
+    enum { RADIX = 0x10000 };
 
     if (ss.size() < g_inssort_threshold)
         return insertion_sort(ss, depth, memory);
@@ -553,14 +551,14 @@ radixsort_CI2(const StringSet& ss, size_t depth, size_t memory) {
 
 template <typename StringSet>
 struct RadixStep_CI3 {
-    static const size_t RADIX = 0x10000;
+    enum { RADIX = 0x10000 };
 
     typedef typename StringSet::Iterator Iterator;
     typedef typename StringSet::String String;
 
-    size_t              idx;
-    Iterator            pos;
-    size_t              bkt_size[RADIX];
+    size_t   idx;
+    Iterator pos;
+    size_t   bkt_size[RADIX];
 
     RadixStep_CI3(const StringSet& ss, size_t depth, uint16_t* charcache) {
         const size_t n = ss.size();
@@ -574,7 +572,7 @@ struct RadixStep_CI3 {
             ++bkt_size[static_cast<uint16_t>(*cc)];
 
         // inclusive prefix sum
-        size_t bkt[RADIX];
+        simple_vector<size_t> bkt(RADIX);
         bkt[0] = bkt_size[0];
         size_t last_bkt_size = bkt_size[0];
         for (size_t i = 1; i < RADIX; ++i) {
@@ -609,7 +607,7 @@ struct RadixStep_CI3 {
 template <typename StringSet>
 static inline void
 radixsort_CI3(const StringSet& ss, size_t depth, size_t memory) {
-    static const size_t RADIX = 0x10000;
+    enum { RADIX = 0x10000 };
 
     if (ss.size() < g_inssort_threshold)
         return insertion_sort(ss, depth, memory);

@@ -26,6 +26,7 @@
 #include <tlx/sort/strings/insertion_sort.hpp>
 
 #include <algorithm>
+#include <cstddef>
 
 namespace tlx {
 namespace sort_strings_detail {
@@ -80,7 +81,7 @@ static inline void multikey_quicksort(
         return insertion_sort(ss, depth, memory);
     }
 
-    int r;
+    ptrdiff_t r;
     Iterator pa, pb, pc, pd, pn;
 
     {

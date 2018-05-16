@@ -913,9 +913,9 @@ RandomAccessIterator3 multiway_merge_loser_tree(
     Comparator comp) {
     using Source = typename LoserTreeType::Source;
     using size_type = typename LoserTreeType::Source;
-    using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+    using RandomAccessIteratorPair =
+        typename std::iterator_traits<RandomAccessIteratorIterator>::value_type;
+    using RandomAccessIterator = typename RandomAccessIteratorPair::first_type;
     using DiffType = typename std::iterator_traits<RandomAccessIterator>
                      ::difference_type;
 
@@ -923,10 +923,12 @@ RandomAccessIterator3 multiway_merge_loser_tree(
 
     LoserTreeType lt(static_cast<size_type>(k), comp);
 
-    const auto total_size = std::min<DiffType>(
+    const DiffType total_size = std::min<DiffType>(
         size,
         std::accumulate(seqs_begin, seqs_end, DiffType(0),
-                        [](DiffType sum, auto x) { return sum + iterpair_size(x); }));
+                        [](DiffType sum, const RandomAccessIteratorPair& x) {
+                            return sum + iterpair_size(x);
+                        }));
 
     for (Source t = 0; t < k; ++t)
     {

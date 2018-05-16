@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <tlx/math/round_to_power_of_two.hpp>
+#include <tlx/simple_vector.hpp>
 
 namespace tlx {
 
@@ -142,7 +143,7 @@ void multisequence_partition(
 
     assert(m != 0 && N != 0 && rank < N);
 
-    diff_type* seqlen = new diff_type[m];
+    simple_vector<diff_type> seqlen(m);
 
     seqlen[0] = std::distance(begin_seqs[0].first, begin_seqs[0].second);
     nmax = seqlen[0];
@@ -156,7 +157,7 @@ void multisequence_partition(
     // iff nmax = 2^k - 1
     diff_type l = round_up_to_power_of_two(nmax + 1) - 1;
 
-    diff_type* a = new diff_type[m], * b = new diff_type[m];
+    simple_vector<diff_type> a(m), b(m);
 
     for (diff_type i = 0; i < m; ++i)
         a[i] = 0, b[i] = l;
@@ -324,10 +325,6 @@ void multisequence_partition(
 
     for (diff_type i = 0; i < m; ++i)
         begin_offsets[i] = S(i) + a[i];
-
-    delete[] seqlen;
-    delete[] a;
-    delete[] b;
 }
 
 /*!
@@ -373,7 +370,7 @@ ValueType multisequence_selection(
         // result undefined when there is no data or rank is outside bounds
         throw std::exception();
 
-    diff_type* seqlen = new diff_type[m];
+    simple_vector<diff_type> seqlen(m);
 
     seqlen[0] = std::distance(begin_seqs[0].first, begin_seqs[0].second);
     nmax = seqlen[0];
@@ -387,7 +384,7 @@ ValueType multisequence_selection(
     // nmax = 2^k - 1
     diff_type l = round_up_to_power_of_two(nmax + 1) - 1;
 
-    diff_type* a = new diff_type[m], * b = new diff_type[m];
+    simple_vector<diff_type> a(m), b(m);
 
     for (diff_type i = 0; i < m; ++i)
         a[i] = 0, b[i] = l;
@@ -569,10 +566,6 @@ ValueType multisequence_selection(
             offset += a[i] - lb;
         }
     }
-
-    delete[] seqlen;
-    delete[] a;
-    delete[] b;
 
     return *minright;
 }

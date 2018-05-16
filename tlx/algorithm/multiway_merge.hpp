@@ -23,6 +23,7 @@
 
 #include <tlx/algorithm/merge_advance.hpp>
 #include <tlx/loser_tree.hpp>
+#include <tlx/simple_vector.hpp>
 #include <tlx/unused.hpp>
 
 namespace tlx {
@@ -737,8 +738,8 @@ RandomAccessIterator3 multiway_merge_bubble(
     // num remaining pieces
     int num_seqs = static_cast<int>(seqs_end - seqs_begin), nrp;
 
-    value_type* pl = new value_type[num_seqs];
-    int* source = new int[num_seqs];
+    simple_vector<value_type> pl(num_seqs);
+    simple_vector<int> source(num_seqs);
     DiffType total_size = 0;
 
 #define POS(i) seqs_begin[(i)].first
@@ -880,9 +881,6 @@ RandomAccessIterator3 multiway_merge_bubble(
             }
         }
     }
-
-    delete[] pl;
-    delete[] source;
 
     return target;
 }

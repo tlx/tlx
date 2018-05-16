@@ -71,6 +71,7 @@ DiffTypeOutputIterator equally_split(
  * \param comp Comparator.
  * \param chunks Output subsequences for num_threads.
  * \param num_threads Split the sequences into for num_threads.
+ * \param merge_oversampling oversampling factor
  * \tparam Stable Stable merging incurs a performance penalty.
  * \return End iterator of output sequence.
  */

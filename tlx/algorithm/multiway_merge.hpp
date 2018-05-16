@@ -55,7 +55,8 @@ public:
     using self_type = guarded_iterator<RandomAccessIterator, Comparator>;
 
     //! Value type of the iterator
-    using value_type = typename std::iterator_traits<RandomAccessIterator>::value_type;
+    using value_type =
+              typename std::iterator_traits<RandomAccessIterator>::value_type;
 
 protected:
     //! Current iterator position.
@@ -140,7 +141,8 @@ public:
     using self_type = unguarded_iterator<RandomAccessIterator, Comparator>;
 
     //! Value type of the iterator
-    using value_type = typename std::iterator_traits<RandomAccessIterator>::value_type;
+    using value_type =
+              typename std::iterator_traits<RandomAccessIterator>::value_type;
 
 protected:
     //! Current iterator position.
@@ -744,16 +746,16 @@ RandomAccessIterator3 multiway_merge_bubble(
     simple_vector<int> source(num_seqs);
     DiffType total_size = 0;
 
-#define POS(i) seqs_begin[(i)].first
-#define STOPS(i) seqs_begin[(i)].second
+#define TLX_POS(i) seqs_begin[(i)].first
+#define TLX_STOPS(i) seqs_begin[(i)].second
 
     // write entries into queue
     nrp = 0;
     for (int pi = 0; pi < num_seqs; ++pi)
     {
-        if (STOPS(pi) != POS(pi))
+        if (TLX_STOPS(pi) != TLX_POS(pi))
         {
-            pl[nrp] = *(POS(pi));
+            pl[nrp] = *(TLX_POS(pi));
             source[nrp] = pi;
             ++nrp;
             total_size += iterpair_size(seqs_begin[pi]);
@@ -795,9 +797,9 @@ RandomAccessIterator3 multiway_merge_bubble(
                 {
                     *target = pl[0];
                     ++target;
-                    ++POS(source[0]);
+                    ++TLX_POS(source[0]);
                     --size;
-                    if (POS(source[0]) == STOPS(source[0]))
+                    if (TLX_POS(source[0]) == TLX_STOPS(source[0]))
                     {
                         // move everything to the left
                         for (int s = 0; s < nrp - 1; ++s)
@@ -809,7 +811,7 @@ RandomAccessIterator3 multiway_merge_bubble(
                         break;
                     }
                     else
-                        pl[0] = *(POS(source[0]));
+                        pl[0] = *(TLX_POS(source[0]));
                 }
             }
             else
@@ -819,9 +821,9 @@ RandomAccessIterator3 multiway_merge_bubble(
                 {
                     *target = pl[0];
                     ++target;
-                    ++POS(source[0]);
+                    ++TLX_POS(source[0]);
                     --size;
-                    if (POS(source[0]) == STOPS(source[0]))
+                    if (TLX_POS(source[0]) == TLX_STOPS(source[0]))
                     {
                         for (int s = 0; s < nrp - 1; ++s)
                         {
@@ -832,7 +834,7 @@ RandomAccessIterator3 multiway_merge_bubble(
                         break;
                     }
                     else
-                        pl[0] = *(POS(source[0]));
+                        pl[0] = *(TLX_POS(source[0]));
                 }
             }
 
@@ -857,9 +859,9 @@ RandomAccessIterator3 multiway_merge_bubble(
             {
                 *target = pl[0];
                 ++target;
-                ++POS(source[0]);
+                ++TLX_POS(source[0]);
                 --size;
-                if (POS(source[0]) == STOPS(source[0]))
+                if (TLX_POS(source[0]) == TLX_STOPS(source[0]))
                 {
                     for (int s = 0; s < (nrp - 1); ++s)
                     {
@@ -870,7 +872,7 @@ RandomAccessIterator3 multiway_merge_bubble(
                     break;
                 }
                 else
-                    pl[0] = *(POS(source[0]));
+                    pl[0] = *(TLX_POS(source[0]));
             }
 
             // sink down
@@ -883,6 +885,9 @@ RandomAccessIterator3 multiway_merge_bubble(
             }
         }
     }
+
+#undef TLX_POS
+#undef TLX_STOPS
 
     return target;
 }

@@ -19,7 +19,10 @@ print "#include <$_>\n" foreach sort glob("tlx/algorithm/"."*.hpp");
 ]]]*/
 #include <tlx/algorithm/exclusive_scan.hpp>
 #include <tlx/algorithm/is_sorted_cmp.hpp>
+#include <tlx/algorithm/merge_advance.hpp>
 #include <tlx/algorithm/merge_combine.hpp>
+#include <tlx/algorithm/multisequence_selection.hpp>
+#include <tlx/algorithm/multiway_merge.hpp>
 // [[[end]]]
 
 #endif // !TLX_ALGORITHM_HEADER

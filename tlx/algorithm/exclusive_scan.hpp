@@ -16,6 +16,9 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_algorithm
+//! \{
+
 template <typename InputIterator, typename OutputIterator,
           typename T, typename BinaryOperation = std::plus<T> >
 OutputIterator exclusive_scan(InputIterator first, InputIterator last,
@@ -34,6 +37,8 @@ OutputIterator exclusive_scan(InputIterator first, InputIterator last,
     }
     return result;
 }
+
+//! \}
 
 } // namespace tlx
 

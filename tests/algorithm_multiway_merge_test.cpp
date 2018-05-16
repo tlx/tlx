@@ -113,12 +113,12 @@ void test_vecs(unsigned int vecnum,
 
     if (Parallel) {
         if (!Stable)
-            tlx::parallel_multiway_merge_base<Stable>(
+            tlx::parallel_multiway_merge(
                 sequences.begin(), sequences.end(),
                 output.begin(), static_cast<difference_type>(totalsize),
                 std::less<ValueType>(), mwma, mwmsa);
         else
-            tlx::parallel_multiway_merge_base<Stable>(
+            tlx::stable_parallel_multiway_merge(
                 sequences.begin(), sequences.end(),
                 output.begin(), static_cast<difference_type>(totalsize),
                 std::less<ValueType>(), mwma, mwmsa);
@@ -148,7 +148,7 @@ void test_vecs(unsigned int vecnum,
                 std::less<ValueType>(), mwma);
     }
 
-    if (debug) {
+    if (debug || output != correct) {
         for (size_t i = 0; i < output.size(); ++i)
             std::cout << '(' << output[i] << '=' << correct[i] << ')' << ' ';
     }

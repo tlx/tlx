@@ -89,7 +89,7 @@ if(NOT MSVC)
   ### Linux/Unix-like Build Environment ########################################
 
   # enable warnings
-  set(CMAKE_CXX_FLAGS "-g -W -Wall -Wextra -fPIC ${CMAKE_CXX_FLAGS} -fopenmp")
+  set(CMAKE_CXX_FLAGS "-g -W -Wall -Wextra -fPIC ${CMAKE_CXX_FLAGS}")
 
   # test availability of -std=c++XX version
   include(CheckCXXCompilerFlag)

@@ -22,7 +22,9 @@
 #include <thread>
 #include <vector>
 
+#if defined(_OPENMP)
 #include <omp.h>
+#endif
 
 #include <tlx/algorithm/multiway_merge.hpp>
 #include <tlx/algorithm/multiway_merge_splitting.hpp>
@@ -46,13 +48,18 @@ enum MultiwayMergeSplittingAlgorithm {
 /*!
  * Parallel multi-way merge routine.
  *
- * The decision if based on the branching factor and runtime settings.
+ * Implemented either using OpenMP or with std::threads, depending on if
+ * compiled with -fopenmp or not. The OpenMP version uses the implicit thread
+ * pool, which is faster when using this method often.
  *
  * \param seqs_begin Begin iterator of iterator pair input sequence.
  * \param seqs_end End iterator of iterator pair input sequence.
  * \param target Begin iterator out output sequence.
  * \param size Maximum size to merge.
  * \param comp Comparator.
+ * \param mwma MultiwayMergeAlgorithm set to use.
+ * \param mwmsa MultiwayMergeSplittingAlgorithm to use.
+ * \param num_threads Number of threads to use (defaults to all cores)
  * \tparam Stable Stable merging incurs a performance penalty.
  * \return End iterator of output sequence.
  */
@@ -60,7 +67,10 @@ template <
     bool Stable,
     typename RandomAccessIteratorIterator,
     typename RandomAccessIterator3,
-    typename Comparator>
+    typename Comparator = std::less<
+        typename std::iterator_traits<
+            typename std::iterator_traits<RandomAccessIteratorIterator>
+            ::value_type::first_type>::value_type> >
 RandomAccessIterator3 parallel_multiway_merge_base(
     RandomAccessIteratorIterator seqs_begin,
     RandomAccessIteratorIterator seqs_end,
@@ -69,9 +79,10 @@ RandomAccessIterator3 parallel_multiway_merge_base(
         typename std::iterator_traits<
             RandomAccessIteratorIterator>::value_type::first_type>::
     difference_type size,
-    Comparator comp,
+    Comparator comp = Comparator(),
     MultiwayMergeAlgorithm mwma = MWMA_ALGORITHM_DEFAULT,
-    MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT) {
+    MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT,
+    size_t num_threads = std::thread::hardware_concurrency()) {
 
     using RandomAccessIteratorPair =
               typename std::iterator_traits<RandomAccessIteratorIterator>
@@ -99,8 +110,8 @@ RandomAccessIterator3 parallel_multiway_merge_base(
     if (total_size == 0 || num_seqs == 0)
         return target;
 
-    size_t num_threads = static_cast<size_t>(
-        std::min(std::thread::hardware_concurrency(), unsigned(total_size)));
+    if (static_cast<DiffType>(num_threads) > total_size)
+        num_threads = total_size;
 
     // thread t will have to merge chunks[iam][0..k - 1]
 
@@ -109,26 +120,24 @@ RandomAccessIterator3 parallel_multiway_merge_base(
     for (size_t s = 0; s < num_threads; ++s)
         chunks[s].resize(num_seqs);
 
+    if (mwmsa == MWMSA_SAMPLING)
+    {
+        multiway_merge_sampling_splitting<Stable>(
+            seqs_ne.begin(), seqs_ne.end(),
+            static_cast<DiffType>(size), total_size, comp,
+            chunks.data(), num_threads);
+    }
+    else // (mwmsa == MWMSA_EXACT)
+    {
+        multiway_merge_exact_splitting<Stable>(
+            seqs_ne.begin(), seqs_ne.end(),
+            static_cast<DiffType>(size), total_size, comp,
+            chunks.data(), num_threads);
+    }
+
+#if defined(_OPENMP)
 #pragma omp parallel num_threads(num_threads)
     {
-#pragma omp single
-        {
-            if (mwmsa == MWMSA_SAMPLING)
-            {
-                multiway_merge_sampling_splitting<Stable>(
-                    seqs_ne.begin(), seqs_ne.end(),
-                    static_cast<DiffType>(size), total_size, comp,
-                    chunks.data(), num_threads);
-            }
-            else // (mwmsa == MWMSA_EXACT)
-            {
-                multiway_merge_exact_splitting<Stable>(
-                    seqs_ne.begin(), seqs_ne.end(),
-                    static_cast<DiffType>(size), total_size, comp,
-                    chunks.data(), num_threads);
-            }
-        }
-
         size_t iam = omp_get_thread_num();
 
         DiffType target_position = 0, local_size = 0;
@@ -145,6 +154,31 @@ RandomAccessIterator3 parallel_multiway_merge_base(
             std::min(local_size, static_cast<DiffType>(size) - target_position),
             comp, mwma);
     }
+#else
+    std::vector<std::thread> threads(num_threads);
+
+    for (size_t iam = 0; iam < num_threads; ++iam) {
+        threads[iam] = std::thread(
+            [&, iam]() {
+                DiffType target_position = 0, local_size = 0;
+
+                for (size_t s = 0; s < num_seqs; ++s)
+                {
+                    target_position += chunks[iam][s].first - seqs_ne[s].first;
+                    local_size += chunks[iam][s].second - chunks[iam][s].first;
+                }
+
+                multiway_merge_base<Stable, false>(
+                    chunks[iam].begin(), chunks[iam].end(),
+                    target + target_position,
+                    std::min(local_size, static_cast<DiffType>(size) - target_position),
+                    comp, mwma);
+            });
+    }
+
+    for (size_t i = 0; i < num_threads; ++i)
+        threads[i].join();
+#endif
 
     // update ends of sequences
     size_t count_seqs = 0;
@@ -155,6 +189,93 @@ RandomAccessIterator3 parallel_multiway_merge_base(
     }
 
     return target + size;
+}
+
+/******************************************************************************/
+// parallel_multiway_merge() Frontends
+
+/*!
+ * Parallel multi-way merge routine.
+ *
+ * Implemented either using OpenMP or with std::threads, depending on if
+ * compiled with -fopenmp or not. The OpenMP version uses the implicit thread
+ * pool, which is faster when using this method often.
+ *
+ * \param seqs_begin Begin iterator of iterator pair input sequence.
+ * \param seqs_end End iterator of iterator pair input sequence.
+ * \param target Begin iterator out output sequence.
+ * \param size Maximum size to merge.
+ * \param comp Comparator.
+ * \param mwma MultiwayMergeAlgorithm set to use.
+ * \param mwmsa MultiwayMergeSplittingAlgorithm to use.
+ * \param num_threads Number of threads to use (defaults to all cores)
+ * \tparam Stable Stable merging incurs a performance penalty.
+ * \return End iterator of output sequence.
+ */
+template <
+    typename RandomAccessIteratorIterator,
+    typename RandomAccessIterator3,
+    typename Comparator = std::less<
+        typename std::iterator_traits<
+            typename std::iterator_traits<RandomAccessIteratorIterator>
+            ::value_type::first_type>::value_type> >
+RandomAccessIterator3 parallel_multiway_merge(
+    RandomAccessIteratorIterator seqs_begin,
+    RandomAccessIteratorIterator seqs_end,
+    RandomAccessIterator3 target,
+    const typename std::iterator_traits<
+        typename std::iterator_traits<
+            RandomAccessIteratorIterator>::value_type::first_type>::
+    difference_type size,
+    Comparator comp = Comparator(),
+    MultiwayMergeAlgorithm mwma = MWMA_ALGORITHM_DEFAULT,
+    MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT,
+    size_t num_threads = std::thread::hardware_concurrency()) {
+
+    return parallel_multiway_merge_base</* Stable */ false>(
+        seqs_begin, seqs_end, target, size, comp, mwma, mwmsa, num_threads);
+}
+
+/*!
+ * Parallel multi-way merge routine.
+ *
+ * Implemented either using OpenMP or with std::threads, depending on if
+ * compiled with -fopenmp or not. The OpenMP version uses the implicit thread
+ * pool, which is faster when using this method often.
+ *
+ * \param seqs_begin Begin iterator of iterator pair input sequence.
+ * \param seqs_end End iterator of iterator pair input sequence.
+ * \param target Begin iterator out output sequence.
+ * \param size Maximum size to merge.
+ * \param comp Comparator.
+ * \param mwma MultiwayMergeAlgorithm set to use.
+ * \param mwmsa MultiwayMergeSplittingAlgorithm to use.
+ * \param num_threads Number of threads to use (defaults to all cores)
+ * \tparam Stable Stable merging incurs a performance penalty.
+ * \return End iterator of output sequence.
+ */
+template <
+    typename RandomAccessIteratorIterator,
+    typename RandomAccessIterator3,
+    typename Comparator = std::less<
+        typename std::iterator_traits<
+            typename std::iterator_traits<RandomAccessIteratorIterator>
+            ::value_type::first_type>::value_type> >
+RandomAccessIterator3 stable_parallel_multiway_merge(
+    RandomAccessIteratorIterator seqs_begin,
+    RandomAccessIteratorIterator seqs_end,
+    RandomAccessIterator3 target,
+    const typename std::iterator_traits<
+        typename std::iterator_traits<
+            RandomAccessIteratorIterator>::value_type::first_type>::
+    difference_type size,
+    Comparator comp = Comparator(),
+    MultiwayMergeAlgorithm mwma = MWMA_ALGORITHM_DEFAULT,
+    MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT,
+    size_t num_threads = std::thread::hardware_concurrency()) {
+
+    return parallel_multiway_merge_base</* Stable */ true>(
+        seqs_begin, seqs_end, target, size, comp, mwma, mwmsa, num_threads);
 }
 
 //! \}

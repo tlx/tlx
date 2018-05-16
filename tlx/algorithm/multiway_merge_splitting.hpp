@@ -18,7 +18,7 @@
 #ifndef TLX_ALGORITHM_MULTIWAY_MERGE_SPLITTING_HEADER
 #define TLX_ALGORITHM_MULTIWAY_MERGE_SPLITTING_HEADER
 
-#include <numeric>
+#include <algorithm>
 #include <vector>
 
 #include <tlx/algorithm/multisequence_selection.hpp>
@@ -108,7 +108,7 @@ void multiway_merge_sampling_splitting(
         num_threads * static_cast<DiffType>(merge_oversampling);
 
     // pick samples
-    value_type* samples = new value_type[num_seqs * num_samples];
+    simple_vector<value_type> samples(num_seqs * num_samples);
 
     for (DiffType s = 0; s < num_seqs; ++s)
     {
@@ -123,9 +123,9 @@ void multiway_merge_sampling_splitting(
     }
 
     if (Stable)
-        std::stable_sort(samples, samples + (num_samples * num_seqs), comp);
+        std::stable_sort(samples.begin(), samples.end(), comp);
     else
-        std::sort(samples, samples + (num_samples * num_seqs), comp);
+        std::sort(samples.begin(), samples.end(), comp);
 
     // for each processor
     for (size_t slab = 0; slab < num_threads; ++slab)
@@ -154,8 +154,6 @@ void multiway_merge_sampling_splitting(
                 chunks[slab][static_cast<size_t>(seq)].second = seqs_begin[seq].second;
         }
     }
-
-    delete[] samples;
 }
 
 /*!
@@ -191,6 +189,7 @@ void multiway_merge_exact_splitting(
     std::vector<typename std::iterator_traits<
                     RandomAccessIteratorIterator>::value_type>* chunks,
     const size_t num_threads) {
+
     using RandomAccessIteratorPair =
               typename std::iterator_traits<RandomAccessIteratorIterator>
               ::value_type;
@@ -202,8 +201,7 @@ void multiway_merge_exact_splitting(
     const size_t num_seqs = static_cast<size_t>(seqs_end - seqs_begin);
     const bool tight = (total_size == size);
 
-    std::vector<RandomAccessIterator>* offsets
-        = new std::vector<RandomAccessIterator>[num_threads];
+    simple_vector<std::vector<RandomAccessIterator> > offsets(num_threads);
 
     std::vector<DiffType> ranks(static_cast<size_t>(num_threads + 1));
     equally_split(size, num_threads, ranks.begin());
@@ -241,8 +239,6 @@ void multiway_merge_exact_splitting(
                 chunks[slab][s].second = seqs_begin[static_cast<DiffType>(s)].second;
         }
     }
-
-    delete[] offsets;
 }
 
 //! \}

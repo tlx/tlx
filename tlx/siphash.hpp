@@ -16,6 +16,7 @@
 
 #include <tlx/define/attribute_fallthrough.hpp>
 #include <tlx/math/bswap_le.hpp>
+#include <tlx/math/rol.hpp>
 
 #include <cstdint>
 #include <cstdlib>
@@ -24,15 +25,9 @@
 
 #include <intrin.h>
 
-#define ROTL64(a, b) _rotl64(a, b)
-
 #if (_MSC_VER > 1200) || defined(_mm_free)
 #define __SSE2__
 #endif
-
-#else // !defined(_MSC_VER)
-
-#define ROTL64(a, b) (((a) << (b)) | ((a) >> (64 - b)))
 
 #endif // !defined(_MSC_VER)
 
@@ -59,23 +54,23 @@ uint64_t siphash_plain(const uint8_t key[16], const uint8_t* m, size_t len) {
 
     last7 = static_cast<uint64_t>(len & 0xff) << 56;
 
-#define sipcompress()    \
-    v0 += v1; v2 += v3;  \
-    v1 = ROTL64(v1, 13); \
-    v3 = ROTL64(v3, 16); \
-    v1 ^= v0; v3 ^= v2;  \
-    v0 = ROTL64(v0, 32); \
-    v2 += v1; v0 += v3;  \
-    v1 = ROTL64(v1, 17); \
-    v3 = ROTL64(v3, 21); \
-    v1 ^= v2; v3 ^= v0;  \
-    v2 = ROTL64(v2, 32);
+#define TLX_SIPCOMPRESS() \
+    v0 += v1; v2 += v3;   \
+    v1 = rol64(v1, 13);   \
+    v3 = rol64(v3, 16);   \
+    v1 ^= v0; v3 ^= v2;   \
+    v0 = rol64(v0, 32);   \
+    v2 += v1; v0 += v3;   \
+    v1 = rol64(v1, 17);   \
+    v3 = rol64(v3, 21);   \
+    v1 ^= v2; v3 ^= v0;   \
+    v2 = rol64(v2, 32);
 
     for (i = 0, blocks = (len & ~7); i < blocks; i += 8) {
         mi = bswap64_le(*reinterpret_cast<const uint64_t*>(m + i));
         v3 ^= mi;
-        sipcompress();
-        sipcompress();
+        TLX_SIPCOMPRESS();
+        TLX_SIPCOMPRESS();
         v0 ^= mi;
     }
 
@@ -106,16 +101,16 @@ uint64_t siphash_plain(const uint8_t key[16], const uint8_t* m, size_t len) {
     }
 
     v3 ^= last7;
-    sipcompress();
-    sipcompress();
+    TLX_SIPCOMPRESS();
+    TLX_SIPCOMPRESS();
     v0 ^= last7;
     v2 ^= 0xff;
-    sipcompress();
-    sipcompress();
-    sipcompress();
-    sipcompress();
+    TLX_SIPCOMPRESS();
+    TLX_SIPCOMPRESS();
+    TLX_SIPCOMPRESS();
+    TLX_SIPCOMPRESS();
 
-#undef sipcompress
+#undef TLX_SIPCOMPRESS
 
     return v0 ^ v1 ^ v2 ^ v3;
 }
@@ -160,7 +155,7 @@ uint64_t siphash_sse2(const uint8_t key[16], const uint8_t* m, size_t len) {
 
     last7 = static_cast<uint64_t>(len & 0xff) << 56;
 
-#define sipcompress()                                                          \
+#define TLX_SIPCOMPRESS()                                                      \
     v11 = v13;                                                                 \
     v33 = _mm_shuffle_epi32(v13, _MM_SHUFFLE(1, 0, 3, 2));                     \
     v11 = _mm_or_si128(_mm_slli_epi64(v11, 13), _mm_srli_epi64(v11, 64 - 13)); \
@@ -181,8 +176,8 @@ uint64_t siphash_sse2(const uint8_t key[16], const uint8_t* m, size_t len) {
     for (i = 0, blocks = (len & ~7); i < blocks; i += 8) {
         mi = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(m + i));
         v13 = _mm_xor_si128(v13, _mm_slli_si128(mi, 8));
-        sipcompress();
-        sipcompress();
+        TLX_SIPCOMPRESS();
+        TLX_SIPCOMPRESS();
         v02 = _mm_xor_si128(v02, mi);
     }
 
@@ -216,21 +211,21 @@ uint64_t siphash_sse2(const uint8_t key[16], const uint8_t* m, size_t len) {
         _mm_cvtsi32_si128(static_cast<uint32_t>(last7)),
         _mm_cvtsi32_si128(static_cast<uint32_t>(last7 >> 32)));
     v13 = _mm_xor_si128(v13, _mm_slli_si128(mi, 8));
-    sipcompress();
-    sipcompress();
+    TLX_SIPCOMPRESS();
+    TLX_SIPCOMPRESS();
     v02 = _mm_xor_si128(v02, mi);
     v02 = _mm_xor_si128(v02, siphash_final.v);
-    sipcompress();
-    sipcompress();
-    sipcompress();
-    sipcompress();
+    TLX_SIPCOMPRESS();
+    TLX_SIPCOMPRESS();
+    TLX_SIPCOMPRESS();
+    TLX_SIPCOMPRESS();
 
     v02 = _mm_xor_si128(v02, v13);
     v02 = _mm_xor_si128(v02, _mm_shuffle_epi32(v02, _MM_SHUFFLE(1, 0, 3, 2)));
     lo = _mm_cvtsi128_si32(v02);
     hi = _mm_cvtsi128_si32(_mm_srli_si128(v02, 4));
 
-#undef sipcompress
+#undef TLX_SIPCOMPRESS
 
     return (static_cast<uint64_t>(hi) << 32) | lo;
 }
@@ -263,7 +258,7 @@ uint64_t siphash(const Type& value) {
     return siphash(reinterpret_cast<const uint8_t*>(&value), sizeof(value));
 }
 
-#undef ROTL64
+#undef rol64
 
 } // namespace tlx
 

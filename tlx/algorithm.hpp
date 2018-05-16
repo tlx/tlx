@@ -24,6 +24,7 @@ print "#include <$_>\n" foreach sort glob("tlx/algorithm/"."*.hpp");
 #include <tlx/algorithm/multisequence_selection.hpp>
 #include <tlx/algorithm/multiway_merge.hpp>
 #include <tlx/algorithm/multiway_merge_splitting.hpp>
+#include <tlx/algorithm/parallel_multiway_merge.hpp>
 // [[[end]]]
 
 #endif // !TLX_ALGORITHM_HEADER

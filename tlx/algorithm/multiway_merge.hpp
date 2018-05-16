@@ -229,8 +229,9 @@ prepare_unguarded(
     RandomAccessIteratorIterator seqs_end,
     Comparator comp,
     int& min_sequence) {
-    using RandomAccessIterator = typename std::iterator_traits<RandomAccessIteratorIterator>
-                                 ::value_type::first_type;
+    using RandomAccessIterator =
+              typename std::iterator_traits<RandomAccessIteratorIterator>
+              ::value_type::first_type;
     using value_type = typename std::iterator_traits<RandomAccessIterator>
                        ::value_type;
     using diff_type = typename std::iterator_traits<RandomAccessIterator>
@@ -595,11 +596,11 @@ RandomAccessIterator3 multiway_merge_4_variant(
 
 #define TLX_MERGE4CASE(a, b, c, d, c0, c1, c2)             \
     s ## a ## b ## c ## d:                                 \
-    if (size == 0) goto finish;                            \
     *target = *seq ## a;                                   \
     ++target;                                              \
     --size;                                                \
     ++seq ## a;                                            \
+    if (size == 0) goto finish;                            \
     if (seq ## a c0 seq ## b) goto s ## a ## b ## c ## d;  \
     if (seq ## a c1 seq ## c) goto s ## b ## a ## c ## d;  \
     if (seq ## a c2 seq ## d) goto s ## b ## c ## a ## d;  \
@@ -655,6 +656,7 @@ RandomAccessIterator3 multiway_merge_4_combined(
             RandomAccessIteratorIterator>::value_type::first_type>::
     difference_type size,
     Comparator comp) {
+
     assert(seqs_end - seqs_begin == 4);
     using RandomAccessIteratorPair =
               typename std::iterator_traits<RandomAccessIteratorIterator>
@@ -673,8 +675,8 @@ RandomAccessIterator3 multiway_merge_4_combined(
     if (overhang != static_cast<DiffType>(-1))
     {
         DiffType unguarded_size = std::min(size, total_size - overhang);
-        target_end = multiway_merge_4_variant<unguarded_iterator>
-                         (seqs_begin, seqs_end, target, unguarded_size, comp);
+        target_end = multiway_merge_4_variant<unguarded_iterator>(
+            seqs_begin, seqs_end, target, unguarded_size, comp);
         overhang = size - unguarded_size;
     }
     else
@@ -914,7 +916,7 @@ RandomAccessIterator3 multiway_merge_loser_tree(
     using Source = typename LoserTreeType::Source;
     using size_type = typename LoserTreeType::Source;
     using RandomAccessIteratorPair =
-        typename std::iterator_traits<RandomAccessIteratorIterator>::value_type;
+              typename std::iterator_traits<RandomAccessIteratorIterator>::value_type;
     using RandomAccessIterator = typename RandomAccessIteratorPair::first_type;
     using DiffType = typename std::iterator_traits<RandomAccessIterator>
                      ::difference_type;
@@ -940,21 +942,31 @@ RandomAccessIterator3 multiway_merge_loser_tree(
 
     lt.init();
 
-    for (DiffType i = 0; i < total_size; ++i)
+    if (total_size == 0)
+        return target;
+
+    // take out first
+    Source source = lt.min_source();
+
+    *target = *seqs_begin[source].first;
+    ++target;
+    ++seqs_begin[source].first;
+
+    for (DiffType i = 1; i < total_size; ++i)
     {
-        // take out
-        Source source = lt.min_source();
-
-        *target = *seqs_begin[source].first;
-        ++target;
-        ++seqs_begin[source].first;
-
         // feed
         if (seqs_begin[source].first == seqs_begin[source].second)
             lt.delete_min_insert(nullptr, true);
         else
             // replace from same source
             lt.delete_min_insert(&*seqs_begin[source].first, false);
+
+        // take out following
+        source = lt.min_source();
+
+        *target = *seqs_begin[source].first;
+        ++target;
+        ++seqs_begin[source].first;
     }
 
     return target;
@@ -1018,20 +1030,28 @@ RandomAccessIterator3 multiway_merge_loser_tree_unguarded(
     // do not go past end
     size = std::min(total_size, size);
 
-    int source;
-
     RandomAccessIterator3 target_end = target + size;
+    if (target == target_end)
+        return target;
+
+    // take out first
+    int source = lt.min_source();
+
+    *target = *seqs_begin[source].first;
+    ++seqs_begin[source].first;
+    ++target;
+
     while (target < target_end)
     {
-        // take out
+        // feed. replace from same source
+        lt.delete_min_insert(&*seqs_begin[source].first, false);
+
+        // take out following
         source = lt.min_source();
 
         *target = *seqs_begin[source].first;
         ++seqs_begin[source].first;
         ++target;
-
-        // feed. replace from same source
-        lt.delete_min_insert(&*seqs_begin[source].first, false);
     }
 
     return target;

@@ -163,20 +163,20 @@ void test_all(const tlx::MultiwayMergeAlgorithm& mwma) {
         std::cout << "testing multiway_merge with " << n << " players\n";
 
         test_vecs<Something, /* Parallel */ false, /* Stable */ false, /* Sentinels */ false>(n, mwma);
-        test_vecs<Something, /* Parallel */ false,/* Stable */ true, /* Sentinels */ false>(n, mwma);
-        test_vecs<Something, /* Parallel */ false,/* Stable */ false, /* Sentinels */ true>(n, mwma);
-        test_vecs<Something, /* Parallel */ false,/* Stable */ true, /* Sentinels */ true>(n, mwma);
+        test_vecs<Something, /* Parallel */ false, /* Stable */ true, /* Sentinels */ false>(n, mwma);
+        test_vecs<Something, /* Parallel */ false, /* Stable */ false, /* Sentinels */ true>(n, mwma);
+        test_vecs<Something, /* Parallel */ false, /* Stable */ true, /* Sentinels */ true>(n, mwma);
 
-        test_vecs<unsigned int, /* Parallel */ false,/* Stable */ false, /* Sentinels */ false>(n, mwma);
-        test_vecs<unsigned int, /* Parallel */ false,/* Stable */ true, /* Sentinels */ false>(n, mwma);
-        test_vecs<unsigned int, /* Parallel */ false,/* Stable */ false, /* Sentinels */ true>(n, mwma);
-        test_vecs<unsigned int, /* Parallel */ false,/* Stable */ true, /* Sentinels */ true>(n, mwma);
+        test_vecs<unsigned int, /* Parallel */ false, /* Stable */ false, /* Sentinels */ false>(n, mwma);
+        test_vecs<unsigned int, /* Parallel */ false, /* Stable */ true, /* Sentinels */ false>(n, mwma);
+        test_vecs<unsigned int, /* Parallel */ false, /* Stable */ false, /* Sentinels */ true>(n, mwma);
+        test_vecs<unsigned int, /* Parallel */ false, /* Stable */ true, /* Sentinels */ true>(n, mwma);
 
         test_vecs<Something, /* Parallel */ true, /* Stable */ false, /* Sentinels */ false>(n, mwma, tlx::MWMSA_EXACT);
-        // test_vecs<Something, /* Parallel */ true, /* Stable */ true, /* Sentinels */ false>(n, mwma, tlx::MWMSA_EXACT);
+        test_vecs<Something, /* Parallel */ true, /* Stable */ true, /* Sentinels */ false>(n, mwma, tlx::MWMSA_EXACT);
 
         test_vecs<Something, /* Parallel */ true, /* Stable */ false, /* Sentinels */ false>(n, mwma, tlx::MWMSA_SAMPLING);
-        // test_vecs<Something, /* Parallel */ true, /* Stable */ true, /* Sentinels */ false>(n, mwma, tlx::MWMSA_SAMPLING);
+        test_vecs<Something, /* Parallel */ true, /* Stable */ true, /* Sentinels */ false>(n, mwma, tlx::MWMSA_SAMPLING);
     }
 }
 
@@ -184,7 +184,7 @@ int main() {
     test_all(tlx::MWMA_BUBBLE);
     test_all(tlx::MWMA_LOSER_TREE);
     test_all(tlx::MWMA_LOSER_TREE_COMBINED);
-    // test_all(tlx::MWMA_LOSER_TREE_SENTINEL);
+    test_all(tlx::MWMA_LOSER_TREE_SENTINEL);
 
     return 0;
 }

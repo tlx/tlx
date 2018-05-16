@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/algorithm/multisequence_selection.hpp
+ * tlx/algorithm/multisequence_partition.hpp
  *
  * Implementation of multisequence partition and selection.
  *
@@ -15,8 +15,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_ALGORITHM_MULTISEQUENCE_SELECTION_HEADER
-#define TLX_ALGORITHM_MULTISEQUENCE_SELECTION_HEADER
+#ifndef TLX_ALGORITHM_MULTISEQUENCE_PARTITION_HEADER
+#define TLX_ALGORITHM_MULTISEQUENCE_PARTITION_HEADER
 
 #include <algorithm>
 #include <cassert>
@@ -32,7 +32,7 @@ namespace tlx {
 //! \addtogroup tlx_algorithm
 //! \{
 
-namespace multisequence_selection_local {
+namespace multisequence_partition_local {
 
 //! Compare a pair of types lexicographically, ascending.
 template <typename T1, typename T2, typename Comparator>
@@ -82,41 +82,49 @@ public:
     }
 };
 
-} // namespace multisequence_selection_local
+} // namespace multisequence_partition_local
 
 /*!
- * Selects the element at a certain global rank from several sorted sequences.
- *
- * The sequences are passed via a sequence of random-access iterator pairs, none
- * of the sequences may be empty.
+ * Splits several sorted sequences at a certain global rank, resulting in a
+ * splitting point for each sequence.  The sequences are passed via a sequence
+ * of random-access iterator pairs, none of the sequences may be empty.  If
+ * there are several equal elements across the split, the ones on the left side
+ * will be chosen from sequences with smaller number.
  *
  * \param begin_seqs Begin of the sequence of iterator pairs.
  * \param end_seqs End of the sequence of iterator pairs.
  * \param rank The global rank to partition at.
- * \param offset The rank of the selected element in the global subsequence of
- * elements equal to the selected element. If the selected element is unique,
- * this number is 0.
- * \param comp The ordering functor, defaults to std::less. */
-template <typename ValueType, typename RanSeqs, typename RankType,
-          typename Comparator = std::less<ValueType> >
-ValueType multisequence_selection(
+ * \param begin_offsets A random-access sequence begin where the result will be
+ * stored in. Each element of the sequence is an iterator that points to the
+ * first element on the greater part of the respective sequence.
+ * \param comp The ordering functor, defaults to std::less<T>.
+ */
+template <typename RanSeqs, typename RankType, typename RankIterator,
+          typename Comparator = std::less<
+              typename std::iterator_traits<
+                  typename std::iterator_traits<RanSeqs>
+                  ::value_type::first_type>::value_type>
+          >
+void multisequence_partition(
     const RanSeqs& begin_seqs, const RanSeqs& end_seqs,
     const RankType& rank,
-    RankType& offset,
+    RankIterator begin_offsets,
     Comparator comp = Comparator()) {
 
     using iterator = typename std::iterator_traits<RanSeqs>
                      ::value_type::first_type;
     using diff_type = typename std::iterator_traits<iterator>
                       ::difference_type;
+    using value_type = typename std::iterator_traits<iterator>
+                       ::value_type;
 
-    using SamplePair = std::pair<ValueType, diff_type>;
+    using SamplePair = std::pair<value_type, diff_type>;
 
-    using namespace multisequence_selection_local;
+    using namespace multisequence_partition_local;
 
     // comparators for SamplePair
-    lexicographic<ValueType, diff_type, Comparator> lcomp(comp);
-    lexicographic_rev<ValueType, diff_type, Comparator> lrcomp(comp);
+    lexicographic<value_type, diff_type, Comparator> lcomp(comp);
+    lexicographic_rev<value_type, diff_type, Comparator> lrcomp(comp);
 
     // number of sequences, number of elements in total (possibly including
     // padding)
@@ -125,11 +133,19 @@ ValueType multisequence_selection(
     RankType N = 0;
 
     for (diff_type i = 0; i < m; ++i)
+    {
         N += std::distance(begin_seqs[i].first, begin_seqs[i].second);
+        assert(std::distance(begin_seqs[i].first, begin_seqs[i].second) > 0);
+    }
 
-    if (m == 0 || N == 0 || rank < 0 || rank >= N)
-        // result undefined when there is no data or rank is outside bounds
-        throw std::exception();
+    if (rank == N)
+    {
+        for (diff_type i = 0; i < m; ++i)
+            begin_offsets[i] = begin_seqs[i].second; // very end
+        return;
+    }
+
+    assert(m != 0 && N != 0 && rank < N);
 
     simple_vector<diff_type> seqlen(m);
 
@@ -141,8 +157,8 @@ ValueType multisequence_selection(
         nmax = std::max(nmax, seqlen[i]);
     }
 
-    // pad all lists to this length, at least as long as any ns[i], equliaty iff
-    // nmax = 2^k - 1
+    // pad all lists to this length, at least as long as any ns[i], equality
+    // iff nmax = 2^k - 1
     diff_type l = round_up_to_power_of_two(nmax + 1) - 1;
 
     simple_vector<diff_type> a(m), b(m);
@@ -160,17 +176,21 @@ ValueType multisequence_selection(
     std::vector<SamplePair> sample;
 
     for (diff_type i = 0; i < m; ++i) {
-        if (n < seqlen[i])
+        if (n < seqlen[i]) {
+            // sequence long enough
             sample.push_back(SamplePair(begin_seqs[i].first[n], i));
+        }
     }
 
     std::sort(sample.begin(), sample.end(), lcomp);
 
     for (diff_type i = 0; i < m; ++i) {
         // conceptual infinity
-        if (n >= seqlen[i])
+        if (n >= seqlen[i]) {
+            // sequence too short, conceptual infinity
             sample.push_back(
                 SamplePair(begin_seqs[i].first[0] /* dummy element */, i));
+        }
     }
 
     size_t localrank = static_cast<size_t>(rank / l);
@@ -187,19 +207,17 @@ ValueType multisequence_selection(
     {
         n /= 2;
 
-        const ValueType* lmax = nullptr;
+        const value_type* lmax = nullptr; // impossible to avoid the warning?
         for (diff_type i = 0; i < m; ++i)
         {
             if (a[i] > 0)
             {
                 if (!lmax)
-                {
                     lmax = &(begin_seqs[i].first[a[i] - 1]);
-                }
                 else
                 {
-                    // max
-                    if (comp(*lmax, begin_seqs[i].first[a[i] - 1]))
+                    // max, favor rear sequences
+                    if (!comp(begin_seqs[i].first[a[i] - 1], *lmax))
                         lmax = &(begin_seqs[i].first[a[i] - 1]);
                 }
             }
@@ -226,7 +244,7 @@ ValueType multisequence_selection(
             // move to the left, find smallest
             std::priority_queue<
                 SamplePair, std::vector<SamplePair>,
-                lexicographic_rev<ValueType, diff_type, Comparator> >
+                lexicographic_rev<value_type, diff_type, Comparator> >
             pq(lrcomp);
 
             for (diff_type i = 0; i < m; ++i) {
@@ -251,7 +269,7 @@ ValueType multisequence_selection(
             // move to the right, find greatest
             std::priority_queue<
                 SamplePair, std::vector<SamplePair>,
-                lexicographic<ValueType, diff_type, Comparator> >
+                lexicographic<value_type, diff_type, Comparator> >
             pq(lcomp);
 
             for (diff_type i = 0; i < m; ++i) {
@@ -280,7 +298,7 @@ ValueType multisequence_selection(
     // edges of the border
 
     // maximum of left edge, minimum of right edge
-    ValueType* maxleft = nullptr, * minright = nullptr;
+    value_type* maxleft = nullptr, * minright = nullptr;
     for (diff_type i = 0; i < m; ++i)
     {
         if (a[i] > 0)
@@ -291,8 +309,8 @@ ValueType multisequence_selection(
             }
             else
             {
-                // max
-                if (comp(*maxleft, begin_seqs[i].first[a[i] - 1]))
+                // max, favor rear sequences
+                if (!comp(begin_seqs[i].first[a[i] - 1], *maxleft))
                     maxleft = &(begin_seqs[i].first[a[i] - 1]);
             }
         }
@@ -304,41 +322,21 @@ ValueType multisequence_selection(
             }
             else
             {
-                // min
+                // min, favor fore sequences
                 if (comp(begin_seqs[i].first[b[i]], *minright))
                     minright = &(begin_seqs[i].first[b[i]]);
             }
         }
     }
 
-    // minright is the splitter, in any case
-
-    if (!maxleft || comp(*minright, *maxleft))
-    {
-        // good luck, everything is split unambigiously
-        offset = 0;
-    }
-    else
-    {
-        // we have to calculate an offset
-        offset = 0;
-
-        for (diff_type i = 0; i < m; ++i)
-        {
-            diff_type lb = std::lower_bound(
-                begin_seqs[i].first, begin_seqs[i].first + seqlen[i],
-                *minright, comp) - begin_seqs[i].first;
-            offset += a[i] - lb;
-        }
-    }
-
-    return *minright;
+    for (diff_type i = 0; i < m; ++i)
+        begin_offsets[i] = begin_seqs[i].first + a[i];
 }
 
 //! \}
 
 } // namespace tlx
 
-#endif // !TLX_ALGORITHM_MULTISEQUENCE_SELECTION_HEADER
+#endif // !TLX_ALGORITHM_MULTISEQUENCE_PARTITION_HEADER
 
 /******************************************************************************/

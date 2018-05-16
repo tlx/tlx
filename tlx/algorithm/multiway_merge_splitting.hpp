@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <vector>
 
-#include <tlx/algorithm/multisequence_selection.hpp>
+#include <tlx/algorithm/multisequence_partition.hpp>
 #include <tlx/simple_vector.hpp>
 
 namespace tlx {

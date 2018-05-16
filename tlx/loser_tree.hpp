@@ -64,9 +64,9 @@ protected:
     //! Internal representation of a loser tree player/node
     struct Loser {
         //! flag, true iff is a virtual maximum sentinel
-        bool      sup;
+        bool sup;
         //! index of source
-        Source    source;
+        Source source;
         //! copy of key value of the element in this node
         ValueType key;
     };
@@ -314,7 +314,7 @@ protected:
     //! Internal representation of a loser tree player/node
     struct Loser {
         //! index of source
-        Source         source;
+        Source source;
         //! pointer to key value of the element in this node
         const ValueType* keyp;
     };
@@ -534,7 +534,7 @@ protected:
     //! Internal representation of a loser tree player/node
     struct Loser {
         //! index of source
-        Source    source;
+        Source source;
         //! copy of key value of the element in this node
         ValueType key;
     };
@@ -706,7 +706,7 @@ protected:
     //! Internal representation of a loser tree player/node
     struct Loser {
         //! index of source
-        Source         source;
+        Source source;
         //! copy of key value of the element in this node
         const ValueType* keyp;
     };
@@ -867,7 +867,7 @@ public:
 template <bool Stable, typename ValueType, typename Comparator>
 class LoserTreeSwitch<
         Stable, ValueType, Comparator,
-        typename std::enable_if<sizeof(ValueType) <= 2* sizeof(size_t)>::type>
+        typename std::enable_if<sizeof(ValueType) <= 2 * sizeof(size_t)>::type>
 {
 public:
     using Type = LoserTreeCopy<Stable, ValueType, Comparator>;
@@ -889,7 +889,7 @@ public:
 template <bool Stable, typename ValueType, typename Comparator>
 class LoserTreeUnguardedSwitch<
         Stable, ValueType, Comparator,
-        typename std::enable_if<sizeof(ValueType) <= 2* sizeof(size_t)>::type>
+        typename std::enable_if<sizeof(ValueType) <= 2 * sizeof(size_t)>::type>
 {
 public:
     using Type = LoserTreeCopyUnguarded<Stable, ValueType, Comparator>;
@@ -897,7 +897,7 @@ public:
 
 template <bool Stable, typename ValueType, typename Comparator>
 using LoserTreeUnguarded =
-          typename LoserTreeUnguardedSwitch<Stable, ValueType, Comparator>::Type;
+    typename LoserTreeUnguardedSwitch<Stable, ValueType, Comparator>::Type;
 
 //! \}
 //! \}

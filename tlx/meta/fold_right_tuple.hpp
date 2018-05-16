@@ -41,7 +41,7 @@ auto fold_right_tuple_impl(Reduce&& r, Initial&& init, Tuple&& t,
 template <typename Reduce, typename Initial, typename Tuple>
 auto fold_right_tuple(Reduce&& r, Initial&& init, Tuple&& t) {
     using Indices = make_index_sequence<
-              std::tuple_size<typename std::decay<Tuple>::type>::value>;
+        std::tuple_size<typename std::decay<Tuple>::type>::value>;
     return detail::fold_right_tuple_impl(
         std::forward<Reduce>(r), std::forward<Initial>(init),
         std::forward<Tuple>(t), Indices());

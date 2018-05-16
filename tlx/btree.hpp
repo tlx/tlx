@@ -74,22 +74,22 @@ struct btree_default_traits {
     //! If true, the tree will self verify its invariants after each insert() or
     //! erase(). The header must have been compiled with TLX_BTREE_DEBUG
     //! defined.
-    static const bool   self_verify = false;
+    static const bool self_verify = false;
 
     //! If true, the tree will print out debug information and a tree dump
     //! during insert() or erase() operation. The header must have been
     //! compiled with TLX_BTREE_DEBUG defined and key_type must be std::ostream
     //! printable.
-    static const bool   debug = false;
+    static const bool debug = false;
 
     //! Number of slots in each leaf of the tree. Estimated so that each node
     //! has a size of about 256 bytes.
-    static const int    leaf_slots =
+    static const int leaf_slots =
         TLX_BTREE_MAX(8, 256 / (sizeof(Value)));
 
     //! Number of slots in each inner node of the tree. Estimated so that each
     //! node has a size of about 256 bytes.
-    static const int    inner_slots =
+    static const int inner_slots =
         TLX_BTREE_MAX(8, 256 / (sizeof(Key) + sizeof(void*)));
 
     //! As of stx-btree-0.9, the code does linear search in find_lower() and
@@ -218,13 +218,13 @@ private:
         unsigned short slotuse;
 
         //! Delayed initialisation of constructed node.
-        void           initialize(const unsigned short l) {
+        void initialize(const unsigned short l) {
             level = l;
             slotuse = 0;
         }
 
         //! True if this is a leaf node.
-        bool           is_leafnode() const {
+        bool is_leafnode() const {
             return (level == 0);
         }
     };
@@ -236,10 +236,10 @@ private:
         typedef typename Alloc_::template rebind<inner_node>::other alloc_type;
 
         //! Keys of children or data pointers
-        key_type        slotkey[inner_slotmax];
+        key_type slotkey[inner_slotmax];
 
         //! Pointers to children
-        node            * childid[inner_slotmax + 1];
+        node* childid[inner_slotmax + 1];
 
         //! Set variables to initial values.
         void initialize(const unsigned short l) {
@@ -274,13 +274,13 @@ private:
         typedef typename Alloc_::template rebind<leaf_node>::other alloc_type;
 
         //! Double linked list pointers to traverse the leaves
-        leaf_node       * prev_leaf;
+        leaf_node* prev_leaf;
 
         //! Double linked list pointers to traverse the leaves
-        leaf_node       * next_leaf;
+        leaf_node* next_leaf;
 
         //! Array of (key, data) pairs
-        value_type      slotdata[leaf_slotmax];
+        value_type slotdata[leaf_slotmax];
 
         //! Set variables to initial values
         void initialize() {
@@ -1035,13 +1035,13 @@ public:
      */
     struct tree_stats {
         //! Number of items in the B+ tree
-        size_type                   size;
+        size_type size;
 
         //! Number of leaves in the B+ tree
-        size_type                   leaves;
+        size_type leaves;
 
         //! Number of inner nodes in the B+ tree
-        size_type                   inner_nodes;
+        size_type inner_nodes;
 
         //! Base B+ tree parameter: The number of key/data slots in each leaf
         static const unsigned short leaf_slots = btree_self::leaf_slotmax;
@@ -1056,12 +1056,12 @@ public:
         { }
 
         //! Return the total number of nodes
-        size_type                   nodes() const {
+        size_type nodes() const {
             return inner_nodes + leaves;
         }
 
         //! Return the average fill of leaves
-        double                      avgfill_leaves() const {
+        double avgfill_leaves() const {
             return static_cast<double>(size) / (leaves * leaf_slots);
         }
     };
@@ -2292,7 +2292,7 @@ private:
         result_flags_t flags;
 
         //! The key to be updated at the parent's slot
-        key_type       lastkey;
+        key_type lastkey;
 
         //! Constructor of a result with a specific flag, this can also be used
         //! as for implicit conversion.
@@ -2306,7 +2306,7 @@ private:
         { }
 
         //! Test if this result object has a given flag set.
-        bool           has(result_flags_t f) const {
+        bool has(result_flags_t f) const {
             return (flags & f) != 0;
         }
 

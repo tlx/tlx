@@ -43,11 +43,11 @@ static double timestamp() {
 //! Traits used for the speed tests, BTREE_DEBUG is not defined.
 template <int InnerSlots_, int LeafSlots_>
 struct btree_traits_speed : tlx::btree_default_traits<size_t, size_t>{
-    static const bool   self_verify = false;
-    static const bool   debug = false;
+    static const bool self_verify = false;
+    static const bool debug = false;
 
-    static const int    leaf_slots = InnerSlots_;
-    static const int    inner_slots = LeafSlots_;
+    static const int leaf_slots = InnerSlots_;
+    static const int inner_slots = LeafSlots_;
 
     static const size_t binsearch_threshold = 256 * 1024 * 1024; // never
 };

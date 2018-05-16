@@ -39,7 +39,7 @@ auto apply_tuple_impl(Functor&& f, Tuple&& t, index_sequence<Is...>) {
 template <typename Functor, typename Tuple>
 auto apply_tuple(Functor&& f, Tuple&& t) {
     using Indices = make_index_sequence<
-              std::tuple_size<typename std::decay<Tuple>::type>::value>;
+        std::tuple_size<typename std::decay<Tuple>::type>::value>;
     return detail::apply_tuple_impl(
         std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }

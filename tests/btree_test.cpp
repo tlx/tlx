@@ -45,8 +45,8 @@ struct SimpleTest {
         static const bool self_verify = true;
         static const bool debug = false;
 
-        static const int  leaf_slots = Slots;
-        static const int  inner_slots = Slots;
+        static const int leaf_slots = Slots;
+        static const int inner_slots = Slots;
     };
 
     static void test_empty() {
@@ -287,8 +287,8 @@ struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType>{
     static const bool self_verify = true;
     static const bool debug = false;
 
-    static const int  leaf_slots = 8;
-    static const int  inner_slots = 8;
+    static const int leaf_slots = 8;
+    static const int inner_slots = 8;
 };
 
 void test_large_multiset(const unsigned int insnum, const unsigned int modulo) {

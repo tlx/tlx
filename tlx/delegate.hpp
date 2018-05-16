@@ -123,7 +123,7 @@ public:
     //! constructor from a plain function pointer with no object.
     explicit Delegate(R (*const function_ptr)(A...)) noexcept
         : Delegate(function_ptr_caller,
-                   * reinterpret_cast<void* const*>(&function_ptr)) { }
+                   *reinterpret_cast<void* const*>(&function_ptr)) { }
 
     static_assert(sizeof(void*) == sizeof(void (*)(void)),
                   "object pointer and function pointer sizes must equal");
@@ -375,13 +375,13 @@ private:
     //! method_ptr)
     template <class C>
     using MemberPair =
-              std::pair<C* const, R(C::* const)(A...)>;
+        std::pair<C* const, R(C::* const)(A...)>;
 
     //! wrappers for indirect const class::method calls containing (object,
     //! const method_ptr)
     template <class C>
     using ConstMemberPair =
-              std::pair<C const* const, R(C::* const)(A...) const>;
+        std::pair<C const* const, R(C::* const)(A...) const>;
 
     //! template for class::function selector
     template <typename>

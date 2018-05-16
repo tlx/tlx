@@ -39,7 +39,7 @@ struct make_index_sequence_helper<0, Indexes...>{
 template <size_t CurrentIndex, size_t... Indexes>
 struct make_index_sequence_helper {
     using type = typename make_index_sequence_helper<
-              CurrentIndex - 1, CurrentIndex - 1, Indexes...>::type;
+        CurrentIndex - 1, CurrentIndex - 1, Indexes...>::type;
 };
 
 } // namespace detail

@@ -59,8 +59,8 @@ struct MyIntCompare {
 
 //! struct with two integers
 struct MyIntPair {
-    size_t    key_ = 1;
-    size_t    value_ = 42;
+    size_t key_ = 1;
+    size_t value_ = 42;
 
     //! tracker to count constructions/destructions
     MyTracker track_;

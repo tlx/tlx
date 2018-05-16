@@ -44,7 +44,7 @@ void call_foreach_tuple_with_index_impl(
 template <typename Functor, typename Tuple>
 void call_foreach_tuple_with_index(Functor&& f, Tuple&& t) {
     using Indices = make_index_sequence<
-              std::tuple_size<typename std::decay<Tuple>::type>::value>;
+        std::tuple_size<typename std::decay<Tuple>::type>::value>;
     detail::call_foreach_tuple_with_index_impl(
         std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }

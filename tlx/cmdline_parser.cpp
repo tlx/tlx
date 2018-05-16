@@ -31,7 +31,7 @@ namespace tlx {
 struct CmdlineParser::Argument {
 
     //! single letter short option, or 0 is none
-    char        key_;
+    char key_;
     //! long option key or name for parameters
     std::string longkey_;
     //! option type description, e.g. "<#>" to indicate numbers
@@ -39,11 +39,11 @@ struct CmdlineParser::Argument {
     //! longer description, which will be wrapped
     std::string desc_;
     //! required, process() fails if the option/parameter is not found.
-    bool        required_;
+    bool required_;
     //! found during processing of command line
-    bool        found_ = false;
+    bool found_ = false;
     //! repeated argument, i.e. std::vector<std::string>
-    bool        repeated_ = false;
+    bool repeated_ = false;
 
     //! contructor filling most attributes
     Argument(char key, const std::string& longkey, const std::string& keytype,

@@ -47,7 +47,7 @@ class StackArena
 
     union {
         //! stack memory area used for allocations.
-        char            buf_[Size];
+        char buf_[Size];
         //! enforce alignment
         AlignmentHelper dummy_for_alignment_;
     };

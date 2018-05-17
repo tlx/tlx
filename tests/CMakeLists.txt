@@ -58,6 +58,7 @@ endmacro(tlx_build_test)
 
 ### list of tests in subdirectories
 
+tlx_build_only(algorithm_multiway_merge_benchmark)
 tlx_build_only(btree_speedtest)
 tlx_build_only(cmdline_parser_example)
 

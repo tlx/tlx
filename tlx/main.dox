@@ -38,14 +38,14 @@ List of the most commonly use components:
 - \subpage tlx_die : \ref die(), \ref die_unless(), \ref die_if(), \ref die_unequal().
 - \ref logger.hpp : \ref LOG, \ref LOG1, \ref LOGC, \ref sLOG.
 - \ref unused.hpp : \ref unused.
-- \ref tlx_algorithm : \ref merge_combine().
+- \ref tlx_algorithm : \ref merge_combine(), \ref exclusive_scan(), \ref multiway_merge(), \ref parallel_multiway_merge(), \ref multisequence_selection(), \ref multisequence_partition().
 - \ref tlx_data_structures : \ref RingBuffer, \ref SimpleVector, \ref tlx_data_structures_btree, \ref tlx_data_structures_loser_tree
 - \ref tlx_define : \ref TLX_LIKELY, \ref TLX_UNLIKELY, \ref TLX_ATTRIBUTE_PACKED, \ref TLX_ATTRIBUTE_ALWAYS_INLINE, \ref TLX_ATTRIBUTE_FORMAT_PRINTF, \ref TLX_DEPRECATED_FUNC_DEF.
-- \ref tlx_digest : \ref MD5, \ref MD5_hex(), \ref SHA256, \ref SHA256_hex(), \ref SHA512, \ref SHA512_hex().
+- \ref tlx_digest : \ref MD5, \ref MD5_hex(), \ref SHA1, \ref SHA1_hex(), \ref SHA256, \ref SHA256_hex(), \ref SHA512, \ref SHA512_hex().
 - \ref tlx_math : \ref integer_log2_floor(), \ref is_power_of_two(), \ref round_up_to_power_of_two(), \ref round_down_to_power_of_two(), \ref ffs(), \ref clz(), \ref abs_diff(), \ref bswap32, \ref bswap64.
 - \ref tlx_string : \ref starts_with(), \ref ends_with(), \ref contains(), \ref contains_word(), \ref trim(), \ref replace_all(), \ref erase_all(), \ref join(), \ref split(), \ref split_words(), \ref union_words(), \ref split_quoted(), \ref join_quoted(), \ref to_lower(), \ref hexdump(), \ref word_wrap(), \ref escape_html(), \ref parse_si_iec_units(), \ref format_iec_units().
 - \ref tlx_meta : \ref call_foreach(), \ref apply_tuple(), \ref vmap_foreach(), \ref Log2Floor, \ref FunctionChain, \ref FunctionStack, \ref is_std_pair, \ref is_std_tuple, \ref is_std_vector, \ref is_std_array, \ref TLX_MAKE_HAS_MEMBER.
-- \ref tlx_sort : \ref sort_strings().
+- \ref tlx_sort : \ref sort_strings() (using radix sort and multikey quicksort).
 - \ref backtrace.hpp "Backtrace Printing" : \ref print_cxx_backtrace().
 - \ref cmdline_parser.hpp "Command Line Parsing" : \ref CmdlineParser.
 - \ref delegate.hpp "Fast Delegates" : \ref Delegate - a better std::function<> replacement.

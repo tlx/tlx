@@ -19,6 +19,12 @@ namespace tlx {
 //! \addtogroup tlx_algorithm
 //! \{
 
+/*!
+ * Computes an exclusive prefix sum operation using binary_op the range [first,
+ * last), using init as the initial value, and writes the results to the range
+ * beginning at result. The term "exclusive" means that the i-th input element
+ * is not included in the i-th sum.
+ */
 template <typename InputIterator, typename OutputIterator,
           typename T, typename BinaryOperation = std::plus<T> >
 OutputIterator exclusive_scan(InputIterator first, InputIterator last,

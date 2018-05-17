@@ -1160,10 +1160,10 @@ RandomAccessIterator3 multiway_merge_loser_tree_sentinel(
  * sentinel
  */
 enum MultiwayMergeAlgorithm {
-    MWMA_BUBBLE,
     MWMA_LOSER_TREE,
     MWMA_LOSER_TREE_COMBINED,
     MWMA_LOSER_TREE_SENTINEL,
+    MWMA_BUBBLE,
     MWMA_ALGORITHM_LAST,
     MWMA_ALGORITHM_DEFAULT = MWMA_LOSER_TREE_COMBINED
 };

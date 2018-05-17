@@ -58,10 +58,12 @@ endmacro(tlx_build_test)
 
 ### list of tests in subdirectories
 
+tlx_build_only(algorithm_multiway_merge_benchmark)
 tlx_build_only(btree_speedtest)
 tlx_build_only(cmdline_parser_example)
 
 tlx_build_test(algorithm_test)
+tlx_build_test(algorithm_multiway_merge_test)
 tlx_build_test(backtrace_test)
 tlx_build_test(btree_test)
 tlx_build_test(cmdline_parser_test)
@@ -114,6 +116,9 @@ if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
   # failed with a weird exception without -pthreads
   set_target_properties(tlx_semaphore_test PROPERTIES COMPILE_FLAGS -pthread)
   set_target_properties(tlx_semaphore_test PROPERTIES LINK_FLAGS -pthread)
+
+  set_target_properties(tlx_algorithm_multiway_merge_test PROPERTIES COMPILE_FLAGS -pthread)
+  set_target_properties(tlx_algorithm_multiway_merge_test PROPERTIES LINK_FLAGS -pthread)
 endif()
 
 ################################################################################

@@ -489,6 +489,7 @@ public:
     void delete_min_insert(const ValueType* keyp, bool sup) {
         using std::swap;
         assert(sup == (keyp == nullptr));
+        unused(sup);
 
         Source source = losers_[0].source;
         for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
@@ -507,7 +508,6 @@ public:
 
         losers_[0].source = source;
         losers_[0].keyp = keyp;
-        unused(sup);
     }
 };
 
@@ -582,12 +582,13 @@ public:
 
         Source left = init_winner(2 * root);
         Source right = init_winner(2 * root + 1);
-        if (!cmp_(losers_[right].key,
-                  losers_[left].key)) { // left one is less or equal
+        if (!cmp_(losers_[right].key, losers_[left].key)) {
+            // left one is less or equal
             losers_[root] = losers_[right];
             return left;
         }
-        else {                          // right one is less
+        else {
+            // right one is less
             losers_[root] = losers_[left];
             return right;
         }
@@ -670,7 +671,9 @@ public:
         ValueType key = keyp ? *keyp : ValueType();
 
         for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
-            if (!cmp_(key, losers_[pos].key) && losers_[pos].source < source) {
+            if (cmp_(losers_[pos].key, key) ||
+                (!cmp_(key, losers_[pos].key) &&
+                 losers_[pos].source < source)) {
                 // the other one is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].key, key);

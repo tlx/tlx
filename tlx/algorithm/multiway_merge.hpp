@@ -56,7 +56,7 @@ public:
 
     //! Value type of the iterator
     using value_type =
-              typename std::iterator_traits<RandomAccessIterator>::value_type;
+        typename std::iterator_traits<RandomAccessIterator>::value_type;
 
 protected:
     //! Current iterator position.
@@ -142,7 +142,7 @@ public:
 
     //! Value type of the iterator
     using value_type =
-              typename std::iterator_traits<RandomAccessIterator>::value_type;
+        typename std::iterator_traits<RandomAccessIterator>::value_type;
 
 protected:
     //! Current iterator position.
@@ -232,8 +232,8 @@ prepare_unguarded(
     Comparator comp,
     int& min_sequence) {
     using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type::first_type;
     using value_type = typename std::iterator_traits<RandomAccessIterator>
                        ::value_type;
     using diff_type = typename std::iterator_traits<RandomAccessIterator>
@@ -309,8 +309,8 @@ prepare_unguarded_sentinel(
     RandomAccessIteratorIterator seqs_end,
     Comparator comp) {
     using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type::first_type;
     using value_type = typename std::iterator_traits<RandomAccessIterator>
                        ::value_type;
     using diff_type = typename std::iterator_traits<RandomAccessIterator>
@@ -382,8 +382,8 @@ RandomAccessIterator3 multiway_merge_3_variant(
     unused(seqs_end);
 
     using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type::first_type;
 
     if (size == 0)
         return target;
@@ -457,8 +457,8 @@ RandomAccessIterator3 multiway_merge_3_combined(
     difference_type size,
     Comparator comp) {
     using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type::first_type;
     using DiffType = typename std::iterator_traits<RandomAccessIterator>
                      ::difference_type;
 
@@ -554,8 +554,8 @@ RandomAccessIterator3 multiway_merge_4_variant(
     assert(seqs_end - seqs_begin == 4);
     unused(seqs_end);
     using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type::first_type;
 
     if (size == 0)
         return target;
@@ -661,8 +661,8 @@ RandomAccessIterator3 multiway_merge_4_combined(
 
     assert(seqs_end - seqs_begin == 4);
     using RandomAccessIteratorPair =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type;
     using DiffType = typename std::iterator_traits<RandomAccessIteratorIterator>
                      ::difference_type;
 
@@ -732,8 +732,8 @@ RandomAccessIterator3 multiway_merge_bubble(
     difference_type size,
     Comparator comp) {
     using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type::first_type;
     using value_type = typename std::iterator_traits<RandomAccessIterator>
                        ::value_type;
     using DiffType = typename std::iterator_traits<RandomAccessIterator>
@@ -921,7 +921,7 @@ RandomAccessIterator3 multiway_merge_loser_tree(
     using Source = typename LoserTreeType::Source;
     using size_type = typename LoserTreeType::Source;
     using RandomAccessIteratorPair =
-              typename std::iterator_traits<RandomAccessIteratorIterator>::value_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>::value_type;
     using RandomAccessIterator = typename RandomAccessIteratorPair::first_type;
     using DiffType = typename std::iterator_traits<RandomAccessIterator>
                      ::difference_type;
@@ -1007,8 +1007,8 @@ RandomAccessIterator3 multiway_merge_loser_tree_unguarded(
     using Source = typename LoserTreeType::Source;
     using size_type = typename LoserTreeType::Source;
     using RandomAccessIteratorPair =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type;
     using RandomAccessIterator = typename RandomAccessIteratorPair
                                  ::first_type;
     using DiffType = typename std::iterator_traits<RandomAccessIterator>
@@ -1077,8 +1077,8 @@ RandomAccessIterator3 multiway_merge_loser_tree_combined(
     difference_type size,
     Comparator comp) {
     using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type::first_type;
     using value_type = typename std::iterator_traits<RandomAccessIterator>
                        ::value_type;
     using DiffType = typename std::iterator_traits<RandomAccessIterator>
@@ -1129,8 +1129,8 @@ RandomAccessIterator3 multiway_merge_loser_tree_sentinel(
     difference_type size,
     Comparator comp) {
     using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type::first_type;
     using value_type = typename std::iterator_traits<RandomAccessIterator>
                        ::value_type;
 
@@ -1204,8 +1204,8 @@ RandomAccessIterator3 multiway_merge_base(
     MultiwayMergeAlgorithm mwma = MWMA_ALGORITHM_DEFAULT) {
 
     using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type::first_type;
     using value_type = typename std::iterator_traits<RandomAccessIterator>
                        ::value_type;
 

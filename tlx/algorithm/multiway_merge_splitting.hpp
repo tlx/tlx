@@ -97,8 +97,8 @@ void multiway_merge_sampling_splitting(
     const size_t merge_oversampling = 10) {
 
     using RandomAccessIterator =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type::first_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type::first_type;
     using value_type = typename std::iterator_traits<RandomAccessIterator>
                        ::value_type;
     using DiffType = typename std::iterator_traits<RandomAccessIterator>
@@ -192,8 +192,8 @@ void multiway_merge_exact_splitting(
     const size_t num_threads) {
 
     using RandomAccessIteratorPair =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type;
     using RandomAccessIterator = typename RandomAccessIteratorPair
                                  ::first_type;
     using DiffType = typename std::iterator_traits<RandomAccessIterator>

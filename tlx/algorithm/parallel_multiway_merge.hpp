@@ -85,10 +85,10 @@ RandomAccessIterator3 parallel_multiway_merge_base(
     size_t num_threads = std::thread::hardware_concurrency()) {
 
     using RandomAccessIteratorPair =
-              typename std::iterator_traits<RandomAccessIteratorIterator>
-              ::value_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>
+        ::value_type;
     using RandomAccessIterator =
-              typename RandomAccessIteratorPair::first_type;
+        typename RandomAccessIteratorPair::first_type;
     using DiffType = typename std::iterator_traits<RandomAccessIterator>
                      ::difference_type;
 

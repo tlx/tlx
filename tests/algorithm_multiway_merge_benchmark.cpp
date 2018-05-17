@@ -45,7 +45,7 @@ bool g_quick = false;
 
 struct DataStruct {
     unsigned int key;
-    char         payload[32];
+    char payload[32];
 
     explicit DataStruct(unsigned int k = 0)
         : key(k)
@@ -190,8 +190,8 @@ void test_multiway_merge(size_t seq_count, const size_t seq_size) {
 
         const char* method_name = nullptr;
         using sequence_iterator_pair_type = std::pair<
-                  typename sequence_type::iterator,
-                  typename sequence_type::iterator>;
+            typename sequence_type::iterator,
+            typename sequence_type::iterator>;
 
         std::vector<sequence_iterator_pair_type> iterpairs(seq_count);
 

@@ -32,7 +32,7 @@ The most important design goals and conventions are:
 - warning and bug-freeness on all compilers.
 - keep overhead down -- small overall size such that is can be included without bloating applications.
 
-List of the most commonly use components:
+List of the most commonly used components:
 
 - \subpage tlx_counting_ptr
 - \subpage tlx_die : \ref die(), \ref die_unless(), \ref die_if(), \ref die_unequal().

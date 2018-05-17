@@ -9,10 +9,12 @@ tlx is a collection of C++ helpers and extensions universally needed, but not fo
 - warning and bug-freeness on all compilers.
 - keep overhead down – small overall size such that is can be included without bloating applications.
 
+--->> **[Doxygen Documentation](https://tlx.github.io/)** <<---
+
 [![Build Status](https://travis-ci.org/tlx/tlx.svg?branch=master)](https://travis-ci.org/tlx/tlx)
 [![Build status](https://ci.appveyor.com/api/projects/status/xxwj7usfjfs3h9id/branch/master?svg=true)](https://ci.appveyor.com/project/bingmann/tlx/branch/master)
 
-## List of the most commonly use components:
+## List of the most commonly used components:
 
 - CountingPtr – an intrusive reference counting pointer
 - die() - Simple Invariant Testing : die(), die_unless(), die_if(), die_unequal().

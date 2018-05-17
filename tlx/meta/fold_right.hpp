@@ -23,7 +23,7 @@ namespace tlx {
 // Variadic Template Expander: Implements fold_right() on the variadic template
 // arguments. Implements (pack ... op ... init) of C++17.
 
-namespace detail {
+namespace meta_detail {
 
 //! helper for fold_right: base case
 template <typename Reduce, typename Initial, typename Arg>
@@ -42,13 +42,13 @@ auto fold_right_impl(Reduce&& r, Initial&& init,
                         std::forward<MoreArgs>(rest) ...));
 }
 
-} // namespace detail
+} // namespace meta_detail
 
 //! Implements fold_right() -- (a * (b * c)) -- with a binary Reduce operation
 //! and initial value.
 template <typename Reduce, typename Initial, typename... Args>
 auto fold_right(Reduce&& r, Initial&& init, Args&& ... args) {
-    return detail::fold_right_impl(
+    return meta_detail::fold_right_impl(
         std::forward<Reduce>(r), std::forward<Initial>(init),
         std::forward<Args>(args) ...);
 }

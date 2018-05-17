@@ -24,7 +24,7 @@ namespace tlx {
 /*!
  * Join a vector of strings using a separator character. If any string contains
  * the separator, quote the field. In the quoted string, escape all quotes,
- * escapes, \n, \r, \t sequences. This is the opposite of split_quoted().
+ * escapes, \\n, \\r, \\t sequences. This is the opposite of split_quoted().
  */
 std::string join_quoted(
     const std::vector<std::string>& str, char sep, char quote, char escape);
@@ -32,7 +32,7 @@ std::string join_quoted(
 /*!
  * Join a vector of strings using spaces as separator character. If any string
  * contains a space, quote the field. In the quoted string, escape all quotes,
- * escapes, \n, \r, \t sequences. This is the opposite of split_quoted().
+ * escapes, \\n, \\r, \\t sequences. This is the opposite of split_quoted().
  */
 std::string join_quoted(const std::vector<std::string>& str);
 

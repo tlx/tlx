@@ -24,7 +24,7 @@ namespace tlx {
 // lambda) for each of the variadic template parameters, and collect the return
 // values in a generic std::tuple.
 
-namespace detail {
+namespace meta_detail {
 
 //! helper for vmap_foreach: base case
 template <typename Functor, typename Arg>
@@ -43,13 +43,13 @@ auto vmap_foreach_impl(Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
             std::forward<Functor>(f), std::forward<MoreArgs>(rest) ...));
 }
 
-} // namespace detail
+} // namespace meta_detail
 
 //! Call a generic functor (like a generic lambda) for each variadic template
 //! argument.
 template <typename Functor, typename... Args>
 auto vmap_foreach(Functor&& f, Args&& ... args) {
-    return detail::vmap_foreach_impl(
+    return meta_detail::vmap_foreach_impl(
         std::forward<Functor>(f), std::forward<Args>(args) ...);
 }
 

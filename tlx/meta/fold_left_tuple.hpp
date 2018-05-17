@@ -24,7 +24,7 @@ namespace tlx {
 // Variadic Template Expander: Implements fold_left() on the components of a
 // tuple.
 
-namespace detail {
+namespace meta_detail {
 
 //! helper for fold_left_tuple: forwards tuple entries
 template <typename Reduce, typename Initial, typename Tuple, std::size_t... Is>
@@ -35,7 +35,7 @@ auto fold_left_tuple_impl(Reduce&& r, Initial&& init, Tuple&& t,
         std::get<Is>(std::forward<Tuple>(t)) ...);
 }
 
-} // namespace detail
+} // namespace meta_detail
 
 //! Implements fold_left() -- ((a * b) * c) -- with a binary Reduce operation
 //! and initial value on a tuple.
@@ -43,7 +43,7 @@ template <typename Reduce, typename Initial, typename Tuple>
 auto fold_left_tuple(Reduce&& r, Initial&& init, Tuple&& t) {
     using Indices = make_index_sequence<
         std::tuple_size<typename std::decay<Tuple>::type>::value>;
-    return detail::fold_left_tuple_impl(
+    return meta_detail::fold_left_tuple_impl(
         std::forward<Reduce>(r), std::forward<Initial>(init),
         std::forward<Tuple>(t), Indices());
 }

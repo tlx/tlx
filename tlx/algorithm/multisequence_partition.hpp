@@ -32,7 +32,7 @@ namespace tlx {
 //! \addtogroup tlx_algorithm
 //! \{
 
-namespace multisequence_partition_local {
+namespace multisequence_partition_detail {
 
 //! Compare a pair of types lexicographically, ascending.
 template <typename T1, typename T2, typename Comparator>
@@ -82,7 +82,7 @@ public:
     }
 };
 
-} // namespace multisequence_partition_local
+} // namespace multisequence_partition_detail
 
 /*!
  * Splits several sorted sequences at a certain global rank, resulting in a
@@ -120,7 +120,7 @@ void multisequence_partition(
 
     using SamplePair = std::pair<value_type, diff_type>;
 
-    using namespace multisequence_partition_local;
+    using namespace multisequence_partition_detail;
 
     // comparators for SamplePair
     lexicographic<value_type, diff_type, Comparator> lcomp(comp);

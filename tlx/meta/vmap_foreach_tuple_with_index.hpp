@@ -27,7 +27,7 @@ namespace tlx {
 //
 // Called with func(StaticIndex<> index, Argument arg).
 
-namespace detail {
+namespace meta_detail {
 
 //! helper for vmap_foreach_tuple_with_index: forwards tuple entries
 template <typename Functor, typename Tuple, std::size_t... Is>
@@ -37,7 +37,7 @@ auto vmap_foreach_tuple_with_index_impl(
                                    std::get<Is>(std::forward<Tuple>(t)) ...);
 }
 
-} // namespace detail
+} // namespace meta_detail
 
 //! Call a generic functor (like a generic lambda) for each variadic template
 //! argument and collect the result in a std::tuple<>.
@@ -45,7 +45,7 @@ template <typename Functor, typename Tuple>
 auto vmap_foreach_tuple_with_index(Functor&& f, Tuple&& t) {
     using Indices = make_index_sequence<
         std::tuple_size<typename std::decay<Tuple>::type>::value>;
-    return detail::vmap_foreach_tuple_with_index_impl(
+    return meta_detail::vmap_foreach_tuple_with_index_impl(
         std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }
 

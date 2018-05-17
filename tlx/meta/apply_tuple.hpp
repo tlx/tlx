@@ -25,7 +25,7 @@ namespace tlx {
 // Tuple Applier: takes a std::tuple<> and applies a variadic template function
 // to it. Hence, this expands the content of the tuple as the arguments.
 
-namespace detail {
+namespace meta_detail {
 
 template <typename Functor, typename Tuple, std::size_t... Is>
 auto apply_tuple_impl(Functor&& f, Tuple&& t, index_sequence<Is...>) {
@@ -33,14 +33,14 @@ auto apply_tuple_impl(Functor&& f, Tuple&& t, index_sequence<Is...>) {
         std::get<Is>(std::forward<Tuple>(t)) ...);
 }
 
-} // namespace detail
+} // namespace meta_detail
 
 //! Call the functor f with the contents of t as arguments.
 template <typename Functor, typename Tuple>
 auto apply_tuple(Functor&& f, Tuple&& t) {
     using Indices = make_index_sequence<
         std::tuple_size<typename std::decay<Tuple>::type>::value>;
-    return detail::apply_tuple_impl(
+    return meta_detail::apply_tuple_impl(
         std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }
 

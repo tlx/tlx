@@ -28,7 +28,7 @@ namespace tlx {
 //
 // Called with func(StaticIndex<> index).
 
-namespace detail {
+namespace meta_detail {
 
 //! helper for vmap_for_range: general recursive case
 template <size_t Index, size_t Size, typename Functor>
@@ -55,19 +55,19 @@ public:
     }
 };
 
-} // namespace detail
+} // namespace meta_detail
 
 //! Vmap a generic functor (like a generic lambda) for the integers [0,Size).
 template <size_t Size, typename Functor>
 auto vmap_for_range(Functor&& f) {
-    return detail::VMapForRangeImpl<0, Size, Functor>::call(
+    return meta_detail::VMapForRangeImpl<0, Size, Functor>::call(
         std::forward<Functor>(f));
 }
 
 //! Vmap a generic functor (like a generic lambda) for the integers [Begin,End).
 template <size_t Begin, size_t End, typename Functor>
 auto vmap_for_range(Functor&& f) {
-    return detail::VMapForRangeImpl<Begin, End - Begin, Functor>::call(
+    return meta_detail::VMapForRangeImpl<Begin, End - Begin, Functor>::call(
         std::forward<Functor>(f));
 }
 

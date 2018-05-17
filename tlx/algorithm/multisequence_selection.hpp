@@ -32,7 +32,7 @@ namespace tlx {
 //! \addtogroup tlx_algorithm
 //! \{
 
-namespace multisequence_selection_local {
+namespace multisequence_selection_detail {
 
 //! Compare a pair of types lexicographically, ascending.
 template <typename T1, typename T2, typename Comparator>
@@ -82,7 +82,7 @@ public:
     }
 };
 
-} // namespace multisequence_selection_local
+} // namespace multisequence_selection_detail
 
 /*!
  * Selects the element at a certain global rank from several sorted sequences.
@@ -112,7 +112,7 @@ ValueType multisequence_selection(
 
     using SamplePair = std::pair<ValueType, diff_type>;
 
-    using namespace multisequence_selection_local;
+    using namespace multisequence_selection_detail;
 
     // comparators for SamplePair
     lexicographic<ValueType, diff_type, Comparator> lcomp(comp);

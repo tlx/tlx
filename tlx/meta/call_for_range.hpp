@@ -26,7 +26,7 @@ namespace tlx {
 //
 // Called with func(StaticIndex<> index).
 
-namespace detail {
+namespace meta_detail {
 
 //! helper for call_for_range: general recursive case
 template <size_t Index, size_t Size, typename Functor>
@@ -48,19 +48,19 @@ public:
     static void call(Functor&& /* f */) { }
 };
 
-} // namespace detail
+} // namespace meta_detail
 
 //! Call a generic functor (like a generic lambda) for the integers [0,Size).
 template <size_t Size, typename Functor>
 void call_for_range(Functor&& f) {
-    detail::CallForRangeImpl<0, Size, Functor>::call(
+    meta_detail::CallForRangeImpl<0, Size, Functor>::call(
         std::forward<Functor>(f));
 }
 
 //! Call a generic functor (like a generic lambda) for the integers [Begin,End).
 template <size_t Begin, size_t End, typename Functor>
 void call_for_range(Functor&& f) {
-    detail::CallForRangeImpl<Begin, End - Begin, Functor>::call(
+    meta_detail::CallForRangeImpl<Begin, End - Begin, Functor>::call(
         std::forward<Functor>(f));
 }
 

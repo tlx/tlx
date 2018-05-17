@@ -26,7 +26,7 @@ namespace tlx {
 //
 // Called with func(StaticIndex<> index, Argument arg).
 
-namespace detail {
+namespace meta_detail {
 
 //! helper for call_foreach_with_index: base case
 template <size_t Index, typename Functor, typename Arg>
@@ -42,13 +42,13 @@ void call_foreach_with_index_impl(Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
         std::forward<Functor>(f), std::forward<MoreArgs>(rest) ...);
 }
 
-} // namespace detail
+} // namespace meta_detail
 
 //! Call a generic functor (like a generic lambda) for each variadic template
 //! argument together with its zero-based index.
 template <typename Functor, typename... Args>
 void call_foreach_with_index(Functor&& f, Args&& ... args) {
-    detail::call_foreach_with_index_impl<0>(
+    meta_detail::call_foreach_with_index_impl<0>(
         std::forward<Functor>(f), std::forward<Args>(args) ...);
 }
 

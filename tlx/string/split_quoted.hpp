@@ -25,7 +25,7 @@ namespace tlx {
  * Split the given string at each separator character into distinct
  * substrings. Multiple separators are joined and will not result in empty split
  * substrings. Quoted fields extend to the next quote. Quoted fields may
- * containg escaped quote, and \n \r \t \\ sequences.
+ * containg escaped quote, and \\n \\r \\t \\\\ sequences.
  */
 std::vector<std::string> split_quoted(
     const std::string& str, char sep, char quote, char escape);
@@ -34,7 +34,7 @@ std::vector<std::string> split_quoted(
  * Split the given string at each space into distinct substrings. Multiple
  * spaces are joined and will not result in empty split substrings. Quoted
  * fields extend to the next quote. Quoted fields may containg escaped quote,
- * and \n \r \t \\ sequences.
+ * and \\n \\r \\t \\\\ sequences.
  */
 std::vector<std::string> split_quoted(const std::string& str);
 

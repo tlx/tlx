@@ -27,7 +27,7 @@ namespace tlx {
 //
 // Called with func(Argument arg).
 
-namespace detail {
+namespace meta_detail {
 
 //! helper for call_foreach_tuple
 template <typename Functor, typename Tuple, std::size_t... Is>
@@ -37,7 +37,7 @@ void call_foreach_tuple_impl(
         std::forward<Functor>(f), std::get<Is>(std::forward<Tuple>(t)) ...);
 }
 
-} // namespace detail
+} // namespace meta_detail
 
 //! Call a generic functor (like a generic lambda) to each components of a tuple
 //! together with its zero-based index.
@@ -45,7 +45,7 @@ template <typename Functor, typename Tuple>
 void call_foreach_tuple(Functor&& f, Tuple&& t) {
     using Indices = make_index_sequence<
         std::tuple_size<typename std::decay<Tuple>::type>::value>;
-    detail::call_foreach_tuple_impl(
+    meta_detail::call_foreach_tuple_impl(
         std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
 }
 

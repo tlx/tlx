@@ -26,7 +26,7 @@ namespace tlx {
 //! \addtogroup tlx_meta
 //! \{
 
-namespace detail {
+namespace meta_detail {
 
 /*!
  * Base case for the chaining of functors: zero functors, returns the identity.
@@ -69,7 +69,7 @@ auto call_chain(const Functor& functor, const MoreFunctors& ... rest) {
     };
 }
 
-} // namespace detail
+} // namespace meta_detail
 
 /*!
  * A FunctionChain is a chain of functors that can be folded to a single
@@ -162,7 +162,7 @@ private:
      */
     template <size_t... Is>
     auto fold_chain(index_sequence<Is...>) const {
-        return detail::call_chain(std::get<Is>(chain_) ...);
+        return meta_detail::call_chain(std::get<Is>(chain_) ...);
     }
 };
 

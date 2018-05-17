@@ -29,7 +29,7 @@ namespace tlx {
 //! \addtogroup tlx_meta
 //! \{
 
-namespace detail {
+namespace meta_detail {
 
 /*!
  * Base case for the chaining of functors.  The last functor receives an input
@@ -67,7 +67,7 @@ auto call_stack(const Functor& functor, const MoreFunctors& ... rest) {
     };
 }
 
-} // namespace detail
+} // namespace meta_detail
 
 /*!
  * A FunctionStack is a chain of functor that can be folded to a single functor
@@ -160,7 +160,7 @@ private:
      */
     template <size_t... Is>
     auto fold_stack(index_sequence<Is...>) const {
-        return detail::call_stack(std::get<Is>(stack_) ...);
+        return meta_detail::call_stack(std::get<Is>(stack_) ...);
     }
 };
 

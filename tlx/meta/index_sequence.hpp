@@ -26,7 +26,7 @@ struct index_sequence {
     static size_t size() { return sizeof ... (Indexes); }
 };
 
-namespace detail {
+namespace meta_detail {
 
 template <size_t CurrentIndex, size_t... Indexes>
 struct make_index_sequence_helper;
@@ -42,11 +42,11 @@ struct make_index_sequence_helper {
         CurrentIndex - 1, CurrentIndex - 1, Indexes...>::type;
 };
 
-} // namespace detail
+} // namespace meta_detail
 
 template <size_t Size>
 struct make_index_sequence
-    : public detail::make_index_sequence_helper<Size>::type { };
+    : public meta_detail::make_index_sequence_helper<Size>::type { };
 
 //! \}
 

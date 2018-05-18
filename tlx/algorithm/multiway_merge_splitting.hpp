@@ -29,6 +29,16 @@ namespace tlx {
 //! \addtogroup tlx_algorithm
 //! \{
 
+/*!
+ * Different splitting strategies for sorting/merging: by sampling, exact
+*/
+enum MultiwayMergeSplittingAlgorithm {
+    MWMSA_SAMPLING,
+    MWMSA_EXACT,
+    MWMSA_LAST,
+    MWMSA_DEFAULT = MWMSA_EXACT
+};
+
 namespace {
 
 /*!
@@ -94,7 +104,7 @@ void multiway_merge_sampling_splitting(
     std::vector<typename std::iterator_traits<
                     RandomAccessIteratorIterator>::value_type>* chunks,
     const size_t num_threads,
-    const size_t merge_oversampling = 10) {
+    const size_t merge_oversampling) {
 
     using RandomAccessIterator =
         typename std::iterator_traits<RandomAccessIteratorIterator>

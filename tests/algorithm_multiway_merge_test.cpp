@@ -112,6 +112,7 @@ void test_vecs(unsigned int vecnum,
     }
 
     if (Parallel) {
+        tlx::parallel_multiway_merge_force_parallel = true;
         if (!Stable)
             tlx::parallel_multiway_merge(
                 sequences.begin(), sequences.end(),

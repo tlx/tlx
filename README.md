@@ -13,6 +13,7 @@ tlx is a collection of C++ helpers and extensions universally needed, but not fo
 
 [![Build Status](https://travis-ci.org/tlx/tlx.svg?branch=master)](https://travis-ci.org/tlx/tlx)
 [![Build status](https://ci.appveyor.com/api/projects/status/xxwj7usfjfs3h9id/branch/master?svg=true)](https://ci.appveyor.com/project/bingmann/tlx/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/tlx/tlx/badge.svg)](https://coveralls.io/github/tlx/tlx)
 
 ## List of the most commonly used components:
 

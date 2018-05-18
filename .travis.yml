@@ -195,7 +195,7 @@ before_script:
   - COMPILER_FLAGS="$COMPILER_FLAGS -Werror"
 
   # gcov coverage
-  - if [ -n "$BUILD_COVERAGE" -a "$TRAVIS_BRANCH" == "master" -a -n "$COVERALLS_REPO_TOKEN" ]; then
+  - if [ -n "$BUILD_COVERAGE" -a -n "$COVERALLS_REPO_TOKEN" ]; then
       pip install --user cpp-coveralls;
       CMAKE_ARGS="$CMAKE_ARGS -DTLX_USE_GCOV=ON";
     fi
@@ -220,6 +220,6 @@ after_success:
   - if [ -n "$BUILD_DOXYGEN" -a "$TRAVIS_REPO_SLUG" == "tlx/tlx" -a "$TRAVIS_BRANCH" == "master" ]; then
       ./misc/mk-doxygen-travis.sh;
     fi
-  - if [ -n "$BUILD_COVERAGE" -a "$TRAVIS_BRANCH" == "master" -a -n "$COVERALLS_REPO_TOKEN" ]; then
-      coveralls --exclude tests --exclude build --gcov-options '\-lp';
+  - if [ -n "$BUILD_COVERAGE" -a -n "$COVERALLS_REPO_TOKEN" ]; then
+      coveralls --exclude tests --gcov-options '\-lp';
     fi

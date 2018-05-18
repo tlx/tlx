@@ -17,6 +17,7 @@
 /*[[[perl
 print "#include <$_>\n" foreach sort glob("tlx/sort/"."*.hpp");
 ]]]*/
+#include <tlx/sort/parallel_mergesort.hpp>
 #include <tlx/sort/strings.hpp>
 // [[[end]]]
 

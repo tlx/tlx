@@ -9,6 +9,7 @@
 
 set(LIBTLX_SOURCES
 
+  algorithm/parallel_multiway_merge.cpp
   backtrace.cpp
   cmdline_parser.cpp
   die.cpp

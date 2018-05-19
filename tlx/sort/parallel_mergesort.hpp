@@ -18,6 +18,8 @@
 #ifndef TLX_SORT_PARALLEL_MERGESORT_HEADER
 #define TLX_SORT_PARALLEL_MERGESORT_HEADER
 
+#if defined(_OPENMP)
+
 #include <algorithm>
 #include <vector>
 
@@ -368,6 +370,8 @@ void stable_parallel_mergesort(
 //! \}
 
 } // namespace tlx
+
+#endif // defined(_OPENMP)
 
 #endif // !TLX_SORT_PARALLEL_MERGESORT_HEADER
 

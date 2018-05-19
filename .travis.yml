@@ -93,7 +93,7 @@ matrix:
       addons: *gcc5_32
 
     # gcc 6.x, Debug & Release, Debug with UndefinedBehaviorSanitizer
-    - env: CMAKE_CC="gcc-6" CMAKE_CXX="g++-6" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+    - env: CMAKE_CC="gcc-6" CMAKE_CXX="g++-6" BUILD_TYPE="Debug" COMPILER_FLAGS="-fopenmp"
       os: linux
       addons: &gcc6
         apt:
@@ -107,7 +107,7 @@ matrix:
             - g++-6
             - doxygen
 
-    - env: CMAKE_CC="gcc-6" CMAKE_CXX="g++-6" BUILD_TYPE="Release" COMPILER_FLAGS=""
+    - env: CMAKE_CC="gcc-6" CMAKE_CXX="g++-6" BUILD_TYPE="Release" COMPILER_FLAGS="-fopenmp"
       os: linux
       addons: *gcc6
 

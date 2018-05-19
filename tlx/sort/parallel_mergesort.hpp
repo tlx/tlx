@@ -31,10 +31,8 @@ namespace tlx {
 
 //! \addtogroup tlx_sort
 //! \{
-//! \name Comparison-Based Parallel Algorithms
-//! \{
 
-namespace parallel_mergesort_local {
+namespace parallel_mergesort_detail {
 
 //! Subsequence description.
 template <typename DiffType>
@@ -79,12 +77,12 @@ struct PMWMSSortingData {
     { }
 };
 
-size_t sort_mwms_oversampling = 10;
-
 /*!
  * Select samples from a sequence.
- * \param d Pointer to thread-local data. Result will be placed in \c d->ds->samples.
+ * \param sd Pointer to sorting data struct. Result will be placed in \c sd->samples.
  * \param num_samples Number of samples to select.
+ * \param iam my thread number
+ * \param num_threads number of threads in group
  */
 template <typename RandomAccessIterator, typename DiffType>
 void determine_samples(PMWMSSortingData<RandomAccessIterator>* sd,
@@ -92,7 +90,7 @@ void determine_samples(PMWMSSortingData<RandomAccessIterator>* sd,
                        size_t iam,
                        size_t num_threads) {
 
-    num_samples = sort_mwms_oversampling * num_threads - 1;
+    num_samples = parallel_multiway_merge_oversampling * num_threads - 1;
 
     std::vector<DiffType> es(num_samples + 2);
     equally_split(sd->starts[iam + 1] - sd->starts[iam],
@@ -104,8 +102,11 @@ void determine_samples(PMWMSSortingData<RandomAccessIterator>* sd,
 
 /*!
  * PMWMS code executed by each thread.
- * \param d Pointer to thread-local data.
+ * \param sd Pointer to sorting data struct.
+ * \param iam my thread number
+ * \param num_threads number of threads in group
  * \param comp Comparator.
+ * \param mwmsa MultiwayMergeSplittingAlgorithm to use.
  */
 template <bool Stable, typename RandomAccessIterator, typename Comparator>
 void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
@@ -250,7 +251,10 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
     delete sd->temporary[iam];
 }
 
-} // namespace parallel_mergesort_local
+} // namespace parallel_mergesort_detail
+
+//! \name Parallel Sorting Algorithms
+//! \{
 
 /*!
  * Parallel multiway mergesort main call.
@@ -271,7 +275,7 @@ void parallel_mergesort_base(
     size_t num_threads = std::thread::hardware_concurrency(),
     MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT) {
 
-    using namespace parallel_mergesort_local;
+    using namespace parallel_mergesort_detail;
 
     using DiffType =
         typename std::iterator_traits<RandomAccessIterator>::difference_type;
@@ -290,7 +294,7 @@ void parallel_mergesort_base(
 
     if (mwmsa == MWMSA_SAMPLING)
         sd.samples.resize(
-            num_threads * (sort_mwms_oversampling * num_threads - 1));
+            num_threads * (parallel_multiway_merge_oversampling * num_threads - 1));
 
     for (size_t s = 0; s < num_threads; s++)
         sd.pieces[s].resize(num_threads);
@@ -321,6 +325,7 @@ void parallel_mergesort_base(
  * \param end End iterator of sequence.
  * \param comp Comparator.
  * \param num_threads Number of threads to use.
+ * \param mwmsa MultiwayMergeSplittingAlgorithm to use.
  */
 template <typename RandomAccessIterator,
           typename Comparator = std::less<
@@ -343,6 +348,7 @@ void parallel_mergesort(
  * \param end End iterator of sequence.
  * \param comp Comparator.
  * \param num_threads Number of threads to use.
+ * \param mwmsa MultiwayMergeSplittingAlgorithm to use.
  */
 template <typename RandomAccessIterator,
           typename Comparator = std::less<
@@ -358,6 +364,7 @@ void stable_parallel_mergesort(
         begin, end, comp, num_threads, mwmsa);
 }
 
+//! \}
 //! \}
 
 } // namespace tlx

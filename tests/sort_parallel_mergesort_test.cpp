@@ -49,7 +49,7 @@ void test_size(unsigned int size, tlx::MultiwayMergeSplittingAlgorithm mwmsa) {
     for (unsigned int i = 0; i < size; ++i)
         v[i] = Something(distr(randgen));
 
-    if (Stable)  {
+    if (Stable) {
         tlx::stable_parallel_mergesort(v.begin(), v.end(), cmp,
                                        /* num_threads */ 8, mwmsa);
     }

@@ -28,7 +28,7 @@ tlx is a collection of C++ helpers and extensions universally needed, but not fo
 - Math Functions : integer_log2_floor(), is_power_of_two(), round_up_to_power_of_two(), round_down_to_power_of_two(), ffs(), clz(), abs_diff(), bswap32, bswap64.
 - String Algorithms : starts_with(), ends_with(), contains(), contains_word(), trim(), replace_all(), erase_all(), join(), split(), split_words(), union_words(), split_quoted(), join_quoted(), to_lower(), hexdump(), word_wrap(), escape_html(), parse_si_iec_units(), format_iec_units().
 - Meta-Template Programming : call_foreach(), apply_tuple(), vmap_foreach(), Log2Floor, FunctionChain, FunctionStack, is_std_pair, is_std_tuple, is_std_vector, is_std_array, TLX_MAKE_HAS_MEMBER.
-- Sorting Algorithms : sort_strings() (using radix sort and multikey quicksort).
+- Sorting Algorithms : sort_strings() (using radix sort and multikey quicksort), parallel_mergesort() (experimental mergesort from MCSTL).
 - Backtrace Printing : print_cxx_backtrace().
 - Command Line Parsing : CmdlineParser.
 - Fast Delegates : Delegate - a better std::function<> replacement.

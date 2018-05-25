@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 #include <tlx/die.hpp>
+#include <tlx/port/setenv.hpp>
 #include <tlx/string.hpp>
 
 //! Returns an initialized unsigned char[] array inside an std::string
@@ -141,8 +142,8 @@ static void test_escape_uri() {
 
 static void test_expand_environment_variables() {
 
-    setenv("TEST_1", "def", /* overwrite */ true);
-    setenv("VAR_2", "uvw", /* overwrite */ true);
+    tlx::setenv("TEST_1", "def", /* overwrite */ true);
+    tlx::setenv("VAR_2", "uvw", /* overwrite */ true);
 
     die_unequal(
         tlx::expand_environment_variables("abc$TEST_1 ---${VAR_2}xyz"),

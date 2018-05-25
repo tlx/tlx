@@ -19,6 +19,7 @@
 #define TLX_ALGORITHM_PARALLEL_MULTIWAY_MERGE_HEADER
 
 #include <algorithm>
+#include <functional>
 #include <thread>
 #include <vector>
 

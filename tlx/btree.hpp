@@ -22,6 +22,7 @@
 #include <istream>
 #include <memory>
 #include <ostream>
+#include <utility>
 
 namespace tlx {
 
@@ -236,10 +237,10 @@ private:
         typedef typename Alloc_::template rebind<inner_node>::other alloc_type;
 
         //! Keys of children or data pointers
-        key_type slotkey[inner_slotmax];
+        key_type slotkey[inner_slotmax]; // NOLINT
 
         //! Pointers to children
-        node* childid[inner_slotmax + 1];
+        node* childid[inner_slotmax + 1]; // NOLINT
 
         //! Set variables to initial values.
         void initialize(const unsigned short l) {
@@ -400,7 +401,7 @@ public:
         { }
 
         //! Copy-constructor from a reverse iterator
-        iterator(const reverse_iterator& it)
+        iterator(const reverse_iterator& it) // NOLINT
             : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
@@ -420,7 +421,7 @@ public:
         }
 
         //! Prefix++ advance the iterator to the next slot.
-        self& operator ++ () {
+        iterator& operator ++ () {
             if (curr_slot + 1u < curr_leaf->slotuse) {
                 ++curr_slot;
             }
@@ -437,8 +438,8 @@ public:
         }
 
         //! Postfix++ advance the iterator to the next slot.
-        self operator ++ (int) {
-            self tmp = *this;   // copy ourselves
+        iterator operator ++ (int) {
+            iterator tmp = *this;   // copy ourselves
 
             if (curr_slot + 1u < curr_leaf->slotuse) {
                 ++curr_slot;
@@ -456,7 +457,7 @@ public:
         }
 
         //! Prefix-- backstep the iterator to the last slot.
-        self& operator -- () {
+        iterator& operator -- () {
             if (curr_slot > 0) {
                 --curr_slot;
             }
@@ -473,8 +474,8 @@ public:
         }
 
         //! Postfix-- backstep the iterator to the last slot.
-        self operator -- (int) {
-            self tmp = *this;   // copy ourselves
+        iterator operator -- (int) {
+            iterator tmp = *this;   // copy ourselves
 
             if (curr_slot > 0) {
                 --curr_slot;
@@ -492,12 +493,12 @@ public:
         }
 
         //! Equality of iterators.
-        bool operator == (const self& x) const {
+        bool operator == (const iterator& x) const {
             return (x.curr_leaf == curr_leaf) && (x.curr_slot == curr_slot);
         }
 
         //! Inequality of iterators.
-        bool operator != (const self& x) const {
+        bool operator != (const iterator& x) const {
             return (x.curr_leaf != curr_leaf) || (x.curr_slot != curr_slot);
         }
     };
@@ -562,17 +563,17 @@ public:
         { }
 
         //! Copy-constructor from a mutable iterator
-        const_iterator(const iterator& it)
+        const_iterator(const iterator& it) // NOLINT
             : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
         //! Copy-constructor from a mutable reverse iterator
-        const_iterator(const reverse_iterator& it)
+        const_iterator(const reverse_iterator& it) // NOLINT
             : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
         //! Copy-constructor from a const reverse iterator
-        const_iterator(const const_reverse_iterator& it)
+        const_iterator(const const_reverse_iterator& it) // NOLINT
             : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
@@ -592,7 +593,7 @@ public:
         }
 
         //! Prefix++ advance the iterator to the next slot.
-        self& operator ++ () {
+        const_iterator& operator ++ () {
             if (curr_slot + 1u < curr_leaf->slotuse) {
                 ++curr_slot;
             }
@@ -609,8 +610,8 @@ public:
         }
 
         //! Postfix++ advance the iterator to the next slot.
-        self operator ++ (int) {
-            self tmp = *this;   // copy ourselves
+        const_iterator operator ++ (int) {
+            const_iterator tmp = *this;   // copy ourselves
 
             if (curr_slot + 1u < curr_leaf->slotuse) {
                 ++curr_slot;
@@ -628,7 +629,7 @@ public:
         }
 
         //! Prefix-- backstep the iterator to the last slot.
-        self& operator -- () {
+        const_iterator& operator -- () {
             if (curr_slot > 0) {
                 --curr_slot;
             }
@@ -645,8 +646,8 @@ public:
         }
 
         //! Postfix-- backstep the iterator to the last slot.
-        self operator -- (int) {
-            self tmp = *this;   // copy ourselves
+        const_iterator operator -- (int) {
+            const_iterator tmp = *this;   // copy ourselves
 
             if (curr_slot > 0) {
                 --curr_slot;
@@ -664,12 +665,12 @@ public:
         }
 
         //! Equality of iterators.
-        bool operator == (const self& x) const {
+        bool operator == (const const_iterator& x) const {
             return (x.curr_leaf == curr_leaf) && (x.curr_slot == curr_slot);
         }
 
         //! Inequality of iterators.
-        bool operator != (const self& x) const {
+        bool operator != (const const_iterator& x) const {
             return (x.curr_leaf != curr_leaf) || (x.curr_slot != curr_slot);
         }
     };
@@ -742,7 +743,7 @@ public:
         { }
 
         //! Copy-constructor from a mutable iterator
-        reverse_iterator(const iterator& it)
+        reverse_iterator(const iterator& it) // NOLINT
             : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
@@ -765,7 +766,7 @@ public:
         }
 
         //! Prefix++ advance the iterator to the next slot.
-        self& operator ++ () {
+        reverse_iterator& operator ++ () {
             if (curr_slot > 1) {
                 --curr_slot;
             }
@@ -782,8 +783,8 @@ public:
         }
 
         //! Postfix++ advance the iterator to the next slot.
-        self operator ++ (int) {
-            self tmp = *this;   // copy ourselves
+        reverse_iterator operator ++ (int) {
+            reverse_iterator tmp = *this;   // copy ourselves
 
             if (curr_slot > 1) {
                 --curr_slot;
@@ -801,7 +802,7 @@ public:
         }
 
         //! Prefix-- backstep the iterator to the last slot.
-        self& operator -- () {
+        reverse_iterator& operator -- () {
             if (curr_slot < curr_leaf->slotuse) {
                 ++curr_slot;
             }
@@ -818,8 +819,8 @@ public:
         }
 
         //! Postfix-- backstep the iterator to the last slot.
-        self operator -- (int) {
-            self tmp = *this;   // copy ourselves
+        reverse_iterator operator -- (int) {
+            reverse_iterator tmp = *this;   // copy ourselves
 
             if (curr_slot < curr_leaf->slotuse) {
                 ++curr_slot;
@@ -837,12 +838,12 @@ public:
         }
 
         //! Equality of iterators.
-        bool operator == (const self& x) const {
+        bool operator == (const reverse_iterator& x) const {
             return (x.curr_leaf == curr_leaf) && (x.curr_slot == curr_slot);
         }
 
         //! Inequality of iterators.
-        bool operator != (const self& x) const {
+        bool operator != (const reverse_iterator& x) const {
             return (x.curr_leaf != curr_leaf) || (x.curr_slot != curr_slot);
         }
     };
@@ -908,17 +909,17 @@ public:
         { }
 
         //! Copy-constructor from a mutable iterator.
-        const_reverse_iterator(const iterator& it)
+        const_reverse_iterator(const iterator& it) // NOLINT
             : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
         //! Copy-constructor from a const iterator.
-        const_reverse_iterator(const const_iterator& it)
+        const_reverse_iterator(const const_iterator& it) // NOLINT
             : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
         //! Copy-constructor from a mutable reverse iterator.
-        const_reverse_iterator(const reverse_iterator& it)
+        const_reverse_iterator(const reverse_iterator& it) // NOLINT
             : curr_leaf(it.curr_leaf), curr_slot(it.curr_slot)
         { }
 
@@ -941,7 +942,7 @@ public:
         }
 
         //! Prefix++ advance the iterator to the previous slot.
-        self& operator ++ () {
+        const_reverse_iterator& operator ++ () {
             if (curr_slot > 1) {
                 --curr_slot;
             }
@@ -958,8 +959,8 @@ public:
         }
 
         //! Postfix++ advance the iterator to the previous slot.
-        self operator ++ (int) {
-            self tmp = *this;   // copy ourselves
+        const_reverse_iterator operator ++ (int) {
+            const_reverse_iterator tmp = *this;   // copy ourselves
 
             if (curr_slot > 1) {
                 --curr_slot;
@@ -977,7 +978,7 @@ public:
         }
 
         //! Prefix-- backstep the iterator to the next slot.
-        self& operator -- () {
+        const_reverse_iterator& operator -- () {
             if (curr_slot < curr_leaf->slotuse) {
                 ++curr_slot;
             }
@@ -994,8 +995,8 @@ public:
         }
 
         //! Postfix-- backstep the iterator to the next slot.
-        self operator -- (int) {
-            self tmp = *this;   // copy ourselves
+        const_reverse_iterator operator -- (int) {
+            const_reverse_iterator tmp = *this;   // copy ourselves
 
             if (curr_slot < curr_leaf->slotuse) {
                 ++curr_slot;
@@ -1013,12 +1014,12 @@ public:
         }
 
         //! Equality of iterators.
-        bool operator == (const self& x) const {
+        bool operator == (const const_reverse_iterator& x) const {
             return (x.curr_leaf == curr_leaf) && (x.curr_slot == curr_slot);
         }
 
         //! Inequality of iterators.
-        bool operator != (const self& x) const {
+        bool operator != (const const_reverse_iterator& x) const {
             return (x.curr_leaf != curr_leaf) || (x.curr_slot != curr_slot);
         }
     };
@@ -1140,7 +1141,7 @@ public:
     }
 
     //! Fast swapping of two identical B+ tree objects.
-    void swap(btree_self& from) {
+    void swap(btree& from) {
         std::swap(root_, from.root_);
         std::swap(head_leaf_, from.head_leaf_);
         std::swap(tail_leaf_, from.tail_leaf_);
@@ -1163,7 +1164,7 @@ public:
         key_compare key_comp;
 
         //! Constructor called from btree::value_comp()
-        value_compare(key_compare kc)
+        explicit value_compare(key_compare kc)
             : key_comp(kc)
         { }
 
@@ -1712,35 +1713,35 @@ public:
     //! Equality relation of B+ trees of the same type. B+ trees of the same
     //! size and equal elements (both key and data) are considered equal. Beware
     //! of the random ordering of duplicate keys.
-    bool operator == (const btree_self& other) const {
+    bool operator == (const btree& other) const {
         return (size() == other.size()) &&
                std::equal(begin(), end(), other.begin());
     }
 
     //! Inequality relation. Based on operator==.
-    bool operator != (const btree_self& other) const {
+    bool operator != (const btree& other) const {
         return !(*this == other);
     }
 
     //! Total ordering relation of B+ trees of the same type. It uses
     //! std::lexicographical_compare() for the actual comparison of elements.
-    bool operator < (const btree_self& other) const {
+    bool operator < (const btree& other) const {
         return std::lexicographical_compare(
             begin(), end(), other.begin(), other.end());
     }
 
     //! Greater relation. Based on operator<.
-    bool operator > (const btree_self& other) const {
+    bool operator > (const btree& other) const {
         return other < *this;
     }
 
     //! Less-equal relation. Based on operator<.
-    bool operator <= (const btree_self& other) const {
+    bool operator <= (const btree& other) const {
         return !(other < *this);
     }
 
     //! Greater-equal relation. Based on operator<.
-    bool operator >= (const btree_self& other) const {
+    bool operator >= (const btree& other) const {
         return !(*this < other);
     }
 
@@ -1751,7 +1752,7 @@ public:
     //! \{
 
     //! Assignment operator. All the key/data pairs are copied.
-    btree_self& operator = (const btree_self& other) {
+    btree& operator = (const btree& other) {
         if (this != &other)
         {
             clear();
@@ -1775,7 +1776,7 @@ public:
 
     //! Copy constructor. The newly initialized B+ tree object will contain a
     //! copy of all key/data pairs.
-    btree(const btree_self& other)
+    btree(const btree& other)
         : root_(nullptr), head_leaf_(nullptr), tail_leaf_(nullptr),
           stats_(other.stats_),
           key_less_(other.key_comp()),
@@ -2296,7 +2297,7 @@ private:
 
         //! Constructor of a result with a specific flag, this can also be used
         //! as for implicit conversion.
-        result_t(result_flags_t f = btree_ok)
+        result_t(result_flags_t f = btree_ok) // NOLINT
             : flags(f), lastkey()
         { }
 

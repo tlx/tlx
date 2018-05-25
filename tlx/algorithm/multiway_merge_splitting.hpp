@@ -39,7 +39,7 @@ enum MultiwayMergeSplittingAlgorithm {
     MWMSA_DEFAULT = MWMSA_EXACT
 };
 
-namespace {
+namespace multiway_merge_detail {
 
 /*!
  * Split a sequence into parts of almost equal size.
@@ -68,7 +68,7 @@ DiffTypeOutputIterator equally_split(
     return s;
 }
 
-} // namespace
+} // namespace multiway_merge_detail
 
 /*!
  * Splitting method for parallel multi-way merge routine: use sampling and
@@ -215,7 +215,7 @@ void multiway_merge_exact_splitting(
     simple_vector<std::vector<RandomAccessIterator> > offsets(num_threads);
 
     std::vector<DiffType> ranks(static_cast<size_t>(num_threads + 1));
-    equally_split(size, num_threads, ranks.begin());
+    multiway_merge_detail::equally_split(size, num_threads, ranks.begin());
 
     for (size_t s = 0; s < (num_threads - 1); ++s)
     {

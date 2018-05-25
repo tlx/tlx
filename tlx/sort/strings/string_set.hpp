@@ -24,7 +24,9 @@
 #include <cassert>
 #include <cstdint>
 #include <memory>
+#include <string>
 #include <utility>
+#include <vector>
 
 #include <tlx/logger.hpp>
 #include <tlx/math/bswap.hpp>

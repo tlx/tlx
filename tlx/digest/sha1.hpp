@@ -33,7 +33,7 @@ public:
     //! construct context and process data range
     SHA1(const void* data, uint32_t size);
     //! construct context and process string
-    SHA1(const std::string& str);
+    explicit SHA1(const std::string& str);
 
     //! process more data
     void process(const void* data, uint32_t size);

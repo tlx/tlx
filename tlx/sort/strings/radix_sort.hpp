@@ -27,6 +27,8 @@
 #include <tlx/sort/strings/string_set.hpp>
 
 #include <stack>
+#include <utility>
+#include <vector>
 
 namespace tlx {
 namespace sort_strings_detail {

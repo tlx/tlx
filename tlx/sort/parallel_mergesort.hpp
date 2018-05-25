@@ -21,6 +21,8 @@
 #if defined(_OPENMP)
 
 #include <algorithm>
+#include <functional>
+#include <utility>
 #include <vector>
 
 #include <tlx/algorithm/multisequence_selection.hpp>
@@ -71,7 +73,7 @@ struct PMWMSSortingData {
     /** PMWMSPieces of data to merge \c [thread][sequence] */
     simple_vector<std::vector<PMWMSPiece<DiffType> > > pieces;
 
-    PMWMSSortingData(size_t num_threads)
+    explicit PMWMSSortingData(size_t num_threads)
         : starts(num_threads + 1),
           temporary(num_threads),
           offsets(num_threads - 1),
@@ -95,8 +97,9 @@ void determine_samples(PMWMSSortingData<RandomAccessIterator>* sd,
     num_samples = parallel_multiway_merge_oversampling * num_threads - 1;
 
     std::vector<DiffType> es(num_samples + 2);
-    equally_split(sd->starts[iam + 1] - sd->starts[iam],
-                  static_cast<size_t>(num_samples + 1), es.begin());
+    multiway_merge_detail::equally_split(
+        sd->starts[iam + 1] - sd->starts[iam],
+        static_cast<size_t>(num_samples + 1), es.begin());
 
     for (DiffType i = 0; i < num_samples; i++)
         sd->samples[iam * num_samples + i] = sd->source[sd->starts[iam] + es[i + 1]];

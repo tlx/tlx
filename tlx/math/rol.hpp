@@ -16,7 +16,7 @@
 #include <cstdint>
 
 #ifdef _MSC_VER
-#include <stdlib.h>
+#include <cstdlib>
 #endif
 
 namespace tlx {

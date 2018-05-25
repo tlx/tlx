@@ -33,7 +33,7 @@ public:
     //! construct context and process data range
     SHA512(const void* data, uint32_t size);
     //! construct context and process string
-    SHA512(const std::string& str);
+    explicit SHA512(const std::string& str);
 
     //! process more data
     void process(const void* data, uint32_t size);

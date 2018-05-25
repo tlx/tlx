@@ -33,7 +33,7 @@ public:
     //! construct context and process data range
     MD5(const void* data, uint32_t size);
     //! construct context and process string
-    MD5(const std::string& str);
+    explicit MD5(const std::string& str);
 
     //! process more data
     void process(const void* data, uint32_t size);

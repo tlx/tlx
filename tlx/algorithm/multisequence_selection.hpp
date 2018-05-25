@@ -22,6 +22,7 @@
 #include <cassert>
 #include <functional>
 #include <queue>
+#include <utility>
 #include <vector>
 
 #include <tlx/math/round_to_power_of_two.hpp>

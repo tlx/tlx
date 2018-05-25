@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <utility>
 
 namespace tlx {
 namespace sort_strings_detail {

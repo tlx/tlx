@@ -197,7 +197,7 @@ LoggerOutputHook * set_logger_output_hook(LoggerOutputHook* hook);
 class LoggerCollectOutput : public LoggerOutputHook
 {
 public:
-    LoggerCollectOutput(bool echo = false);
+    explicit LoggerCollectOutput(bool echo = false);
     ~LoggerCollectOutput();
 
     //! return transcript of log

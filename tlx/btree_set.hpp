@@ -11,6 +11,10 @@
 #ifndef TLX_BTREE_SET_HEADER
 #define TLX_BTREE_SET_HEADER
 
+#include <functional>
+#include <memory>
+#include <utility>
+
 #include <tlx/btree.hpp>
 
 namespace tlx {
@@ -195,7 +199,7 @@ public:
     { }
 
     //! Fast swapping of two identical B+ tree objects.
-    void swap(self& from) {
+    void swap(btree_set& from) {
         std::swap(tree_, from.tree_);
     }
 
@@ -392,33 +396,33 @@ public:
 
     //! Equality relation of B+ trees of the same type. B+ trees of the same
     //! size and equal elements are considered equal.
-    bool operator == (const self& other) const {
+    bool operator == (const btree_set& other) const {
         return (tree_ == other.tree_);
     }
 
     //! Inequality relation. Based on operator==.
-    bool operator != (const self& other) const {
+    bool operator != (const btree_set& other) const {
         return (tree_ != other.tree_);
     }
 
     //! Total ordering relation of B+ trees of the same type. It uses
     //! std::lexicographical_compare() for the actual comparison of elements.
-    bool operator < (const self& other) const {
+    bool operator < (const btree_set& other) const {
         return (tree_ < other.tree_);
     }
 
     //! Greater relation. Based on operator<.
-    bool operator > (const self& other) const {
+    bool operator > (const btree_set& other) const {
         return (tree_ > other.tree_);
     }
 
     //! Less-equal relation. Based on operator<.
-    bool operator <= (const self& other) const {
+    bool operator <= (const btree_set& other) const {
         return (tree_ <= other.tree_);
     }
 
     //! Greater-equal relation. Based on operator<.
-    bool operator >= (const self& other) const {
+    bool operator >= (const btree_set& other) const {
         return (tree_ >= other.tree_);
     }
 
@@ -428,7 +432,7 @@ public:
     //! \name Fast Copy: Assign Operator and Copy Constructors
 
     //! Assignment operator. All the keys are copied
-    self& operator = (const self& other) {
+    btree_set& operator = (const btree_set& other) {
         if (this != &other)
             tree_ = other.tree_;
         return *this;
@@ -436,7 +440,7 @@ public:
 
     //! Copy constructor. The newly initialized B+ tree object will contain a
     //! copy of all keys.
-    btree_set(const self& other)
+    btree_set(const btree_set& other)
         : tree_(other.tree_)
     { }
 

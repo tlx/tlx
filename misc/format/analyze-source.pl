@@ -219,7 +219,7 @@ sub process_cpp {
     for my $i (0...@data-1)
     {
         if ($data[$i] =~ m!\s*#\s*include\s*[<"](\S+)[">]!) {
-            $include_list{$1} = 1;
+            push(@{$include_list{$1}}, $path);
             $include_map{$path}{$1} = 1;
         }
     }
@@ -579,7 +579,7 @@ close(A);
     {
         next if !$include_list{$ch};
         print "Replace c-style header $ch in\n";
-        print "    [".join(",", sort keys %{$include_list{$ch}}). "]\n";
+        print "    [".join(",", sort @{$include_list{$ch}}). "]\n";
     }
 }
 

@@ -18,7 +18,10 @@
 #ifndef TLX_ALGORITHM_MULTIWAY_MERGE_HEADER
 #define TLX_ALGORITHM_MULTIWAY_MERGE_HEADER
 
+#include <algorithm>
+#include <functional>
 #include <numeric>
+#include <utility>
 #include <vector>
 
 #include <tlx/algorithm/merge_advance.hpp>

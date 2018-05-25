@@ -33,6 +33,7 @@ set(LIBTLX_SOURCES
   string/erase_all.cpp
   string/escape_html.cpp
   string/escape_uri.cpp
+  string/expand_environment_variables.cpp
   string/extract_between.cpp
   string/format_si_iec_units.cpp
   string/hexdump.cpp

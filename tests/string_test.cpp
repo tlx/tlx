@@ -139,6 +139,24 @@ static void test_escape_uri() {
         tlx::escape_uri("hello <tag>\""), "hello%20%3Ctag%3E%22");
 }
 
+static void test_expand_environment_variables() {
+
+    setenv("TEST_1", "def", /* overwrite */ true);
+    setenv("VAR_2", "uvw", /* overwrite */ true);
+
+    die_unequal(
+        tlx::expand_environment_variables("abc$TEST_1 ---${VAR_2}xyz"),
+        "abcdef ---uvwxyz");
+
+    die_unequal(
+        tlx::expand_environment_variables("abc$4TEST_1 -$$--${VAR_2}xyz"),
+        "abc$4TEST_1 -$$--uvwxyz");
+
+    die_unequal(
+        tlx::expand_environment_variables("abc${NON_EXISTING_VARIABLE}xyz"),
+        "abcxyz");
+}
+
 static void test_extract_between() {
     std::string data =
         "Content-Disposition: form-data; name='testfile'; filename='test.html'";
@@ -729,6 +747,7 @@ int main() {
     test_erase_all();
     test_escape_html();
     test_escape_uri();
+    test_expand_environment_variables();
     test_extract_between();
     test_format_si_iec_units();
     test_hexdump();

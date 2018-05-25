@@ -24,6 +24,12 @@ namespace tlx {
  */
 std::string escape_html(const std::string& str);
 
+/*!
+ * Escape characters for inclusion in HTML documents: replaces the characters <,
+ * >, & and " with HTML entities.
+ */
+std::string escape_html(const char* str);
+
 //! \}
 
 } // namespace tlx

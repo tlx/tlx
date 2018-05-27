@@ -64,6 +64,7 @@ tlx_build_only(cmdline_parser_example)
 
 tlx_build_test(algorithm_test)
 tlx_build_test(algorithm_multiway_merge_test)
+tlx_build_test(algorithm_random_bipartition_shuffle)
 tlx_build_test(backtrace_test)
 tlx_build_test(btree_test)
 tlx_build_test(cmdline_parser_test)

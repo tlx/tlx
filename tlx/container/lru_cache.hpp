@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/lru_cache.hpp
+ * tlx/container/lru_cache.hpp
  *
  * An expected O(1) LRU cache which contains a set of key -> value associations.
  * Loosely based on https://github.com/lamerman/cpp-lru-cache by Alexander
@@ -12,8 +12,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_LRU_CACHE_HEADER
-#define TLX_LRU_CACHE_HEADER
+#ifndef TLX_CONTAINER_LRU_CACHE_HEADER
+#define TLX_CONTAINER_LRU_CACHE_HEADER
 
 #include <cassert>
 #include <cstddef>
@@ -26,7 +26,7 @@
 
 namespace tlx {
 
-//! \addtogroup tlx_data_structures
+//! \addtogroup tlx_container
 //! \{
 
 /*!
@@ -299,6 +299,6 @@ private:
 
 } // namespace tlx
 
-#endif // !TLX_LRU_CACHE_HEADER
+#endif // !TLX_CONTAINER_LRU_CACHE_HEADER
 
 /******************************************************************************/

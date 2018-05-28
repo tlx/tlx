@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/lru_cache_test.cpp
+ * tests/container/lru_cache_test.cpp
  *
  * Borrowed from https://github.com/lamerman/cpp-lru-cache by Alexander
  * Ponomarev under BSD license and modified for Thrill's block pool.
@@ -11,8 +11,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/lru_cache.hpp>
 #include <tlx/die.hpp>
-#include <tlx/lru_cache.hpp>
 
 namespace tlx {
 

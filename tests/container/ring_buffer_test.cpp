@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/ring_buffer_test.cpp
+ * tests/container/ring_buffer_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,8 +8,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/ring_buffer.hpp>
 #include <tlx/die.hpp>
-#include <tlx/ring_buffer.hpp>
 
 static void test_fill_circular(size_t rb_size) {
 

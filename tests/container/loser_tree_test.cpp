@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/loser_tree_test.cpp
+ * tests/container/loser_tree_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -15,8 +15,8 @@
 #include <vector>
 
 #include <tlx/cmdline_parser.hpp>
+#include <tlx/container/loser_tree.hpp>
 #include <tlx/die.hpp>
-#include <tlx/loser_tree.hpp>
 
 static long ctor_dtor_counter = 0;
 

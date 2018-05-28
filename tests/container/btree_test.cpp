@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/btree_test.cpp
+ * tests/container/btree_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,10 +8,10 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/btree_map.hpp>
-#include <tlx/btree_multimap.hpp>
-#include <tlx/btree_multiset.hpp>
-#include <tlx/btree_set.hpp>
+#include <tlx/container/btree_map.hpp>
+#include <tlx/container/btree_multimap.hpp>
+#include <tlx/container/btree_multiset.hpp>
+#include <tlx/container/btree_set.hpp>
 
 #include <tlx/die.hpp>
 

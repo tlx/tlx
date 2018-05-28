@@ -25,8 +25,8 @@
 #include <utility>
 #include <vector>
 
+#include <tlx/container/simple_vector.hpp>
 #include <tlx/math/round_to_power_of_two.hpp>
-#include <tlx/simple_vector.hpp>
 
 namespace tlx {
 

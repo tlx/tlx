@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/simple_vector_test.cpp
+ * tests/container/simple_vector_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,8 +8,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/simple_vector.hpp>
 #include <tlx/die.hpp>
-#include <tlx/simple_vector.hpp>
 
 #include <algorithm>
 

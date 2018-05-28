@@ -18,8 +18,8 @@
 #include <mutex>
 #include <thread>
 
+#include <tlx/container/simple_vector.hpp>
 #include <tlx/delegate.hpp>
-#include <tlx/simple_vector.hpp>
 
 namespace tlx {
 

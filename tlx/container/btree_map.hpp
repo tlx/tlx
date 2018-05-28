@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/btree_multimap.hpp
+ * tlx/container/btree_map.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,34 +8,34 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_BTREE_MULTIMAP_HEADER
-#define TLX_BTREE_MULTIMAP_HEADER
+#ifndef TLX_CONTAINER_BTREE_MAP_HEADER
+#define TLX_CONTAINER_BTREE_MAP_HEADER
 
 #include <functional>
 #include <memory>
 #include <utility>
 
-#include <tlx/btree.hpp>
+#include <tlx/container/btree.hpp>
 
 namespace tlx {
 
-//! \addtogroup tlx_data_structures_btree
+//! \addtogroup tlx_container_btree
 //! \{
 
 /*!
- * Specialized B+ tree template class implementing STL's multimap container.
+ * Specialized B+ tree template class implementing STL's map container.
  *
- * Implements the STL multimap using a B+ tree. It can be used as a drop-in
- * replacement for std::multimap. Not all asymptotic time requirements are met
- * in theory. The class has a traits class defining B+ tree properties like
- * slots and self-verification. Furthermore an allocator can be specified for
- * tree nodes.
+ * Implements the STL map using a B+ tree. It can be used as a drop-in
+ * replacement for std::map. Not all asymptotic time requirements are met in
+ * theory. The class has a traits class defining B+ tree properties like slots
+ * and self-verification. Furthermore an allocator can be specified for tree
+ * nodes.
  */
 template <typename Key_, typename Data_,
           typename Compare_ = std::less<Key_>,
           typename Traits_ = btree_default_traits<Key_, std::pair<Key_, Data_> >,
           typename Alloc_ = std::allocator<std::pair<Key_, Data_> > >
-class btree_multimap
+class btree_map
 {
 public:
     //! \name Template Parameter Types
@@ -45,8 +45,8 @@ public:
     //! inner nodes.
     typedef Key_ key_type;
 
-    //! Second template parameter: The data type associated with each
-    //! key. Stored in the B+ tree's leaves
+    //! Second template parameter: The value type associated with each key.
+    //! Stored in the B+ tree's leaves
     typedef Data_ data_type;
 
     //! Third template parameter: Key comparison function object
@@ -71,7 +71,8 @@ public:
     //! \{
 
     //! Typedef of our own type
-    typedef btree_multimap<key_type, data_type, key_compare, traits, allocator_type> self;
+    typedef btree_map<key_type, data_type, key_compare,
+                      traits, allocator_type> self;
 
     //! Construct the STL-required value_type as a composition pair of key and
     //! data types
@@ -85,7 +86,7 @@ public:
 
     //! Implementation type of the btree_base
     typedef btree<key_type, value_type, key_of_value, key_compare,
-                  traits, true, allocator_type> btree_impl;
+                  traits, false, allocator_type> btree_impl;
 
     //! Function class comparing two value_type pairs.
     typedef typename btree_impl::value_compare value_compare;
@@ -124,8 +125,8 @@ public:
     static const bool self_verify = btree_impl::self_verify;
 
     //! Debug parameter: Prints out lots of debug information about how the
-    //! algorithms change the tree. Requires the header file to be compiled with
-    //! TLX_BTREE_DEBUG and the key type must be std::ostream printable.
+    //! algorithms change the tree. Requires the header file to be compiled
+    //! with TLX_BTREE_DEBUG and the key type must be std::ostream printable.
     static const bool debug = btree_impl::debug;
 
     //! Operational parameter: Allow duplicate keys in the btree.
@@ -168,38 +169,38 @@ public:
 
     //! Default constructor initializing an empty B+ tree with the standard key
     //! comparison function
-    explicit btree_multimap(const allocator_type& alloc = allocator_type())
+    explicit btree_map(const allocator_type& alloc = allocator_type())
         : tree_(alloc)
     { }
 
-    //! Constructor initializing an empty B+ tree with a special key comparison
-    //! object
-    explicit btree_multimap(const key_compare& kcf,
-                            const allocator_type& alloc = allocator_type())
+    //! Constructor initializing an empty B+ tree with a special key
+    //! comparison object
+    explicit btree_map(const key_compare& kcf,
+                       const allocator_type& alloc = allocator_type())
         : tree_(kcf, alloc)
     { }
 
     //! Constructor initializing a B+ tree with the range [first,last)
     template <class InputIterator>
-    btree_multimap(InputIterator first, InputIterator last,
-                   const allocator_type& alloc = allocator_type())
+    btree_map(InputIterator first, InputIterator last,
+              const allocator_type& alloc = allocator_type())
         : tree_(first, last, alloc)
     { }
 
     //! Constructor initializing a B+ tree with the range [first,last) and a
     //! special key comparison object
     template <class InputIterator>
-    btree_multimap(InputIterator first, InputIterator last, const key_compare& kcf,
-                   const allocator_type& alloc = allocator_type())
+    btree_map(InputIterator first, InputIterator last, const key_compare& kcf,
+              const allocator_type& alloc = allocator_type())
         : tree_(first, last, kcf, alloc)
     { }
 
     //! Frees up all used B+ tree memory pages
-    ~btree_multimap()
+    ~btree_map()
     { }
 
     //! Fast swapping of two identical B+ tree objects.
-    void swap(btree_multimap& from) {
+    void swap(btree_map& from) {
         std::swap(tree_, from.tree_);
     }
 
@@ -348,7 +349,8 @@ public:
     }
 
     //! Tries to locate a key in the B+ tree and returns the number of identical
-    //! key entries found.
+    //! key entries found. Since this is a unique map, count() returns either 0
+    //! or 1.
     size_type count(const key_type& key) const {
         return tree_.count(key);
     }
@@ -395,35 +397,34 @@ public:
     //! \{
 
     //! Equality relation of B+ trees of the same type. B+ trees of the same
-    //! size and equal elements (both key and data) are considered equal. Beware
-    //! of the random ordering of duplicate keys.
-    bool operator == (const btree_multimap& other) const {
+    //! size and equal elements (both key and data) are considered equal.
+    bool operator == (const btree_map& other) const {
         return (tree_ == other.tree_);
     }
 
     //! Inequality relation. Based on operator==.
-    bool operator != (const btree_multimap& other) const {
+    bool operator != (const btree_map& other) const {
         return (tree_ != other.tree_);
     }
 
     //! Total ordering relation of B+ trees of the same type. It uses
     //! std::lexicographical_compare() for the actual comparison of elements.
-    bool operator < (const btree_multimap& other) const {
+    bool operator < (const btree_map& other) const {
         return (tree_ < other.tree_);
     }
 
     //! Greater relation. Based on operator<.
-    bool operator > (const btree_multimap& other) const {
+    bool operator > (const btree_map& other) const {
         return (tree_ > other.tree_);
     }
 
     //! Less-equal relation. Based on operator<.
-    bool operator <= (const btree_multimap& other) const {
+    bool operator <= (const btree_map& other) const {
         return (tree_ <= other.tree_);
     }
 
     //! Greater-equal relation. Based on operator<.
-    bool operator >= (const btree_multimap& other) const {
+    bool operator >= (const btree_map& other) const {
         return (tree_ >= other.tree_);
     }
 
@@ -434,15 +435,15 @@ public:
     //! \{
 
     //! Assignment operator. All the key/data pairs are copied
-    btree_multimap& operator = (const btree_multimap& other) {
+    btree_map& operator = (const btree_map& other) {
         if (this != &other)
             tree_ = other.tree_;
         return *this;
     }
 
     //! Copy constructor. The newly initialized B+ tree object will contain a
-    //! copy or all key/data pairs.
-    btree_multimap(const btree_multimap& other)
+    //! copy of all key/data pairs.
+    btree_map(const btree_map& other)
         : tree_(other.tree_)
     { }
 
@@ -452,17 +453,16 @@ public:
     //! \name Public Insertion Functions
     //! \{
 
-    //! Attempt to insert a key/data pair into the B+ tree. As this tree allows
-    //! duplicates, insertion never fails.
-    iterator insert(const value_type& x) {
-        return tree_.insert(x).first;
+    //! Attempt to insert a key/data pair into the B+ tree. Fails if the pair is
+    //! already present.
+    std::pair<iterator, bool> insert(const value_type& x) {
+        return tree_.insert(x);
     }
 
     //! Attempt to insert a key/data pair into the B+ tree. This function is the
-    //! same as the other insert.  As this tree allows duplicates, insertion
-    //! never fails.
-    iterator insert2(const key_type& key, const data_type& data) {
-        return tree_.insert(value_type(key, data)).first;
+    //! same as the other insert. Fails if the inserted pair is already present.
+    std::pair<iterator, bool> insert2(const key_type& key, const data_type& data) {
+        return tree_.insert(value_type(key, data));
     }
 
     //! Attempt to insert a key/data pair into the B+ tree. The iterator hint is
@@ -475,6 +475,14 @@ public:
     //! currently ignored by the B+ tree insertion routine.
     iterator insert2(iterator hint, const key_type& key, const data_type& data) {
         return tree_.insert(hint, value_type(key, data));
+    }
+
+    //! Returns a reference to the object that is associated with a particular
+    //! key. If the map does not already contain such an object, operator[]
+    //! inserts the default object data_type().
+    data_type& operator [] (const key_type& key) {
+        iterator i = insert(value_type(key, data_type())).first;
+        return i->second;
     }
 
     //! Attempt to insert the range [first,last) of value_type pairs into the B+
@@ -498,14 +506,14 @@ public:
     //! \name Public Erase Functions
     //! \{
 
-    //! Erases one (the first) of the key/data pairs associated with the given
-    //! key.
+    //! Erases the key/data pairs associated with the given key. For this
+    //! unique-associative map there is no difference to erase().
     bool erase_one(const key_type& key) {
         return tree_.erase_one(key);
     }
 
     //! Erases all the key/data pairs associated with the given key. This is
-    //! implemented using erase_one() and thus not very efficient.
+    //! implemented using erase_one().
     size_type erase(const key_type& key) {
         return tree_.erase(key);
     }
@@ -563,6 +571,6 @@ public:
 
 } // namespace tlx
 
-#endif // !TLX_BTREE_MULTIMAP_HEADER
+#endif // !TLX_CONTAINER_BTREE_MAP_HEADER
 
 /******************************************************************************/

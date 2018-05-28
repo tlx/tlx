@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/btree.hpp
+ * tlx/container/btree.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,8 +8,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_BTREE_HEADER
-#define TLX_BTREE_HEADER
+#ifndef TLX_CONTAINER_BTREE_HEADER
+#define TLX_CONTAINER_BTREE_HEADER
 
 #include <tlx/die.hpp>
 
@@ -26,9 +26,9 @@
 
 namespace tlx {
 
-//! \addtogroup tlx_data_structures
+//! \addtogroup tlx_container
 //! \{
-//! \defgroup tlx_data_structures_btree B+ Trees
+//! \defgroup tlx_container_btree B+ Trees
 //! B+ tree variants
 //! \{
 
@@ -3510,6 +3510,6 @@ private:
 
 } // namespace tlx
 
-#endif // !TLX_BTREE_HEADER
+#endif // !TLX_CONTAINER_BTREE_HEADER
 
 /******************************************************************************/

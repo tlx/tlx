@@ -21,8 +21,8 @@
 #ifndef TLX_SORT_STRINGS_RADIX_SORT_HEADER
 #define TLX_SORT_STRINGS_RADIX_SORT_HEADER
 
+#include <tlx/container/simple_vector.hpp>
 #include <tlx/define/likely.hpp>
-#include <tlx/simple_vector.hpp>
 #include <tlx/sort/strings/multikey_quicksort.hpp>
 #include <tlx/sort/strings/string_set.hpp>
 

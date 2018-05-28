@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/btree_speedtest.cpp
+ * tests/container/btree_speedtest.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -15,11 +15,11 @@
 #include <string>
 
 #include <set>
-#include <tlx/btree_multiset.hpp>
+#include <tlx/container/btree_multiset.hpp>
 #include <unordered_set>
 
 #include <map>
-#include <tlx/btree_multimap.hpp>
+#include <tlx/container/btree_multimap.hpp>
 #include <unordered_map>
 
 #include <tlx/die.hpp>

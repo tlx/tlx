@@ -25,8 +25,8 @@
 #include <vector>
 
 #include <tlx/algorithm/merge_advance.hpp>
-#include <tlx/loser_tree.hpp>
-#include <tlx/simple_vector.hpp>
+#include <tlx/container/loser_tree.hpp>
+#include <tlx/container/simple_vector.hpp>
 #include <tlx/unused.hpp>
 
 namespace tlx {

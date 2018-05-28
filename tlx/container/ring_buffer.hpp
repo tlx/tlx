@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/ring_buffer.hpp
+ * tlx/container/ring_buffer.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,8 +8,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_RING_BUFFER_HEADER
-#define TLX_RING_BUFFER_HEADER
+#ifndef TLX_CONTAINER_RING_BUFFER_HEADER
+#define TLX_CONTAINER_RING_BUFFER_HEADER
 
 #include <cassert>
 #include <cstdint>
@@ -21,7 +21,7 @@
 
 namespace tlx {
 
-//! \addtogroup tlx_data_structures
+//! \addtogroup tlx_container
 //! \{
 
 /*!
@@ -374,6 +374,6 @@ protected:
 
 } // namespace tlx
 
-#endif // !TLX_RING_BUFFER_HEADER
+#endif // !TLX_CONTAINER_RING_BUFFER_HEADER
 
 /******************************************************************************/

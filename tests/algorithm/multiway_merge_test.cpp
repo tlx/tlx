@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/algorithm_multiway_merge_test.cpp
+ * tests/algorithm/multiway_merge_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *

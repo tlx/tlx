@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/meta_has_member_test.cpp
+ * tests/meta/has_member_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *

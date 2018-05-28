@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/function_chain_test.cpp
+ * tests/meta/function_chain_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *

@@ -69,6 +69,7 @@ List of the most commonly used components:
 \defgroup tlx_digest Message Digests
 \defgroup tlx_math Math Functions
 \defgroup tlx_meta Meta-Template Programming
+\defgroup tlx_port Helpers for Portable Code
 \defgroup tlx_sort Sorting Algorithms
 \defgroup tlx_string String Algorithms
 

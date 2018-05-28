@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/meta_vmap_for_test.cpp
+ * tests/meta/vmap_for_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *

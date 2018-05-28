@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/meta_log2_test.cpp
+ * tests/meta/log2_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *

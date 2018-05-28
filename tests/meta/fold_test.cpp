@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/meta_fold_test.cpp
+ * tests/meta/fold_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *

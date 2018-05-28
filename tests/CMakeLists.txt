@@ -101,7 +101,8 @@ endif()
 # disable -Wshadow on source with FunctionStack or FunctionChain
 if(NOT MSVC)
   set_source_files_properties(
-    function_chain_test.cpp  function_stack_test.cpp
+    meta/function_chain_test.cpp
+    meta/function_stack_test.cpp
     PROPERTIES COMPILE_FLAGS "-Wno-shadow")
 
   set_source_files_properties(
@@ -110,7 +111,7 @@ if(NOT MSVC)
 endif()
 if(MSVC)
   # requires /bigobj flag to build
-  set_target_properties(tlx_btree_test PROPERTIES COMPILE_FLAGS /bigobj)
+  set_target_properties(tlx_container_btree_test PROPERTIES COMPILE_FLAGS /bigobj)
 endif()
 if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
   # failed with a weird exception without -pthreads

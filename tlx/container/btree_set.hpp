@@ -82,7 +82,7 @@ public:
     };
 
     //! Implementation type of the btree_base
-    typedef btree<key_type, value_type, key_of_value, key_compare,
+    typedef BTree<key_type, value_type, key_of_value, key_compare,
                   traits, false, allocator_type> btree_impl;
 
     //! Function class comparing two value_type keys.

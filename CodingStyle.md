@@ -2,9 +2,9 @@
 
 This file should document some of the C++ coding style used in tlx.
 
-## 80 columns rule
+## 80 Columns Rule
 
-All source must _strictly_ adhere to the 80 column limit.
+All source must **strictly** adhere to the 80 column limit.
 
 This may seem overly short considered today's wide high-resolution screens, but there are some good reasons.
 
@@ -12,12 +12,12 @@ This may seem overly short considered today's wide high-resolution screens, but 
 
 - A shorter limit allow to arrange more than one column of code, e.g. for reading side-by-side or diffs.
 
-For a fun read on the history of "Why 80 columns?", see
+For a fun read on the history of "Why 80 columns?", see  
 <https://softwareengineering.stackexchange.com/questions/148677>
 
 ## Naming of Types, Methods, Functions, Variables.
 
-- Styles: ThisIsWrittenInCamelCase or this_is_written_in_snake_case.
+- Styles: `ThisIsWrittenInCamelCase` or `this_is_written_in_snake_case`.
 
 - All types, e.g. classes or typedef/usings are CamelCase, with the following exceptions:
 

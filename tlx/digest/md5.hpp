@@ -61,14 +61,14 @@ private:
 };
 
 //! process data and return 16 byte (128 bit) digest hex encoded
-std::string MD5_hex(const void* data, uint32_t size);
+std::string md5_hex(const void* data, uint32_t size);
 //! process data and return 16 byte (128 bit) digest hex encoded
-std::string MD5_hex(const std::string& str);
+std::string md5_hex(const std::string& str);
 
 //! process data and return 16 byte (128 bit) digest upper-case hex encoded
-std::string MD5_hex_uc(const void* data, uint32_t size);
+std::string md5_hex_uc(const void* data, uint32_t size);
 //! process data and return 16 byte (128 bit) digest upper-case hex encoded
-std::string MD5_hex_uc(const std::string& str);
+std::string md5_hex_uc(const std::string& str);
 
 //! \}
 

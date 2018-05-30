@@ -235,19 +235,19 @@ std::string SHA256::digest_hex_uc() {
     return hexdump(digest, kDigestLength);
 }
 
-std::string SHA256_hex(const void* data, uint32_t size) {
+std::string sha256_hex(const void* data, uint32_t size) {
     return SHA256(data, size).digest_hex();
 }
 
-std::string SHA256_hex(const std::string& str) {
+std::string sha256_hex(const std::string& str) {
     return SHA256(str).digest_hex();
 }
 
-std::string SHA256_hex_uc(const void* data, uint32_t size) {
+std::string sha256_hex_uc(const void* data, uint32_t size) {
     return SHA256(data, size).digest_hex_uc();
 }
 
-std::string SHA256_hex_uc(const std::string& str) {
+std::string sha256_hex_uc(const std::string& str) {
     return SHA256(str).digest_hex_uc();
 }
 

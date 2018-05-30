@@ -253,19 +253,19 @@ std::string SHA512::digest_hex_uc() {
     return hexdump(digest, kDigestLength);
 }
 
-std::string SHA512_hex(const void* data, uint32_t size) {
+std::string sha512_hex(const void* data, uint32_t size) {
     return SHA512(data, size).digest_hex();
 }
 
-std::string SHA512_hex(const std::string& str) {
+std::string sha512_hex(const std::string& str) {
     return SHA512(str).digest_hex();
 }
 
-std::string SHA512_hex_uc(const void* data, uint32_t size) {
+std::string sha512_hex_uc(const void* data, uint32_t size) {
     return SHA512(data, size).digest_hex_uc();
 }
 
-std::string SHA512_hex_uc(const std::string& str) {
+std::string sha512_hex_uc(const std::string& str) {
     return SHA512(str).digest_hex_uc();
 }
 

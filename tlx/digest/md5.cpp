@@ -262,19 +262,19 @@ std::string MD5::digest_hex_uc() {
     return hexdump(digest, kDigestLength);
 }
 
-std::string MD5_hex(const void* data, uint32_t size) {
+std::string md5_hex(const void* data, uint32_t size) {
     return MD5(data, size).digest_hex();
 }
 
-std::string MD5_hex(const std::string& str) {
+std::string md5_hex(const std::string& str) {
     return MD5(str).digest_hex();
 }
 
-std::string MD5_hex_uc(const void* data, uint32_t size) {
+std::string md5_hex_uc(const void* data, uint32_t size) {
     return MD5(data, size).digest_hex_uc();
 }
 
-std::string MD5_hex_uc(const std::string& str) {
+std::string md5_hex_uc(const std::string& str) {
     return MD5(str).digest_hex_uc();
 }
 

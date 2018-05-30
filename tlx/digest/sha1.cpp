@@ -219,19 +219,19 @@ std::string SHA1::digest_hex_uc() {
     return hexdump(digest, kDigestLength);
 }
 
-std::string SHA1_hex(const void* data, uint32_t size) {
+std::string sha1_hex(const void* data, uint32_t size) {
     return SHA1(data, size).digest_hex();
 }
 
-std::string SHA1_hex(const std::string& str) {
+std::string sha1_hex(const std::string& str) {
     return SHA1(str).digest_hex();
 }
 
-std::string SHA1_hex_uc(const void* data, uint32_t size) {
+std::string sha1_hex_uc(const void* data, uint32_t size) {
     return SHA1(data, size).digest_hex_uc();
 }
 
-std::string SHA1_hex_uc(const std::string& str) {
+std::string sha1_hex_uc(const std::string& str) {
     return SHA1(str).digest_hex_uc();
 }
 

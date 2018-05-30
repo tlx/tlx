@@ -61,14 +61,14 @@ private:
 };
 
 //! process data and return 20 byte (160 bit) digest hex encoded
-std::string SHA1_hex(const void* data, uint32_t size);
+std::string sha1_hex(const void* data, uint32_t size);
 //! process data and return 20 byte (160 bit) digest hex encoded
-std::string SHA1_hex(const std::string& str);
+std::string sha1_hex(const std::string& str);
 
 //! process data and return 20 byte (160 bit) digest upper-case hex encoded
-std::string SHA1_hex_uc(const void* data, uint32_t size);
+std::string sha1_hex_uc(const void* data, uint32_t size);
 //! process data and return 20 byte (160 bit) digest upper-case hex encoded
-std::string SHA1_hex_uc(const std::string& str);
+std::string sha1_hex_uc(const std::string& str);
 
 //! \}
 

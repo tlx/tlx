@@ -21,7 +21,7 @@ For a fun read on the history of "Why 80 columns?", see
 
 - All types, e.g. classes or typedef/usings are CamelCase, with the following exceptions:
 
-  - All STL-style types which end with `_type` or `iterator` are snake_case.
+  - All STL-style types which end with `_type`, `_traits`, or `iterator` are snake_case.
   
   - STL-style container or functor classes are granted an exception or may define an alias, e.g. `simple_vector`.
     
@@ -29,8 +29,10 @@ For a fun read on the history of "Why 80 columns?", see
 
   - Some exceptions are granted, e.g. the `debug` variable cannot have a tailing underscore.
 
-  - Constant variables may alternatively be written as `kCamelCase` without underscore..
-
+  - Constant variables may alternatively be written as `kCamelCase` without underscore.
+  
+  - Structs used mainly to store fields may optionally omit the tailing underscore on all members.
+  
 - Functions and class methods are written as snake_case.
 
   - currently no exceptions

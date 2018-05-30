@@ -24,7 +24,7 @@ tlx is a collection of C++ helpers and extensions universally needed, but not fo
 - Algorithms : merge_combine(), exclusive_scan(), multiway_merge(), parallel_multiway_merge(), multisequence_selection(), multisequence_partition().
 - Data Structures : RingBuffer, SimpleVector, B+ Trees, Loser Trees
 - Defines and Macros : TLX_LIKELY, TLX_UNLIKELY, TLX_ATTRIBUTE_PACKED, TLX_ATTRIBUTE_ALWAYS_INLINE, TLX_ATTRIBUTE_FORMAT_PRINTF, TLX_DEPRECATED_FUNC_DEF.
-- Message Digests : MD5, MD5_hex(), SHA1, SHA1_hex(), SHA256, SHA256_hex(), SHA512, SHA512_hex().
+- Message Digests : MD5, md5_hex(), SHA1, sha1_hex(), SHA256, sha256_hex(), SHA512, sha512_hex().
 - Math Functions : integer_log2_floor(), is_power_of_two(), round_up_to_power_of_two(), round_down_to_power_of_two(), ffs(), clz(), abs_diff(), bswap32, bswap64.
 - String Algorithms : starts_with(), ends_with(), contains(), contains_word(), trim(), replace_all(), erase_all(), join(), split(), split_words(), union_words(), split_quoted(), join_quoted(), to_lower(), hexdump(), word_wrap(), escape_html(), parse_si_iec_units(), format_iec_units(), expand_environment_variables().
 - Meta-Template Programming : call_foreach(), apply_tuple(), vmap_foreach(), Log2Floor, FunctionChain, FunctionStack, is_std_pair, is_std_tuple, is_std_vector, is_std_array, TLX_MAKE_HAS_MEMBER.

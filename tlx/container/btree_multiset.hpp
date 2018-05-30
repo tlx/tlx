@@ -188,7 +188,8 @@ public:
     //! Constructor initializing a B+ tree with the range [first,last) and a
     //! special key comparison object
     template <class InputIterator>
-    btree_multiset(InputIterator first, InputIterator last, const key_compare& kcf,
+    btree_multiset(InputIterator first, InputIterator last,
+                   const key_compare& kcf,
                    const allocator_type& alloc = allocator_type())
         : tree_(kcf, alloc) {
         insert(first, last);
@@ -383,7 +384,8 @@ public:
     }
 
     //! Searches the B+ tree and returns both lower_bound() and upper_bound().
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
+    std::pair<const_iterator, const_iterator> equal_range(
+        const key_type& key) const {
         return tree_.equal_range(key);
     }
 

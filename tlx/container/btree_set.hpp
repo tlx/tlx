@@ -384,7 +384,8 @@ public:
     }
 
     //! Searches the B+ tree and returns both lower_bound() and upper_bound().
-    std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const {
+    std::pair<const_iterator, const_iterator> equal_range(
+        const key_type& key) const {
         return tree_.equal_range(key);
     }
 

@@ -33,7 +33,8 @@ namespace tlx {
  */
 template <typename Key_, typename Data_,
           typename Compare_ = std::less<Key_>,
-          typename Traits_ = btree_default_traits<Key_, std::pair<Key_, Data_> >,
+          typename Traits_ =
+              btree_default_traits<Key_, std::pair<Key_, Data_> >,
           typename Alloc_ = std::allocator<std::pair<Key_, Data_> > >
 class btree_map
 {
@@ -461,7 +462,8 @@ public:
 
     //! Attempt to insert a key/data pair into the B+ tree. This function is the
     //! same as the other insert. Fails if the inserted pair is already present.
-    std::pair<iterator, bool> insert2(const key_type& key, const data_type& data) {
+    std::pair<iterator, bool> insert2(
+        const key_type& key, const data_type& data) {
         return tree_.insert(value_type(key, data));
     }
 
@@ -473,7 +475,8 @@ public:
 
     //! Attempt to insert a key/data pair into the B+ tree. The iterator hint is
     //! currently ignored by the B+ tree insertion routine.
-    iterator insert2(iterator hint, const key_type& key, const data_type& data) {
+    iterator insert2(iterator hint,
+                     const key_type& key, const data_type& data) {
         return tree_.insert(hint, value_type(key, data));
     }
 

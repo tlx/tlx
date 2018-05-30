@@ -33,7 +33,8 @@ namespace tlx {
  */
 template <typename Key_, typename Data_,
           typename Compare_ = std::less<Key_>,
-          typename Traits_ = btree_default_traits<Key_, std::pair<Key_, Data_> >,
+          typename Traits_ =
+              btree_default_traits<Key_, std::pair<Key_, Data_> >,
           typename Alloc_ = std::allocator<std::pair<Key_, Data_> > >
 class btree_multimap
 {
@@ -71,7 +72,8 @@ public:
     //! \{
 
     //! Typedef of our own type
-    typedef btree_multimap<key_type, data_type, key_compare, traits, allocator_type> self;
+    typedef btree_multimap<
+            key_type, data_type, key_compare, traits, allocator_type> self;
 
     //! Construct the STL-required value_type as a composition pair of key and
     //! data types
@@ -189,7 +191,8 @@ public:
     //! Constructor initializing a B+ tree with the range [first,last) and a
     //! special key comparison object
     template <class InputIterator>
-    btree_multimap(InputIterator first, InputIterator last, const key_compare& kcf,
+    btree_multimap(InputIterator first, InputIterator last,
+                   const key_compare& kcf,
                    const allocator_type& alloc = allocator_type())
         : tree_(first, last, kcf, alloc)
     { }
@@ -473,7 +476,8 @@ public:
 
     //! Attempt to insert a key/data pair into the B+ tree. The iterator hint is
     //! currently ignored by the B+ tree insertion routine.
-    iterator insert2(iterator hint, const key_type& key, const data_type& data) {
+    iterator insert2(iterator hint,
+                     const key_type& key, const data_type& data) {
         return tree_.insert(hint, value_type(key, data));
     }
 

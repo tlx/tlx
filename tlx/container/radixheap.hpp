@@ -364,13 +364,13 @@ class radixheap
 {
     static_assert(Log2<Radix>::floor == Log2<Radix>::ceil,
                   "Radix has to be power of two");
-    static_assert(Radix <= 64, "Radix has to be at most 64");
 
     static constexpr bool debug = false;
 
 public:
     using key_type = KeyType;
     using value_type = ValueType;
+    using bucket_index_type = size_t;
 
     static constexpr unsigned radix = Radix;
 
@@ -386,7 +386,8 @@ protected:
 public:
     using bucket_data_type = std::vector<value_type>;
 
-    explicit radixheap(KeyExtract key_extract) : key_extract_(key_extract) {
+    explicit radixheap(KeyExtract key_extract = KeyExtract{})
+        : key_extract_(key_extract) {
         initialize_();
     }
 
@@ -398,33 +399,72 @@ public:
     radixheap(radixheap&&) = default;
     radixheap& operator = (radixheap&&) = default;
 
+    bucket_index_type get_bucket(const value_type& value) const {
+        return get_bucket_key(key_extract_(value));
+    }
+
+    bucket_index_type get_bucket_key(const key_type key) const {
+        const auto enc = encoder::rank_of_int(key);
+        assert(enc >= insertion_limit_);
+
+        return bucket_map_(enc, insertion_limit_);
+    }
+
     //! Construct and insert element with priority key
     //! \warning In contrast to all other methods the key has to be provided
     //! explicitly as the first argument. All other arguments are passed to
     //! the constructor of the element.
     template <typename... Args>
-    void emplace(const key_type key, Args&& ... args) {
+    bucket_index_type emplace(const key_type key, Args&& ... args) {
         const auto enc = encoder::rank_of_int(key);
         assert(enc >= insertion_limit_);
-
         const auto idx = bucket_map_(enc, insertion_limit_);
 
+        emplace_in_bucket(idx, std::forward<Args>(args)...);
+        return idx;
+    }
+
+    //! Construct and insert element into bucket idx (useful if an item
+    //! was inserted into the same bucket directly before)
+    //! \warning Calling any method which updates the current
+    //! can invalidate this hint
+    template <typename... Args>
+    void emplace_in_bucket(const bucket_index_type idx, Args&& ... args) {
         if (buckets_data_[idx].empty()) filled_.set_bit(idx);
         buckets_data_[idx].emplace_back(std::forward<Args>(args) ...);
+
+        const auto enc = encoder::rank_of_int(key_extract_(buckets_data_[idx].back()));
         if (mins_[idx] > enc) mins_[idx] = enc;
+        assert(idx == bucket_map_(enc, insertion_limit_));
 
         size_++;
     }
 
     //! Insert element with priority key
-    void push(const value_type& value) {
+    bucket_index_type push(const value_type& value) {
         const auto enc = encoder::rank_of_int(key_extract_(value));
         assert(enc >= insertion_limit_);
 
         const auto idx = bucket_map_(enc, insertion_limit_);
 
+        push_to_bucket(idx, value);
+
+        return idx;
+    }
+
+    //! Insert element into specific bucket (useful if an item
+    //! was inserted into the same bucket directly before)
+    //! \warning Calling any method which updates the current
+    //! can invalidate this hint
+    void push_to_bucket(const bucket_index_type idx, const value_type& value) {
+        const auto enc = encoder::rank_of_int(key_extract_(value));
+
+        assert(enc >= insertion_limit_);
+        assert(idx == get_bucket(value));
+
         if (buckets_data_[idx].empty()) filled_.set_bit(idx);
         buckets_data_[idx].push_back(value);
+
         if (mins_[idx] > enc) mins_[idx] = enc;
 
         size_++;
@@ -472,10 +512,10 @@ public:
         reorganize_();
 
         assert(exchange_bucket.empty());
+        size_ -= buckets_data_[current_bucket_].size();
         buckets_data_[current_bucket_].swap(exchange_bucket);
 
         filled_.clear_bit(current_bucket_);
-        size_ -= exchange_bucket.size();
     }
 
     //! Clears all internal queues and resets insertion limit
@@ -502,7 +542,7 @@ protected:
         insertion_limit_ = std::numeric_limits<ranked_key_type>::min();
         current_bucket_ = 0;
 
-        for (auto& x : mins_) x = std::numeric_limits<ranked_key_type>::max();
+        std::fill(mins_.begin(), mins_.end(), std::numeric_limits<ranked_key_type>::max());
 
         filled_.clear_all();
     }
@@ -535,7 +575,7 @@ protected:
         }
         #endif
 
-        if (first_non_empty < Radix) {
+        if (TLX_LIKELY(first_non_empty < Radix)) {
             // the first_non_empty non-empty bucket belongs to the smallest row
             // it hence contains only one key and we do not need to reorganise
             current_bucket_ = first_non_empty;

@@ -20,7 +20,7 @@ namespace tlx {
 
 std::string hexdump(const void* const data, size_t size) {
     const unsigned char* const cdata =
-        static_cast<const unsigned char* const>(data);
+        static_cast<const unsigned char*>(data);
 
     std::string out;
     out.resize(size * 2);
@@ -94,7 +94,7 @@ std::string hexdump_sourcecode(
 
 std::string hexdump_lc(const void* const data, size_t size) {
     const unsigned char* const cdata =
-        static_cast<const unsigned char* const>(data);
+        static_cast<const unsigned char*>(data);
 
     std::string out;
     out.resize(size * 2);

@@ -1197,12 +1197,12 @@ private:
     //! \{
 
     //! True if a < b ? "constructed" from key_less_()
-    bool key_less(const key_type& a, const key_type b) const {
+    bool key_less(const key_type& a, const key_type& b) const {
         return key_less_(a, b);
     }
 
     //! True if a <= b ? constructed from key_less()
-    bool key_lessequal(const key_type& a, const key_type b) const {
+    bool key_lessequal(const key_type& a, const key_type& b) const {
         return !key_less_(b, a);
     }
 
@@ -1212,7 +1212,7 @@ private:
     }
 
     //! True if a >= b ? constructed from key_less()
-    bool key_greaterequal(const key_type& a, const key_type b) const {
+    bool key_greaterequal(const key_type& a, const key_type& b) const {
         return !key_less_(a, b);
     }
 

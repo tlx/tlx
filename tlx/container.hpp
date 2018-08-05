@@ -24,6 +24,7 @@ print "#include <$_>\n" foreach sort glob("tlx/container/"."*.hpp");
 #include <tlx/container/btree_set.hpp>
 #include <tlx/container/loser_tree.hpp>
 #include <tlx/container/lru_cache.hpp>
+#include <tlx/container/radixheap.hpp>
 #include <tlx/container/ring_buffer.hpp>
 #include <tlx/container/simple_vector.hpp>
 // [[[end]]]

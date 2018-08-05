@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/container_radixheap_test.cpp
+ * tests/container/radixheap_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *

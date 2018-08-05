@@ -638,11 +638,9 @@ protected:
 /**
  * Helper to easily derive type of radixheap for a pre-C++17 compiler.
  * Refer to radixheap for description of parameters.
- * \note Expects DataType to be default constructable
  */
 template <typename DataType, unsigned Radix = 8, typename KeyExtract = void>
-auto make_radixheap(KeyExtract&& key_extract)->radixheap < DataType, KeyExtract, decltype(key_extract(DataType { })), Radix >
-{
+auto make_radixheap(KeyExtract&& key_extract)->radixheap<DataType, KeyExtract, decltype(key_extract(std::declval<DataType>())), Radix>{
     return (radixheap < DataType, KeyExtract, decltype(key_extract(DataType{ })), Radix > {
                 key_extract
             });

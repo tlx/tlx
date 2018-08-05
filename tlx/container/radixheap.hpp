@@ -331,6 +331,16 @@ public:
         num_buckets_(std::numeric_limits<Int>::digits) + 1;
 };
 
+//! Used as an adaptor to implement radixheap_pair on top of radixheap.
+template <typename KeyType, typename DataType>
+struct pair_keyextract {
+    using allow_emplace_pair = bool;
+
+    KeyType operator () (const std::pair<KeyType, DataType>& p) const {
+        return p.first;
+    }
+};
+
 } // namespace radixheap_detail
 
 //! \addtogroup tlx_data_structures
@@ -386,7 +396,7 @@ protected:
 public:
     using bucket_data_type = std::vector<value_type>;
 
-    explicit radixheap(KeyExtract key_extract = KeyExtract{})
+    explicit radixheap(KeyExtract key_extract = KeyExtract { })
         : key_extract_(key_extract) {
         initialize_();
     }
@@ -420,8 +430,15 @@ public:
         assert(enc >= insertion_limit_);
         const auto idx = bucket_map_(enc, insertion_limit_);
 
-        emplace_in_bucket(idx, std::forward<Args>(args)...);
+        emplace_in_bucket(idx, std::forward<Args>(args) ...);
         return idx;
+    }
+
+    //! In case the first parameter can be directly casted into key_type,
+    //! using this method avoid repeating it.
+    template <typename... Args>
+    bucket_index_type emplace_keyfirst(const key_type key, Args&& ... args) {
+        return emplace(key, key, std::forward<Args>(args) ...);
     }
 
     //! Construct and insert element into bucket idx (useful if an item
@@ -632,233 +649,12 @@ auto make_radixheap(KeyExtract&& key_extract)->radixheap < DataType, KeyExtract,
 }
 
 /**
- * This class is a specialisation of tlx::radixheap for data type which do not
- * include the key directly. It contains a few optimisation avoiding redundant
- * storage of keys and should be used if possible.
+ * This class is a variant of tlx::radixheap for data types which do not
+ * include the key directly. Hence each entry is stored as an (Key,Value)-Pair
+ * implemented with std::pair.
  */
 template <typename KeyType, typename DataType, unsigned Radix = 8>
-class radixheap_pair
-{
-    static_assert(Log2<Radix>::floor == Log2<Radix>::ceil,
-                  "Radix has to be power of two");
-    static_assert(Radix <= 64,
-                  "Radix has to be at most 64");
-
-    static constexpr bool debug = false;
-
-public:
-    using key_type = KeyType;
-    using data_type = DataType;
-    using value_type = std::pair<const key_type, data_type>;
-
-    static constexpr unsigned radix = Radix;
-
-protected:
-    using encoder = radixheap_detail::integer_rank<key_type>;
-    using ranked_key_type = typename encoder::rank_type;
-    using bucket_map_type = radixheap_detail::bucket_computation<Radix, ranked_key_type>;
-
-    static constexpr unsigned radix_bits = tlx::Log2<radix>::floor;
-    static constexpr unsigned num_layers = div_ceil(8 * sizeof(ranked_key_type), radix_bits);
-    static constexpr unsigned num_buckets = bucket_map_type::num_buckets;
-
-public:
-    using bucket_key_type = std::vector<ranked_key_type>;
-    using bucket_data_type = std::vector<data_type>;
-
-    radixheap_pair() { initialize_(); }
-
-    // Copy
-    radixheap_pair(const radixheap_pair&) = default;
-    radixheap_pair& operator = (const radixheap_pair&) = default;
-
-    // Move
-    radixheap_pair(radixheap_pair&&) = default;
-    radixheap_pair& operator = (radixheap_pair&&) = default;
-
-    //! Construct and insert element with priority key
-    template <typename... Args>
-    void emplace(const key_type key, Args&& ... args) {
-        const auto enc = encoder::rank_of_int(key);
-        assert(enc >= insertion_limit_);
-
-        const auto idx = bucket_map_(enc, insertion_limit_);
-
-        if (buckets_data_[idx].empty()) filled_.set_bit(idx);
-        buckets_data_[idx].emplace_back(std::forward<Args>(args) ...);
-        if (idx >= Radix) buckets_key_[idx].push_back(enc);
-        if (mins_[idx] > enc) mins_[idx] = enc;
-
-        size_++;
-    }
-
-    //! Insert element with priority key
-    void push(const value_type& value) {
-        const auto enc = encoder::rank_of_int(value.first);
-        assert(enc >= insertion_limit_);
-
-        const auto idx = bucket_map_(enc, insertion_limit_);
-
-        if (buckets_data_[idx].empty()) filled_.set_bit(idx);
-        buckets_data_[idx].push_back(value.second);
-        if (idx >= Radix) buckets_key_[idx].push_back(enc);
-        if (mins_[idx] > enc) mins_[idx] = enc;
-
-        size_++;
-    }
-
-    //! Indicates whether size() == 0
-    bool empty() const {
-        return size() == 0;
-    }
-
-    //! Returns number of elements currently stored
-    size_t size() const {
-        return size_;
-    }
-
-    //! Returns currently smallest key without updating the insertion limit
-    key_type peak_top_key() const {
-        assert(!empty());
-        const auto first = filled_.find_lsb();
-        return encoder::int_at_rank(mins_[first]);
-    }
-
-    //! Returns currently smallest key and data
-    //! \warning Updates insertion limit; no smaller keys can be inserted subsequently
-    std::pair<const key_type, const data_type&> top() {
-        reorganize_();
-        return {
-                   encoder::int_at_rank(mins_[current_bucket_]),
-                   buckets_data_[current_bucket_].back()
-        };
-    }
-
-    //! Removes smallest element
-    //! \warning Updates insertion limit; no smaller keys can be inserted subsequently
-    void pop() {
-        reorganize_();
-        buckets_data_[current_bucket_].pop_back();
-        if (buckets_data_[current_bucket_].empty())
-            filled_.clear_bit(current_bucket_);
-        --size_;
-    }
-
-    //! Exchanges the top buckets with an *empty* user provided bucket.
-    //! Can be used for bulk removals and may reduce allocation overhead
-    //! \warning The exchange bucket has to be empty
-    //! \warning Updates insertion limit; no smaller keys can be inserted subsequently
-    void swap_top_bucket(bucket_data_type& exchange_bucket) {
-        reorganize_();
-
-        assert(exchange_bucket.empty());
-        buckets_data_[current_bucket_].swap(exchange_bucket);
-
-        filled_.clear_bit(current_bucket_);
-        size_ -= exchange_bucket.size();
-    }
-
-    //! Clears all internal queues and resets insertion limit
-    void clear() {
-        for (auto& x : buckets_data_) x.clear();
-        for (auto& x : buckets_key_) x.clear();
-        initialize_();
-    }
-
-protected:
-    size_t size_ { 0 };
-    ranked_key_type insertion_limit_{ 0 };
-    size_t current_bucket_{ 0 };
-
-    bucket_map_type bucket_map_;
-
-    std::array<bucket_data_type, num_buckets> buckets_data_;
-    std::array<bucket_key_type, num_buckets> buckets_key_;
-
-    std::array<ranked_key_type, num_buckets> mins_;
-    radixheap_detail::bitarray<num_buckets> filled_;
-
-    void initialize_() {
-        size_ = 0;
-        insertion_limit_ = std::numeric_limits<ranked_key_type>::min();
-        current_bucket_ = 0;
-
-        for (auto& x : mins_)
-            x = std::numeric_limits<ranked_key_type>::max();
-
-        filled_.clear_all();
-    }
-
-    void reorganize_() {
-        assert(!empty());
-
-        // nothing do to if we already know a suited bucket
-        if (!buckets_data_[current_bucket_].empty()) {
-            assert(current_bucket_ < Radix);
-            return;
-        }
-
-        mins_[current_bucket_] = std::numeric_limits<ranked_key_type>::max();
-        filled_.clear_bit(current_bucket_);
-
-        // find a non-empty bucket
-        const auto first_non_empty = filled_.find_lsb();
-        #ifndef NDEBUG
-        {
-            assert(first_non_empty < num_buckets);
-            for (size_t i = 0; i < first_non_empty; i++) {
-                assert(buckets_data_[i].empty());
-                assert(mins_[i] == std::numeric_limits<ranked_key_type>::max());
-            }
-
-            assert(!buckets_data_[first_non_empty].empty());
-
-            for (size_t i = Radix; i <= first_non_empty; i++)
-                assert(buckets_data_[i].size() == buckets_key_[i].size());
-        }
-        #endif
-
-        if (first_non_empty < Radix) {
-            // the first_non_empty non-empty bucket belongs to the smallest row
-            // it hence contains only one key and we do not need to reorganise
-            current_bucket_ = first_non_empty;
-            return;
-        }
-
-        const auto new_ins_limit = mins_[first_non_empty];
-        assert(new_ins_limit > insertion_limit_);
-        insertion_limit_ = new_ins_limit;
-
-        auto& data_source = buckets_data_[first_non_empty];
-        auto& key_source = buckets_key_[first_non_empty];
-
-        for ( ; !data_source.empty(); data_source.pop_back(), key_source.pop_back()) {
-            const ranked_key_type key = key_source.back();
-            assert(key >= mins_[first_non_empty]);
-            assert(first_non_empty == mins_.size() - 1 || key < mins_[first_non_empty + 1]);
-            const auto idx = bucket_map_(key, insertion_limit_);
-            assert(idx < first_non_empty);
-
-            // insert into bucket
-            if (buckets_data_[idx].empty()) filled_.set_bit(idx);
-            buckets_data_[idx].push_back(std::move(data_source.back()));
-            if (idx >= Radix) buckets_key_[idx].push_back(key);
-            if (mins_[idx] > key) mins_[idx] = key;
-        }
-
-        // mark consumed bucket as empty
-        assert(buckets_key_[first_non_empty].empty());
-        assert(buckets_data_[first_non_empty].empty());
-        mins_[first_non_empty] = std::numeric_limits<ranked_key_type>::max();
-        filled_.clear_bit(first_non_empty);
-
-        // update global pointers and minima
-        current_bucket_ = filled_.find_lsb();
-        assert(current_bucket_ < Radix);
-        assert(!buckets_data_[current_bucket_].empty());
-        assert(mins_[current_bucket_] >= insertion_limit_);
-    }
-};
+using radixheap_pair = radixheap<std::pair<KeyType, DataType>, radixheap_detail::pair_keyextract<KeyType, DataType>, KeyType, Radix>;
 
 //! \}
 

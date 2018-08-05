@@ -499,7 +499,7 @@ void random_inout_pair(std::mt19937& prng,
                       auto key = kdistr(prng);
                       auto pay = pdistr(prng);
                       pq.emplace(key, pay);
-                      heap.emplace(key, pay);
+                      heap.emplace_keyfirst(key, pay);
                   };
 
     for (size_t i = 0; i < prefill_n; i++) {
@@ -545,8 +545,8 @@ void random_inout_pair(std::mt19937& prng,
                 heap_data.clear();
                 heap_data.reserve(bucket.size());
 
-                for (const payload_t x : bucket) {
-                    heap_data.push_back(x);
+                for (const auto& x : bucket) {
+                    heap_data.push_back(x.second);
                 }
             }
 

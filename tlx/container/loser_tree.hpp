@@ -108,6 +108,8 @@ public:
      */
     void insert_start(const ValueType* keyp, const Source& source, bool sup) {
         Source pos = k_ + source;
+
+        assert(pos < losers_.size());
         assert(sup == (keyp == nullptr));
 
         losers_[pos].sup = sup;
@@ -360,10 +362,12 @@ public:
     void insert_start(const ValueType* keyp, const Source& source, bool sup) {
         Source pos = k_ + source;
 
+        assert(pos < losers_.size());
         assert(sup == (keyp == nullptr));
+        unused(sup);
+
         losers_[pos].source = source;
         losers_[pos].keyp = keyp;
-        unused(sup);
     }
 
     /*!
@@ -569,6 +573,7 @@ public:
     void insert_start(const ValueType* keyp, const Source& source, bool sup) {
         Source pos = k_ + source;
 
+        assert(pos < losers_.size());
         assert(sup == (keyp == nullptr));
         unused(sup);
 
@@ -746,8 +751,10 @@ public:
     void insert_start(const ValueType* keyp, const Source& source, bool sup) {
         Source pos = k_ + source;
 
+        assert(pos < losers_.size());
         assert(sup == (keyp == nullptr));
         unused(sup);
+
         losers_[pos].source = source;
         losers_[pos].keyp = keyp;
     }

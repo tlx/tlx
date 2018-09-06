@@ -28,7 +28,7 @@
 #include <utility>
 #include <vector>
 
-#include <tlx/logger.hpp>
+#include <tlx/logger/core.hpp>
 #include <tlx/math/bswap.hpp>
 
 namespace tlx {
@@ -139,7 +139,7 @@ public:
              pi != ss.end(); ++pi)
         {
             if (!check_order(ss[pi - 1], ss[pi])) {
-                LOG1 << "check_order() failed at position " << pi - ss.begin();
+                TLX_LOG1 << "check_order() failed at position " << pi - ss.begin();
                 return false;
             }
         }
@@ -151,8 +151,8 @@ public:
         size_t i = 0;
         for (typename Traits::Iterator pi = ss.begin(); pi != ss.end(); ++pi)
         {
-            LOG1 << "[" << i++ << "] = " << *pi
-                 << " = " << ss.get_string(*pi, 0);
+            TLX_LOG1 << "[" << i++ << "] = " << *pi
+                     << " = " << ss.get_string(*pi, 0);
         }
     }
 };
@@ -422,8 +422,8 @@ public:
         size_t i = 0;
         for (Iterator pi = begin(); pi != end(); ++pi)
         {
-            LOG1 << "[" << i++ << "] = " << pi->get()
-                 << " = " << get_string(*pi, 0);
+            TLX_LOG1 << "[" << i++ << "] = " << pi->get()
+                     << " = " << get_string(*pi, 0);
         }
     }
 

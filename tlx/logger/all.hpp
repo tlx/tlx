@@ -18,6 +18,7 @@ foreach (sort glob("tlx/logger/"."*.hpp")) {
 }
 ]]]*/
 #include <tlx/logger/array.hpp>
+#include <tlx/logger/core.hpp>
 #include <tlx/logger/deque.hpp>
 #include <tlx/logger/map.hpp>
 #include <tlx/logger/set.hpp>

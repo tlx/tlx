@@ -11,7 +11,7 @@
 #ifndef TLX_LOGGER_DEQUE_HEADER
 #define TLX_LOGGER_DEQUE_HEADER
 
-#include <tlx/logger.hpp>
+#include <tlx/logger/core.hpp>
 
 #include <deque>
 

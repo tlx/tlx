@@ -17,7 +17,7 @@ set(LIBTLX_SOURCES
   digest/sha1.cpp
   digest/sha256.cpp
   digest/sha512.cpp
-  logger.cpp
+  logger/core.cpp
   math/integer_log2.cpp
   math/is_power_of_two.cpp
   math/round_to_power_of_two.cpp

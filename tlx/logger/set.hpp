@@ -11,7 +11,7 @@
 #ifndef TLX_LOGGER_SET_HEADER
 #define TLX_LOGGER_SET_HEADER
 
-#include <tlx/logger.hpp>
+#include <tlx/logger/core.hpp>
 
 #include <set>
 

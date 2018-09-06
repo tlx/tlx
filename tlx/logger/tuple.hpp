@@ -11,7 +11,7 @@
 #ifndef TLX_LOGGER_TUPLE_HEADER
 #define TLX_LOGGER_TUPLE_HEADER
 
-#include <tlx/logger.hpp>
+#include <tlx/logger/core.hpp>
 #include <tlx/meta/call_foreach_tuple_with_index.hpp>
 
 #include <tuple>

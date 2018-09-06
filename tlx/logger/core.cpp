@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/logger.cpp
+ * tlx/logger/core.cpp
  *
  * Simple logging methods using ostream output.
  *
@@ -10,7 +10,7 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/logger.hpp>
+#include <tlx/logger/core.hpp>
 
 #include <atomic>
 #include <iostream>

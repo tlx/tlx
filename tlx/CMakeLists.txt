@@ -12,7 +12,7 @@ set(LIBTLX_SOURCES
   algorithm/parallel_multiway_merge.cpp
   backtrace.cpp
   cmdline_parser.cpp
-  die.cpp
+  die/core.cpp
   digest/md5.cpp
   digest/sha1.cpp
   digest/sha256.cpp

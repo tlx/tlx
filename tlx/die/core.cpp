@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/die.cpp
+ * tlx/die/core.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *

@@ -11,7 +11,7 @@
 #ifndef TLX_CONTAINER_BTREE_HEADER
 #define TLX_CONTAINER_BTREE_HEADER
 
-#include <tlx/die.hpp>
+#include <tlx/die/core.hpp>
 
 // *** Required Headers from the STL
 
@@ -3534,7 +3534,7 @@ public:
     //! \{
 
     //! Run a thorough verification of all B+ tree invariants. The program
-    //! aborts via die_unless() if something is wrong.
+    //! aborts via tlx_die_unless() if something is wrong.
     void verify() const {
         key_type minkey, maxkey;
         tree_stats vstats;
@@ -3543,9 +3543,9 @@ public:
         {
             verify_node(root_, &minkey, &maxkey, vstats);
 
-            die_unless(vstats.size == stats_.size);
-            die_unless(vstats.leaves == stats_.leaves);
-            die_unless(vstats.inner_nodes == stats_.inner_nodes);
+            tlx_die_unless(vstats.size == stats_.size);
+            tlx_die_unless(vstats.leaves == stats_.leaves);
+            tlx_die_unless(vstats.inner_nodes == stats_.inner_nodes);
 
             verify_leaflinks();
         }
@@ -3561,12 +3561,13 @@ private:
         {
             const LeafNode* leaf = static_cast<const LeafNode*>(n);
 
-            die_unless(leaf == root_ || !leaf->is_underflow());
-            die_unless(leaf->slotuse > 0);
+            tlx_die_unless(leaf == root_ || !leaf->is_underflow());
+            tlx_die_unless(leaf->slotuse > 0);
 
             for (unsigned short slot = 0; slot < leaf->slotuse - 1; ++slot)
             {
-                die_unless(key_lessequal(leaf->key(slot), leaf->key(slot + 1)));
+                tlx_die_unless(
+                    key_lessequal(leaf->key(slot), leaf->key(slot + 1)));
             }
 
             *minkey = leaf->key(0);
@@ -3580,12 +3581,12 @@ private:
             const InnerNode* inner = static_cast<const InnerNode*>(n);
             vstats.inner_nodes++;
 
-            die_unless(inner == root_ || !inner->is_underflow());
-            die_unless(inner->slotuse > 0);
+            tlx_die_unless(inner == root_ || !inner->is_underflow());
+            tlx_die_unless(inner->slotuse > 0);
 
             for (unsigned short slot = 0; slot < inner->slotuse - 1; ++slot)
             {
-                die_unless(
+                tlx_die_unless(
                     key_lessequal(inner->key(slot), inner->key(slot + 1)));
             }
 
@@ -3595,7 +3596,7 @@ private:
                 key_type subminkey = key_type();
                 key_type submaxkey = key_type();
 
-                die_unless(subnode->level + 1 == inner->level);
+                tlx_die_unless(subnode->level + 1 == inner->level);
                 verify_node(subnode, &subminkey, &submaxkey, vstats);
 
                 TLX_BTREE_PRINT("verify subnode " << subnode <<
@@ -3605,13 +3606,13 @@ private:
                 if (slot == 0)
                     *minkey = subminkey;
                 else
-                    die_unless(
+                    tlx_die_unless(
                         key_greaterequal(subminkey, inner->key(slot - 1)));
 
                 if (slot == inner->slotuse)
                     *maxkey = submaxkey;
                 else
-                    die_unless(key_equal(inner->key(slot), submaxkey));
+                    tlx_die_unless(key_equal(inner->key(slot), submaxkey));
 
                 if (inner->level == 1 && slot < inner->slotuse)
                 {
@@ -3622,8 +3623,8 @@ private:
                     const LeafNode* leafb = static_cast<const LeafNode*>(
                         inner->childid[slot + 1]);
 
-                    die_unless(leafa->next_leaf == leafb);
-                    die_unless(leafa == leafb->prev_leaf);
+                    tlx_die_unless(leafa->next_leaf == leafb);
+                    tlx_die_unless(leafa == leafb->prev_leaf);
                 }
                 if (inner->level == 2 && slot < inner->slotuse)
                 {
@@ -3638,8 +3639,8 @@ private:
                     const LeafNode* leafb = static_cast<const LeafNode*>(
                         parentb->childid[0]);
 
-                    die_unless(leafa->next_leaf == leafb);
-                    die_unless(leafa == leafb->prev_leaf);
+                    tlx_die_unless(leafa->next_leaf == leafb);
+                    tlx_die_unless(leafa == leafb->prev_leaf);
                 }
             }
         }
@@ -3649,39 +3650,39 @@ private:
     void verify_leaflinks() const {
         const LeafNode* n = head_leaf_;
 
-        die_unless(n->level == 0);
-        die_unless(!n || n->prev_leaf == nullptr);
+        tlx_die_unless(n->level == 0);
+        tlx_die_unless(!n || n->prev_leaf == nullptr);
 
         unsigned int testcount = 0;
 
         while (n)
         {
-            die_unless(n->level == 0);
-            die_unless(n->slotuse > 0);
+            tlx_die_unless(n->level == 0);
+            tlx_die_unless(n->slotuse > 0);
 
             for (unsigned short slot = 0; slot < n->slotuse - 1; ++slot)
             {
-                die_unless(key_lessequal(n->key(slot), n->key(slot + 1)));
+                tlx_die_unless(key_lessequal(n->key(slot), n->key(slot + 1)));
             }
 
             testcount += n->slotuse;
 
             if (n->next_leaf)
             {
-                die_unless(key_lessequal(n->key(n->slotuse - 1),
-                                         n->next_leaf->key(0)));
+                tlx_die_unless(key_lessequal(n->key(n->slotuse - 1),
+                                             n->next_leaf->key(0)));
 
-                die_unless(n == n->next_leaf->prev_leaf);
+                tlx_die_unless(n == n->next_leaf->prev_leaf);
             }
             else
             {
-                die_unless(tail_leaf_ == n);
+                tlx_die_unless(tail_leaf_ == n);
             }
 
             n = n->next_leaf;
         }
 
-        die_unless(testcount == size());
+        tlx_die_unless(testcount == size());
     }
 
     //! \}

@@ -572,13 +572,21 @@ close(A);
 # check include_list for C-style headers
 {
     my @cheaders = qw(assert.h ctype.h errno.h fenv.h float.h inttypes.h
-                      limits.h locale.h math.h signal.h stdarg.h stddef.h
+                      limits.h locale.h math.h stdarg.h stddef.h
                       stdlib.h stdio.h string.h time.h);
 
     foreach my $ch (@cheaders)
     {
-        next if !$include_list{$ch};
+        next if !$include_list{$ch} or !@{$include_list{$ch}};
         print "Replace c-style header $ch in\n";
+        print "    [".join(",", sort @{$include_list{$ch}}). "]\n";
+    }
+
+    foreach my $ch ("tlx/die.hpp", "tlx/logger.hpp")
+    {
+        $include_list{$ch} = [grep(!m!tests/!, @{$include_list{$ch}})];
+        next if !$include_list{$ch} or !@{$include_list{$ch}};
+        print "Replace special header $ch in\n";
         print "    [".join(",", sort @{$include_list{$ch}}). "]\n";
     }
 }

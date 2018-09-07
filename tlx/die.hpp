@@ -42,8 +42,8 @@ namespace tlx {
 
 //! Check that X == Y or die miserably, but output the values of X and Y for
 //! better debugging. Only active if NDEBUG is not defined.
-#define assert_unequal(X, Y) \
-    tlx_assert_unequal(X, Y)
+#define assert_equal(X, Y) \
+    tlx_assert_equal(X, Y)
 
 /******************************************************************************/
 // die_unequal_eps()

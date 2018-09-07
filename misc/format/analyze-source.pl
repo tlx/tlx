@@ -151,11 +151,11 @@ sub process_inline_perl {
             my $prog = join("", @data[$i+1..$j-1]);
 
             # evaluate the program
-            my $output;
+            my ($output, $ret);
             {
                 # return STDOUT to $output
                 open local(*STDOUT), '>', \$output or die $!;
-                eval $prog;
+                $ret = eval($prog);
             }
             if ($@) {
                 print "Perl inline: -------------\n";
@@ -164,6 +164,8 @@ sub process_inline_perl {
                 die("failed with $@");
             }
             #print "output: ".$output."\n";
+
+            next if $ret eq "keep";
 
             # try to find the following [[[end]]] line
             my $k = $j + 1;

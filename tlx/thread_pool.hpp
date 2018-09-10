@@ -67,6 +67,9 @@ public:
     using Job = Delegate<void ()>;
 
 private:
+    //! Run once per worker
+    Job init_;
+
     //! Deque of scheduled jobs.
     std::deque<Job> jobs_;
 
@@ -92,8 +95,9 @@ private:
 
 public:
     //! Construct running thread pool of num_threads
-    explicit ThreadPool(
-        size_t num_threads = std::thread::hardware_concurrency());
+    ThreadPool(
+        size_t num_threads = std::thread::hardware_concurrency(),
+        Job&& init = []{});
 
     //! non-copyable: delete copy-constructor
     ThreadPool(const ThreadPool&) = delete;

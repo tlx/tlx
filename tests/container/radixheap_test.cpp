@@ -160,8 +160,10 @@ void test_main_bitarray(std::mt19937& prng) {
     bitarray_test<tlx::radixheap_detail::BitArray<4096>, 4096>(prng);
 
     // 3 layers
-    bitarray_test<tlx::radixheap_detail::BitArray<1 * 64 * 64 + 1>, 1 * 64 * 64 + 1>(prng);
-    bitarray_test<tlx::radixheap_detail::BitArray<64 * 64 * 64>, 64 * 64 * 64>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<64 * 64 + 1>, 64 * 64 + 1>(
+        prng
+        );
+    bitarray_test<tlx::radixheap_detail::BitArray<1 << 18>, 1 << 18>(prng);
 }
 
 /******************************************************************************/
@@ -227,7 +229,8 @@ void test_bucket_bounds() {
         "num_buckets=" << size_t(comp.num_buckets) << "\n";
 
     die_unequal(comp.lower_bound(0u), std::numeric_limits<T>::min());
-    die_unequal(comp.upper_bound(comp.num_buckets - 1u), std::numeric_limits<T>::max());
+    die_unequal(comp.upper_bound(comp.num_buckets - 1u),
+                std::numeric_limits<T>::max());
 
     for (size_t i = 1; i < comp.num_buckets; i++) {
         die_unless(comp.lower_bound(i - 1) < comp.lower_bound(i));
@@ -396,7 +399,9 @@ void random_inout(std::mt19937& prng, const KeyType min, const KeyType max,
     using bucket_type = typename decltype(heap)::bucket_data_type;
 
     using pq_type = std::pair<KeyType, payload_type>;
-    std::priority_queue<pq_type, std::vector<pq_type>, std::greater<pq_type> > pq;
+    std::priority_queue<pq_type,
+                        std::vector<pq_type>,
+                        std::greater<pq_type> > pq;
 
     auto insert = [&](KeyType minv, KeyType maxv) {
                       std::uniform_int_distribution<KeyType> kdistr(minv, maxv);
@@ -434,16 +439,24 @@ void random_inout(std::mt19937& prng, const KeyType min, const KeyType max,
         }
         else {
             const KeyType key = pq.top().first;
-            for (ref_data.clear(); !pq.empty() && pq.top().first == key; pq.pop())
+            for (ref_data.clear();
+                 !pq.empty() && pq.top().first == key;
+                 pq.pop())
+            {
                 ref_data.push_back(pq.top().second);
+            }
 
             running_min = key;
 
             die_unequal(std::get<0>(heap.top()), key);
 
             if (pm == PullMode::AllOfKey) {
-                for (heap_data.clear(); !heap.empty() && heap.peak_top_key() == key; heap.pop())
+                for (heap_data.clear();
+                     !heap.empty() && heap.peak_top_key() == key;
+                     heap.pop())
+                {
                     heap_data.push_back(std::get<1>(heap.top()));
+                }
             }
             else {
                 bucket_type bucket;
@@ -489,7 +502,8 @@ void random_inout_pair(std::mt19937& prng,
     using pq_type = std::pair<KeyType, payload_type>;
     std::priority_queue<pq_type, std::vector<pq_type>, std::greater<pq_type> > pq;
     using heap_type = tlx::RadixHeapPair<KeyType, payload_type, Radix>;
-    using bucket_type = typename tlx::RadixHeapPair<KeyType, payload_type, Radix>::bucket_data_type;
+    using bucket_type = typename
+                        tlx::RadixHeapPair<KeyType, payload_type, Radix>::bucket_data_type;
     heap_type heap;
 
     auto insert = [&](KeyType minv, KeyType maxv) {
@@ -513,8 +527,10 @@ void random_inout_pair(std::mt19937& prng,
     std::vector<payload_type> ref_data, heap_data;
 
     for (int64_t i = 0; i < static_cast<int64_t>(iters) || !pq.empty(); i++) {
-        while (i < static_cast<int64_t>(iters) && rdist(prng) < insert_prob)
-            insert(running_min, static_cast<KeyType>(max - std::max<int64_t>(0, iters - i)));
+        while (i < static_cast<int64_t>(iters) && rdist(prng) < insert_prob) {
+            insert(running_min,
+                   static_cast<KeyType>(max - std::max<int64_t>(0, iters - i)));
+        }
 
         die_unequal(pq.empty(), heap.empty());
 
@@ -528,16 +544,24 @@ void random_inout_pair(std::mt19937& prng,
         }
         else {
             const KeyType key = pq.top().first;
-            for (ref_data.clear(); !pq.empty() && pq.top().first == key; pq.pop())
+            for (ref_data.clear();
+                 !pq.empty() && pq.top().first == key;
+                 pq.pop())
+            {
                 ref_data.push_back(pq.top().second);
+            }
 
             running_min = key;
 
             die_unequal(heap.top().first, key);
 
             if (pm == PullMode::AllOfKey) {
-                for (heap_data.clear(); !heap.empty() && heap.peak_top_key() == key; heap.pop())
+                for (heap_data.clear();
+                     !heap.empty() && heap.peak_top_key() == key;
+                     heap.pop())
+                {
                     heap_data.push_back(heap.top().second);
+                }
             }
             else {
                 bucket_type bucket;
@@ -565,11 +589,15 @@ void random_inout_all(std::mt19937& prng,
                       const int64_t min, const int64_t max,
                       const size_t iters, const double insert_prob,
                       const size_t prefill_n, const PullMode pm) {
-#define RADIXHEAP_TESTSET(T)                                                                                    \
-    random_inout<T, 2>(prng, static_cast<T>(min), static_cast<T>(max), iters, insert_prob, prefill_n, pm);      \
-    random_inout<T, 64>(prng, static_cast<T>(min), static_cast<T>(max), iters, insert_prob, prefill_n, pm);     \
-    random_inout_pair<T, 2>(prng, static_cast<T>(min), static_cast<T>(max), iters, insert_prob, prefill_n, pm); \
-    random_inout_pair<T, 64>(prng, static_cast<T>(min), static_cast<T>(max), iters, insert_prob, prefill_n, pm);
+#define RADIXHEAP_TESTSET(T)                                                 \
+    random_inout<T, 2>(prng, static_cast<T>(min), static_cast<T>(max),       \
+                       iters, insert_prob, prefill_n, pm);                   \
+    random_inout<T, 64>(prng, static_cast<T>(min), static_cast<T>(max),      \
+                        iters, insert_prob, prefill_n, pm);                  \
+    random_inout_pair<T, 2>(prng, static_cast<T>(min), static_cast<T>(max),  \
+                            iters, insert_prob, prefill_n, pm);              \
+    random_inout_pair<T, 64>(prng, static_cast<T>(min), static_cast<T>(max), \
+                             iters, insert_prob, prefill_n, pm);
 
     die_unless(min < max);
 
@@ -609,7 +637,8 @@ void test_main_radixheap_pair(std::mt19937& prng) {
         }
     }
 
-    for (PullMode pm : { PullMode::Single, PullMode::AllOfKey, PullMode::ExtractBucket }) {
+    for (PullMode pm : { PullMode::Single, PullMode::AllOfKey,
+                         PullMode::ExtractBucket }) {
         for (int64_t prefill : { 0, 100 }) {
             for (int64_t min : { 0, 10000000, -10000000, -250 }) {
                 for (size_t length : { 500 }) {

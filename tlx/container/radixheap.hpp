@@ -218,7 +218,8 @@ private:
  *
  * The BitArray is implemented as a search tree with a fan-out of up to 64.
  * It is thus very flat, and all operations but with the exception of clear_all
- * have a complexity of O(log_64(Size)) which is << 10 for all practical purposes.
+ * have a complexity of O(log_64(Size)) which is << 10 for all practical
+ * purposes.
  */
 template <size_t Size>
 class BitArray
@@ -359,7 +360,8 @@ struct PairKeyExtract {
  * We implement a two level radix heap. Let k=sizeof(KeyType)*8 be the number of
  * bits in a key. In contrast to an ordinary radix heap which contains k buckets,
  * we maintain ceil(k/log2(Radix)) rows each containing Radix-many buckets.
- * This reduces the number of move operations when reorganizing the data structure.
+ * This reduces the number of move operations when reorganizing the data
+ * structure.
  *
  * The implementation loosly follows the description of "An Experimental Study
  * of Priority Queues in External Memory" [Bregel et al.] and is also inspired
@@ -369,7 +371,8 @@ struct PairKeyExtract {
  * \tparam DataType  Type of data payload
  * \tparam Radix     A power of two <= 64.
  */
-template <typename ValueType, typename KeyExtract, typename KeyType, unsigned Radix = 8>
+template <typename ValueType, typename KeyExtract,
+          typename KeyType, unsigned Radix = 8>
 class RadixHeap
 {
     static_assert(Log2<Radix>::floor == Log2<Radix>::ceil,
@@ -387,10 +390,12 @@ public:
 protected:
     using encoder = radixheap_detail::IntegerRank<key_type>;
     using ranked_key_type = typename encoder::rank_type;
-    using bucket_map_type = radixheap_detail::BucketComputation<Radix, ranked_key_type>;
+    using bucket_map_type =
+        radixheap_detail::BucketComputation<Radix, ranked_key_type>;
 
     static constexpr unsigned radix_bits = tlx::Log2<radix>::floor;
-    static constexpr unsigned num_layers = div_ceil(8 * sizeof(ranked_key_type), radix_bits);
+    static constexpr unsigned num_layers =
+        div_ceil(8 * sizeof(ranked_key_type), radix_bits);
     static constexpr unsigned num_buckets = bucket_map_type::num_buckets;
 
 public:
@@ -402,12 +407,12 @@ public:
     }
 
     // Copy
-	RadixHeap(const RadixHeap&) = default;
-	RadixHeap& operator = (const RadixHeap&) = default;
+    RadixHeap(const RadixHeap&) = default;
+    RadixHeap& operator = (const RadixHeap&) = default;
 
     // Move
-	RadixHeap(RadixHeap&&) = default;
-	RadixHeap& operator = (RadixHeap&&) = default;
+    RadixHeap(RadixHeap&&) = default;
+    RadixHeap& operator = (RadixHeap&&) = default;
 
     bucket_index_type get_bucket(const value_type& value) const {
         return get_bucket_key(key_extract_(value));
@@ -450,7 +455,8 @@ public:
         if (buckets_data_[idx].empty()) filled_.set_bit(idx);
         buckets_data_[idx].emplace_back(std::forward<Args>(args) ...);
 
-        const auto enc = encoder::rank_of_int(key_extract_(buckets_data_[idx].back()));
+        const auto enc = encoder::rank_of_int(
+            key_extract_(buckets_data_[idx].back()));
         if (mins_[idx] > enc) mins_[idx] = enc;
         assert(idx == bucket_map_(enc, insertion_limit_));
 
@@ -559,7 +565,8 @@ protected:
         insertion_limit_ = std::numeric_limits<ranked_key_type>::min();
         current_bucket_ = 0;
 
-        std::fill(mins_.begin(), mins_.end(), std::numeric_limits<ranked_key_type>::max());
+        std::fill(mins_.begin(), mins_.end(),
+                  std::numeric_limits<ranked_key_type>::max());
 
         filled_.clear_all();
     }
@@ -611,7 +618,8 @@ protected:
         for (auto& x : data_source) {
             const ranked_key_type key = encoder::rank_of_int(key_extract_(x));
             assert(key >= mins_[first_non_empty]);
-            assert(first_non_empty == mins_.size() - 1 || key < mins_[first_non_empty + 1]);
+            assert(first_non_empty == mins_.size() - 1
+                   || key < mins_[first_non_empty + 1]);
             const auto idx = bucket_map_(key, insertion_limit_);
             assert(idx < first_non_empty);
 
@@ -640,8 +648,12 @@ protected:
  * Refer to radixheap for description of parameters.
  */
 template <typename DataType, unsigned Radix = 8, typename KeyExtract = void>
-auto make_radixheap(KeyExtract&& key_extract) -> RadixHeap<DataType, KeyExtract, decltype(key_extract(std::declval<DataType>())), Radix>{
-    return (RadixHeap < DataType, KeyExtract, decltype(key_extract(DataType{ })), Radix > {
+auto make_radixheap(KeyExtract&& key_extract)->
+RadixHeap<DataType, KeyExtract,
+          decltype(key_extract(std::declval<DataType>())), Radix>{
+    return (RadixHeap < DataType,
+            KeyExtract,
+            decltype(key_extract(DataType{ })), Radix > {
                 key_extract
             });
 }
@@ -652,7 +664,11 @@ auto make_radixheap(KeyExtract&& key_extract) -> RadixHeap<DataType, KeyExtract,
  * implemented with std::pair.
  */
 template <typename KeyType, typename DataType, unsigned Radix = 8>
-using RadixHeapPair = RadixHeap<std::pair<KeyType, DataType>, radixheap_detail::PairKeyExtract<KeyType, DataType>, KeyType, Radix>;
+using RadixHeapPair = RadixHeap<
+    std::pair<KeyType, DataType>,
+    radixheap_detail::PairKeyExtract<KeyType, DataType>,
+    KeyType, Radix
+    >;
 
 //! \}
 

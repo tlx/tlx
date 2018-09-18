@@ -143,32 +143,32 @@ void bitarray_test(std::mt19937& rng) {
 }
 
 void test_main_bitarray(std::mt19937& prng) {
-    bitarray_test<tlx::radixheap_detail::bitarray_recursive<32, true>, 32>(prng);
-    bitarray_test<tlx::radixheap_detail::bitarray_recursive<64, true>, 64>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArrayRecursive<32, true>, 32>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArrayRecursive<64, true>, 64>(prng);
 
     // 1 layer
-    bitarray_test<tlx::radixheap_detail::bitarray<32>, 32>(prng);
-    bitarray_test<tlx::radixheap_detail::bitarray<33>, 33>(prng);
-    bitarray_test<tlx::radixheap_detail::bitarray<63>, 63>(prng);
-    bitarray_test<tlx::radixheap_detail::bitarray<64>, 64>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<32>, 32>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<33>, 33>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<63>, 63>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<64>, 64>(prng);
 
     // 2 layers
-    bitarray_test<tlx::radixheap_detail::bitarray<65>, 65>(prng);
-    bitarray_test<tlx::radixheap_detail::bitarray<500>, 500>(prng);
-    bitarray_test<tlx::radixheap_detail::bitarray<1001>, 1001>(prng);
-    bitarray_test<tlx::radixheap_detail::bitarray<4004>, 4004>(prng);
-    bitarray_test<tlx::radixheap_detail::bitarray<4096>, 4096>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<65>, 65>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<500>, 500>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<1001>, 1001>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<4004>, 4004>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<4096>, 4096>(prng);
 
     // 3 layers
-    bitarray_test<tlx::radixheap_detail::bitarray<1 * 64 * 64 + 1>, 1 * 64 * 64 + 1>(prng);
-    bitarray_test<tlx::radixheap_detail::bitarray<64 * 64 * 64>, 64 * 64 * 64>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<1 * 64 * 64 + 1>, 1 * 64 * 64 + 1>(prng);
+    bitarray_test<tlx::radixheap_detail::BitArray<64 * 64 * 64>, 64 * 64 * 64>(prng);
 }
 
 /******************************************************************************/
 
 template <typename T>
 void int_rank_test(std::mt19937& prng) {
-    using ir = tlx::radixheap_detail::integer_rank<T>;
+    using IR = tlx::radixheap_detail::IntegerRank<T>;
 
     constexpr T min = std::numeric_limits<T>::min();
     constexpr T max = std::numeric_limits<T>::max();
@@ -176,12 +176,12 @@ void int_rank_test(std::mt19937& prng) {
     constexpr T one = 1;
 
     // Check that int_at_rank and rank_of_int are inverse
-    die_unequal(min, ir::int_at_rank(ir::rank_of_int(min)));
-    die_unequal(min + one, ir::int_at_rank(ir::rank_of_int(min + one)));
-    die_unequal(zero, ir::int_at_rank(ir::rank_of_int(zero)));
-    die_unequal(one, ir::int_at_rank(ir::rank_of_int(one)));
-    die_unequal(max - one, ir::int_at_rank(ir::rank_of_int(max - one)));
-    die_unequal(max, ir::int_at_rank(ir::rank_of_int(max)));
+    die_unequal(min, IR::int_at_rank(IR::rank_of_int(min)));
+    die_unequal(min + one, IR::int_at_rank(IR::rank_of_int(min + one)));
+    die_unequal(zero, IR::int_at_rank(IR::rank_of_int(zero)));
+    die_unequal(one, IR::int_at_rank(IR::rank_of_int(one)));
+    die_unequal(max - one, IR::int_at_rank(IR::rank_of_int(max - one)));
+    die_unequal(max, IR::int_at_rank(IR::rank_of_int(max)));
 
     // Check that random pairs keep their relative order
     std::uniform_int_distribution<T> dist;
@@ -194,11 +194,11 @@ void int_rank_test(std::mt19937& prng) {
         } while (b == a);
         if (a > b) std::swap(a, b);
 
-        die_unless(ir::rank_of_int(a) < ir::rank_of_int(b));
+        die_unless(IR::rank_of_int(a) < IR::rank_of_int(b));
 
         // Check inverse for random numbers
-        die_unequal(a, ir::int_at_rank(ir::rank_of_int(a)));
-        die_unequal(b, ir::int_at_rank(ir::rank_of_int(b)));
+        die_unequal(a, IR::int_at_rank(IR::rank_of_int(a)));
+        die_unequal(b, IR::int_at_rank(IR::rank_of_int(b)));
     }
 }
 
@@ -219,7 +219,7 @@ void test_main_int_rank(std::mt19937& prng) {
 template <unsigned Radix, typename T>
 void test_bucket_bounds() {
     constexpr bool debug = false;
-    using Comp = tlx::radixheap_detail::bucket_computation<Radix, T>;
+    using Comp = tlx::radixheap_detail::BucketComputation<Radix, T>;
     Comp comp;
 
     LOG << "test_bucket_bounds<"
@@ -272,13 +272,13 @@ void allin_allout(std::mt19937& prng, KeyType min, KeyType max, size_t n) {
         "max=" << max << ", "
         "n=" << n << ")\n";
 
-    using payload_t = uint64_t;
-    using value_t = std::tuple<KeyType, payload_t>;
+    using payload_type = uint64_t;
+    using value_type = std::tuple<KeyType, payload_type>;
 
-    auto heap = tlx::make_radixheap<value_t, Radix>(
-        [](const value_t& p) { return std::get<0>(p); });
+    auto heap = tlx::make_radixheap<value_type, Radix>(
+        [](const value_type& p) { return std::get<0>(p); });
 
-    std::vector<std::pair<KeyType, payload_t> > values;
+    std::vector<std::pair<KeyType, payload_type> > values;
     values.reserve(n);
 
     std::uniform_int_distribution<KeyType> distr(min, max);
@@ -291,7 +291,7 @@ void allin_allout(std::mt19937& prng, KeyType min, KeyType max, size_t n) {
         die_unequal(heap.size(), i);
 
         const auto key = distr(prng);
-        heap.push(value_t{ key, i });
+        heap.push(value_type{ key, i });
         values.emplace_back(key, i);
 
         running_min = std::min(running_min, key);
@@ -327,10 +327,10 @@ void allin_allout_pair(std::mt19937& prng, KeyType min, KeyType max, size_t n) {
         "max=" << max << ", "
         "n=" << n << ")\n";
 
-    using payload_t = uint64_t;
+    using payload_type = uint64_t;
 
-    tlx::radixheap_pair<KeyType, payload_t, Radix> heap;
-    std::vector<std::pair<KeyType, payload_t> > values;
+    tlx::RadixHeapPair<KeyType, payload_type, Radix> heap;
+    std::vector<std::pair<KeyType, payload_type> > values;
     values.reserve(n);
 
     std::uniform_int_distribution<KeyType> distr(min, max);
@@ -388,19 +388,19 @@ void random_inout(std::mt19937& prng, const KeyType min, const KeyType max,
         "prefill_n=" << prefill_n << ", "
         "pm=" << static_cast<int>(pm) << ")\n";
 
-    using payload_t = uint32_t;
-    using value_t = std::tuple<KeyType, payload_t>;
+    using payload_type = uint32_t;
+    using value_type = std::tuple<KeyType, payload_type>;
 
-    auto heap = tlx::make_radixheap<value_t, Radix>(
-        [](const value_t& p) { return std::get<0>(p); });
-    using bucket_t = typename decltype(heap)::bucket_data_type;
+    auto heap = tlx::make_radixheap<value_type, Radix>(
+        [](const value_type& p) { return std::get<0>(p); });
+    using bucket_type = typename decltype(heap)::bucket_data_type;
 
-    using pq_t = std::pair<KeyType, payload_t>;
-    std::priority_queue<pq_t, std::vector<pq_t>, std::greater<pq_t> > pq;
+    using pq_type = std::pair<KeyType, payload_type>;
+    std::priority_queue<pq_type, std::vector<pq_type>, std::greater<pq_type> > pq;
 
     auto insert = [&](KeyType minv, KeyType maxv) {
                       std::uniform_int_distribution<KeyType> kdistr(minv, maxv);
-                      std::uniform_int_distribution<payload_t> pdistr;
+                      std::uniform_int_distribution<payload_type> pdistr;
 
                       auto key = kdistr(prng);
                       auto pay = pdistr(prng);
@@ -416,7 +416,7 @@ void random_inout(std::mt19937& prng, const KeyType min, const KeyType max,
 
     KeyType running_min = min;
 
-    std::vector<payload_t> ref_data, heap_data;
+    std::vector<payload_type> ref_data, heap_data;
 
     for (int64_t i = 0; i < static_cast<int64_t>(iters) || !pq.empty(); i++) {
         while (i < static_cast<int64_t>(iters) && rdist(prng) < insert_prob)
@@ -446,7 +446,7 @@ void random_inout(std::mt19937& prng, const KeyType min, const KeyType max,
                     heap_data.push_back(std::get<1>(heap.top()));
             }
             else {
-                bucket_t bucket;
+                bucket_type bucket;
                 heap.swap_top_bucket(bucket);
                 heap_data.clear();
                 heap_data.reserve(bucket.size());
@@ -485,16 +485,16 @@ void random_inout_pair(std::mt19937& prng,
         "prefill_n=" << prefill_n << ", "
         "pm=" << static_cast<int>(pm) << ")\n";
 
-    using payload_t = uint32_t;
-    using pq_t = std::pair<KeyType, payload_t>;
-    std::priority_queue<pq_t, std::vector<pq_t>, std::greater<pq_t> > pq;
-    using heap_t = tlx::radixheap_pair<KeyType, payload_t, Radix>;
-    using bucket_t = typename tlx::radixheap_pair<KeyType, payload_t, Radix>::bucket_data_type;
-    heap_t heap;
+    using payload_type = uint32_t;
+    using pq_type = std::pair<KeyType, payload_type>;
+    std::priority_queue<pq_type, std::vector<pq_type>, std::greater<pq_type> > pq;
+    using heap_type = tlx::RadixHeapPair<KeyType, payload_type, Radix>;
+    using bucket_type = typename tlx::RadixHeapPair<KeyType, payload_type, Radix>::bucket_data_type;
+    heap_type heap;
 
     auto insert = [&](KeyType minv, KeyType maxv) {
                       std::uniform_int_distribution<KeyType> kdistr(minv, maxv);
-                      std::uniform_int_distribution<payload_t> pdistr;
+                      std::uniform_int_distribution<payload_type> pdistr;
 
                       auto key = kdistr(prng);
                       auto pay = pdistr(prng);
@@ -510,7 +510,7 @@ void random_inout_pair(std::mt19937& prng,
 
     KeyType running_min = min;
 
-    std::vector<payload_t> ref_data, heap_data;
+    std::vector<payload_type> ref_data, heap_data;
 
     for (int64_t i = 0; i < static_cast<int64_t>(iters) || !pq.empty(); i++) {
         while (i < static_cast<int64_t>(iters) && rdist(prng) < insert_prob)
@@ -540,7 +540,7 @@ void random_inout_pair(std::mt19937& prng,
                     heap_data.push_back(heap.top().second);
             }
             else {
-                bucket_t bucket;
+                bucket_type bucket;
                 heap.swap_top_bucket(bucket);
                 heap_data.clear();
                 heap_data.reserve(bucket.size());

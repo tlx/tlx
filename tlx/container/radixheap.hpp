@@ -38,7 +38,7 @@ namespace radixheap_detail {
  * complement and contains static_asserts failing if this is not the case.
  */
 template <typename Int>
-class integer_rank
+class IntegerRank
 {
     static_assert(std::is_integral<Int>::value,
                   "SignedInt has to be an integral type");
@@ -48,7 +48,7 @@ public:
     using rank_type = typename std::make_unsigned<int_type>::type;
 
     //! Maps value i to its rank in int_type. For any pair T x < y the invariant
-    //! integer_rank<T>::rank_of_int(x) < integer_rank<T>::rank_of_int(y) holds.
+    //! IntegerRank<T>::rank_of_int(x) < IntegerRank<T>::rank_of_int(y) holds.
     static constexpr rank_type rank_of_int(int_type i) {
         return use_identity_
                ? static_cast<rank_type>(i)
@@ -82,15 +82,15 @@ private:
                   "Rank of maximum is not larger than rank of zero");
 };
 
-//! Internal implementation of bitarray; do not invoke directly
+//! Internal implementation of BitArray; do not invoke directly
 //! \tparam Size  Number of bits the data structure is supposed to store
 //! \tparam SizeIsAtmost64  Switch between inner node implementation (false)
 //!                         and leaf implementation (true)
 template <size_t Size, bool SizeIsAtmost64>
-class bitarray_recursive;
+class BitArrayRecursive;
 
 template <size_t Size>
-class bitarray_recursive<Size, false>
+class BitArrayRecursive<Size, false>
 {
     static constexpr size_t leaf_width = 6;
     static constexpr size_t width = tlx::Log2<Size>::ceil;
@@ -100,21 +100,21 @@ class bitarray_recursive<Size, false>
                                          ? (width % leaf_width)
                                          : leaf_width;
     static constexpr size_t child_width = width - root_width;
-    using child_type = bitarray_recursive<1llu << child_width, child_width <= 6>;
+    using child_type = BitArrayRecursive<1llu << child_width, child_width <= 6>;
 
     static constexpr size_t root_size = div_ceil(Size, child_type::size);
-    using root_type = bitarray_recursive<root_size <= 32 ? 32 : 64, true>;
+    using root_type = BitArrayRecursive<root_size <= 32 ? 32 : 64, true>;
 
     using child_array_type = std::array<child_type, root_size>;
 
 public:
     static constexpr size_t size = Size;
 
-    explicit bitarray_recursive() noexcept = default;
-    bitarray_recursive(const bitarray_recursive&) noexcept = default;
-    bitarray_recursive(bitarray_recursive&&) noexcept = default;
-    bitarray_recursive& operator = (const bitarray_recursive&) noexcept = default;
-    bitarray_recursive& operator = (bitarray_recursive&&) noexcept = default;
+    explicit BitArrayRecursive() noexcept = default;
+    BitArrayRecursive(const BitArrayRecursive&) noexcept = default;
+    BitArrayRecursive(BitArrayRecursive&&) noexcept = default;
+    BitArrayRecursive& operator = (const BitArrayRecursive&) noexcept = default;
+    BitArrayRecursive& operator = (BitArrayRecursive&&) noexcept = default;
 
     void set_bit(const size_t i) {
         const auto idx = get_index_(i);
@@ -164,7 +164,7 @@ private:
 };
 
 template <size_t Size>
-class bitarray_recursive<Size, true>
+class BitArrayRecursive<Size, true>
 {
     static_assert(Size <= 64, "Support at most 64 bits");
     using uint_type = typename std::conditional<
@@ -173,11 +173,11 @@ class bitarray_recursive<Size, true>
 public:
     static constexpr size_t size = Size;
 
-    explicit bitarray_recursive() noexcept : flags_(0) { }
-    bitarray_recursive(const bitarray_recursive&) noexcept = default;
-    bitarray_recursive(bitarray_recursive&&) noexcept = default;
-    bitarray_recursive& operator = (const bitarray_recursive&) noexcept = default;
-    bitarray_recursive& operator = (bitarray_recursive&&) noexcept = default;
+    explicit BitArrayRecursive() noexcept : flags_(0) { }
+    BitArrayRecursive(const BitArrayRecursive&) noexcept = default;
+    BitArrayRecursive(BitArrayRecursive&&) noexcept = default;
+    BitArrayRecursive& operator = (const BitArrayRecursive&) noexcept = default;
+    BitArrayRecursive& operator = (BitArrayRecursive&&) noexcept = default;
 
     void set_bit(const size_t i) {
         assert(i < size);
@@ -212,27 +212,27 @@ private:
 };
 
 /*!
- * A bitarray of fixed size supporting reading, setting, and clearing
+ * A BitArray of fixed size supporting reading, setting, and clearing
  * of individual bits. The data structure is optimized to find the bit with
  * smallest index that is set (find_lsb).
  *
- * The bitarray is implemented as a search tree with a fan-out of up to 64.
+ * The BitArray is implemented as a search tree with a fan-out of up to 64.
  * It is thus very flat, and all operations but with the exception of clear_all
  * have a complexity of O(log_64(Size)) which is << 10 for all practical purposes.
  */
 template <size_t Size>
-class bitarray
+class BitArray
 {
-    using impl_type = bitarray_recursive<Size, Size <= 64>;
+    using impl_type = BitArrayRecursive<Size, Size <= 64>;
 
 public:
     static constexpr size_t size = Size;
 
-    explicit bitarray() noexcept = default;
-    bitarray(const bitarray&) noexcept = default;
-    bitarray(bitarray&&) noexcept = default;
-    bitarray& operator = (const bitarray&) noexcept = default;
-    bitarray& operator = (bitarray&&) noexcept = default;
+    explicit BitArray() noexcept = default;
+    BitArray(const BitArray&) noexcept = default;
+    BitArray(BitArray&&) noexcept = default;
+    BitArray& operator = (const BitArray&) noexcept = default;
+    BitArray& operator = (BitArray&&) noexcept = default;
 
     //! Set the i-th bit to true
     void set_bit(const size_t i) {
@@ -270,7 +270,7 @@ private:
 };
 
 template <unsigned Radix, typename Int>
-class bucket_computation
+class BucketComputation
 {
     static_assert(std::is_unsigned<Int>::value, "Require unsigned integer");
     static constexpr unsigned radix_bits = tlx::Log2<Radix>::floor;
@@ -333,7 +333,7 @@ public:
 
 //! Used as an adaptor to implement radixheap_pair on top of radixheap.
 template <typename KeyType, typename DataType>
-struct pair_keyextract {
+struct PairKeyExtract {
     using allow_emplace_pair = bool;
 
     KeyType operator () (const std::pair<KeyType, DataType>& p) const {
@@ -370,7 +370,7 @@ struct pair_keyextract {
  * \tparam Radix     A power of two <= 64.
  */
 template <typename ValueType, typename KeyExtract, typename KeyType, unsigned Radix = 8>
-class radixheap
+class RadixHeap
 {
     static_assert(Log2<Radix>::floor == Log2<Radix>::ceil,
                   "Radix has to be power of two");
@@ -385,9 +385,9 @@ public:
     static constexpr unsigned radix = Radix;
 
 protected:
-    using encoder = radixheap_detail::integer_rank<key_type>;
+    using encoder = radixheap_detail::IntegerRank<key_type>;
     using ranked_key_type = typename encoder::rank_type;
-    using bucket_map_type = radixheap_detail::bucket_computation<Radix, ranked_key_type>;
+    using bucket_map_type = radixheap_detail::BucketComputation<Radix, ranked_key_type>;
 
     static constexpr unsigned radix_bits = tlx::Log2<radix>::floor;
     static constexpr unsigned num_layers = div_ceil(8 * sizeof(ranked_key_type), radix_bits);
@@ -396,18 +396,18 @@ protected:
 public:
     using bucket_data_type = std::vector<value_type>;
 
-    explicit radixheap(KeyExtract key_extract = KeyExtract { })
+    explicit RadixHeap(KeyExtract key_extract = KeyExtract { })
         : key_extract_(key_extract) {
         initialize_();
     }
 
     // Copy
-    radixheap(const radixheap&) = default;
-    radixheap& operator = (const radixheap&) = default;
+	RadixHeap(const RadixHeap&) = default;
+	RadixHeap& operator = (const RadixHeap&) = default;
 
     // Move
-    radixheap(radixheap&&) = default;
-    radixheap& operator = (radixheap&&) = default;
+	RadixHeap(RadixHeap&&) = default;
+	RadixHeap& operator = (RadixHeap&&) = default;
 
     bucket_index_type get_bucket(const value_type& value) const {
         return get_bucket_key(key_extract_(value));
@@ -552,7 +552,7 @@ protected:
     std::array<bucket_data_type, num_buckets> buckets_data_;
 
     std::array<ranked_key_type, num_buckets> mins_;
-    radixheap_detail::bitarray<num_buckets> filled_;
+    radixheap_detail::BitArray<num_buckets> filled_;
 
     void initialize_() {
         size_ = 0;
@@ -640,8 +640,8 @@ protected:
  * Refer to radixheap for description of parameters.
  */
 template <typename DataType, unsigned Radix = 8, typename KeyExtract = void>
-auto make_radixheap(KeyExtract&& key_extract)->radixheap<DataType, KeyExtract, decltype(key_extract(std::declval<DataType>())), Radix>{
-    return (radixheap < DataType, KeyExtract, decltype(key_extract(DataType{ })), Radix > {
+auto make_radixheap(KeyExtract&& key_extract) -> RadixHeap<DataType, KeyExtract, decltype(key_extract(std::declval<DataType>())), Radix>{
+    return (RadixHeap < DataType, KeyExtract, decltype(key_extract(DataType{ })), Radix > {
                 key_extract
             });
 }
@@ -652,7 +652,7 @@ auto make_radixheap(KeyExtract&& key_extract)->radixheap<DataType, KeyExtract, d
  * implemented with std::pair.
  */
 template <typename KeyType, typename DataType, unsigned Radix = 8>
-using radixheap_pair = radixheap<std::pair<KeyType, DataType>, radixheap_detail::pair_keyextract<KeyType, DataType>, KeyType, Radix>;
+using RadixHeapPair = RadixHeap<std::pair<KeyType, DataType>, radixheap_detail::PairKeyExtract<KeyType, DataType>, KeyType, Radix>;
 
 //! \}
 

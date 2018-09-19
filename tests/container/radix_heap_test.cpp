@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/container/radixheap_test.cpp
+ * tests/container/radix_heap_test.cpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -17,7 +17,7 @@
 #include <tuple>
 #include <vector>
 
-#include <tlx/container/radixheap.hpp>
+#include <tlx/container/radix_heap.hpp>
 #include <tlx/die.hpp>
 #include <tlx/logger.hpp>
 
@@ -142,35 +142,34 @@ void bitarray_test(std::mt19937& rng) {
     die_unless(f1.empty());
 }
 
-void test_main_bitarray(std::mt19937& prng) {
-    bitarray_test<tlx::radixheap_detail::BitArrayRecursive<32, true>, 32>(prng);
-    bitarray_test<tlx::radixheap_detail::BitArrayRecursive<64, true>, 64>(prng);
+void test_main_bitarray(std::mt19937& rng) {
+    bitarray_test<tlx::radix_heap_detail::BitArrayRecursive<32, true>, 32>(rng);
+    bitarray_test<tlx::radix_heap_detail::BitArrayRecursive<64, true>, 64>(rng);
 
     // 1 layer
-    bitarray_test<tlx::radixheap_detail::BitArray<32>, 32>(prng);
-    bitarray_test<tlx::radixheap_detail::BitArray<33>, 33>(prng);
-    bitarray_test<tlx::radixheap_detail::BitArray<63>, 63>(prng);
-    bitarray_test<tlx::radixheap_detail::BitArray<64>, 64>(prng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<32>, 32>(rng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<33>, 33>(rng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<63>, 63>(rng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<64>, 64>(rng);
 
     // 2 layers
-    bitarray_test<tlx::radixheap_detail::BitArray<65>, 65>(prng);
-    bitarray_test<tlx::radixheap_detail::BitArray<500>, 500>(prng);
-    bitarray_test<tlx::radixheap_detail::BitArray<1001>, 1001>(prng);
-    bitarray_test<tlx::radixheap_detail::BitArray<4004>, 4004>(prng);
-    bitarray_test<tlx::radixheap_detail::BitArray<4096>, 4096>(prng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<65>, 65>(rng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<500>, 500>(rng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<1001>, 1001>(rng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<4004>, 4004>(rng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<4096>, 4096>(rng);
 
     // 3 layers
-    bitarray_test<tlx::radixheap_detail::BitArray<64 * 64 + 1>, 64 * 64 + 1>(
-        prng
-        );
-    bitarray_test<tlx::radixheap_detail::BitArray<1 << 18>, 1 << 18>(prng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<64 * 64 + 1>, 64 * 64 + 1>(
+        rng);
+    bitarray_test<tlx::radix_heap_detail::BitArray<1 << 18>, 1 << 18>(rng);
 }
 
 /******************************************************************************/
 
 template <typename T>
 void int_rank_test(std::mt19937& prng) {
-    using IR = tlx::radixheap_detail::IntegerRank<T>;
+    using IR = tlx::radix_heap_detail::IntegerRank<T>;
 
     constexpr T min = std::numeric_limits<T>::min();
     constexpr T max = std::numeric_limits<T>::max();
@@ -221,7 +220,7 @@ void test_main_int_rank(std::mt19937& prng) {
 template <unsigned Radix, typename T>
 void test_bucket_bounds() {
     constexpr bool debug = false;
-    using Comp = tlx::radixheap_detail::BucketComputation<Radix, T>;
+    using Comp = tlx::radix_heap_detail::BucketComputation<Radix, T>;
     Comp comp;
 
     LOG << "test_bucket_bounds<"
@@ -278,7 +277,7 @@ void allin_allout(std::mt19937& prng, KeyType min, KeyType max, size_t n) {
     using payload_type = uint64_t;
     using value_type = std::tuple<KeyType, payload_type>;
 
-    auto heap = tlx::make_radixheap<value_type, Radix>(
+    auto heap = tlx::make_radix_heap<value_type, Radix>(
         [](const value_type& p) { return std::get<0>(p); });
 
     std::vector<std::pair<KeyType, payload_type> > values;
@@ -394,7 +393,7 @@ void random_inout(std::mt19937& prng, const KeyType min, const KeyType max,
     using payload_type = uint32_t;
     using value_type = std::tuple<KeyType, payload_type>;
 
-    auto heap = tlx::make_radixheap<value_type, Radix>(
+    auto heap = tlx::make_radix_heap<value_type, Radix>(
         [](const value_type& p) { return std::get<0>(p); });
     using bucket_type = typename decltype(heap)::bucket_data_type;
 
@@ -630,7 +629,7 @@ void allin_allout_all(std::mt19937& prng, int64_t min, int64_t max, size_t n) {
 #undef RADIXHEAP_TESTSET
 }
 
-void test_main_radixheap_pair(std::mt19937& prng) {
+void test_main_radix_heap_pair(std::mt19937& prng) {
     for (int64_t min : { 0, 1000000, -1000000 }) {
         for (size_t x : { 1000, 1000000 }) {
             allin_allout_all(prng, min, min + x, 500);
@@ -657,7 +656,7 @@ int main() {
     test_main_bitarray(prng);
     test_main_int_rank(prng);
     test_main_bucket(prng);
-    test_main_radixheap_pair(prng);
+    test_main_radix_heap_pair(prng);
 
     return 0;
 }

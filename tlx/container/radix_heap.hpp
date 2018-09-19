@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/container/radixheap.hpp
+ * tlx/container/radix_heap.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,8 +8,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_CONTAINER_RADIXHEAP_HEADER
-#define TLX_CONTAINER_RADIXHEAP_HEADER
+#ifndef TLX_CONTAINER_RADIX_HEAP_HEADER
+#define TLX_CONTAINER_RADIX_HEAP_HEADER
 
 #include <array>
 #include <cassert>
@@ -25,7 +25,7 @@
 #include <tlx/meta/log2.hpp>
 
 namespace tlx {
-namespace radixheap_detail {
+namespace radix_heap_detail {
 
 /*!
  * Compute the rank of an integer x (i.e. the number of elements smaller than x
@@ -332,7 +332,7 @@ public:
         num_buckets_(std::numeric_limits<Int>::digits) + 1;
 };
 
-//! Used as an adaptor to implement radixheap_pair on top of radixheap.
+//! Used as an adapter to implement RadixHeapPair on top of RadixHeap.
 template <typename KeyType, typename DataType>
 struct PairKeyExtract {
     using allow_emplace_pair = bool;
@@ -342,7 +342,7 @@ struct PairKeyExtract {
     }
 };
 
-} // namespace radixheap_detail
+} // namespace radix_heap_detail
 
 //! \addtogroup tlx_data_structures
 //! \{
@@ -388,10 +388,10 @@ public:
     static constexpr unsigned radix = Radix;
 
 protected:
-    using encoder = radixheap_detail::IntegerRank<key_type>;
+    using encoder = radix_heap_detail::IntegerRank<key_type>;
     using ranked_key_type = typename encoder::rank_type;
     using bucket_map_type =
-        radixheap_detail::BucketComputation<Radix, ranked_key_type>;
+        radix_heap_detail::BucketComputation<Radix, ranked_key_type>;
 
     static constexpr unsigned radix_bits = tlx::Log2<radix>::floor;
     static constexpr unsigned num_layers =
@@ -558,7 +558,7 @@ protected:
     std::array<bucket_data_type, num_buckets> buckets_data_;
 
     std::array<ranked_key_type, num_buckets> mins_;
-    radixheap_detail::BitArray<num_buckets> filled_;
+    radix_heap_detail::BitArray<num_buckets> filled_;
 
     void initialize_() {
         size_ = 0;
@@ -644,11 +644,11 @@ protected:
 };
 
 /**
- * Helper to easily derive type of radixheap for a pre-C++17 compiler.
- * Refer to radixheap for description of parameters.
+ * Helper to easily derive type of RadixHeap for a pre-C++17 compiler.
+ * Refer to RadixHeap for description of parameters.
  */
 template <typename DataType, unsigned Radix = 8, typename KeyExtract = void>
-auto make_radixheap(KeyExtract&& key_extract)->
+auto make_radix_heap(KeyExtract&& key_extract)->
 RadixHeap<DataType, KeyExtract,
           decltype(key_extract(std::declval<DataType>())), Radix>{
     return (RadixHeap < DataType,
@@ -659,14 +659,14 @@ RadixHeap<DataType, KeyExtract,
 }
 
 /**
- * This class is a variant of tlx::radixheap for data types which do not
+ * This class is a variant of tlx::RadixHeap for data types which do not
  * include the key directly. Hence each entry is stored as an (Key,Value)-Pair
  * implemented with std::pair.
  */
 template <typename KeyType, typename DataType, unsigned Radix = 8>
 using RadixHeapPair = RadixHeap<
     std::pair<KeyType, DataType>,
-    radixheap_detail::PairKeyExtract<KeyType, DataType>,
+    radix_heap_detail::PairKeyExtract<KeyType, DataType>,
     KeyType, Radix
     >;
 
@@ -674,6 +674,6 @@ using RadixHeapPair = RadixHeap<
 
 } // namespace tlx
 
-#endif // !TLX_CONTAINER_RADIXHEAP_HEADER
+#endif // !TLX_CONTAINER_RADIX_HEAP_HEADER
 
 /******************************************************************************/

@@ -261,7 +261,7 @@ public:
     }
 
     //! Finds the bit with smallest index that is set
-    //! \Warning: If empty() is true, the result is undefined
+    //! \warning If empty() is true, the result is undefined
     size_t find_lsb() const {
         return impl_.find_lsb();
     }
@@ -344,24 +344,24 @@ struct PairKeyExtract {
 
 } // namespace radix_heap_detail
 
-//! \addtogroup tlx_data_structures
+//! \addtogroup tlx_container
 //! \{
 
-/**
+/*!
  * This class implements a monotonic integer min priority queue, more specific
  * a multi-level radix heap.
  *
  * Here, monotonic refers to the fact that the heap maintains an insertion limit
  * and does not allow the insertion of keys smaller than this limit. The
- * frontier is increased to the current minimum when invoking the methods
- * top_key, top_data, pop and swap_top_bucket. To query the currently smallest
- * item without updating the insertion limit use peak_top_key.
+ * frontier is increased to the current minimum when invoking the methods top(),
+ * pop() and swap_top_bucket(). To query the currently smallest item without
+ * updating the insertion limit use peak_top_key().
  *
  * We implement a two level radix heap. Let k=sizeof(KeyType)*8 be the number of
- * bits in a key. In contrast to an ordinary radix heap which contains k buckets,
- * we maintain ceil(k/log2(Radix)) rows each containing Radix-many buckets.
- * This reduces the number of move operations when reorganizing the data
- * structure.
+ * bits in a key. In contrast to an ordinary radix heap which contains k
+ * buckets, we maintain ceil(k/log2(Radix)) rows each containing Radix-many
+ * buckets.  This reduces the number of move operations when reorganizing the
+ * data structure.
  *
  * The implementation loosly follows the description of "An Experimental Study
  * of Priority Queues in External Memory" [Bregel et al.] and is also inspired
@@ -388,8 +388,8 @@ public:
     static constexpr unsigned radix = Radix;
 
 protected:
-    using encoder = radix_heap_detail::IntegerRank<key_type>;
-    using ranked_key_type = typename encoder::rank_type;
+    using Encoder = radix_heap_detail::IntegerRank<key_type>;
+    using ranked_key_type = typename Encoder::rank_type;
     using bucket_map_type =
         radix_heap_detail::BucketComputation<Radix, ranked_key_type>;
 
@@ -419,7 +419,7 @@ public:
     }
 
     bucket_index_type get_bucket_key(const key_type key) const {
-        const auto enc = encoder::rank_of_int(key);
+        const auto enc = Encoder::rank_of_int(key);
         assert(enc >= insertion_limit_);
 
         return bucket_map_(enc, insertion_limit_);
@@ -431,7 +431,7 @@ public:
     //! the constructor of the element.
     template <typename... Args>
     bucket_index_type emplace(const key_type key, Args&& ... args) {
-        const auto enc = encoder::rank_of_int(key);
+        const auto enc = Encoder::rank_of_int(key);
         assert(enc >= insertion_limit_);
         const auto idx = bucket_map_(enc, insertion_limit_);
 
@@ -455,7 +455,7 @@ public:
         if (buckets_data_[idx].empty()) filled_.set_bit(idx);
         buckets_data_[idx].emplace_back(std::forward<Args>(args) ...);
 
-        const auto enc = encoder::rank_of_int(
+        const auto enc = Encoder::rank_of_int(
             key_extract_(buckets_data_[idx].back()));
         if (mins_[idx] > enc) mins_[idx] = enc;
         assert(idx == bucket_map_(enc, insertion_limit_));
@@ -465,7 +465,7 @@ public:
 
     //! Insert element with priority key
     bucket_index_type push(const value_type& value) {
-        const auto enc = encoder::rank_of_int(key_extract_(value));
+        const auto enc = Encoder::rank_of_int(key_extract_(value));
         assert(enc >= insertion_limit_);
 
         const auto idx = bucket_map_(enc, insertion_limit_);
@@ -480,7 +480,7 @@ public:
     //! \warning Calling any method which updates the current
     //! can invalidate this hint
     void push_to_bucket(const bucket_index_type idx, const value_type& value) {
-        const auto enc = encoder::rank_of_int(key_extract_(value));
+        const auto enc = Encoder::rank_of_int(key_extract_(value));
 
         assert(enc >= insertion_limit_);
         assert(idx == get_bucket(value));
@@ -507,7 +507,7 @@ public:
     key_type peak_top_key() const {
         assert(!empty());
         const auto first = filled_.find_lsb();
-        return encoder::int_at_rank(mins_[first]);
+        return Encoder::int_at_rank(mins_[first]);
     }
 
     //! Returns currently smallest key and data
@@ -586,7 +586,7 @@ protected:
 
         // find a non-empty bucket
         const auto first_non_empty = filled_.find_lsb();
-        #ifndef NDEBUG
+#ifndef NDEBUG
         {
             assert(first_non_empty < num_buckets);
 
@@ -597,7 +597,7 @@ protected:
 
             assert(!buckets_data_[first_non_empty].empty());
         }
-        #endif
+#endif
 
         if (TLX_LIKELY(first_non_empty < Radix)) {
             // the first_non_empty non-empty bucket belongs to the smallest row
@@ -616,7 +616,7 @@ protected:
         auto& data_source = buckets_data_[first_non_empty];
 
         for (auto& x : data_source) {
-            const ranked_key_type key = encoder::rank_of_int(key_extract_(x));
+            const ranked_key_type key = Encoder::rank_of_int(key_extract_(x));
             assert(key >= mins_[first_non_empty]);
             assert(first_non_empty == mins_.size() - 1
                    || key < mins_[first_non_empty + 1]);
@@ -643,7 +643,7 @@ protected:
     }
 };
 
-/**
+/*!
  * Helper to easily derive type of RadixHeap for a pre-C++17 compiler.
  * Refer to RadixHeap for description of parameters.
  */
@@ -658,7 +658,7 @@ RadixHeap<DataType, KeyExtract,
             });
 }
 
-/**
+/*!
  * This class is a variant of tlx::RadixHeap for data types which do not
  * include the key directly. Hence each entry is stored as an (Key,Value)-Pair
  * implemented with std::pair.

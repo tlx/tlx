@@ -82,12 +82,6 @@ struct MyIntPairCompare {
     }
 };
 
-struct MyIntPairCompareFull {
-    bool operator () (const MyIntPair& a, const MyIntPair& b) const {
-        return std::tie(a.key_, a.value_) < std::tie(b.key_, b.value_);
-    }
-};
-
 // force instantiation
 namespace tlx {
 
@@ -125,31 +119,35 @@ void test_losertree(bool stable, size_t num_vectors) {
 
     for (size_t i = 0; i < num_vectors; ++i) {
         std::vector<MyIntPair> vec1;
-        for (size_t j = 0; j < 1000; ++j) {
-            vec1.emplace_back(rng(), i);
-            correct.emplace_back(vec1.back());
-        }
+        for (size_t j = 0; j < 1000; ++j)
+            vec1.emplace_back(rng(), rng());
 
         std::sort(vec1.begin(), vec1.end(), MyIntPairCompare());
-        vecs.emplace_back(vec1);
+
+        for (const MyIntPair& p : vec1)
+            correct.emplace_back(p);
+
+        vecs.emplace_back(std::move(vec1));
     }
 
     if (stable)
     {
-        // take first lists and replicate them with higher dummy order id
-        for (size_t i = 0; i < num_vectors / 2; ++i) {
+        // take first lists and replicate them with other second component
+        for (size_t i = 0; i < num_vectors / 1; ++i) {
             std::vector<MyIntPair> vec1;
-            for (size_t j = 0; j < 1000; ++j) {
-                vec1.emplace_back(vecs[i][j].key_, vecs.size());
-                correct.emplace_back(vec1.back());
-            }
+            for (size_t j = 0; j < 1000; ++j)
+                vec1.emplace_back(vecs[i][j].key_, rng());
 
             std::sort(vec1.begin(), vec1.end(), MyIntPairCompare());
-            vecs.emplace_back(vec1);
+
+            for (const MyIntPair& p : vec1)
+                correct.emplace_back(p);
+
+            vecs.emplace_back(std::move(vec1));
         }
     }
 
-    std::stable_sort(correct.begin(), correct.end(), MyIntPairCompareFull());
+    std::stable_sort(correct.begin(), correct.end(), MyIntPairCompare());
 
     LoserTree lt(vecs.size());
 

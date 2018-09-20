@@ -87,6 +87,9 @@ public:
     template <typename Other, typename OtherDeleter>
     friend class CountingPtr;
 
+    //! \name Construction, Assignment and Destruction
+    //! \{
+
     //! default constructor: contains a nullptr pointer.
     CountingPtr() noexcept
         : ptr_(nullptr) { }
@@ -178,6 +181,11 @@ public:
     //! destructor: decrements reference count in ptr.
     ~CountingPtr() { dec_reference(); }
 
+    //! \}
+
+    //! \name Observers
+    //! \{
+
     //! return the enclosed object as reference.
     Type& operator * () const noexcept {
         assert(ptr_);
@@ -192,22 +200,6 @@ public:
 
     //! return the enclosed pointer.
     Type * get() const noexcept { return ptr_; }
-
-    //! test equality of only the pointer values.
-    bool operator == (const CountingPtr& other) const noexcept
-    { return ptr_ == other.ptr_; }
-
-    //! test inequality of only the pointer values.
-    bool operator != (const CountingPtr& other) const noexcept
-    { return ptr_ != other.ptr_; }
-
-    //! test equality of only the address pointed to
-    bool operator == (Type* other) const noexcept
-    { return ptr_ == other; }
-
-    //! test inequality of only the address pointed to
-    bool operator != (Type* other) const noexcept
-    { return ptr_ != other; }
 
     //! test for a non-nullptr pointer
     bool valid() const noexcept
@@ -225,11 +217,15 @@ public:
     bool unique() const noexcept
     { return ptr_ && ptr_->unique(); }
 
-    //! make and refer a copy if the original object was shared.
-    void unify() {
-        if (ptr_ && !ptr_->unique())
-            operator = (CountingPtr(new Type(*ptr_)));
-    }
+    //! Returns the number of different shared_ptr instances managing the
+    //! current object.
+    size_t use_count() const noexcept
+    { return ptr_->reference_count(); }
+
+    //! \}
+
+    //! \name Modifiers
+    //! \{
 
     //! release contained pointer, frees object if this is the last reference.
     void reset() {
@@ -241,6 +237,67 @@ public:
     //! need change)
     void swap(CountingPtr& b) noexcept
     { std::swap(ptr_, b.ptr_); }
+
+    //! make and refer a copy if the original object was shared.
+    void unify() {
+        if (ptr_ && !ptr_->unique())
+            operator = (CountingPtr(new Type(*ptr_)));
+    }
+
+    //! \}
+
+    //! \name Comparison Operators
+    //! \{
+
+    //! test equality of only the pointer values.
+    bool operator == (const CountingPtr& other) const noexcept
+    { return ptr_ == other.ptr_; }
+
+    //! test inequality of only the pointer values.
+    bool operator != (const CountingPtr& other) const noexcept
+    { return ptr_ != other.ptr_; }
+
+    //! test equality of only the address pointed to
+    bool operator == (Type* other) const noexcept
+    { return ptr_ == other; }
+
+    //! test inequality of only the address pointed to
+    bool operator != (Type* other) const noexcept
+    { return ptr_ != other; }
+
+    //! compare the pointer values.
+    bool operator < (const CountingPtr& other) const noexcept
+    { return ptr_ < other.ptr_; }
+
+    //! compare the pointer values.
+    bool operator <= (const CountingPtr& other) const noexcept
+    { return ptr_ <= other.ptr_; }
+
+    //! compare the pointer values.
+    bool operator > (const CountingPtr& other) const noexcept
+    { return ptr_ > other.ptr_; }
+
+    //! compare the pointer values.
+    bool operator >= (const CountingPtr& other) const noexcept
+    { return ptr_ >= other.ptr_; }
+
+    //! compare the pointer values.
+    bool operator < (Type* other) const noexcept
+    { return ptr_ < other; }
+
+    //! compare the pointer values.
+    bool operator <= (Type* other) const noexcept
+    { return ptr_ <= other; }
+
+    //! compare the pointer values.
+    bool operator > (Type* other) const noexcept
+    { return ptr_ > other; }
+
+    //! compare the pointer values.
+    bool operator >= (Type* other) const noexcept
+    { return ptr_ >= other; }
+
+    //! \}
 };
 
 //! make alias due to similarity with std::shared_ptr<T>

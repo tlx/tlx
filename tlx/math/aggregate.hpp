@@ -47,17 +47,12 @@ public:
         count_++;
         min_ = std::min(min_, value);
         max_ = std::max(max_, value);
-        if (TLX_UNLIKELY(count_ == 1)) {
-            mean_ = value;
-        }
-        else {
-            // Single-pass numerically stable mean and standard deviation
-            // calculation as described in Donald Knuth: The Art of Computer
-            // Programming, Volume 2, Chapter 4.2.2, Equations 15 & 16
-            double delta = value - mean_;
-            mean_ += delta / count_;
-            nvar_ += delta * (value - mean_);
-        }
+        // Single-pass numerically stable mean and standard deviation
+        // calculation as described in Donald Knuth: The Art of Computer
+        // Programming, Volume 2, Chapter 4.2.2, Equations 15 & 16
+        double delta = value - mean_;
+        mean_ += delta / count_;
+        nvar_ += delta * (value - mean_);
         return *this;
     }
 

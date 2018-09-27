@@ -148,9 +148,9 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps) {
         auto x__ = (X);                                     /* NOLINT */ \
         auto y__ = (Y);                                     /* NOLINT */ \
         if (!::tlx::die_equal_eps_compare(x__, y__, eps))                \
-            die("DIE-UNEQUAL-EPS: " #X " != " #Y " : "                   \
-                << std::setprecision(18)                                 \
-                << "\"" << x__ << "\" != \"" << y__ << "\"");            \
+            tlx_die("DIE-UNEQUAL-EPS: " #X " != " #Y " : "               \
+                    << std::setprecision(18)                             \
+                    << "\"" << x__ << "\" != \"" << y__ << "\"");        \
     } while (false)
 
 //! Check that ABS(X - Y) <= 0.000001 or die miserably, but output the values of

@@ -18,6 +18,7 @@
 print "#include <$_>\n" foreach sort glob("tlx/math/"."*.hpp");
 ]]]*/
 #include <tlx/math/abs_diff.hpp>
+#include <tlx/math/aggregate.hpp>
 #include <tlx/math/bswap.hpp>
 #include <tlx/math/bswap_be.hpp>
 #include <tlx/math/bswap_le.hpp>

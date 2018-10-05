@@ -58,19 +58,21 @@ option(TLX_BUILD_SHARED_LIBS "Build shared library version of libtlx" OFF)
 
 ### allow user to change installation paths relative to CMAKE_INSTALL_PREFIX
 
-set(TLX_INSTALL_BIN_DIR "bin"
+include(GNUInstallDirs)
+
+set(TLX_INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR}
   CACHE PATH "Installation directory for executables")
-set(TLX_INSTALL_LIB_DIR "lib"
+set(TLX_INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR}
   CACHE PATH "Installation directory for libraries")
-set(TLX_INSTALL_INCLUDE_DIR "include"
+set(TLX_INSTALL_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR}
   CACHE PATH "Installation directory for header files")
-set(TLX_INSTALL_PKGCONFIG_DIR "lib/pkgconfig"
+set(TLX_INSTALL_PKGCONFIG_DIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
   CACHE PATH "Installation directory for pkg-config file")
 
 if(WIN32 AND NOT CYGWIN)
   set(TLX_DEFAULT_INSTALL_CMAKE_DIR "CMake")
 else()
-  set(TLX_DEFAULT_INSTALL_CMAKE_DIR "lib/cmake/tlx")
+  set(TLX_DEFAULT_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/tlx")
 endif()
 set(TLX_INSTALL_CMAKE_DIR "${TLX_DEFAULT_INSTALL_CMAKE_DIR}"
   CACHE PATH "Installation directory for cmake files")

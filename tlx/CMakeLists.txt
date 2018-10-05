@@ -58,10 +58,6 @@ set(LIBTLX_SOURCES
 
   )
 
-# glob header files
-file(GLOB_RECURSE TLX_HEADER_FILES
-  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" FOLLOW_SYMLINKS "*.hpp")
-
 # tell top-level cmakelists which library we build: assume only static
 set(TLX_EXPORTED_LIBS tlx)
 
@@ -77,7 +73,6 @@ if(TLX_BUILD_SHARED_LIBS)
   add_library(tlx SHARED ${LIBTLX_SOURCES})
   set_target_properties(tlx PROPERTIES OUTPUT_NAME "${TLX_LIBNAME}")
   set_target_properties(tlx PROPERTIES VERSION "${TLX_VERSION}")
-  set_target_properties(tlx PROPERTIES PUBLIC_HEADER "${TLX_HEADER_FILES}")
 
   target_compile_definitions(tlx PUBLIC ${TLX_DEFINITIONS})
   target_include_directories(tlx PUBLIC
@@ -88,7 +83,6 @@ if(TLX_BUILD_SHARED_LIBS)
 
   install(TARGETS tlx
     EXPORT tlx-targets
-    PUBLIC_HEADER DESTINATION ${TLX_INSTALL_INCLUDE_DIR}
     ARCHIVE DESTINATION ${TLX_INSTALL_LIB_DIR}
     LIBRARY DESTINATION ${TLX_INSTALL_LIB_DIR})
 
@@ -97,7 +91,6 @@ if(TLX_BUILD_SHARED_LIBS)
     add_library(tlx_static STATIC ${LIBTLX_SOURCES})
     set_target_properties(tlx_static PROPERTIES OUTPUT_NAME "${TLX_LIBNAME}")
     set_target_properties(tlx_static PROPERTIES VERSION "${TLX_VERSION}")
-    set_target_properties(tlx_static PROPERTIES PUBLIC_HEADER "${TLX_HEADER_FILES}")
 
     target_compile_definitions(tlx_static PUBLIC ${TLX_DEFINITIONS})
     target_include_directories(tlx_static PUBLIC
@@ -121,7 +114,6 @@ else()
   add_library(tlx STATIC ${LIBTLX_SOURCES})
   set_target_properties(tlx PROPERTIES OUTPUT_NAME "${TLX_LIBNAME}")
   set_target_properties(tlx PROPERTIES VERSION "${TLX_VERSION}")
-  set_target_properties(tlx PROPERTIES PUBLIC_HEADER "${TLX_HEADER_FILES}")
 
   target_compile_definitions(tlx PUBLIC ${TLX_DEFINITIONS})
   target_include_directories(tlx PUBLIC
@@ -132,7 +124,6 @@ else()
 
   install(TARGETS tlx
     EXPORT tlx-targets
-    PUBLIC_HEADER DESTINATION ${TLX_INSTALL_INCLUDE_DIR}
     ARCHIVE DESTINATION ${TLX_INSTALL_LIB_DIR}
     LIBRARY DESTINATION ${TLX_INSTALL_LIB_DIR})
 

@@ -64,7 +64,7 @@ set(TLX_INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR}
   CACHE PATH "Installation directory for executables")
 set(TLX_INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR}
   CACHE PATH "Installation directory for libraries")
-set(TLX_INSTALL_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR}
+set(TLX_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}/tlx"
   CACHE PATH "Installation directory for header files")
 set(TLX_INSTALL_PKGCONFIG_DIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
   CACHE PATH "Installation directory for pkg-config file")
@@ -319,11 +319,6 @@ if(TLX_BUILD_TESTS)
 endif()
 
 set(TLX_LIBRARIES tlx)
-
-# install header files
-install(DIRECTORY tlx
-  DESTINATION ${TLX_INSTALL_INCLUDE_DIR}
-  FILES_MATCHING PATTERN "*.hpp")
 
 ###############################################################################
 ### cmake script TLX_TRY_COMPILE_HEADERS to compile all tlx header files

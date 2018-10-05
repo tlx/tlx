@@ -77,8 +77,9 @@ if(TLX_BUILD_SHARED_LIBS)
   target_compile_definitions(tlx PUBLIC ${TLX_DEFINITIONS})
   target_include_directories(tlx PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/>
-    $<INSTALL_INTERFACE:${TLX_INSTALL_INCLUDE_DIR}>)
-  target_link_libraries(tlx ${TLX_LINK_LIBRARIES})
+    $<INSTALL_INTERFACE:${TLX_INSTALL_INCLUDE_DIR}>
+    ${TLX_DEPEND_INCLUDE_DIRS})
+  target_link_libraries(tlx ${TLX_DEPEND_LIBRARIES})
 
   install(TARGETS tlx
     EXPORT tlx-targets
@@ -94,8 +95,9 @@ if(TLX_BUILD_SHARED_LIBS)
     target_compile_definitions(tlx_static PUBLIC ${TLX_DEFINITIONS})
     target_include_directories(tlx_static PUBLIC
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/>
-      $<INSTALL_INTERFACE:${TLX_INSTALL_INCLUDE_DIR}>)
-    target_link_libraries(tlx_static ${TLX_LINK_LIBRARIES})
+      $<INSTALL_INTERFACE:${TLX_INSTALL_INCLUDE_DIR}>
+      ${TLX_DEPEND_INCLUDE_DIRS})
+    target_link_libraries(tlx_static ${TLX_DEPEND_LIBRARIES})
 
     install(TARGETS tlx_static
       EXPORT tlx-targets
@@ -116,8 +118,9 @@ else()
   target_compile_definitions(tlx PUBLIC ${TLX_DEFINITIONS})
   target_include_directories(tlx PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/>
-    $<INSTALL_INTERFACE:${TLX_INSTALL_INCLUDE_DIR}>)
-  target_link_libraries(tlx ${TLX_LINK_LIBRARIES})
+    $<INSTALL_INTERFACE:${TLX_INSTALL_INCLUDE_DIR}>
+    ${TLX_DEPEND_INCLUDE_DIRS})
+  target_link_libraries(tlx ${TLX_DEPEND_LIBRARIES})
 
   install(TARGETS tlx
     EXPORT tlx-targets

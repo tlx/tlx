@@ -37,7 +37,8 @@ set(TLX_VERSION "0.1.0")
 ################################################################################
 ### Options and Switches
 
-option(TLX_BUILD_TESTS "Build and run tlx's tests." OFF)
+option(TLX_BUILD_TESTS
+  "Build and run tlx's tests." OFF)
 
 option(TLX_USE_GCOV
   "Compile and run tests with gcov for coverage analysis." OFF)
@@ -78,8 +79,8 @@ set(TLX_INSTALL_CMAKE_DIR "${TLX_DEFAULT_INSTALL_CMAKE_DIR}"
 
 # variables to collect compile-time definitions, include dirs, and libraries
 set(TLX_DEFINITIONS "")
-set(TLX_INCLUDE_DIRS "")
-set(TLX_LINK_LIBRARIES "")
+set(TLX_DEPEND_INCLUDE_DIRS "")
+set(TLX_DEPEND_LIBRARIES "")
 
 if(TLX_MORE_TESTS)
   list(APPEND TLX_DEFINITIONS "TLX_MORE_TESTS")
@@ -302,7 +303,7 @@ enable_testing()
 # find pthreads
 
 find_package(Threads REQUIRED)
-list(APPEND TLX_LINK_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
+list(APPEND TLX_DEPEND_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
 ################################################################################
 ### Descend into Subdirectories
@@ -368,6 +369,16 @@ if(TLX_TRY_COMPILE_HEADERS)
   endforeach()
 
 endif(TLX_TRY_COMPILE_HEADERS)
+
+################################################################################
+# export macros for building with tlx to global CACHE
+# NOTE: this is for old-school cmake, better just add tlx to link_libaries
+
+set(TLX_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}")
+set(TLX_LIBRARIES "tlx")
+
+set(TLX_INCLUDE_DIRS "${TLX_INCLUDE_DIRS}" CACHE STRING "Include paths for TLX")
+set(TLX_LIBRARIES "${TLX_LIBRARIES}" CACHE STRING "Libraries to link for TLX")
 
 ###############################################################################
 # export targets to cmake project config file

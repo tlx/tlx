@@ -318,7 +318,7 @@ sub process_cpp {
         }
 
         # check for double underscore identifiers
-        if ($data[$i] =~ m@\s__(?!(attribute__|sync_|builtin_|has_feature|FILE__|LINE__|FUNCTION__|PRETTY_FUNCTION__|GNUC__|linux__|APPLE__|FreeBSD__|clang__|STDC_WANT_SECURE_LIB__|BYTE_ORDER|BIG_ENDIAN|LITTLE_ENDIAN|BYTE_ORDER__|ORDER_BIG_ENDIAN__|ORDER_LITTLE_ENDIAN__|SSE2__|cxa_demangle|declspec|m128i|gnu_parallel))@ && $data[$i] !~ /NOLINT/) {
+        if ($data[$i] =~ m@\s__(?!(attribute__|sync_|builtin_|has_feature|FILE__|LINE__|FUNCTION__|PRETTY_FUNCTION__|GNUC__|linux__|APPLE__|FreeBSD__|clang__|STDC_WANT_SECURE_LIB__|BYTE_ORDER|BIG_ENDIAN|LITTLE_ENDIAN|BYTE_ORDER__|ORDER_BIG_ENDIAN__|ORDER_LITTLE_ENDIAN__|SSE2__|cxa_demangle|declspec|m128i|popcnt|popcnt64|gnu_parallel))@ && $data[$i] !~ /NOLINT/) {
             print("double underscore identifier found in $path:$i\n");
             print("$data[$i]\n");
         }

@@ -110,6 +110,24 @@ static void test_is_power_of_two() {
     }
 }
 
+static void test_popcount() {
+
+    die_unequal(tlx::popcount(0x11111111u), 8u);
+    die_unequal(tlx::popcount_generic32(0x11111111u), 8u);
+
+    for (size_t i = 0; i < 0xFF; ++i)
+        die_unequal(tlx::popcount(i), tlx::popcount_generic8(i));
+
+    for (size_t i = 0; i < 0xFFFF; ++i)
+        die_unequal(tlx::popcount(i), tlx::popcount_generic16(i));
+
+    for (size_t i = 0; i < 0xFFFFFF; ++i)
+        die_unequal(tlx::popcount(i), tlx::popcount_generic32(i));
+
+    // for (size_t i = 0; i < 0xFFFFFFFFFF; ++i)
+    //     die_unequal(tlx::popcount(i), tlx::popcount_generic64(i));
+}
+
 static void test_rol() {
     die_unequal(tlx::rol32_generic(0x12345678u, 1), 0x2468ACF0u);
     die_unequal(tlx::rol32(0x12345678u, 1), 0x2468ACF0u);
@@ -181,6 +199,7 @@ int main() {
     test_clz();
     test_ffs();
     test_integer_log2();
+    test_popcount();
     test_rol();
     test_ror();
     test_round_to_power_of_two();

@@ -36,31 +36,37 @@ static inline unsigned integer_log2_floor_template(IntegerType i) {
 
 //! calculate the log2 floor of an integer type
 static inline unsigned integer_log2_floor(int i) {
+    if (i == 0) return 0;
     return 8 * sizeof(int) - 1 - __builtin_clz(i);
 }
 
 //! calculate the log2 floor of an integer type
 static inline unsigned integer_log2_floor(unsigned int i) {
+    if (i == 0) return 0;
     return 8 * sizeof(unsigned) - 1 - __builtin_clz(i);
 }
 
 //! calculate the log2 floor of an integer type
 static inline unsigned integer_log2_floor(long i) {
+    if (i == 0) return 0;
     return 8 * sizeof(long) - 1 - __builtin_clzl(i);
 }
 
 //! calculate the log2 floor of an integer type
 static inline unsigned integer_log2_floor(unsigned long i) {
+    if (i == 0) return 0;
     return 8 * sizeof(unsigned long) - 1 - __builtin_clzl(i);
 }
 
 //! calculate the log2 floor of an integer type
 static inline unsigned integer_log2_floor(long long i) {
+    if (i == 0) return 0;
     return 8 * sizeof(long long) - 1 - __builtin_clzll(i);
 }
 
 //! calculate the log2 floor of an integer type
 static inline unsigned integer_log2_floor(unsigned long long i) {
+    if (i == 0) return 0;
     return 8 * sizeof(unsigned long long) - 1 - __builtin_clzll(i);
 }
 

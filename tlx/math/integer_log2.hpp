@@ -32,6 +32,40 @@ static inline unsigned integer_log2_floor_template(IntegerType i) {
 /******************************************************************************/
 // integer_log2_floor()
 
+#if defined(__GNUC__) || defined(__clang__)
+
+//! calculate the log2 floor of an integer type
+static inline unsigned integer_log2_floor(int i) {
+    return 8 * sizeof(int) - 1 - __builtin_clz(i);
+}
+
+//! calculate the log2 floor of an integer type
+static inline unsigned integer_log2_floor(unsigned int i) {
+    return 8 * sizeof(unsigned) - 1 - __builtin_clz(i);
+}
+
+//! calculate the log2 floor of an integer type
+static inline unsigned integer_log2_floor(long i) {
+    return 8 * sizeof(long) - 1 - __builtin_clzl(i);
+}
+
+//! calculate the log2 floor of an integer type
+static inline unsigned integer_log2_floor(unsigned long i) {
+    return 8 * sizeof(unsigned long) - 1 - __builtin_clzl(i);
+}
+
+//! calculate the log2 floor of an integer type
+static inline unsigned integer_log2_floor(long long i) {
+    return 8 * sizeof(long long) - 1 - __builtin_clzll(i);
+}
+
+//! calculate the log2 floor of an integer type
+static inline unsigned integer_log2_floor(unsigned long long i) {
+    return 8 * sizeof(unsigned long long) - 1 - __builtin_clzll(i);
+}
+
+#else
+
 //! calculate the log2 floor of an integer type
 static inline unsigned integer_log2_floor(int i) {
     return integer_log2_floor_template(i);
@@ -61,6 +95,8 @@ static inline unsigned integer_log2_floor(long long i) {
 static inline unsigned integer_log2_floor(unsigned long long i) {
     return integer_log2_floor_template(i);
 }
+
+#endif
 
 /******************************************************************************/
 // integer_log2_ceil()

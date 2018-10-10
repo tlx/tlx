@@ -81,13 +81,91 @@ static void test_ffs() {
 static void test_integer_log2() {
 
     unsigned power = 0;
-    for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
+    for (uint16_t i = 1; i < (1lu << 15); i <<= 1, ++power)
     {
-        if (i > 1)
+        if (i > 1) {
             die_unequal(tlx::integer_log2_floor(i - 1), power - 1);
+            die_unequal(tlx::integer_log2_floor_template(i - 1), power - 1);
+        }
 
         die_unequal(tlx::integer_log2_floor(i), power);
         die_unequal(tlx::integer_log2_floor(i + 1), power + (i == 1 ? 1 : 0));
+
+        die_unequal(tlx::integer_log2_floor_template(i), power);
+        die_unequal(tlx::integer_log2_floor_template(i + 1),
+                    power + (i == 1 ? 1 : 0));
+
+        if (i > 1) {
+            die_unequal(
+                tlx::integer_log2_ceil(i - 1), power - (i == 2 ? 1 : 0));
+        }
+
+        die_unequal(tlx::integer_log2_ceil(i), power);
+        die_unequal(tlx::integer_log2_ceil(i + 1), power + 1);
+    }
+
+    power = 0;
+    for (uint32_t i = 1; i < (1lu << 31); i <<= 1, ++power)
+    {
+        if (i > 1) {
+            die_unequal(tlx::integer_log2_floor(i - 1), power - 1);
+            die_unequal(tlx::integer_log2_floor_template(i - 1), power - 1);
+        }
+
+        die_unequal(tlx::integer_log2_floor(i), power);
+        die_unequal(tlx::integer_log2_floor(i + 1), power + (i == 1 ? 1 : 0));
+
+        die_unequal(tlx::integer_log2_floor_template(i), power);
+        die_unequal(tlx::integer_log2_floor_template(i + 1),
+                    power + (i == 1 ? 1 : 0));
+
+        if (i > 1) {
+            die_unequal(
+                tlx::integer_log2_ceil(i - 1), power - (i == 2 ? 1 : 0));
+        }
+
+        die_unequal(tlx::integer_log2_ceil(i), power);
+        die_unequal(tlx::integer_log2_ceil(i + 1), power + 1);
+    }
+
+    power = 0;
+    for (int64_t i = 1; i < (1ll << 62); i <<= 1, ++power)
+    {
+        if (i > 1) {
+            die_unequal(tlx::integer_log2_floor(i - 1), power - 1);
+            die_unequal(tlx::integer_log2_floor_template(i - 1), power - 1);
+        }
+
+        die_unequal(tlx::integer_log2_floor(i), power);
+        die_unequal(tlx::integer_log2_floor(i + 1), power + (i == 1 ? 1 : 0));
+
+        die_unequal(tlx::integer_log2_floor_template(i), power);
+        die_unequal(tlx::integer_log2_floor_template(i + 1),
+                    power + (i == 1 ? 1 : 0));
+
+        if (i > 1) {
+            die_unequal(
+                tlx::integer_log2_ceil(i - 1), power - (i == 2 ? 1 : 0));
+        }
+
+        die_unequal(tlx::integer_log2_ceil(i), power);
+        die_unequal(tlx::integer_log2_ceil(i + 1), power + 1);
+    }
+
+    power = 0;
+    for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
+    {
+        if (i > 1) {
+            die_unequal(tlx::integer_log2_floor(i - 1), power - 1);
+            die_unequal(tlx::integer_log2_floor_template(i - 1), power - 1);
+        }
+
+        die_unequal(tlx::integer_log2_floor(i), power);
+        die_unequal(tlx::integer_log2_floor(i + 1), power + (i == 1 ? 1 : 0));
+
+        die_unequal(tlx::integer_log2_floor_template(i), power);
+        die_unequal(tlx::integer_log2_floor_template(i + 1),
+                    power + (i == 1 ? 1 : 0));
 
         if (i > 1) {
             die_unequal(

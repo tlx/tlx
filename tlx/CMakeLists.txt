@@ -3,6 +3,7 @@
 #
 # Part of tlx - http://panthema.net/tlx
 #
+# Copyright (C) 2017-2018 Timo Bingmann <tb@panthema.net>
 #
 # All rights reserved. Published under the Boost Software License, Version 1.0
 ################################################################################
@@ -18,9 +19,6 @@ set(LIBTLX_SOURCES
   digest/sha256.cpp
   digest/sha512.cpp
   logger/core.cpp
-  math/integer_log2.cpp
-  math/is_power_of_two.cpp
-  math/round_to_power_of_two.cpp
   port/setenv.cpp
   sort/strings1.cpp
   sort/strings2.cpp

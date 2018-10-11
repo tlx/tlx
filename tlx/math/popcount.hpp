@@ -28,7 +28,7 @@ namespace tlx {
 // popcount() - count one bits
 
 //! popcount (count one bits) - generic SWAR implementation
-static inline unsigned popcount_generic8(uint16_t x) {
+static inline unsigned popcount_generic8(uint8_t x) {
     x = x - ((x >> 1) & 0x55);
     x = (x & 0x33) + ((x >> 2) & 0x33);
     return static_cast<uint8_t>((x + (x >> 4)) & 0x0F);
@@ -95,8 +95,7 @@ static inline unsigned popcount(long long i) {
 //! popcount (count one bits)
 template <typename Integral>
 inline unsigned popcount(Integral i) {
-    unsigned long leading_zeros = 0;
-    if (sizeof(i) > 4)
+    if (sizeof(i) <= sizeof(int))
         return __popcnt(i);
     else
         return __popcnt64(i);
@@ -107,13 +106,13 @@ inline unsigned popcount(Integral i) {
 //! popcount (count one bits)
 template <typename Integral>
 inline unsigned popcount(Integral i) {
-    if (sizeof(i) == 1)
+    if (sizeof(i) <= sizeof(uint8_t))
         return popcount_generic8(i);
-    else if (sizeof(i) == 2)
+    else if (sizeof(i) <= sizeof(uint16_t))
         return popcount_generic16(i);
-    else if (sizeof(i) == 4)
+    else if (sizeof(i) <= sizeof(uint32_t))
         return popcount_generic32(i);
-    else if (sizeof(i) == 8)
+    else if (sizeof(i) <= sizeof(uint64_t))
         return popcount_generic64(i);
     else
         abort();

@@ -16,8 +16,6 @@
 #include <tlx/math/ror.hpp>
 #include <tlx/string/hexdump.hpp>
 
-#include <algorithm>
-
 namespace tlx {
 
 /*
@@ -29,12 +27,9 @@ namespace tlx {
  * The library is free for all purposes without any express guarantee it works.
  */
 
-typedef uint32_t u32;
-typedef uint64_t u64;
+namespace digest_detail {
 
-namespace {
-
-static const u64 K[80] = {
+static const uint64_t K[80] = {
     0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL, 0xb5c0fbcfec4d3b2fULL,
     0xe9b5dba58189dbbcULL, 0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL,
     0x923f82a4af194f9bULL, 0xab1c5ed5da6d8118ULL, 0xd807aa98a3030242ULL,
@@ -64,45 +59,47 @@ static const u64 K[80] = {
     0x5fcb6fab3ad6faecULL, 0x6c44198c4a475817ULL
 };
 
-static inline u32 min(u32 x, u32 y) {
+static inline uint32_t min(uint32_t x, uint32_t y) {
     return x < y ? x : y;
 }
 
-static inline void store64(u64 x, unsigned char* y) {
+static inline void store64(uint64_t x, unsigned char* y) {
     for (int i = 0; i != 8; ++i)
         y[i] = (x >> ((7 - i) * 8)) & 255;
 }
-static inline u64 load64(const unsigned char* y) {
-    u64 res = 0;
+static inline uint64_t load64(const unsigned char* y) {
+    uint64_t res = 0;
     for (int i = 0; i != 8; ++i)
-        res |= u64(y[i]) << ((7 - i) * 8);
+        res |= uint64_t(y[i]) << ((7 - i) * 8);
     return res;
 }
 
-static inline u64 Ch(const u64& x, const u64& y, const u64& z) {
+static inline
+uint64_t Ch(const uint64_t& x, const uint64_t& y, const uint64_t& z) {
     return z ^ (x & (y ^ z));
 }
-static inline u64 Maj(const u64& x, const u64& y, const u64& z) {
+static inline
+uint64_t Maj(const uint64_t& x, const uint64_t& y, const uint64_t& z) {
     return ((x | y) & z) | (x & y);
 }
-static inline u64 Sh(u64 x, u64 n) {
+static inline uint64_t Sh(uint64_t x, uint64_t n) {
     return x >> n;
 }
-static inline u64 Sigma0(u64 x) {
+static inline uint64_t Sigma0(uint64_t x) {
     return ror64(x, 28) ^ ror64(x, 34) ^ ror64(x, 39);
 }
-static inline u64 Sigma1(u64 x) {
+static inline uint64_t Sigma1(uint64_t x) {
     return ror64(x, 14) ^ ror64(x, 18) ^ ror64(x, 41);
 }
-static inline u64 Gamma0(u64 x) {
+static inline uint64_t Gamma0(uint64_t x) {
     return ror64(x, 1) ^ ror64(x, 8) ^ Sh(x, 7);
 }
-static inline u64 Gamma1(u64 x) {
+static inline uint64_t Gamma1(uint64_t x) {
     return ror64(x, 19) ^ ror64(x, 61) ^ Sh(x, 6);
 }
 
 static void sha512_compress(uint64_t state[8], const uint8_t* buf) {
-    u64 S[8], W[80], t0, t1;
+    uint64_t S[8], W[80], t0, t1;
 
     // Copy state_ into S
     for (int i = 0; i < 8; i++)
@@ -118,7 +115,8 @@ static void sha512_compress(uint64_t state[8], const uint8_t* buf) {
 
     // Compress
     auto RND =
-        [&](u64 a, u64 b, u64 c, u64& d, u64 e, u64 f, u64 g, u64& h, u64 i)
+        [&](uint64_t a, uint64_t b, uint64_t c, uint64_t& d, uint64_t e,
+            uint64_t f, uint64_t g, uint64_t& h, uint64_t i)
         {
             t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];
             t1 = Sigma0(a) + Maj(a, b, c);
@@ -143,7 +141,7 @@ static void sha512_compress(uint64_t state[8], const uint8_t* buf) {
         state[i] = state[i] + S[i];
 }
 
-} // namespace
+} // namespace digest_detail
 
 SHA512::SHA512() {
     curlen_ = 0;
@@ -158,40 +156,41 @@ SHA512::SHA512() {
     state_[7] = 0x5be0cd19137e2179ULL;
 }
 
-SHA512::SHA512(const void* data, uint32_t size)
-    : SHA512() {
+SHA512::SHA512(const void* data, uint32_t size) : SHA512() {
     process(data, size);
 }
 
-SHA512::SHA512(const std::string& str)
-    : SHA512() {
+SHA512::SHA512(const std::string& str) : SHA512() {
     process(str);
 }
 
-void SHA512::process(const void* data, u32 size) {
-    const u32 block_size = sizeof(SHA512::buf_);
+void SHA512::process(const void* data, uint32_t size) {
+    const uint32_t block_size = sizeof(SHA512::buf_);
     auto in = static_cast<const uint8_t*>(data);
 
     while (size > 0)
     {
         if (curlen_ == 0 && size >= block_size)
         {
-            sha512_compress(state_, in);
+            digest_detail::sha512_compress(state_, in);
             length_ += block_size * 8;
             in += block_size;
             size -= block_size;
         }
         else
         {
-            u32 n = min(size, (block_size - curlen_));
-            std::copy(in, in + n, buf_ + curlen_);
+            uint32_t n = digest_detail::min(size, (block_size - curlen_));
+            uint8_t* b = buf_ + curlen_;
+            for (const uint8_t* a = in; a != in + n; ++a, ++b) {
+                *b = *a;
+            }
             curlen_ += n;
             in += n;
             size -= n;
 
             if (curlen_ == block_size)
             {
-                sha512_compress(state_, buf_);
+                digest_detail::sha512_compress(state_, buf_);
                 length_ += 8 * block_size;
                 curlen_ = 0;
             }
@@ -216,7 +215,7 @@ void SHA512::finalize(void* digest) {
     {
         while (curlen_ < 128)
             buf_[curlen_++] = 0;
-        sha512_compress(state_, buf_);
+        digest_detail::sha512_compress(state_, buf_);
         curlen_ = 0;
     }
 
@@ -227,12 +226,14 @@ void SHA512::finalize(void* digest) {
         buf_[curlen_++] = 0;
 
     // Store length
-    store64(length_, buf_ + 120);
-    sha512_compress(state_, buf_);
+    digest_detail::store64(length_, buf_ + 120);
+    digest_detail::sha512_compress(state_, buf_);
 
     // Copy output
-    for (int i = 0; i < 8; i++)
-        store64(state_[i], static_cast<uint8_t*>(digest) + (8 * i));
+    for (int i = 0; i < 8; i++) {
+        digest_detail::store64(
+            state_[i], static_cast<uint8_t*>(digest) + (8 * i));
+    }
 }
 
 std::string SHA512::digest() {

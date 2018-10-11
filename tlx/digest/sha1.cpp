@@ -16,8 +16,6 @@
 #include <tlx/math/rol.hpp>
 #include <tlx/string/hexdump.hpp>
 
-#include <algorithm>
-
 namespace tlx {
 
 /*
@@ -29,43 +27,44 @@ namespace tlx {
  * The library is free for all purposes without any express guarantee it works.
  */
 
-typedef uint32_t u32;
-typedef uint64_t u64;
+namespace digest_detail {
 
-namespace {
-
-static inline u32 min(u32 x, u32 y) {
+static inline uint32_t min(uint32_t x, uint32_t y) {
     return x < y ? x : y;
 }
 
-static inline void store64h(u64 x, unsigned char* y) {
+static inline void store64h(uint64_t x, unsigned char* y) {
     for (int i = 0; i != 8; ++i)
         y[i] = (x >> ((7 - i) * 8)) & 255;
 }
-static inline u32 load32h(const uint8_t* y) {
-    return (u32(y[0]) << 24) | (u32(y[1]) << 16) |
-           (u32(y[2]) << 8) | (u32(y[3]) << 0);
+static inline uint32_t load32h(const uint8_t* y) {
+    return (uint32_t(y[0]) << 24) | (uint32_t(y[1]) << 16) |
+           (uint32_t(y[2]) << 8) | (uint32_t(y[3]) << 0);
 }
-static inline void store32h(u32 x, uint8_t* y) {
+static inline void store32h(uint32_t x, uint8_t* y) {
     for (int i = 0; i != 4; ++i)
         y[i] = (x >> ((3 - i) * 8)) & 255;
 }
 
-static inline u32 F0(const u32& x, const u32& y, const u32& z) {
+static inline
+uint32_t F0(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
     return (z ^ (x & (y ^ z)));
 }
-static inline u32 F1(const u32& x, const u32& y, const u32& z) {
+static inline
+uint32_t F1(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
     return (x ^ y ^ z);
 }
-static inline u32 F2(const u32& x, const u32& y, const u32& z) {
+static inline
+uint32_t F2(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
     return ((x & y) | (z & (x | y)));
 }
-static inline u32 F3(const u32& x, const u32& y, const u32& z) {
+static inline
+uint32_t F3(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
     return (x ^ y ^ z);
 }
 
 static void sha1_compress(uint32_t state[4], const uint8_t* buf) {
-    u32 a, b, c, d, e, W[80], i, t;
+    uint32_t a, b, c, d, e, W[80], i, t;
 
     /* copy the state into 512-bits into W[0..15] */
     for (i = 0; i < 16; i++) {
@@ -114,7 +113,7 @@ static void sha1_compress(uint32_t state[4], const uint8_t* buf) {
     state[4] = state[4] + e;
 }
 
-} // namespace
+} // namespace digest_detail
 
 SHA1::SHA1() {
     curlen_ = 0;
@@ -126,40 +125,41 @@ SHA1::SHA1() {
     state_[4] = 0xc3d2e1f0UL;
 }
 
-SHA1::SHA1(const void* data, uint32_t size)
-    : SHA1() {
+SHA1::SHA1(const void* data, uint32_t size) : SHA1() {
     process(data, size);
 }
 
-SHA1::SHA1(const std::string& str)
-    : SHA1() {
+SHA1::SHA1(const std::string& str) : SHA1() {
     process(str);
 }
 
-void SHA1::process(const void* data, u32 size) {
-    const u32 block_size = sizeof(SHA1::buf_);
+void SHA1::process(const void* data, uint32_t size) {
+    const uint32_t block_size = sizeof(SHA1::buf_);
     auto in = static_cast<const uint8_t*>(data);
 
     while (size > 0)
     {
         if (curlen_ == 0 && size >= block_size)
         {
-            sha1_compress(state_, in);
+            digest_detail::sha1_compress(state_, in);
             length_ += block_size * 8;
             in += block_size;
             size -= block_size;
         }
         else
         {
-            u32 n = min(size, (block_size - curlen_));
-            std::copy(in, in + n, buf_ + curlen_);
+            uint32_t n = digest_detail::min(size, (block_size - curlen_));
+            uint8_t* b = buf_ + curlen_;
+            for (const uint8_t* a = in; a != in + n; ++a, ++b) {
+                *b = *a;
+            }
             curlen_ += n;
             in += n;
             size -= n;
 
             if (curlen_ == block_size)
             {
-                sha1_compress(state_, buf_);
+                digest_detail::sha1_compress(state_, buf_);
                 length_ += 8 * block_size;
                 curlen_ = 0;
             }
@@ -184,7 +184,7 @@ void SHA1::finalize(void* digest) {
     if (curlen_ > 56) {
         while (curlen_ < 64)
             buf_[curlen_++] = 0;
-        sha1_compress(state_, buf_);
+        digest_detail::sha1_compress(state_, buf_);
         curlen_ = 0;
     }
 
@@ -193,12 +193,12 @@ void SHA1::finalize(void* digest) {
         buf_[curlen_++] = 0;
 
     // Store length
-    store64h(length_, buf_ + 56);
-    sha1_compress(state_, buf_);
+    digest_detail::store64h(length_, buf_ + 56);
+    digest_detail::sha1_compress(state_, buf_);
 
     // Copy output
     for (size_t i = 0; i < 5; i++)
-        store32h(state_[i], static_cast<uint8_t*>(digest) + (4 * i));
+        digest_detail::store32h(state_[i], static_cast<uint8_t*>(digest) + (4 * i));
 }
 
 std::string SHA1::digest() {

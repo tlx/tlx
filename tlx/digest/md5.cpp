@@ -16,8 +16,6 @@
 #include <tlx/math/rol.hpp>
 #include <tlx/string/hexdump.hpp>
 
-#include <algorithm>
-
 namespace tlx {
 
 /*
@@ -29,61 +27,66 @@ namespace tlx {
  * The library is free for all purposes without any express guarantee it works.
  */
 
-typedef uint32_t u32;
-typedef uint64_t u64;
+namespace digest_detail {
 
-namespace {
-
-static inline u32 min(u32 x, u32 y) {
+static inline uint32_t min(uint32_t x, uint32_t y) {
     return x < y ? x : y;
 }
 
-static inline u32 load32l(const uint8_t* y) {
-    u32 res = 0;
+static inline uint32_t load32l(const uint8_t* y) {
+    uint32_t res = 0;
     for (size_t i = 0; i != 4; ++i)
-        res |= u32(y[i]) << (i * 8);
+        res |= uint32_t(y[i]) << (i * 8);
     return res;
 }
 
-static inline void store32l(u32 x, uint8_t* y) {
+static inline void store32l(uint32_t x, uint8_t* y) {
     for (size_t i = 0; i != 4; ++i)
         y[i] = (x >> (i * 8)) & 255;
 }
 
-static inline void store64l(u64 x, uint8_t* y) {
+static inline void store64l(uint64_t x, uint8_t* y) {
     for (size_t i = 0; i != 8; ++i)
         y[i] = (x >> (i * 8)) & 255;
 }
 
-static inline u32 F(const u32& x, const u32& y, const u32& z) {
+static inline
+uint32_t F(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
     return (z ^ (x & (y ^ z)));
 }
-static inline u32 G(const u32& x, const u32& y, const u32& z) {
+static inline
+uint32_t G(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
     return (y ^ (z & (y ^ x)));
 }
-static inline u32 H(const u32& x, const u32& y, const u32& z) {
+static inline
+uint32_t H(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
     return (x ^ y ^ z);
 }
-static inline u32 I(const u32& x, const u32& y, const u32& z) {
+static inline
+uint32_t I(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
     return (y ^ (x | (~z)));
 }
 
-static inline void FF(u32& a, u32& b, u32& c, u32& d, u32 M, u32 s, u32 t) {
+static inline void FF(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d,
+                      uint32_t M, uint32_t s, uint32_t t) {
     a = (a + F(b, c, d) + M + t);
     a = rol32(a, s) + b;
 }
 
-static inline void GG(u32& a, u32& b, u32& c, u32& d, u32 M, u32 s, u32 t) {
+static inline void GG(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d,
+                      uint32_t M, uint32_t s, uint32_t t) {
     a = (a + G(b, c, d) + M + t);
     a = rol32(a, s) + b;
 }
 
-static inline void HH(u32& a, u32& b, u32& c, u32& d, u32 M, u32 s, u32 t) {
+static inline void HH(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d,
+                      uint32_t M, uint32_t s, uint32_t t) {
     a = (a + H(b, c, d) + M + t);
     a = rol32(a, s) + b;
 }
 
-static inline void II(u32& a, u32& b, u32& c, u32& d, u32 M, u32 s, u32 t) {
+static inline void II(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d,
+                      uint32_t M, uint32_t s, uint32_t t) {
     a = (a + I(b, c, d) + M + t);
     a = rol32(a, s) + b;
 }
@@ -102,7 +105,7 @@ static const uint8_t Rorder[64] = {
     6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21
 };
 
-static const u32 Korder[64] = {
+static const uint32_t Korder[64] = {
     0xd76aa478UL, 0xe8c7b756UL, 0x242070dbUL, 0xc1bdceeeUL, 0xf57c0fafUL,
     0x4787c62aUL, 0xa8304613UL, 0xfd469501UL, 0x698098d8UL, 0x8b44f7afUL,
     0xffff5bb1UL, 0x895cd7beUL, 0x6b901122UL, 0xfd987193UL, 0xa679438eUL,
@@ -119,7 +122,7 @@ static const u32 Korder[64] = {
 };
 
 static void md5_compress(uint32_t state[4], const uint8_t* buf) {
-    u32 i, W[16], a, b, c, d, t;
+    uint32_t i, W[16], a, b, c, d, t;
 
     // copy the state into 512-bits into W[0..15]
     for (i = 0; i < 16; i++) {
@@ -158,7 +161,7 @@ static void md5_compress(uint32_t state[4], const uint8_t* buf) {
     state[3] = state[3] + d;
 }
 
-} // namespace
+} // namespace digest_detail
 
 MD5::MD5() {
     curlen_ = 0;
@@ -169,40 +172,41 @@ MD5::MD5() {
     state_[3] = 0x10325476UL;
 }
 
-MD5::MD5(const void* data, uint32_t size)
-    : MD5() {
+MD5::MD5(const void* data, uint32_t size) : MD5() {
     process(data, size);
 }
 
-MD5::MD5(const std::string& str)
-    : MD5() {
+MD5::MD5(const std::string& str) : MD5() {
     process(str);
 }
 
-void MD5::process(const void* data, u32 size) {
-    const u32 block_size = sizeof(MD5::buf_);
+void MD5::process(const void* data, uint32_t size) {
+    const uint32_t block_size = sizeof(MD5::buf_);
     auto in = static_cast<const uint8_t*>(data);
 
     while (size > 0)
     {
         if (curlen_ == 0 && size >= block_size)
         {
-            md5_compress(state_, in);
+            digest_detail::md5_compress(state_, in);
             length_ += block_size * 8;
             in += block_size;
             size -= block_size;
         }
         else
         {
-            u32 n = min(size, (block_size - curlen_));
-            std::copy(in, in + n, buf_ + curlen_);
+            uint32_t n = digest_detail::min(size, (block_size - curlen_));
+            uint8_t* b = buf_ + curlen_;
+            for (const uint8_t* a = in; a != in + n; ++a, ++b) {
+                *b = *a;
+            }
             curlen_ += n;
             in += n;
             size -= n;
 
             if (curlen_ == block_size)
             {
-                md5_compress(state_, buf_);
+                digest_detail::md5_compress(state_, buf_);
                 length_ += 8 * block_size;
                 curlen_ = 0;
             }
@@ -227,7 +231,7 @@ void MD5::finalize(void* digest) {
     if (curlen_ > 56) {
         while (curlen_ < 64)
             buf_[curlen_++] = 0;
-        md5_compress(state_, buf_);
+        digest_detail::md5_compress(state_, buf_);
         curlen_ = 0;
     }
 
@@ -236,12 +240,14 @@ void MD5::finalize(void* digest) {
         buf_[curlen_++] = 0;
 
     // Store length
-    store64l(length_, buf_ + 56);
-    md5_compress(state_, buf_);
+    digest_detail::store64l(length_, buf_ + 56);
+    digest_detail::md5_compress(state_, buf_);
 
     // Copy output
-    for (size_t i = 0; i < 4; i++)
-        store32l(state_[i], static_cast<uint8_t*>(digest) + (4 * i));
+    for (size_t i = 0; i < 4; i++) {
+        digest_detail::store32l(
+            state_[i], static_cast<uint8_t*>(digest) + (4 * i));
+    }
 }
 
 std::string MD5::digest() {

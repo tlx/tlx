@@ -10,7 +10,7 @@
 
 #include <cmath>
 #include <cstddef>
-#include <iostream>
+#include <vector>
 
 #include <tlx/die.hpp>
 #include <tlx/math.hpp>
@@ -180,6 +180,12 @@ static void test_popcount() {
 
     // for (size_t i = 0; i < 0xFFFFFFFFFF; ++i)
     //     die_unequal(tlx::popcount(i), tlx::popcount_generic64(i));
+
+    std::vector<uint8_t> data;
+    for (size_t i = 0; i < 20; ++i) {
+        die_unequal(tlx::popcount(data.data(), data.size()), 2 * i);
+        data.push_back(0x11);
+    }
 }
 
 static void test_rol() {

@@ -14,6 +14,7 @@
 #define TLX_MATH_POPCOUNT_HEADER
 
 #include <cstdint>
+#include <cstdlib>
 
 #ifdef _MSC_VER
 #include <intrin.h>
@@ -119,6 +120,27 @@ inline unsigned popcount(Integral i) {
 }
 
 #endif
+
+/******************************************************************************/
+// popcount range
+
+size_t popcount(const void* data, size_t size) {
+    const uint8_t* begin = reinterpret_cast<const uint8_t*>(data);
+    const uint8_t* end = begin + size;
+    size_t total = 0;
+    while (begin + 7 < end) {
+        total += popcount(*reinterpret_cast<const uint64_t*>(begin));
+        begin += 8;
+    }
+    if (begin + 3 < end) {
+        total += popcount(*reinterpret_cast<const uint32_t*>(begin));
+        begin += 4;
+    }
+    while (begin < end) {
+        total += popcount(*begin++);
+    }
+    return total;
+}
 
 //! \}
 

@@ -127,6 +127,33 @@ static void test_contains_word() {
     die_unless(!tlx::contains_word(data, "doit"));
 }
 
+static void test_erase_all() {
+
+    die_unequal(
+        tlx::erase_all(" abcdef   ghi jk "), "abcdefghijk");
+
+    die_unequal(
+        tlx::erase_all("abcdef   ghi jk"), "abcdefghijk");
+
+    die_unequal(
+        tlx::erase_all(" abcdef   ghi jk ", " bg"), "acdefhijk");
+
+    die_unequal(
+        tlx::erase_all("abcdef   ghi jk", " bg"), "acdefhijk");
+
+    std::string s1 = " abcdef   ghi jk ";
+    die_unequal(tlx::erase_all(&s1), "abcdefghijk");
+
+    std::string s2 = "abcdef   ghi jk";
+    die_unequal(tlx::erase_all(&s2), "abcdefghijk");
+
+    std::string s3 = " abcdef   ghi jk ";
+    die_unequal(tlx::erase_all(&s3, " bg"), "acdefhijk");
+
+    std::string s4 = "abcdef   ghi jk";
+    die_unequal(tlx::erase_all(&s4, " bg"), "acdefhijk");
+}
+
 static void test_escape_html() {
 
     die_unequal(
@@ -175,33 +202,6 @@ static void test_format_si_iec_units() {
     die_unequal(tlx::format_iec_units(33 * 1024 * 1024 * 1024LLU), "33.000 Gi");
 }
 
-static void test_erase_all() {
-
-    die_unequal(
-        tlx::erase_all(" abcdef   ghi jk "), "abcdefghijk");
-
-    die_unequal(
-        tlx::erase_all("abcdef   ghi jk"), "abcdefghijk");
-
-    die_unequal(
-        tlx::erase_all(" abcdef   ghi jk ", " bg"), "acdefhijk");
-
-    die_unequal(
-        tlx::erase_all("abcdef   ghi jk", " bg"), "acdefhijk");
-
-    std::string s1 = " abcdef   ghi jk ";
-    die_unequal(tlx::erase_all(&s1), "abcdefghijk");
-
-    std::string s2 = "abcdef   ghi jk";
-    die_unequal(tlx::erase_all(&s2), "abcdefghijk");
-
-    std::string s3 = " abcdef   ghi jk ";
-    die_unequal(tlx::erase_all(&s3, " bg"), "acdefhijk");
-
-    std::string s4 = "abcdef   ghi jk";
-    die_unequal(tlx::erase_all(&s4, " bg"), "acdefhijk");
-}
-
 static void test_hexdump() {
 
     // take hex data and dump it into a string, then parse back into array
@@ -246,15 +246,6 @@ static void test_hexdump() {
     die_unless_throws(tlx::parse_hexdump("8DE285D4BF98E60"), std::runtime_error);
 }
 
-static void test_parse_si_iec_units() {
-
-    uint64_t size;
-    die_unless(tlx::parse_si_iec_units(" 33 GiB ", &size));
-    die_unequal(33 * 1024 * 1024 * 1024LLU, size);
-
-    die_if(tlx::parse_si_iec_units(" 33 GiBX ", &size));
-}
-
 static void test_join() {
     // simple string split and join
     std::vector<std::string> sv = tlx::split('/', "/usr/bin/test");
@@ -268,6 +259,27 @@ static void test_join() {
         sv2.emplace_back("abc");
 
     die_unequal(tlx::join(".", sv2), "abc.abc.abc.abc.abc.abc");
+}
+
+static void test_levenshtein() {
+    die_unequal(tlx::levenshtein("Demonstration", "Comparison"), 9u);
+    die_unequal(tlx::levenshtein("Levenshtein", "Distance"), 10u);
+    die_unequal(tlx::levenshtein("Distance", "Distance"), 0u);
+    die_unequal(tlx::levenshtein("Distance", "LVDistance"), 2u);
+
+    die_unequal(tlx::levenshtein_icase("distance", "DISTANCE"), 0u);
+    die_unequal(tlx::levenshtein_icase("Levenshtein", "Distance"), 10u);
+
+    die_unequal(tlx::levenshtein_icase("Test this distance", "to this one"), 9u);
+}
+
+static void test_parse_si_iec_units() {
+
+    uint64_t size;
+    die_unless(tlx::parse_si_iec_units(" 33 GiB ", &size));
+    die_unequal(33 * 1024 * 1024 * 1024LLU, size);
+
+    die_if(tlx::parse_si_iec_units(" 33 GiBX ", &size));
 }
 
 static void test_split() {
@@ -753,6 +765,7 @@ int main() {
     test_format_si_iec_units();
     test_hexdump();
     test_join();
+    test_levenshtein();
     test_parse_si_iec_units();
     test_replace();
     test_split();

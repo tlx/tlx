@@ -155,6 +155,130 @@ public:
 
     /**************************************************************************/
 
+    //! \name Add Option with short -k, --longkey, and description.
+    //! \{
+
+    //! add boolean option flag -key, --longkey with description and store to
+    //! dest
+    void add_bool(char key, const std::string& longkey, bool& dest, // NOLINT
+                  const std::string& desc);
+
+    //! add boolean option flag -key, --longkey with description and store to
+    //! dest. identical to add_bool()
+    void add_flag(char key, const std::string& longkey, bool& dest, // NOLINT
+                  const std::string& desc);
+
+    //! add signed integer option -key, --longkey with description and store to
+    //! dest
+    void add_int(char key, const std::string& longkey, int& dest, // NOLINT
+                 const std::string& desc);
+
+    //! add unsigned integer option -key, --longkey with description and store
+    //! to dest
+    void add_unsigned(char key, const std::string& longkey,
+                      unsigned int& dest, const std::string& desc); // NOLINT
+
+    //! add unsigned integer option -key, --longkey with description and store
+    //! to dest. identical to add_unsigned()
+    void add_uint(char key, const std::string& longkey,
+                  unsigned int& dest, const std::string& desc); // NOLINT
+
+    //! add size_t option -key, --longkey with description and store to dest
+    void add_size_t(char key, const std::string& longkey,
+                    size_t& dest, const std::string& desc); // NOLINT
+
+    //! add float option -key, --longkey with description and store to dest
+    void add_float(char key, const std::string& longkey,
+                   float& dest, const std::string& desc); // NOLINT
+
+    //! add double option -key, --longkey with description and store to dest
+    void add_double(char key, const std::string& longkey,
+                    double& dest, const std::string& desc); // NOLINT
+
+    //! add SI/IEC suffixes byte size option -key, --longkey and store to 32-bit
+    //! dest
+    void add_bytes(char key, const std::string& longkey,
+                   uint32_t& dest, const std::string& desc); // NOLINT
+
+    //! add SI/IEC suffixes byte size option -key, --longkey and store to 64-bit
+    //! dest
+    void add_bytes(char key, const std::string& longkey,
+                   uint64_t& dest, const std::string& desc); // NOLINT
+
+    //! add string option -key, --longkey and store to dest
+    void add_string(char key, const std::string& longkey,
+                    std::string& dest, const std::string& desc); // NOLINT
+
+    //! add string list option -key, --longkey and store to dest
+    void add_stringlist(
+        char key, const std::string& longkey,
+        std::vector<std::string>& dest, const std::string& desc); // NOLINT
+
+    //! \}
+
+    /**************************************************************************/
+
+    //! \name Add Option with --longkey and description.
+    //! \{
+
+    //! add boolean option flag --longkey with description and store to dest
+    void add_bool(const std::string& longkey, bool& dest, // NOLINT
+                  const std::string& desc);
+
+    //! add boolean option flag --longkey with description and store to
+    //! dest. identical to add_bool()
+    void add_flag(const std::string& longkey, bool& dest, // NOLINT
+                  const std::string& desc);
+
+    //! add signed integer option --longkey with description and store to dest
+    void add_int(const std::string& longkey, int& dest, // NOLINT
+                 const std::string& desc);
+
+    //! add unsigned integer option --longkey with description and store to dest
+    void add_unsigned(const std::string& longkey,
+                      unsigned int& dest, const std::string& desc); // NOLINT
+
+    //! add unsigned integer option --longkey with description and store to
+    //! dest. identical to add_unsigned()
+    void add_uint(const std::string& longkey,
+                  unsigned int& dest, const std::string& desc); // NOLINT
+
+    //! add size_t option --longkey with description and store to dest
+    void add_size_t(const std::string& longkey,
+                    size_t& dest, const std::string& desc); // NOLINT
+
+    //! add float option --longkey with description and store to dest
+    void add_float(const std::string& longkey,
+                   float& dest, const std::string& desc); // NOLINT
+
+    //! add double option --longkey with description and store to dest
+    void add_double(const std::string& longkey,
+                    double& dest, const std::string& desc); // NOLINT
+
+    //! add SI/IEC suffixes byte size option --longkey and store to 32-bit dest
+    void add_bytes(const std::string& longkey,
+                   uint32_t& dest, const std::string& desc); // NOLINT
+
+    //! add SI/IEC suffixes byte size option --longkey and store to 64-bit dest
+    void add_bytes(const std::string& longkey,
+                   uint64_t& dest, const std::string& desc); // NOLINT
+
+    //! add string option --longkey and store to dest
+    void add_string(const std::string& longkey,
+                    std::string& dest, const std::string& desc); // NOLINT
+
+    //! add string list option --longkey and store to dest
+    void add_stringlist(
+        const std::string& longkey,
+        std::vector<std::string>& dest, const std::string& desc); // NOLINT
+
+    //! \}
+
+    /**************************************************************************/
+
+    //! \name Add Option with short -k, --longkey, [keytype], and description.
+    //! \{
+
     //! add boolean option flag -key, --longkey [keytype] with description and
     //! store to dest
     void add_bool(
@@ -237,68 +361,12 @@ public:
         const std::string& keytype, std::vector<std::string>& dest, // NOLINT
         const std::string& desc);
 
-    /**************************************************************************/
-
-    //! add boolean option flag -key, --longkey with description and store to
-    //! dest
-    void add_bool(char key, const std::string& longkey, bool& dest, // NOLINT
-                  const std::string& desc);
-
-    //! add boolean option flag -key, --longkey with description and store to
-    //! dest. identical to add_bool()
-    void add_flag(char key, const std::string& longkey, bool& dest, // NOLINT
-                  const std::string& desc);
-
-    //! add signed integer option -key, --longkey with description and store to
-    //! dest
-    void add_int(char key, const std::string& longkey, int& dest, // NOLINT
-                 const std::string& desc);
-
-    //! add unsigned integer option -key, --longkey [keytype] with description
-    //! and store to dest
-    void add_unsigned(char key, const std::string& longkey,
-                      unsigned int& dest, const std::string& desc); // NOLINT
-
-    //! add unsigned integer option -key, --longkey [keytype] with description
-    //! and store to dest. identical to add_unsigned()
-    void add_uint(char key, const std::string& longkey,
-                  unsigned int& dest, const std::string& desc); // NOLINT
-
-    //! add size_t option -key, --longkey [keytype] with description and store
-    //! to dest
-    void add_size_t(char key, const std::string& longkey,
-                    size_t& dest, const std::string& desc); // NOLINT
-
-    //! add float option -key, --longkey [keytype] with description and store
-    //! to dest
-    void add_float(char key, const std::string& longkey,
-                   float& dest, const std::string& desc); // NOLINT
-
-    //! add double option -key, --longkey [keytype] with description and store
-    //! to dest
-    void add_double(char key, const std::string& longkey,
-                    double& dest, const std::string& desc); // NOLINT
-
-    //! add SI/IEC suffixes byte size option -key, --longkey [keytype] and
-    //! store to 32-bit dest
-    void add_bytes(char key, const std::string& longkey,
-                   uint32_t& dest, const std::string& desc); // NOLINT
-
-    //! add SI/IEC suffixes byte size option -key, --longkey [keytype] and
-    //! store to 64-bit dest
-    void add_bytes(char key, const std::string& longkey,
-                   uint64_t& dest, const std::string& desc); // NOLINT
-
-    //! add string option -key, --longkey [keytype] and store to dest
-    void add_string(char key, const std::string& longkey,
-                    std::string& dest, const std::string& desc); // NOLINT
-
-    //! add string list option -key, --longkey [keytype] and store to dest
-    void add_stringlist(
-        char key, const std::string& longkey,
-        std::vector<std::string>& dest, const std::string& desc); // NOLINT
+    //! \}
 
     // ************************************************************************
+
+    //! \name Add Required Parameter [name] with description.
+    //! \{
 
     //! add signed integer parameter [name] with description and store to dest
     void add_param_int(
@@ -354,7 +422,12 @@ public:
         const std::string& name, std::vector<std::string>& dest, // NOLINT
         const std::string& desc);
 
+    //! \}
+
     /**************************************************************************/
+
+    //! \name Add Optional Parameter [name] with description.
+    //! \{
 
     //! add optional signed integer parameter [name] with description and store
     //! to dest
@@ -411,6 +484,8 @@ public:
     void add_opt_param_stringlist(
         const std::string& name, std::vector<std::string>& dest, // NOLINT
         const std::string& desc);
+
+    //! \}
 
     /**************************************************************************/
 

@@ -628,6 +628,69 @@ void CmdlineParser::add_stringlist(
 
 /******************************************************************************/
 
+void CmdlineParser::add_bool(
+    const std::string& longkey, bool& dest, const std::string& desc) {
+    return add_bool(0, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_flag(
+    const std::string& longkey, bool& dest, const std::string& desc) {
+    return add_bool(0, longkey, dest, desc);
+}
+
+void CmdlineParser::add_int(
+    const std::string& longkey, int& dest, const std::string& desc) {
+    return add_int(0, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_unsigned(const std::string& longkey,
+                                 unsigned int& dest, const std::string& desc) {
+    return add_unsigned(0, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_uint(const std::string& longkey,
+                             unsigned int& dest, const std::string& desc) {
+    return add_unsigned(0, longkey, dest, desc);
+}
+
+void CmdlineParser::add_size_t(const std::string& longkey,
+                               size_t& dest, const std::string& desc) {
+    return add_size_t(0, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_float(const std::string& longkey,
+                              float& dest, const std::string& desc) {
+    return add_float(0, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_double(const std::string& longkey,
+                               double& dest, const std::string& desc) {
+    return add_double(0, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_bytes(const std::string& longkey,
+                              uint32_t& dest, const std::string& desc) {
+    return add_bytes(0, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_bytes(const std::string& longkey,
+                              uint64_t& dest, const std::string& desc) {
+    return add_bytes(0, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_string(const std::string& longkey,
+                               std::string& dest, const std::string& desc) {
+    return add_string(0, longkey, "", dest, desc);
+}
+
+void CmdlineParser::add_stringlist(
+    const std::string& longkey,
+    std::vector<std::string>& dest, const std::string& desc) {
+    return add_stringlist(0, longkey, "", dest, desc);
+}
+
+/******************************************************************************/
+
 void CmdlineParser::add_param_int(
     const std::string& name, int& dest, const std::string& desc) {
     param_list_.emplace_back(new ArgumentInt(0, name, "", desc, true, dest));

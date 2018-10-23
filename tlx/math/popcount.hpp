@@ -124,6 +124,7 @@ inline unsigned popcount(Integral i) {
 /******************************************************************************/
 // popcount range
 
+static inline
 size_t popcount(const void* data, size_t size) {
     const uint8_t* begin = reinterpret_cast<const uint8_t*>(data);
     const uint8_t* end = begin + size;

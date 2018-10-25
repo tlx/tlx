@@ -253,6 +253,15 @@ static void test_round_to_power_of_two() {
     }
 }
 
+static void test_sgn() {
+    die_unequal(tlx::sgn(42), +1);
+    die_unequal(tlx::sgn(42.0), +1);
+    die_unequal(tlx::sgn(0), 0);
+    die_unequal(tlx::sgn(0.0), 0);
+    die_unequal(tlx::sgn(-42), -1);
+    die_unequal(tlx::sgn(-42.0), -1);
+}
+
 int main() {
 
     test_bswap();
@@ -264,6 +273,7 @@ int main() {
     test_ror();
     test_round_to_power_of_two();
     test_is_power_of_two();
+    test_sgn();
 
     return 0;
 }

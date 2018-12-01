@@ -20,6 +20,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <string>
 
 #if defined(_MSC_VER)
 
@@ -250,6 +251,16 @@ uint64_t siphash(const uint8_t* msg, size_t size) {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
     };
     return siphash(key, msg, size);
+}
+
+static inline
+uint64_t siphash(const char* msg, size_t size) {
+    return siphash(reinterpret_cast<const uint8_t*>(msg), size);
+}
+
+static inline
+uint64_t siphash(const std::string& str) {
+    return siphash(str.data(), str.size());
 }
 
 template <typename Type>

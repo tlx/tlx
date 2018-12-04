@@ -159,6 +159,28 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps) {
     die_unequal_eps(X, Y, 1e-6)
 
 /******************************************************************************/
+// die_equal()
+
+//! Die miserably if X == Y, but first output the values of X and Y for better
+//! debugging.
+#define tlx_die_equal(X, Y)                                                  \
+    do {                                                                     \
+        auto x__ = (X);                                     /* NOLINT */     \
+        auto y__ = (Y);                                     /* NOLINT */     \
+        if (::tlx::die_equal_compare(x__, y__))                              \
+            tlx_die_with_sstream("DIE-EQUAL: " #X " == " #Y " : "            \
+                                 "\"" << x__ << "\" == \"" << y__ << "\"");  \
+    } while (false)
+
+//! Die miserably if X == Y, but first output the values of X and Y for better
+//! debugging. Only active if NDEBUG is not defined.
+#ifdef NDEBUG
+#define tlx_assert_unequal(X, Y)
+#else
+#define tlx_assert_unequal(X, Y)  die_equal(X, Y)
+#endif
+
+/******************************************************************************/
 // die_unless_throws()
 
 //! Define to check that [code] throws and exception of given type

@@ -59,6 +59,19 @@ namespace tlx {
     tlx_die_unequal_eps6(X, Y)
 
 /******************************************************************************/
+// die_equal()
+
+//! Die miserably if X == Y, but first output the values of X and Y for better
+//! debugging.
+#define die_equal(X, Y) \
+    tlx_die_equal(X, Y)
+
+//! Die miserably if X == Y, but first output the values of X and Y for better
+//! debugging. Only active if NDEBUG is not defined.
+#define assert_unequal(X, Y) \
+    tlx_assert_unequal(X, Y)
+
+/******************************************************************************/
 // die_unless_throws()
 
 //! Define to check that [code] throws and exception of given type

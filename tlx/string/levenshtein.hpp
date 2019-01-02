@@ -56,9 +56,11 @@ struct LevenshteinStandardICaseParameters {
  * other. Implemented with time complexity O(|n|+|m|) and memory complexity
  * O(2*max(|n|,|m|))
  *
- * \param a     first string
- * \param b     second string
- * \return      Levenshtein distance
+ * \param a      first string
+ * \param a_size size of first string
+ * \param b      second string
+ * \param b_size size of second string
+ * \return       Levenshtein distance
  */
 template <typename Param>
 static inline

@@ -59,7 +59,7 @@ struct DataStruct {
         return (key == other.key);
     }
 
-    friend std ::ostream& operator << (std::ostream& os, const DataStruct& s) {
+    friend std::ostream& operator << (std::ostream& os, const DataStruct& s) {
         return os << '(' << s.key << ",...)";
     }
 };

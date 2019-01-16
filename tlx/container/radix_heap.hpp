@@ -650,7 +650,7 @@ protected:
 template <typename DataType, unsigned Radix = 8, typename KeyExtract = void>
 auto make_radix_heap(KeyExtract&& key_extract)->
 RadixHeap<DataType, KeyExtract,
-          decltype(key_extract(std::declval<DataType>())), Radix>{
+          decltype(key_extract(std::declval<DataType>())), Radix> {
     return (RadixHeap < DataType,
             KeyExtract,
             decltype(key_extract(DataType{ })), Radix > {

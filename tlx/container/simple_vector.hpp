@@ -65,8 +65,8 @@ public:
 
     using iterator = value_type *;
     using const_iterator = const value_type *;
-    using reference = value_type &;
-    using const_reference = const value_type &;
+    using reference = value_type&;
+    using const_reference = const value_type&;
 
 public:
     //! allocate empty simple vector

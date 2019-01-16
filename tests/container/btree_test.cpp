@@ -41,7 +41,7 @@ template class tlx::btree_multimap<int, int>;
 template <int Slots>
 struct SimpleTest {
     template <typename KeyType>
-    struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType>{
+    struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType> {
         static const bool self_verify = true;
         static const bool debug = false;
 
@@ -283,7 +283,7 @@ void test_simple() {
 // Large Test
 
 template <typename KeyType>
-struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType>{
+struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType> {
     static const bool self_verify = true;
     static const bool debug = false;
 

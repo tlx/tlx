@@ -1143,8 +1143,8 @@ RandomAccessIterator3 multiway_merge_loser_tree_sentinel(
 
     RandomAccessIterator3 target_end
         = multiway_merge_loser_tree_unguarded<
-        LoserTreeUnguarded<Stable, value_type, Comparator> >(
-        seqs_begin, seqs_end, target, size, comp);
+              LoserTreeUnguarded<Stable, value_type, Comparator> >(
+              seqs_begin, seqs_end, target, size, comp);
 
     // restore end of sequences
     for (RandomAccessIteratorIterator s = seqs_begin; s != seqs_end; ++s)

@@ -119,7 +119,7 @@ void multiway_merge_sampling_splitting(
         num_threads * static_cast<DiffType>(merge_oversampling);
 
     // pick samples
-    simple_vector<value_type> samples(num_seqs* num_samples);
+    simple_vector<value_type> samples(num_seqs * num_samples);
 
     for (DiffType s = 0; s < num_seqs; ++s)
     {

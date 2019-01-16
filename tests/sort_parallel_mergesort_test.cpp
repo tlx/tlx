@@ -31,7 +31,7 @@ struct Something {
         return a < other.a;
     }
 
-    friend std ::ostream& operator << (std::ostream& os, const Something& s) {
+    friend std::ostream& operator << (std::ostream& os, const Something& s) {
         return os << '(' << s.a << ',' << s.b << ')';
     }
 };

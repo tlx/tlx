@@ -64,7 +64,7 @@ pool.loop_until_empty();
 class ThreadPool
 {
 public:
-    using Job = Delegate<void()>;
+    using Job = Delegate<void ()>;
 
 private:
     //! Deque of scheduled jobs.

@@ -13,7 +13,7 @@
 
 using tlx::Delegate;
 
-using TestDelegate = Delegate<int(int)>;
+using TestDelegate = Delegate<int (int)>;
 // TODO(tb): add tests with a different allocator
 
 int func1(int a) {

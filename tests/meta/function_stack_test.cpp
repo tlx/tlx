@@ -111,11 +111,12 @@ static void test_stack_maker() {
 
     std::vector<std::string> out;
 
-    auto result = tlx::FunctionStack<double>()
-                  &[](const int& d, auto emit) { emit(d + 1); }
-                  &[](const int& d, auto emit) { emit(std::to_string(2 * d)); }
-                  &[](const std::string& s, auto emit) { emit(s + "2"); }
-                  &[&](const std::string& s) { out.emplace_back(s); };
+    auto result =
+        tlx::FunctionStack<double>()
+        & ([](const int& d, auto emit) { emit(d + 1); })
+        & ([](const int& d, auto emit) { emit(std::to_string(2 * d)); })
+        & ([](const std::string& s, auto emit) { emit(s + "2"); })
+        & ([&](const std::string& s) { out.emplace_back(s); });
 
     auto x = result.fold();
     x(5);

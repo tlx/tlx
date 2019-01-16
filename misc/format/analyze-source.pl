@@ -10,7 +10,8 @@
 ################################################################################
 
 # uncrustify executable
-my $uncrustify = "uncrustify-0.66";
+my $uncrustify = "uncrustify-0.68.1";
+my $uncrustify_sign = "Uncrustify-0.68-2-8c80bd84";
 
 # print multiple email addresses
 my $email_multimap = 0;
@@ -509,7 +510,8 @@ foreach my $arg (@ARGV) {
 
 # check uncrustify's version:
 my ($uncrustver) = filter_program("", $uncrustify, "--version");
-($uncrustver eq "Uncrustify-0.66\n")
+chomp($uncrustver);
+($uncrustver eq $uncrustify_sign)
     or die("Requires $uncrustify to run correctly. Got: $uncrustver");
 
 use File::Find;

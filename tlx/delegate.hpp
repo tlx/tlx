@@ -121,7 +121,7 @@ public:
     //! \{
 
     //! constructor from a plain function pointer with no object.
-    explicit Delegate(R (*const function_ptr)(A...)) noexcept
+    explicit Delegate(R(*const function_ptr)(A...)) noexcept
         : Delegate(function_ptr_caller,
                    *reinterpret_cast<void* const*>(&function_ptr)) { }
 
@@ -129,7 +129,7 @@ public:
                   "object pointer and function pointer sizes must equal");
 
     //! construction from a plain function pointer with no object.
-    static Delegate make(R (*const function_ptr)(A...)) noexcept {
+    static Delegate make(R(*const function_ptr)(A...)) noexcept {
         return Delegate(function_ptr);
     }
 
@@ -207,48 +207,48 @@ public:
 
     //! constructor for wrapping a class::method with object pointer.
     template <class C>
-    Delegate(C* const object_ptr, R (C::* const method_ptr)(A...))
+    Delegate(C* const object_ptr, R(C::* const method_ptr)(A...))
         : Delegate(MemberPair<C>(object_ptr, method_ptr)) { }
 
     //! constructor for wrapping a const class::method with object pointer.
     template <class C>
-    Delegate(C* const object_ptr, R (C::* const method_ptr)(A...) const)
+    Delegate(C* const object_ptr, R(C::* const method_ptr)(A...) const)
         : Delegate(ConstMemberPair<C>(object_ptr, method_ptr)) { }
 
     //! constructor for wrapping a class::method with object reference.
     template <class C>
-    Delegate(C& object, R (C::* const method_ptr)(A...))
+    Delegate(C& object, R(C::* const method_ptr)(A...))
         : Delegate(MemberPair<C>(&object, method_ptr)) { }
 
     //! constructor for wrapping a const class::method with object reference.
     template <class C>
-    Delegate(C const& object, R (C::* const method_ptr)(A...) const)
+    Delegate(C const& object, R(C::* const method_ptr)(A...) const)
         : Delegate(ConstMemberPair<C>(&object, method_ptr)) { }
 
     //! constructor for wrapping a class::method with object pointer.
     template <class C>
     static Delegate make(C* const object_ptr,
-                         R (C::* const method_ptr)(A...)) {
+                         R(C::* const method_ptr)(A...)) {
         return MemberPair<C>(object_ptr, method_ptr);
     }
 
     //! constructor for wrapping a const class::method with object pointer.
     template <class C>
     static Delegate make(C const* const object_ptr,
-                         R (C::* const method_ptr)(A...) const) {
+                         R(C::* const method_ptr)(A...) const) {
         return ConstMemberPair<C>(object_ptr, method_ptr);
     }
 
     //! constructor for wrapping a class::method with object reference.
     template <class C>
-    static Delegate make(C& object, R (C::* const method_ptr)(A...)) {
+    static Delegate make(C& object, R(C::* const method_ptr)(A...)) {
         return MemberPair<C>(&object, method_ptr);
     }
 
     //! constructor for wrapping a const class::method with object reference.
     template <class C>
     static Delegate make(C const& object,
-                         R (C::* const method_ptr)(A...) const) {
+                         R(C::* const method_ptr)(A...) const) {
         return ConstMemberPair<C>(&object, method_ptr);
     }
 

@@ -32,7 +32,7 @@ struct Something {
         return (a == other.a) && (b == other.b);
     }
 
-    friend std ::ostream& operator << (std::ostream& os, const Something& s) {
+    friend std::ostream& operator << (std::ostream& os, const Something& s) {
         return os << '(' << s.a << ',' << s.b << ')';
     }
 };
@@ -51,7 +51,7 @@ void test_vecs(unsigned int vecnum,
 
     std::mt19937 randgen(123456);
     std::uniform_int_distribution<unsigned int> distr_size(0, 127);
-    std::uniform_int_distribution<unsigned int> distr_value(0, vecnum * 20);
+    std::uniform_int_distribution<unsigned int> distr_value(0, 20 * vecnum);
 
     std::vector<std::vector<ValueType> > vec(vecnum);
 

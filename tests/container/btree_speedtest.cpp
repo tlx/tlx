@@ -42,7 +42,7 @@ static double timestamp() {
 
 //! Traits used for the speed tests, BTREE_DEBUG is not defined.
 template <int InnerSlots_, int LeafSlots_>
-struct btree_traits_speed : tlx::btree_default_traits<size_t, size_t>{
+struct btree_traits_speed : tlx::btree_default_traits<size_t, size_t> {
     static const bool self_verify = false;
     static const bool debug = false;
 
@@ -142,7 +142,7 @@ struct TestFactory_Set {
     struct BtreeSet
         : TestClass<tlx::btree_multiset<
                         size_t, std::less<size_t>,
-                        struct btree_traits_speed<Slots, Slots> > >{
+                        struct btree_traits_speed<Slots, Slots> > > {
         BtreeSet(size_t n)
             : TestClass<tlx::btree_multiset<
                             size_t, std::less<size_t>,
@@ -249,7 +249,7 @@ struct TestFactory_Map {
     struct BtreeMap
         : TestClass<tlx::btree_multimap<
                         size_t, size_t, std::less<size_t>,
-                        struct btree_traits_speed<Slots, Slots> > >{
+                        struct btree_traits_speed<Slots, Slots> > > {
         BtreeMap(size_t n)
             : TestClass<tlx::btree_multimap<
                             size_t, size_t, std::less<size_t>,
@@ -324,7 +324,7 @@ struct btree_range {
 };
 
 template <template <int Slots> class Functional, int Low>
-struct btree_range<Functional, Low, Low>{
+struct btree_range<Functional, Low, Low> {
     void operator () (size_t items, const std::string& container_name) {
         testrunner_loop<Functional<Low> >(
             items, container_name + "<" + std::to_string(Low) + ">"

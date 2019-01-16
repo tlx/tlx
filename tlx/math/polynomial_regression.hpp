@@ -81,7 +81,7 @@ public:
 
     //! polynomial stored as the coefficients of
     //! \f$ a_0+a_1 x^1+a_2 x^2+\cdots+a_n x^n \f$
-    struct Coefficients : public std::vector<Type>{
+    struct Coefficients : public std::vector<Type> {
         //! evaluate polynomial at x using Horner schema
         Type evaluate(const Type& x) const {
             Type result = 0.0;
@@ -161,7 +161,7 @@ protected:
         size_t np1 = order_ + 1, np2 = order_ + 2;
 
         // B = normal augmented matrix that stores the equations.
-        std::vector<Type> B(np1* np2, 0);
+        std::vector<Type> B(np1 * np2, 0);
 
         for (size_t i = 0; i <= order_; ++i) {
             for (size_t j = 0; j <= order_; ++j) {

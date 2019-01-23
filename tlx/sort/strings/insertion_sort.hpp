@@ -15,7 +15,7 @@
 #define TLX_SORT_STRINGS_INSERTION_SORT_HEADER
 
 #include <tlx/define/likely.hpp>
-#include <tlx/sort/strings/string_set.hpp>
+#include <tlx/sort/strings/string_ptr.hpp>
 
 namespace tlx {
 namespace sort_strings_detail {
@@ -24,17 +24,23 @@ namespace sort_strings_detail {
 
 //! Generic insertion sort for abstract string sets. This method only requires
 //! O(1) additional memory for sorting n strings, but runs in time O(nD).
-template <typename StringSet>
+template <typename StringPtr>
 static inline void insertion_sort(
-    const StringSet& ss, size_t depth, size_t /* memory */) {
-    typedef typename StringSet::Iterator Iterator;
-    typedef typename StringSet::String String;
-    typedef typename StringSet::CharIterator CharIterator;
+    const StringPtr& strptr, size_t depth, size_t /* memory */) {
+    typedef typename StringPtr::StringSet::Iterator Iterator;
+    typedef typename StringPtr::StringSet::String String;
+    typedef typename StringPtr::StringSet::CharIterator CharIterator;
 
     // this stores the begin iterator and size n, making the loops faster
+
+    const typename StringPtr::StringSet& ss = strptr.active();
+
+    size_t n = ss.size();
+    if (n == 0)
+        return;
+
     const Iterator begin = ss.begin();
     Iterator j;
-    size_t n = ss.size();
 
     for (Iterator i = begin + 1; TLX_UNLIKELY(--n != 0); ++i)
     {
@@ -58,6 +64,20 @@ static inline void insertion_sort(
         }
 
         ss[j] = std::move(tmp);
+    }
+
+    // there should be a better solution but then strptr.lcp(i) cannot result in an abort() if strptr is not an StringLcpPtr
+    n = ss.size();
+    size_t index = 1;
+    for (Iterator i = begin + 1; TLX_UNLIKELY(--n != 0); ++i)
+    {
+        CharIterator s = ss.get_chars(ss[i], 0);
+        CharIterator t = ss.get_chars(ss[i - 1], 0);
+        size_t value = 0;
+        while (ss.is_equal(ss[i], s, ss[i - 1], t))
+            ++s, ++t, ++value;
+
+        strptr.set_lcp(index++, value);
     }
 }
 

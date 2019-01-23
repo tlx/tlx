@@ -19,7 +19,8 @@ namespace ss = tlx::sort_strings_detail;
 
 void sort_strings(std::string* strings, size_t size, size_t memory) {
     ss::radixsort_CE3(
-        ss::StdStringSet(strings, strings + size), /* depth */ 0, memory);
+        ss::StringPtr<ss::StdStringSet>(
+            ss::StdStringSet(strings, strings + size)), /* depth */ 0, memory);
 }
 
 void sort_strings(std::vector<std::string>& strings, size_t memory) {

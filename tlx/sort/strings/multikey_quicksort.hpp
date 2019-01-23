@@ -66,11 +66,14 @@ static inline typename StringSet::Iterator med3func(
  * strings. In Proceedings of 8th Annual ACM-SIAM Symposium on Discrete
  * Algorithms, 1997.
  */
-template <typename StringSet>
+template <typename StringPtr>
 static inline void multikey_quicksort(
-    const StringSet& ss, size_t depth, size_t memory) {
+    const StringPtr& strptr, size_t depth, size_t memory) {
+
+    typedef typename StringPtr::StringSet StringSet;
     typedef typename StringSet::Iterator Iterator;
 
+    const StringSet& ss = strptr.active();
     const Iterator a = ss.begin();
     size_t n = ss.size();
 
@@ -79,7 +82,7 @@ static inline void multikey_quicksort(
         2 * sizeof(size_t) + sizeof(StringSet) + 5 * sizeof(Iterator);
 
     if (n < 32 || (memory != 0 && memory < memory_use + 1)) {
-        return insertion_sort(ss, depth, memory);
+        return insertion_sort(strptr, depth, memory);
     }
 
     ptrdiff_t r;
@@ -115,19 +118,34 @@ static inline void multikey_quicksort(
         }
         pn = a + n;
 
+        size_t pe_start_index, pe_end_index;
         r = std::min(pa - a, pb - pa);
         vec_swap<StringSet>(a, pb - r, r);
+        pe_start_index = r;
         r = std::min(pd - pc, pn - pd - 1);
+        pe_end_index = (pn - a) - r;
         vec_swap<StringSet>(pb, pn - r, r);
+        if (pivot == 0) {
+            for (auto it = pe_start_index + 1; it < pe_end_index; ++it)
+                strptr.set_lcp(it, depth);
+        }
     }
 
-    if ((r = pb - pa) > 1)
-        multikey_quicksort(ss.sub(a, a + r), depth, memory - memory_use);
+    r = pb - pa;
+    if (r > 0) {
+        strptr.set_lcp(a - ss.begin() + r, depth);
+    }
+    if (r > 1)
+        multikey_quicksort(strptr.sub(a - ss.begin(), r), depth, memory - memory_use);
     if (ss.get_char(*(a + r), depth) != 0)
-        multikey_quicksort(ss.sub(a + r, a + r + (pa - a) + (pn - pd - 1)),
+        multikey_quicksort(strptr.sub(a - ss.begin() + r, (pa - a) + (pn - pd - 1)),
                            depth + 1, memory - memory_use);
+    r = pd - pc;
+    if (r > 0) {
+        strptr.set_lcp(a - ss.begin() + n - r, depth);
+    }
     if ((r = pd - pc) > 1)
-        multikey_quicksort(ss.sub(a + n - r, a + n),
+        multikey_quicksort(strptr.sub(a - ss.begin() + n - r, r),
                            depth, memory - memory_use);
 }
 

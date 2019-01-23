@@ -24,7 +24,8 @@ void sort_strings(const char** strings, size_t size, size_t memory) {
 
 void sort_strings(const unsigned char** strings, size_t size, size_t memory) {
     ss::radixsort_CE3(
-        ss::CUCharStringSet(strings, strings + size), /* depth */ 0, memory);
+        ss::StringPtr<ss::CUCharStringSet>(
+            ss::CUCharStringSet(strings, strings + size)), /* depth */ 0, memory);
 }
 
 void sort_strings(std::vector<const char*>& strings, size_t memory) {

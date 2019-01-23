@@ -56,6 +56,16 @@ public:
     }
 
     //! check if string a is less or equal to string b at iterators ai and bi.
+    bool is_less(const typename Traits::String& a,
+                 const typename Traits::CharIterator& ai,
+                 const typename Traits::String& b,
+                 const typename Traits::CharIterator& bi) const {
+        const StringSet& ss = *static_cast<const StringSet*>(this);
+        return ss.is_end(a, ai) ||
+               (!ss.is_end(a, ai) && !ss.is_end(b, bi) && *ai < *bi);
+    }
+
+    //! check if string a is less or equal to string b at iterators ai and bi.
     bool is_leq(const typename Traits::String& a,
                 const typename Traits::CharIterator& ai,
                 const typename Traits::String& b,

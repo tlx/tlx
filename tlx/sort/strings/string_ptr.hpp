@@ -72,6 +72,9 @@ public:
     //! if we want to save the LCPs
     static const bool with_lcp = false;
 
+    //! return LCP array value
+    LcpType get_lcp(size_t /* i */) const { return 0; }
+
     //! set the i-th lcp to v and check its value
     void set_lcp(size_t /* i */, const LcpType& /* v */) const { }
 
@@ -120,6 +123,12 @@ public:
 
     //! if we want to save the LCPs
     static const bool with_lcp = true;
+
+    //! return LCP array value
+    LcpType get_lcp(size_t i) const {
+        assert(i < size());
+        return lcp_[i];
+    }
 
     //! set the i-th lcp to v and check its value
     void set_lcp(size_t i, const LcpType& v) const {
@@ -204,6 +213,9 @@ public:
     //! if we want to save the LCPs
     static const bool with_lcp = false;
 
+    //! return LCP array value
+    LcpType get_lcp(size_t /* i */) const { return 0; }
+
     //! set the i-th lcp to v and check its value
     void set_lcp(size_t /* i */, const LcpType& /* v */) const { }
 };
@@ -280,6 +292,12 @@ public:
 
     //! if we want to save the LCPs
     static const bool with_lcp = true;
+
+    //! return LCP array value
+    LcpType get_lcp(size_t i) const {
+        assert(i < size());
+        return lcp_[i];
+    }
 
     //! set the i-th lcp to v and check its value
     void set_lcp(size_t i, const LcpType& v) const {

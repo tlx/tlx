@@ -21,6 +21,7 @@ set(LIBTLX_SOURCES
   logger/core.cpp
   port/setenv.cpp
   sort/strings_impl.cpp
+  sort/strings_lcp_impl.cpp
   string/base64.cpp
   string/compare_icase.cpp
   string/contains.cpp

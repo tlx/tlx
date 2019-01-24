@@ -122,7 +122,6 @@ void TestUCharString(const char* name,
         double ts1 = timestamp();
 
         tlx::simple_vector<uint32_t> lcp(num_strings);
-        lcp.fill(1000);
 
         UCharStringSet ss(cstrings.data(), cstrings.data() + num_strings);
         lcp_sorter(StringLcpPtr<UCharStringSet, uint32_t>(ss, lcp.data()),
@@ -198,7 +197,6 @@ void TestVectorStdString(const char* name,
         double ts1 = timestamp();
 
         tlx::simple_vector<uint32_t> lcp(num_strings);
-        lcp.fill(1000);
 
         StdStringSet ss(strings.data(), strings.data() + strings.size());
         lcp_sorter(StringLcpPtr<StdStringSet, uint32_t>(ss, lcp.data()),
@@ -267,7 +265,6 @@ void TestUPtrStdString(const char* name,
         double ts1 = timestamp();
 
         tlx::simple_vector<uint32_t> lcp(num_strings);
-        lcp.fill(1000);
 
         UPtrStdStringSet ss(strings.data(), strings.data() + strings.size());
         lcp_sorter(StringLcpPtr<UPtrStdStringSet, uint32_t>(ss, lcp.data()),
@@ -330,7 +327,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
          << " uint8_t* strings";
 
     // array of string pointers
-    uint8_t** cstrings = new uint8_t*[num_strings];
+    tlx::simple_vector<uint8_t*> cstrings(num_strings);
 
     // generate random strings of length num_chars
     for (size_t i = 0; i < num_strings; ++i)
@@ -346,36 +343,71 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
     {
         double ts1 = timestamp();
 
-        tlx::sort_strings(cstrings, num_strings, /* memory */ 0);
+        tlx::sort_strings(cstrings.data(), num_strings, /* memory */ 0);
 
         double ts2 = timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
         // check result
-        if (!UCharStringSet(cstrings, cstrings + num_strings).check_order()) {
+        if (!UCharStringSet(cstrings.data(), cstrings.data() + num_strings)
+            .check_order())
+        {
             LOG1 << "Result is not sorted!";
             abort();
         }
     }
 
     // array of const string pointers
-    const uint8_t** ccstrings = new const uint8_t*[num_strings];
+    tlx::simple_vector<const uint8_t*> ccstrings(num_strings);
 
     for (size_t i = 0; i < num_strings; ++i)
         ccstrings[i] = cstrings[i];
+    std::shuffle(ccstrings.begin(), ccstrings.end(), rng);
 
     // run sorting algorithm
     {
         double ts1 = timestamp();
 
-        tlx::sort_strings(ccstrings, num_strings, /* memory */ 0);
+        tlx::sort_strings(ccstrings.data(), num_strings, /* memory */ 0);
 
         double ts2 = timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
         // check result
-        if (!CUCharStringSet(ccstrings, ccstrings + num_strings).check_order()) {
+        if (!CUCharStringSet(ccstrings.data(), ccstrings.data() + num_strings)
+            .check_order())
+        {
             LOG1 << "Result is not sorted!";
+            abort();
+        }
+    }
+
+    // recreate array of const string pointers
+    for (size_t i = 0; i < num_strings; ++i)
+        ccstrings[i] = cstrings[i];
+    std::shuffle(ccstrings.begin(), ccstrings.end(), rng);
+
+    // run sorting algorithm with LCP output
+    {
+        double ts1 = timestamp();
+
+        tlx::simple_vector<uint32_t> lcp(num_strings);
+
+        tlx::sort_strings_lcp(
+            ccstrings.data(), num_strings, lcp.data(), /* memory */ 0);
+
+        double ts2 = timestamp();
+        LOG1 << "sorting took " << ts2 - ts1 << " seconds";
+
+        // check result
+        CUCharStringSet ss(ccstrings.data(), ccstrings.data() + num_strings);
+        if (!ss.check_order())
+        {
+            LOG1 << "Result is not sorted!";
+            abort();
+        }
+        if (!check_lcp(ss, lcp.data())) {
+            LOG1 << "LCP result is not correct!";
             abort();
         }
     }
@@ -383,8 +415,6 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
     // free memory.
     for (size_t i = 0; i < num_strings; ++i)
         delete[] cstrings[i];
-
-    delete[] cstrings;
 }
 
 static const char* letters_alnum
@@ -396,15 +426,15 @@ static const char* letters_alnum
     TestUCharString<UCharStringSet, func, uint32_t, func>(       \
         #func, num_strings, 16, letters_alnum, /* lcp */ false); \
     TestUCharString<UCharStringSet, func, uint32_t, func>(       \
-        #func, num_strings, 16, letters_alnum, /* lcp */ true);  \
+        #func, num_strings, 4, letters_alnum, /* lcp */ true);   \
     TestVectorStdString<StdStringSet, func, uint32_t, func>(     \
         #func, num_strings, 16, letters_alnum, /* lcp */ false); \
     TestVectorStdString<StdStringSet, func, uint32_t, func>(     \
-        #func, num_strings, 16, letters_alnum, /* lcp */ true);  \
+        #func, num_strings, 4, letters_alnum, /* lcp */ true);   \
     TestUPtrStdString<UPtrStdStringSet, func, uint32_t, func>(   \
         #func, num_strings, 16, letters_alnum, /* lcp */ false); \
     TestUPtrStdString<UPtrStdStringSet, func, uint32_t, func>(   \
-        #func, num_strings, 16, letters_alnum, /* lcp */ true);  \
+        #func, num_strings, 8, letters_alnum, /* lcp */ true);   \
     TestStringSuffixString<StringSuffixSet, func>(               \
         #func, num_strings, letters_alnum);                      \
 

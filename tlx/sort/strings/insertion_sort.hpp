@@ -19,6 +19,10 @@
 #include <tlx/sort/strings/string_ptr.hpp>
 
 namespace tlx {
+
+//! \addtogroup tlx_sort
+//! \{
+
 namespace sort_strings_detail {
 
 /******************************************************************************/
@@ -214,6 +218,9 @@ insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */) {
 /******************************************************************************/
 
 } // namespace sort_strings_detail
+
+//! \}
+
 } // namespace tlx
 
 #endif // !TLX_SORT_STRINGS_INSERTION_SORT_HEADER

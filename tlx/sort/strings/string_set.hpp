@@ -13,7 +13,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -32,6 +32,10 @@
 #include <tlx/math/bswap.hpp>
 
 namespace tlx {
+
+//! \addtogroup tlx_sort
+//! \{
+
 namespace sort_strings_detail {
 
 /******************************************************************************/
@@ -548,6 +552,9 @@ protected:
 /******************************************************************************/
 
 } // namespace sort_strings_detail
+
+//! \}
+
 } // namespace tlx
 
 #endif // !TLX_SORT_STRINGS_STRING_SET_HEADER

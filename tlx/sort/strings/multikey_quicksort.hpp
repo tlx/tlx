@@ -30,6 +30,10 @@
 #include <utility>
 
 namespace tlx {
+
+//! \addtogroup tlx_sort
+//! \{
+
 namespace sort_strings_detail {
 
 template <typename StringSet>
@@ -155,6 +159,9 @@ static inline void multikey_quicksort(
 }
 
 } // namespace sort_strings_detail
+
+//! \}
+
 } // namespace tlx
 
 #endif // !TLX_SORT_STRINGS_MULTIKEY_QUICKSORT_HEADER

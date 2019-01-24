@@ -13,7 +13,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -31,6 +31,10 @@
 #include <vector>
 
 namespace tlx {
+
+//! \addtogroup tlx_sort
+//! \{
+
 namespace sort_strings_detail {
 
 /******************************************************************************/
@@ -883,6 +887,9 @@ radixsort_CI3(const StringPtr& strptr, size_t depth, size_t memory) {
 /******************************************************************************/
 
 } // namespace sort_strings_detail
+
+//! \}
+
 } // namespace tlx
 
 #endif // !TLX_SORT_STRINGS_RADIX_SORT_HEADER

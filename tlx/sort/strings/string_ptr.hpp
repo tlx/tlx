@@ -11,7 +11,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2013-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2013-2019 Timo Bingmann <tb@panthema.net>
  * Copyright (C) 2013-2014 Andreas Eberle <email@andreas-eberle.com>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
@@ -27,6 +27,10 @@
 #include <stdint.h>
 
 namespace tlx {
+
+//! \addtogroup tlx_sort
+//! \{
+
 namespace sort_strings_detail {
 
 template <typename StringSet_>
@@ -319,6 +323,9 @@ StringLcpPtr<StringSet_, LcpType_>::add_shadow(const StringSet_& shadow) const {
 /******************************************************************************/
 
 } // namespace sort_strings_detail
+
+//! \}
+
 } // namespace tlx
 
 #endif // !TLX_SORT_STRINGS_STRING_PTR_HEADER

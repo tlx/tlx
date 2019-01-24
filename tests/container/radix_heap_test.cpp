@@ -262,6 +262,24 @@ void test_main_bucket(std::mt19937&) {
 
 /******************************************************************************/
 
+namespace tlx {
+
+using payload_type = uint64_t;
+using value_type = std::tuple<int64_t, payload_type>;
+
+class KeyExtractor
+{
+public:
+    int64_t operator () (const value_type& p) const { return std::get<0>(p); }
+};
+
+// force instantiations
+template class RadixHeap<value_type, KeyExtractor, int64_t, /* Radix */ 64>;
+
+} // namespace tlx
+
+/******************************************************************************/
+
 //! Fill radix heap completely and then check whether values are output
 //! in the correct order. This function also checks that the heap is stable
 template <typename KeyType, unsigned Radix>

@@ -29,12 +29,10 @@
 namespace tlx {
 namespace sort_strings_detail {
 
-using LcpType = size_t;
-
 template <typename StringSet_>
 class StringShadowPtr;
 
-template <typename StringSet_>
+template <typename StringSet_, typename LcpType_>
 class StringShadowLcpPtr;
 
 /******************************************************************************/
@@ -72,28 +70,27 @@ public:
     //! if we want to save the LCPs
     static const bool with_lcp = false;
 
-    //! return LCP array value
-    LcpType get_lcp(size_t /* i */) const { return 0; }
-
     //! set the i-th lcp to v and check its value
+    template <typename LcpType>
     void set_lcp(size_t /* i */, const LcpType& /* v */) const { }
 
     //! objectified string and shadow pointer class
     typedef StringShadowPtr<StringSet_> WithShadow;
 
     //! construct objectified string and shadow pointer class
-    StringShadowPtr<StringSet_> add_shadow(const StringSet& shadow) const;
+    WithShadow add_shadow(const StringSet& shadow) const;
 };
 
 /******************************************************************************/
 // StringLcpPtr
 
 //! Objectified string and LCP array pointer arrays.
-template <typename StringSet_>
+template <typename StringSet_, typename LcpType_>
 class StringLcpPtr
 {
 public:
     typedef StringSet_ StringSet;
+    typedef LcpType_ LcpType;
     typedef typename StringSet::String String;
 
 protected:
@@ -137,10 +134,10 @@ public:
     }
 
     //! objectified string and shadow pointer class
-    typedef StringShadowLcpPtr<StringSet_> WithShadow;
+    typedef StringShadowLcpPtr<StringSet_, LcpType_> WithShadow;
 
     //! construct objectified string and shadow pointer class
-    StringShadowLcpPtr<StringSet_> add_shadow(const StringSet& shadow) const;
+    WithShadow add_shadow(const StringSet& shadow) const;
 };
 
 /******************************************************************************/
@@ -213,10 +210,8 @@ public:
     //! if we want to save the LCPs
     static const bool with_lcp = false;
 
-    //! return LCP array value
-    LcpType get_lcp(size_t /* i */) const { return 0; }
-
     //! set the i-th lcp to v and check its value
+    template <typename LcpType>
     void set_lcp(size_t /* i */, const LcpType& /* v */) const { }
 };
 
@@ -225,11 +220,12 @@ public:
 
 //! Objectified string array pointer and shadow pointer array for out-of-place
 //! swapping of pointers.
-template <typename StringSet_>
+template <typename StringSet_, typename LcpType_>
 class StringShadowLcpPtr
 {
 public:
     typedef StringSet_ StringSet;
+    typedef LcpType_ LcpType;
     typedef typename StringSet::String String;
     typedef typename StringSet::Iterator Iterator;
 
@@ -314,10 +310,10 @@ StringPtr<StringSet_>::add_shadow(const StringSet_& shadow) const {
     return StringShadowPtr<StringSet_>(active_, shadow);
 }
 
-template <typename StringSet_>
-StringShadowLcpPtr<StringSet_>
-StringLcpPtr<StringSet_>::add_shadow(const StringSet_& shadow) const {
-    return StringShadowLcpPtr<StringSet_>(active_, shadow, lcp_);
+template <typename StringSet_, typename LcpType_>
+StringShadowLcpPtr<StringSet_, LcpType_>
+StringLcpPtr<StringSet_, LcpType_>::add_shadow(const StringSet_& shadow) const {
+    return StringShadowLcpPtr<StringSet_, LcpType_>(active_, shadow, lcp_);
 }
 
 /******************************************************************************/

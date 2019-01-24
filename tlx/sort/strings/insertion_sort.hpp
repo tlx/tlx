@@ -6,7 +6,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -15,6 +15,7 @@
 #define TLX_SORT_STRINGS_INSERTION_SORT_HEADER
 
 #include <tlx/define/likely.hpp>
+#include <tlx/meta/enable_if.hpp>
 #include <tlx/sort/strings/string_ptr.hpp>
 
 namespace tlx {
@@ -22,10 +23,12 @@ namespace sort_strings_detail {
 
 /******************************************************************************/
 
+//! Generic insertion sort for abstract string sets. This method only requires
+//! O(1) additional memory for sorting n strings, but runs in time O(nD).
 template <typename StringPtr>
 static inline
-void lcp_insertion_sort(const StringPtr& strptr, size_t depth,
-                        size_t /* memory */) {
+typename enable_if<!StringPtr::with_lcp, void>::type
+insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */) {
     typedef typename StringPtr::StringSet StringSet;
     typedef typename StringSet::Iterator Iterator;
     typedef typename StringSet::String String;
@@ -37,21 +40,69 @@ void lcp_insertion_sort(const StringPtr& strptr, size_t depth,
     if (n <= 1) return;
 
     const Iterator begin = ss.begin();
+    Iterator j;
+
+    for (Iterator i = begin + 1; TLX_UNLIKELY(--n != 0); ++i)
+    {
+        String tmp = std::move(ss[i]);
+        j = i;
+
+        while (TLX_LIKELY(j != begin))
+        {
+            CharIterator s = ss.get_chars(ss[j - 1], depth);
+            CharIterator t = ss.get_chars(tmp, depth);
+
+            while (TLX_LIKELY(ss.is_equal(ss[j - 1], s, tmp, t)))
+                ++s, ++t;
+
+            if (TLX_UNLIKELY(ss.is_leq(ss[j - 1], s, tmp, t))) {
+                break;
+            }
+
+            ss[j] = std::move(ss[j - 1]);
+            --j;
+        }
+
+        ss[j] = std::move(tmp);
+    }
+}
+
+/******************************************************************************/
+
+//! LCP insertion sort for abstract string sets. Enabled via SFINAE if
+//! StringPtr::with_lcp is true. This method only requires O(1) additional
+//! memory for sorting n strings, and runs in time O(n^2 + D).
+template <typename StringPtr>
+static inline
+typename enable_if<StringPtr::with_lcp, void>::type
+insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */) {
+    typedef typename StringPtr::StringSet StringSet;
+    typedef typename StringPtr::LcpType LcpType;
+    typedef typename StringSet::Iterator Iterator;
+    typedef typename StringSet::String String;
+    typedef typename StringSet::CharIterator CharIterator;
+
+    // this stores the begin iterator and size n, making the loops faster
+    const StringSet& ss = strptr.active();
+    size_t n = ss.size();
+    if (n <= 1) return;
+
+    const Iterator begin = ss.begin();
 
     for (size_t j = 0; j < n - 1; ++j)
     {
         // insert strings[j] into sorted strings[0..j-1]
 
         String new_str = std::move(ss[begin + j]);
-        size_t new_lcp = depth; // start with LCP depth
+        LcpType new_lcp = depth; // start with LCP depth
 
         size_t i = j;
         while (i > 0)
         {
-            size_t prev_lcp = new_lcp;
+            LcpType prev_lcp = new_lcp;
 
             String cur_str = std::move(ss[begin + i - 1]);
-            size_t cur_lcp = strptr.get_lcp(i);
+            LcpType cur_lcp = strptr.get_lcp(i);
 
             if (cur_lcp < new_lcp)
             {
@@ -103,15 +154,15 @@ void lcp_insertion_sort(const StringPtr& strptr, size_t depth,
         // insert strings[j] into sorted strings[0..j-1]
 
         String new_str = std::move(ss[begin + j]);
-        size_t new_lcp = depth; // start with LCP depth
+        LcpType new_lcp = depth; // start with LCP depth
 
         size_t i = j;
         while (i > 0)
         {
-            size_t prev_lcp = new_lcp;
+            LcpType prev_lcp = new_lcp;
 
             String cur_str = std::move(ss[begin + i - 1]);
-            size_t cur_lcp = strptr.get_lcp(i);
+            LcpType cur_lcp = strptr.get_lcp(i);
 
             if (cur_lcp < new_lcp)
             {
@@ -157,55 +208,6 @@ void lcp_insertion_sort(const StringPtr& strptr, size_t depth,
         if (i + 1 < n) { // check out-of-bounds save
             strptr.set_lcp(i + 1, new_lcp);
         }
-    }
-}
-
-/******************************************************************************/
-
-//! Generic insertion sort for abstract string sets. This method only requires
-//! O(1) additional memory for sorting n strings, but runs in time O(nD).
-template <typename StringPtr>
-static inline void insertion_sort(
-    const StringPtr& strptr, size_t depth, size_t memory) {
-
-    if (strptr.with_lcp)
-        return lcp_insertion_sort(strptr, depth, memory);
-
-    typedef typename StringPtr::StringSet StringSet;
-    typedef typename StringSet::Iterator Iterator;
-    typedef typename StringSet::String String;
-    typedef typename StringSet::CharIterator CharIterator;
-
-    // this stores the begin iterator and size n, making the loops faster
-    const typename StringPtr::StringSet& ss = strptr.active();
-    size_t n = ss.size();
-    if (n <= 1) return;
-
-    const Iterator begin = ss.begin();
-    Iterator j;
-
-    for (Iterator i = begin + 1; TLX_UNLIKELY(--n != 0); ++i)
-    {
-        String tmp = std::move(ss[i]);
-        j = i;
-
-        while (TLX_LIKELY(j != begin))
-        {
-            CharIterator s = ss.get_chars(ss[j - 1], depth);
-            CharIterator t = ss.get_chars(tmp, depth);
-
-            while (TLX_LIKELY(ss.is_equal(ss[j - 1], s, tmp, t)))
-                ++s, ++t;
-
-            if (TLX_UNLIKELY(ss.is_leq(ss[j - 1], s, tmp, t))) {
-                break;
-            }
-
-            ss[j] = std::move(ss[j - 1]);
-            --j;
-        }
-
-        ss[j] = std::move(tmp);
     }
 }
 

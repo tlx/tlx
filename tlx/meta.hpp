@@ -23,6 +23,7 @@ print "#include <$_>\n" foreach sort glob("tlx/meta/"."*.hpp");
 #include <tlx/meta/call_foreach_tuple.hpp>
 #include <tlx/meta/call_foreach_tuple_with_index.hpp>
 #include <tlx/meta/call_foreach_with_index.hpp>
+#include <tlx/meta/enable_if.hpp>
 #include <tlx/meta/fold_left.hpp>
 #include <tlx/meta/fold_left_tuple.hpp>
 #include <tlx/meta/fold_right.hpp>

@@ -31,11 +31,12 @@ using namespace tlx::sort_strings_detail;
 
 static const size_t seed = 1234567;
 
-template <typename Set>
-using StringSorter = void (*)(const StringPtr<Set>&, size_t, size_t);
+template <typename StringSet>
+using StringSorter = void (*)(const StringPtr<StringSet>&, size_t, size_t);
 
-template <typename Set>
-using StringLcpSorter = void (*)(const StringLcpPtr<Set>&, size_t, size_t);
+template <typename StringSet, typename LcpType>
+using StringLcpSorter =
+    void (*)(const StringLcpPtr<StringSet, LcpType>&, size_t, size_t);
 
 template <typename Random, typename Iterator>
 void fill_random(Random& rng, const std::string& letters,
@@ -45,9 +46,9 @@ void fill_random(Random& rng, const std::string& letters,
 }
 
 //! calculate lcp by scanning
-template <typename StringSet>
+template <typename StringSet, typename LcpType>
 static inline
-bool check_lcp(const StringSet& ss, size_t* lcp) {
+bool check_lcp(const StringSet& ss, LcpType* lcp) {
     bool good = true;
     typename StringSet::Iterator s1 = ss.begin();
     for (size_t i = 0; i + 1 < ss.size(); ++i, ++s1) {
@@ -56,7 +57,7 @@ bool check_lcp(const StringSet& ss, size_t* lcp) {
         typename StringSet::CharIterator c1 = ss.get_chars(*s1, 0);
         typename StringSet::CharIterator c2 = ss.get_chars(*s2, 0);
 
-        size_t h = 0;
+        LcpType h = 0;
         while (ss.is_equal(*s1, c1, *s2, c2))
             ++h, ++c1, ++c2;
 
@@ -76,7 +77,7 @@ static inline double timestamp() {
 }
 
 template <typename StringSet, StringSorter<StringSet> sorter,
-          StringLcpSorter<StringSet> lcp_sorter>
+          typename LcpType, StringLcpSorter<StringSet, LcpType> lcp_sorter>
 void TestUCharString(const char* name,
                      const size_t num_strings, const size_t num_chars,
                      const std::string& letters, bool with_lcp) {
@@ -120,11 +121,11 @@ void TestUCharString(const char* name,
         // run sorting algorithm with lcp output
         double ts1 = timestamp();
 
-        tlx::simple_vector<size_t> lcp(num_strings);
+        tlx::simple_vector<uint32_t> lcp(num_strings);
         lcp.fill(1000);
 
         UCharStringSet ss(cstrings.data(), cstrings.data() + num_strings);
-        lcp_sorter(StringLcpPtr<UCharStringSet>(ss, lcp.data()),
+        lcp_sorter(StringLcpPtr<UCharStringSet, uint32_t>(ss, lcp.data()),
                    /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
@@ -148,7 +149,7 @@ void TestUCharString(const char* name,
 }
 
 template <typename StringSet, StringSorter<StringSet> sorter,
-          StringLcpSorter<StringSet> lcp_sorter>
+          typename LcpType, StringLcpSorter<StringSet, LcpType> lcp_sorter>
 void TestVectorStdString(const char* name,
                          const size_t num_strings, const size_t num_chars,
                          const std::string& letters, bool with_lcp) {
@@ -196,11 +197,11 @@ void TestVectorStdString(const char* name,
         // run sorting algorithm with lcp output
         double ts1 = timestamp();
 
-        tlx::simple_vector<size_t> lcp(num_strings);
+        tlx::simple_vector<uint32_t> lcp(num_strings);
         lcp.fill(1000);
 
         StdStringSet ss(strings.data(), strings.data() + strings.size());
-        lcp_sorter(StringLcpPtr<StdStringSet>(ss, lcp.data()),
+        lcp_sorter(StringLcpPtr<StdStringSet, uint32_t>(ss, lcp.data()),
                    /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
@@ -220,7 +221,7 @@ void TestVectorStdString(const char* name,
 }
 
 template <typename StringSet, StringSorter<StringSet> sorter,
-          StringLcpSorter<StringSet> lcp_sorter>
+          typename LcpType, StringLcpSorter<StringSet, LcpType> lcp_sorter>
 void TestUPtrStdString(const char* name,
                        const size_t num_strings, const size_t num_chars,
                        const std::string& letters, bool with_lcp) {
@@ -265,11 +266,11 @@ void TestUPtrStdString(const char* name,
         // run sorting algorithm with lcp output
         double ts1 = timestamp();
 
-        tlx::simple_vector<size_t> lcp(num_strings);
+        tlx::simple_vector<uint32_t> lcp(num_strings);
         lcp.fill(1000);
 
         UPtrStdStringSet ss(strings.data(), strings.data() + strings.size());
-        lcp_sorter(StringLcpPtr<UPtrStdStringSet>(ss, lcp.data()),
+        lcp_sorter(StringLcpPtr<UPtrStdStringSet, uint32_t>(ss, lcp.data()),
                    /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
@@ -392,17 +393,17 @@ static const char* letters_alnum
 
 // use macro because one cannot pass template functions as template parameters:
 #define run_tests(func)                                          \
-    TestUCharString<UCharStringSet, func, func>(                 \
+    TestUCharString<UCharStringSet, func, uint32_t, func>(       \
         #func, num_strings, 16, letters_alnum, /* lcp */ false); \
-    TestUCharString<UCharStringSet, func, func>(                 \
+    TestUCharString<UCharStringSet, func, uint32_t, func>(       \
         #func, num_strings, 16, letters_alnum, /* lcp */ true);  \
-    TestVectorStdString<StdStringSet, func, func>(               \
+    TestVectorStdString<StdStringSet, func, uint32_t, func>(     \
         #func, num_strings, 16, letters_alnum, /* lcp */ false); \
-    TestVectorStdString<StdStringSet, func, func>(               \
+    TestVectorStdString<StdStringSet, func, uint32_t, func>(     \
         #func, num_strings, 16, letters_alnum, /* lcp */ true);  \
-    TestUPtrStdString<UPtrStdStringSet, func, func>(             \
+    TestUPtrStdString<UPtrStdStringSet, func, uint32_t, func>(   \
         #func, num_strings, 16, letters_alnum, /* lcp */ false); \
-    TestUPtrStdString<UPtrStdStringSet, func, func>(             \
+    TestUPtrStdString<UPtrStdStringSet, func, uint32_t, func>(   \
         #func, num_strings, 16, letters_alnum, /* lcp */ true);  \
     TestStringSuffixString<StringSuffixSet, func>(               \
         #func, num_strings, letters_alnum);                      \

@@ -4,7 +4,7 @@
  * Implementations of a StringSet concept. This is an internal implementation
  * header, see tlx/sort/strings.hpp for public front-end functions.
  *
- * A StringSet abstracts from arrays of strings, we provide six abstractions:
+ * A StringSet abstracts from arrays of strings, we provide four abstractions:
  *
  * - UCharStringSet: (const) unsigned char**
  * - StdStringSet: std::string*

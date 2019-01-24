@@ -135,18 +135,23 @@ static inline void multikey_quicksort(
     if (r > 0) {
         strptr.set_lcp(a - ss.begin() + r, depth);
     }
-    if (r > 1)
-        multikey_quicksort(strptr.sub(a - ss.begin(), r), depth, memory - memory_use);
-    if (ss.get_char(*(a + r), depth) != 0)
-        multikey_quicksort(strptr.sub(a - ss.begin() + r, (pa - a) + (pn - pd - 1)),
-                           depth + 1, memory - memory_use);
+    if (r > 1) {
+        multikey_quicksort(strptr.sub(a - ss.begin(), r),
+                           depth, memory - memory_use);
+    }
+    if (ss.get_char(*(a + r), depth) != 0) {
+        multikey_quicksort(
+            strptr.sub(a - ss.begin() + r, (pa - a) + (pn - pd - 1)),
+            depth + 1, memory - memory_use);
+    }
     r = pd - pc;
     if (r > 0) {
         strptr.set_lcp(a - ss.begin() + n - r, depth);
     }
-    if ((r = pd - pc) > 1)
+    if ((r = pd - pc) > 1) {
         multikey_quicksort(strptr.sub(a - ss.begin() + n - r, r),
                            depth, memory - memory_use);
+    }
 }
 
 } // namespace sort_strings_detail

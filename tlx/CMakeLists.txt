@@ -20,9 +20,8 @@ set(LIBTLX_SOURCES
   digest/sha512.cpp
   logger/core.cpp
   port/setenv.cpp
-  sort/strings1.cpp
-  sort/strings2.cpp
-  sort/strings3.cpp
+  sort/strings_impl.cpp
+  sort/strings_lcp_impl.cpp
   string/base64.cpp
   string/compare_icase.cpp
   string/contains.cpp

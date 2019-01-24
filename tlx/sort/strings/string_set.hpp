@@ -4,7 +4,7 @@
  * Implementations of a StringSet concept. This is an internal implementation
  * header, see tlx/sort/strings.hpp for public front-end functions.
  *
- * A StringSet abstracts from arrays of strings, we provide six abstractions:
+ * A StringSet abstracts from arrays of strings, we provide four abstractions:
  *
  * - UCharStringSet: (const) unsigned char**
  * - StdStringSet: std::string*
@@ -13,7 +13,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -32,6 +32,10 @@
 #include <tlx/math/bswap.hpp>
 
 namespace tlx {
+
+//! \addtogroup tlx_sort
+//! \{
+
 namespace sort_strings_detail {
 
 /******************************************************************************/
@@ -53,6 +57,16 @@ public:
                   const typename Traits::CharIterator& bi) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
         return !ss.is_end(a, ai) && !ss.is_end(b, bi) && (*ai == *bi);
+    }
+
+    //! check if string a is less or equal to string b at iterators ai and bi.
+    bool is_less(const typename Traits::String& a,
+                 const typename Traits::CharIterator& ai,
+                 const typename Traits::String& b,
+                 const typename Traits::CharIterator& bi) const {
+        const StringSet& ss = *static_cast<const StringSet*>(this);
+        return ss.is_end(a, ai) ||
+               (!ss.is_end(a, ai) && !ss.is_end(b, bi) && *ai < *bi);
     }
 
     //! check if string a is less or equal to string b at iterators ai and bi.
@@ -135,10 +149,10 @@ public:
     bool check_order() const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
 
-        for (typename Traits::Iterator pi = ss.begin() + 1;
-             pi != ss.end(); ++pi)
+        for (typename Traits::Iterator pi = ss.begin();
+             pi + 1 != ss.end(); ++pi)
         {
-            if (!check_order(ss[pi - 1], ss[pi])) {
+            if (!check_order(*pi, *(pi + 1))) {
                 TLX_LOG1 << "check_order() failed at position " << pi - ss.begin();
                 return false;
             }
@@ -537,70 +551,10 @@ protected:
 
 /******************************************************************************/
 
-//! Objectified string array pointer and shadow pointer array for out-of-place
-//! swapping of pointers.
-template <typename StringSet_>
-class StringShadowPtr
-{
-public:
-    typedef StringSet_ StringSet;
-    typedef typename StringSet::String String;
-    typedef typename StringSet::Iterator Iterator;
-
-protected:
-    //! strings (front) and temporary shadow (back) array
-    StringSet active_, shadow_;
-
-    //! false if active_ is original, true if shadow_ is original
-    bool flipped_;
-
-public:
-    //! constructor specifying all attributes
-    StringShadowPtr(const StringSet& original, const StringSet& shadow,
-                    bool flipped = false)
-        : active_(original), shadow_(shadow), flipped_(flipped)
-    { }
-
-    //! return currently active array
-    const StringSet& active() const { return active_; }
-
-    //! return current shadow array
-    const StringSet& shadow() const { return shadow_; }
-
-    //! true if flipped to back array
-    bool flipped() const { return flipped_; }
-
-    //! return valid length
-    size_t size() const { return active_.size(); }
-
-    //! construct a StringShadowPtr object specifying a sub-array with flipping
-    //! to other array.
-    StringShadowPtr flip(size_t begin, size_t end) const {
-        assert(end <= size());
-        return StringShadowPtr(shadow_.subi(begin, end),
-                               active_.subi(begin, end), !flipped_);
-    }
-
-    //! construct a StringShadowPtr object specifying a sub-array with flipping
-    //! to other array.
-    StringShadowPtr flip() const {
-        return StringShadowPtr(shadow_, active_, !flipped_);
-    }
-
-    //! return subarray pointer to n strings in original array, might copy from
-    //! shadow before returning.
-    const StringSet& copy_back() const {
-        if (!flipped_) {
-            return active_;
-        }
-        else {
-            std::move(active_.begin(), active_.end(), shadow_.begin());
-            return shadow_;
-        }
-    }
-};
-
 } // namespace sort_strings_detail
+
+//! \}
+
 } // namespace tlx
 
 #endif // !TLX_SORT_STRINGS_STRING_SET_HEADER

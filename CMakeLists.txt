@@ -49,6 +49,9 @@ option(TLX_TRY_COMPILE_HEADERS
 option(TLX_MORE_TESTS
   "Run more extensive test." OFF)
 
+option(TLX_BUILD_STRING_SORTING
+  "Compile string sorting algorithms into library object." OFF)
+
 ### building shared and/or static libraries
 
 # by default we currently only build a static library, since we do not aim to
@@ -86,6 +89,10 @@ set(TLX_DEPEND_LIBRARIES "")
 
 if(TLX_MORE_TESTS)
   list(APPEND TLX_DEFINITIONS "TLX_MORE_TESTS")
+endif()
+
+if(TLX_BUILD_STRING_SORTING)
+  list(APPEND TLX_DEFINITIONS "TLX_BUILD_STRING_SORTING")
 endif()
 
 if(NOT MSVC)

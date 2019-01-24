@@ -121,6 +121,11 @@ void sort_strings(std::vector<std::string>& strings, size_t memory = 0);
 
 } // namespace tlx
 
+#if !TLX_BUILD_STRING_SORTING
+// include implementations of string sorting algorithms
+#include <tlx/sort/strings_impl.hpp>
+#endif
+
 #endif // !TLX_SORT_STRINGS_HEADER
 
 /******************************************************************************/

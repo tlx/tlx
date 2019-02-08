@@ -37,7 +37,7 @@ List of the most commonly used components:
 - \subpage tlx_counting_ptr
 - \subpage tlx_die : \ref die(), \ref die_unless(), \ref die_if(), \ref die_unequal().
 - \ref logger.hpp : \ref LOG, \ref LOG1, \ref LOGC, \ref sLOG.
-- \ref unused.hpp : \ref unused.
+- Miscellaneous: \ref unused, \ref vector_free.
 - \ref tlx_algorithm : \ref merge_combine(), \ref exclusive_scan(), \ref multiway_merge(), \ref parallel_multiway_merge(), \ref multisequence_selection(), \ref multisequence_partition().
 - \ref tlx_container : \ref RingBuffer, \ref SimpleVector, \ref tlx_container_btree, \ref tlx_container_loser_tree, \ref RadixHeap
 - \ref tlx_define : \ref TLX_LIKELY, \ref TLX_UNLIKELY, \ref TLX_ATTRIBUTE_PACKED, \ref TLX_ATTRIBUTE_ALWAYS_INLINE, \ref TLX_ATTRIBUTE_FORMAT_PRINTF, \ref TLX_DEPRECATED_FUNC_DEF.

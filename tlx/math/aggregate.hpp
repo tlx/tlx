@@ -81,6 +81,9 @@ public:
     //! return maximum over all values aggregated
     const Type& max() const noexcept { return max_; }
 
+    //! return maximum - minimum over all values aggregated
+    Type span() const noexcept { return max_ - min_; }
+
     //! return the variance of all values aggregated.
     //! ddof = delta degrees of freedom
     //! Set to 0 if you have the entire distribution

@@ -180,20 +180,33 @@ public:
         if (empty()) {
             return true;
         }
+        std::vector<uint8_t> mark(handles_.size());
         std::queue<size_t> q;
         // Explore from the root.
         q.push(0);
+        // mark first value as seen
+        mark.at(heap_[0]) = 1;
         while (!q.empty()) {
             size_t s = q.front();
             q.pop();
             size_t l = left(s);
             for (size_t i = 0; i < arity && l < heap_.size(); ++i) {
-                // Check that the priority of the children is not strictly less
+                // check that the priority of the children is not strictly less
                 // than their parent.
                 if (cmp_(heap_[l], heap_[s]))
                     return false;
+                // check handle
+                if (handles_[heap_[l]] != l)
+                    return false;
+                // mark value as seen
+                mark.at(heap_[l]) = 1;
                 q.push(l++);
             }
+        }
+        // check not_present handles
+        for (size_t i = 0; i < mark.size(); ++i) {
+            if (mark[i] != (handles_[i] != not_present()))
+                return false;
         }
         return true;
     }

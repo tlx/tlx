@@ -97,7 +97,24 @@ public:
     bool empty() const noexcept { return heap_.empty(); }
 
     //! Inserts a new item.
-    void push(key_type new_key) {
+    void push(const key_type& new_key) {
+        // Avoid to add the key that we use to mark non present keys.
+        assert(new_key != not_present());
+        if (new_key >= handles_.size()) {
+            handles_.resize(new_key + 1, not_present());
+        }
+        else {
+            assert(handles_[new_key] == not_present());
+        }
+
+        // Insert the new item at the end of the heap.
+        handles_[new_key] = static_cast<key_type>(heap_.size());
+        heap_.push_back(new_key);
+        sift_up(heap_.size() - 1);
+    }
+
+    //! Inserts a new item.
+    void push(key_type&& new_key) {
         // Avoid to add the key that we use to mark non present keys.
         assert(new_key != not_present());
         if (new_key >= handles_.size()) {
@@ -221,15 +238,15 @@ private:
     //! Pushes the node at position \c k up until either it becomes the root or
     //! its parent has lower or equal priority.
     void sift_up(size_t k) {
-        while (k) {
-            size_t p = parent(k);
-            if (!cmp_(heap_[k], heap_[p])) {
-                break;
-            }
-            std::swap(heap_[p], heap_[k]);
-            std::swap(handles_[heap_[p]], handles_[heap_[k]]);
-            k = p;
+        key_type value = std::move(heap_[k]);
+        size_t p = parent(k);
+        while (k > 0 && !cmp_(heap_[p], value)) {
+            heap_[k] = std::move(heap_[p]);
+            handles_[heap_[k]] = k;
+            k = p, p = parent(k);
         }
+        handles_[value] = k;
+        heap_[k] = std::move(value);
     }
 
     //! Pushes the item at position \c k down until either it becomes a leaf or

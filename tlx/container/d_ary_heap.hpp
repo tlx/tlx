@@ -49,11 +49,6 @@ protected:
     //! Compare function.
     compare_type cmp_;
 
-    //! Marks a key that is not in the heap.
-    static constexpr key_type not_present() {
-        return static_cast<key_type>(-1);
-    }
-
 public:
     //! Allocates an empty heap.
     explicit DAryHeap(compare_type cmp = compare_type())
@@ -87,10 +82,14 @@ public:
     bool empty() const noexcept { return heap_.empty(); }
 
     //! Inserts a new item.
-    void push(key_type new_key) {
-        // Avoid to add the key that we use to mark non present keys.
-        assert(new_key != not_present());
+    void push(const key_type& new_key) {
+        // Insert the new item at the end of the heap.
+        heap_.push_back(new_key);
+        sift_up(heap_.size() - 1);
+    }
 
+    //! Inserts a new item.
+    void push(key_type&& new_key) {
         // Insert the new item at the end of the heap.
         heap_.push_back(std::move(new_key));
         sift_up(heap_.size() - 1);
@@ -151,14 +150,13 @@ private:
     //! Pushes the node at position \c k up until either it becomes the root or
     //! its parent has lower or equal priority.
     void sift_up(size_t k) {
-        while (k) {
-            size_t p = parent(k);
-            if (!cmp_(heap_[k], heap_[p])) {
-                break;
-            }
-            std::swap(heap_[p], heap_[k]);
-            k = p;
+        key_type value = std::move(heap_[k]);
+        size_t p = parent(k);
+        while (k > 0 && !cmp_(heap_[p], value)) {
+            heap_[k] = std::move(heap_[p]);
+            k = p, p = parent(k);
         }
+        heap_[k] = std::move(value);
     }
 
     //! Pushes the item at position \c k down until either it becomes a leaf or

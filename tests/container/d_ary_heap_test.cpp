@@ -26,6 +26,8 @@ template class d_ary_heap<uint64_t>;
 
 } // namespace tlx
 
+/******************************************************************************/
+
 template <class T>
 struct Comparator {
 public:
@@ -48,6 +50,24 @@ std::vector<KeyType> get_shuffled_vector(size_t size, uint32_t r_seed) {
     return keys;
 }
 
+//! Verifies the heap property, the size of the heap, and the top item.
+template <typename DAryHeap, typename Set>
+void check_heap(DAryHeap& heap, Set& set) {
+    die_unequal(heap.size(), set.size());
+    if (!heap.empty()) {
+        die_unequal(heap.top(), *(set.begin()));
+    }
+}
+
+template <typename DAryHeap, typename Set, typename KeysVector>
+void fill_heap_and_set(DAryHeap& heap, Set& set, KeysVector& keys) {
+    for (const typename KeysVector::value_type& key : keys) {
+        heap.push(key);
+        set.insert(key);
+        check_heap(heap, set);
+    }
+}
+
 //! Basic APIs: push(), top(), pop(), and remove().
 template <typename KeyType, unsigned Arity = 2,
           class Compare = std::less<KeyType> >
@@ -58,26 +78,6 @@ void d_ary_heap_test(size_t size, uint32_t r_seed = 42) {
 
     // To check the correctness of the heap.
     std::set<KeyType, Compare> s;
-
-    // Verifies the heap property, the size of the heap, and the top item.
-    auto check_heap = [&](tlx::d_ary_heap<KeyType, Arity, Compare>& heap,
-                          std::set<KeyType, Compare>& set) {
-                          heap.sanity_check();
-                          die_unequal(heap.size(), set.size());
-                          if (!heap.empty()) {
-                              die_unequal(heap.top(), *(set.begin()));
-                          }
-                      };
-
-    auto fill_heap_and_set = [&](tlx::d_ary_heap<KeyType, Arity, Compare>& heap,
-                                 std::set<KeyType, Compare>& set,
-                                 std::vector<KeyType>& keys_) {
-                                 for (KeyType key : keys_) {
-                                     heap.push(key);
-                                     set.insert(key);
-                                     check_heap(heap, set);
-                                 }
-                             };
 
     auto keys = get_shuffled_vector<KeyType>(size, r_seed);
     fill_heap_and_set(x, s, keys);
@@ -114,15 +114,6 @@ void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
 
     // Keep a backup of the priorities because we are going to modify them.
     std::vector<double> backup(prio);
-
-    // Verifies the heap property, the size of the heap, and the top item.
-    auto check_heap =
-        [&](tlx::d_ary_heap<KeyType, Arity, Comparator<KeyType> >& heap,
-            std::set<KeyType, Comparator<KeyType> >& set) {
-            heap.sanity_check();
-            die_unequal(heap.size(), set.size());
-            die_unequal(heap.top(), *(set.begin()));
-        };
 
     auto keys = get_shuffled_vector<KeyType>(size, r_seed);
 

@@ -41,30 +41,35 @@ class d_ary_heap
 
 public:
     using key_type = KeyType;
-    using compare = Compare;
+    using compare_type = Compare;
 
     static constexpr size_t arity = Arity;
 
 protected:
-    std::vector<key_type> heap;
+    //! Cells in the heap.
+    std::vector<key_type> heap_;
+
     //! Positions of the keys in the heap vector.
-    std::vector<key_type> handles;
+    std::vector<key_type> handles_;
 
     //! Compare function.
-    compare c_;
+    compare_type cmp_;
 
     //! Marks a key that is not in the heap.
-    static constexpr key_type not_present() { return static_cast<key_type>(-1); }
+    static constexpr key_type not_present() {
+        return static_cast<key_type>(-1);
+    }
 
 public:
     //! Allocates an empty heap.
-    explicit d_ary_heap(compare c = compare{ }) : heap(0), handles(0), c_(c) { }
+    explicit d_ary_heap(compare_type cmp = compare_type())
+        : heap_(0), handles_(0), cmp_(cmp) { }
 
     //! Allocates space for \c new_size items.
     void reserve(size_t new_size) {
-        if (handles.size() < new_size) {
-            handles.resize(new_size, not_present());
-            heap.reserve(new_size);
+        if (handles_.size() < new_size) {
+            handles_.resize(new_size, not_present());
+            heap_.reserve(new_size);
         }
     }
 
@@ -78,63 +83,63 @@ public:
 
     //! Empties the heap.
     void clear() {
-        std::fill(handles.begin(), handles.end(), not_present());
-        heap.clear();
+        std::fill(handles_.begin(), handles_.end(), not_present());
+        heap_.clear();
     }
 
     //! Returns the number of items in the heap.
-    size_t size() const noexcept { return heap.size(); }
+    size_t size() const noexcept { return heap_.size(); }
 
     //! Returns the capacity of the heap.
-    size_t capacity() const noexcept { return heap.capacity(); }
+    size_t capacity() const noexcept { return heap_.capacity(); }
 
     //! Returns true if the heap has no items, false otherwise.
-    bool empty() const noexcept { return heap.empty(); }
+    bool empty() const noexcept { return heap_.empty(); }
 
     //! Inserts a new item.
     void push(key_type new_key) {
         // Avoid to add the key that we use to mark non present keys.
         assert(new_key != not_present());
-        if (new_key >= handles.size()) {
-            handles.resize(new_key + 1, not_present());
+        if (new_key >= handles_.size()) {
+            handles_.resize(new_key + 1, not_present());
         }
         else {
-            assert(handles[new_key] == not_present());
+            assert(handles_[new_key] == not_present());
         }
 
         // Insert the new item at the end of the heap.
-        handles[new_key] = static_cast<key_type>(heap.size());
-        heap.push_back(std::move(new_key));
-        siftup(heap.size() - 1);
+        handles_[new_key] = static_cast<key_type>(heap_.size());
+        heap_.push_back(std::move(new_key));
+        sift_up(heap_.size() - 1);
     }
 
     //! Removes the item with key \c key.
     void remove(key_type key) {
         assert(contains(key));
-        auto h = handles[key];
-        std::swap(heap[h], heap.back());
-        handles[heap[h]] = h;
-        handles[heap.back()] = not_present();
-        heap.pop_back();
+        key_type h = handles_[key];
+        std::swap(heap_[h], heap_.back());
+        handles_[heap_[h]] = h;
+        handles_[heap_.back()] = not_present();
+        heap_.pop_back();
         // If we did not remove the last item in the heap vector.
         if (h < size()) {
-            if (h && c_(heap[h], heap[parent(h)])) {
-                siftup(h);
+            if (h && cmp_(heap_[h], heap_[parent(h)])) {
+                sift_up(h);
             }
             else {
-                siftdown(h);
+                sift_down(h);
             }
         }
     }
 
     //! Returns the top item.
-    key_type const& top() const {
+    const key_type& top() const noexcept {
         assert(!empty());
-        return heap[0];
+        return heap_[0];
     }
 
     //! Removes the top item.
-    void pop() { remove(heap[0]); }
+    void pop() { remove(heap_[0]); }
 
     //! Removes and returns the top item.
     key_type extract_top() {
@@ -143,28 +148,30 @@ public:
         return top_item;
     }
 
-    //! Updates the priority queue after the priority associated to the item
-    //! with key \c key has been changed; if the key \c key is not present in the
-    //! the priority queue, it will be added.
-    //!
-    //! Note: if not called after a priority is changed, the behavior of the data
-    //! structure is undefined.
+    /*!
+     * Updates the priority queue after the priority associated to the item with
+     * key \c key has been changed; if the key \c key is not present in the
+     * priority queue, it will be added.
+     *
+     * Note: if not called after a priority is changed, the behavior of the data
+     * structure is undefined.
+     */
     void update(key_type key) {
-        if (key >= handles.size() || handles[key] == not_present()) {
+        if (key >= handles_.size() || handles_[key] == not_present()) {
             push(key);
         }
-        else if (handles[key] &&
-                 c_(heap[handles[key]], heap[parent(handles[key])])) {
-            siftup(handles[key]);
+        else if (handles_[key] &&
+                 cmp_(heap_[handles_[key]], heap_[parent(handles_[key])])) {
+            sift_up(handles_[key]);
         }
         else {
-            siftdown(handles[key]);
+            sift_down(handles_[key]);
         }
     }
 
     //! Returns true if the key \c key is in the heap, false otherwise.
     bool contains(key_type key) const {
-        return key < handles.size() ? handles[key] != not_present() : false;
+        return key < handles_.size() ? handles_[key] != not_present() : false;
     }
 
     //! For debugging: runs a BFS from the root node and verifies that the heap
@@ -180,9 +187,9 @@ public:
             auto s = q.front();
             q.pop();
             auto l = left(s);
-            for (size_t i = 0; i < arity && l < heap.size(); ++i) {
-                // Check that the priority of the children is not strictly less than
-                // their parent.
+            for (size_t i = 0; i < arity && l < heap_.size(); ++i) {
+                // Check that the priority of the children is not strictly less
+                // than their parent.
                 assert(!c_(heap[l], heap[s]));
                 q.push(l++);
             }
@@ -196,46 +203,46 @@ private:
     //! Returns the position of the parent of the node at position \c k.
     size_t parent(size_t k) const { return (k - 1) / arity; }
 
-    //! Pushes the node at position \c k up until  either it becomes the root or
+    //! Pushes the node at position \c k up until either it becomes the root or
     //! its parent has lower or equal priority.
-    void siftup(size_t k) {
+    void sift_up(size_t k) {
         while (k) {
-            auto p = parent(k);
-            if (!c_(heap[k], heap[p])) {
+            size_t p = parent(k);
+            if (!cmp_(heap_[k], heap_[p])) {
                 break;
             }
-            std::swap(heap[p], heap[k]);
-            std::swap(handles[heap[p]], handles[heap[k]]);
+            std::swap(heap_[p], heap_[k]);
+            std::swap(handles_[heap_[p]], handles_[heap_[k]]);
             k = p;
         }
     }
 
     //! Pushes the item at position \c k down until either it becomes a leaf or
     //! all its children have higher priority
-    void siftdown(size_t k) {
+    void sift_down(size_t k) {
         while (true) {
-            auto l = left(k);
-            if (l >= heap.size()) {
+            size_t l = left(k);
+            if (l >= heap_.size()) {
                 break;
             }
             // Get the min child.
-            auto c = l;
-            auto right = std::min(heap.size(), c + arity);
+            size_t c = l;
+            size_t right = std::min(heap_.size(), c + arity);
             while (++l < right) {
-                if (c_(heap[l], heap[c])) {
+                if (cmp_(heap_[l], heap_[c])) {
                     c = l;
                 }
             }
 
-            // Current item has lower or equal priority than the child with minimum
-            // priority, stop.
-            if (!c_(heap[c], heap[k])) {
+            // Current item has lower or equal priority than the child with
+            // minimum priority, stop.
+            if (!cmp_(heap_[c], heap_[k])) {
                 break;
             }
 
             // Swap current item with the child with minimum priority.
-            std::swap(heap[k], heap[c]);
-            std::swap(handles[heap[k]], handles[heap[c]]);
+            std::swap(heap_[k], heap_[c]);
+            std::swap(handles_[heap_[k]], handles_[heap_[c]]);
             k = c;
         }
     }

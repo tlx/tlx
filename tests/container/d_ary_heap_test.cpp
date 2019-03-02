@@ -53,6 +53,7 @@ std::vector<KeyType> get_shuffled_vector(size_t size, uint32_t r_seed) {
 //! Verifies the heap property, the size of the heap, and the top item.
 template <typename DAryHeap, typename Set>
 void check_heap(DAryHeap& heap, Set& set) {
+    die_unless(heap.sanity_check());
     die_unequal(heap.size(), set.size());
     if (!heap.empty()) {
         die_unequal(heap.top(), *(set.begin()));
@@ -131,7 +132,7 @@ void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
     for (auto key : keys) {
         prio[key] = dis(gen);
         x.update(key);
-        x.sanity_check();
+        die_unless(x.sanity_check());
     }
 
     // Update the set.

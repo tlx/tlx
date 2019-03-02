@@ -176,24 +176,26 @@ public:
 
     //! For debugging: runs a BFS from the root node and verifies that the heap
     //! property is respected.
-    void sanity_check() {
+    bool sanity_check() {
         if (empty()) {
-            return;
+            return true;
         }
         std::queue<size_t> q;
         // Explore from the root.
         q.push(0);
         while (!q.empty()) {
-            auto s = q.front();
+            size_t s = q.front();
             q.pop();
-            auto l = left(s);
+            size_t l = left(s);
             for (size_t i = 0; i < arity && l < heap_.size(); ++i) {
                 // Check that the priority of the children is not strictly less
                 // than their parent.
-                assert(!c_(heap[l], heap[s]));
+                if (cmp_(heap_[l], heap_[s]))
+                    return false;
                 q.push(l++);
             }
         }
+        return true;
     }
 
 private:

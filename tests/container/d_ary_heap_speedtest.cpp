@@ -115,7 +115,9 @@ public:
 template <template <typename HeapType> class TestClass>
 struct TestFactory_Heap {
     //! Test the binary heap from STL
-    using StdQueue = TestClass<std::priority_queue<uint32_t> >;
+    using StdQueue = TestClass<
+        std::priority_queue<uint32_t, std::vector<uint32_t>,
+                            std::greater<uint32_t> > >;
 
     //! Test the d-ary heap with a specific arity
     template <int Arity>
@@ -123,7 +125,8 @@ struct TestFactory_Heap {
 
     //! Test the d-ary heap with a specific arity
     template <int Arity>
-    using DAryAIntHeap = TestClass<tlx::DAryAddressableIntHeap<uint32_t, Arity> >;
+    using DAryAIntHeap =
+        TestClass<tlx::DAryAddressableIntHeap<uint32_t, Arity> >;
 
     //! Run tests on all heap types
     void call_testrunner(size_t items);

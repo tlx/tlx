@@ -162,6 +162,7 @@ private:
     //! Pushes the item at position \c k down until either it becomes a leaf or
     //! all its children have higher priority
     void sift_down(size_t k) {
+        key_type value = std::move(heap_[k]);
         while (true) {
             size_t l = left(k);
             if (l >= heap_.size()) {
@@ -178,14 +179,15 @@ private:
 
             // Current item has lower or equal priority than the child with
             // minimum priority, stop.
-            if (!cmp_(heap_[c], heap_[k])) {
+            if (!cmp_(heap_[c], value)) {
                 break;
             }
 
             // Swap current item with the child with minimum priority.
-            std::swap(heap_[k], heap_[c]);
+            heap_[k] = std::move(heap_[c]);
             k = c;
         }
+        heap_[k] = std::move(value);
     }
 };
 

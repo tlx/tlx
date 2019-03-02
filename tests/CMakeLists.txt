@@ -60,6 +60,7 @@ endmacro(tlx_build_test)
 
 tlx_build_only(algorithm/multiway_merge_benchmark)
 tlx_build_only(container/btree_speedtest)
+tlx_build_only(container/d_ary_heap_speedtest)
 tlx_build_only(cmdline_parser_example)
 
 tlx_build_test(algorithm/multiway_merge_test)

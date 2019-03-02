@@ -44,11 +44,45 @@ private:
     const std::vector<double>& prio;
 };
 
+struct TestData {
+    unsigned int a, b;
+
+    // required by the heap
+    TestData()
+        : a(0), b(0)
+    { }
+
+    // also used as implicit conversion constructor
+    TestData(unsigned int _a)
+        : a(_a), b(0)
+    { }
+
+    friend std::ostream& operator << (std::ostream& os, const TestData& d) {
+        return os << d.a;
+    }
+
+    bool operator == (const TestData& o) const {
+        return a == o.a && b == o.b;
+    }
+};
+
+struct TestCompare {
+    unsigned int somevalue;
+
+    TestCompare(unsigned int sv = 0)
+        : somevalue(sv)
+    { }
+
+    bool operator () (const struct TestData& a, const struct TestData& b) const {
+        return a.a > b.a;
+    }
+};
+
 template <typename KeyType>
 std::vector<KeyType> get_shuffled_vector(size_t size, uint32_t r_seed) {
     std::vector<KeyType> keys(size);
-    for (KeyType key = 0; key < size; ++key) {
-        keys[key] = key;
+    for (size_t key = 0; key < size; ++key) {
+        keys[key] = KeyType(key);
     }
 
     std::mt19937 gen(r_seed);
@@ -206,6 +240,10 @@ int main() {
     d_ary_heap_test<uint16_t, 2, std::greater<uint16_t> >(size, r_seed);
     d_ary_heap_test<uint32_t, 2, std::greater<uint32_t> >(size, r_seed);
     d_ary_heap_test<uint64_t, 2, std::greater<uint64_t> >(size, r_seed);
+
+    // Basic heap API with custom struct.
+    d_ary_heap_test<TestData, 2, TestCompare>(size, r_seed);
+    d_ary_heap_test<TestData, 3, TestCompare>(size, r_seed);
 
     // Basic heap APIs with default compare functions.
     d_ary_addressable_int_heap_test<uint8_t, 1>(size, r_seed);

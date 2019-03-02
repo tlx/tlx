@@ -15,6 +15,7 @@
 #include <string>
 
 #include <queue>
+#include <tlx/container/d_ary_addressable_int_heap.hpp>
 #include <tlx/container/d_ary_heap.hpp>
 
 #include <tlx/die.hpp>
@@ -118,7 +119,11 @@ struct TestFactory_Heap {
 
     //! Test the d-ary heap with a specific arity
     template <int Arity>
-    using DAryHeap = TestClass<tlx::d_ary_heap<uint32_t, Arity> >;
+    using DAryHeap = TestClass<tlx::DAryHeap<uint32_t, Arity> >;
+
+    //! Test the d-ary heap with a specific arity
+    template <int Arity>
+    using DAryAIntHeap = TestClass<tlx::DAryAddressableIntHeap<uint32_t, Arity> >;
 
     //! Run tests on all heap types
     void call_testrunner(size_t items);
@@ -180,13 +185,21 @@ void TestFactory_Heap<TestClass>::call_testrunner(size_t items) {
 
     testrunner_loop<StdQueue>(items, "std::priority_queue");
 
-    testrunner_loop<DAryHeap<2> >(items, "tlx::d_ary_heap<2> slots=2");
-    testrunner_loop<DAryHeap<3> >(items, "tlx::d_ary_heap<3> slots=3");
-    testrunner_loop<DAryHeap<4> >(items, "tlx::d_ary_heap<4> slots=4");
-    testrunner_loop<DAryHeap<6> >(items, "tlx::d_ary_heap<6> slots=6");
-    testrunner_loop<DAryHeap<8> >(items, "tlx::d_ary_heap<8> slots=8");
-    testrunner_loop<DAryHeap<16> >(items, "tlx::d_ary_heap<16> slots=16");
-    testrunner_loop<DAryHeap<32> >(items, "tlx::d_ary_heap<32> slots=32");
+    testrunner_loop<DAryHeap<2> >(items, "tlx::DAryHeap<2> slots=2");
+    testrunner_loop<DAryHeap<3> >(items, "tlx::DAryHeap<3> slots=3");
+    testrunner_loop<DAryHeap<4> >(items, "tlx::DAryHeap<4> slots=4");
+    testrunner_loop<DAryHeap<6> >(items, "tlx::DAryHeap<6> slots=6");
+    testrunner_loop<DAryHeap<8> >(items, "tlx::DAryHeap<8> slots=8");
+    testrunner_loop<DAryHeap<16> >(items, "tlx::DAryHeap<16> slots=16");
+    testrunner_loop<DAryHeap<32> >(items, "tlx::DAryHeap<32> slots=32");
+
+    testrunner_loop<DAryAIntHeap<2> >(items, "tlx::DAryAIntHeap<2> slots=2");
+    testrunner_loop<DAryAIntHeap<3> >(items, "tlx::DAryAIntHeap<3> slots=3");
+    testrunner_loop<DAryAIntHeap<4> >(items, "tlx::DAryAIntHeap<4> slots=4");
+    testrunner_loop<DAryAIntHeap<6> >(items, "tlx::DAryAIntHeap<6> slots=6");
+    testrunner_loop<DAryAIntHeap<8> >(items, "tlx::DAryAIntHeap<8> slots=8");
+    testrunner_loop<DAryAIntHeap<16> >(items, "tlx::DAryAIntHeap<16> slots=16");
+    testrunner_loop<DAryAIntHeap<32> >(items, "tlx::DAryAIntHeap<32> slots=32");
 }
 
 //! Speed test them!

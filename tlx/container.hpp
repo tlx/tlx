@@ -22,6 +22,7 @@ print "#include <$_>\n" foreach sort glob("tlx/container/"."*.hpp");
 #include <tlx/container/btree_multimap.hpp>
 #include <tlx/container/btree_multiset.hpp>
 #include <tlx/container/btree_set.hpp>
+#include <tlx/container/d_ary_addressable_int_heap.hpp>
 #include <tlx/container/d_ary_heap.hpp>
 #include <tlx/container/loser_tree.hpp>
 #include <tlx/container/lru_cache.hpp>

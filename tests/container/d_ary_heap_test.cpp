@@ -13,16 +13,22 @@
 #include <set>
 #include <vector>
 
+#include <tlx/container/d_ary_addressable_int_heap.hpp>
 #include <tlx/container/d_ary_heap.hpp>
 #include <tlx/die.hpp>
 
 // Force instantiation.
 namespace tlx {
 
-template class d_ary_heap<uint8_t>;
-template class d_ary_heap<uint16_t>;
-template class d_ary_heap<uint32_t>;
-template class d_ary_heap<uint64_t>;
+template class DAryHeap<uint8_t>;
+template class DAryHeap<uint16_t>;
+template class DAryHeap<uint32_t>;
+template class DAryHeap<uint64_t>;
+
+template class DAryAddressableIntHeap<uint8_t>;
+template class DAryAddressableIntHeap<uint16_t>;
+template class DAryAddressableIntHeap<uint32_t>;
+template class DAryAddressableIntHeap<uint64_t>;
 
 } // namespace tlx
 
@@ -69,11 +75,37 @@ void fill_heap_and_set(DAryHeap& heap, Set& set, KeysVector& keys) {
     }
 }
 
-//! Basic APIs: push(), top(), pop(), and remove().
+//! Basic APIs: push(), top(), and pop().
 template <typename KeyType, unsigned Arity = 2,
           class Compare = std::less<KeyType> >
 void d_ary_heap_test(size_t size, uint32_t r_seed = 42) {
-    tlx::d_ary_heap<KeyType, Arity, Compare> x;
+    tlx::DAryHeap<KeyType, Arity, Compare> x;
+    die_unequal(x.size(), 0u);
+    die_if(!x.empty());
+
+    // To check the correctness of the heap.
+    std::set<KeyType, Compare> s;
+
+    auto keys = get_shuffled_vector<KeyType>(size, r_seed);
+    fill_heap_and_set(x, s, keys);
+
+    // Test pop().
+    while (!x.empty()) {
+        x.pop();
+        s.erase(s.begin());
+        check_heap(x, s);
+    }
+
+    std::mt19937 gen(r_seed);
+    std::shuffle(keys.begin(), keys.end(), gen);
+    fill_heap_and_set(x, s, keys);
+}
+
+//! Basic APIs: push(), top(), pop(), and remove().
+template <typename KeyType, unsigned Arity = 2,
+          class Compare = std::less<KeyType> >
+void d_ary_addressable_int_heap_test(size_t size, uint32_t r_seed = 42) {
+    tlx::DAryAddressableIntHeap<KeyType, Arity, Compare> x;
     die_unequal(x.size(), 0u);
     die_if(!x.empty());
 
@@ -106,7 +138,7 @@ void d_ary_heap_test(size_t size, uint32_t r_seed = 42) {
 template <typename KeyType, unsigned Arity = 2>
 void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
                             uint32_t r_seed = 42) {
-    tlx::d_ary_heap<KeyType, Arity, Comparator<KeyType> > x{
+    tlx::DAryAddressableIntHeap<KeyType, Arity, Comparator<KeyType> > x{
         Comparator<KeyType>(prio) };
     die_unequal(x.size(), 0u);
     die_if(!x.empty());
@@ -155,6 +187,9 @@ int main() {
     d_ary_heap_test<uint8_t, 1>(size, r_seed);
     d_ary_heap_test<uint8_t, 2>(size, r_seed);
     d_ary_heap_test<uint8_t, 3>(size, r_seed);
+    d_ary_heap_test<uint8_t, 4>(size, r_seed);
+    d_ary_heap_test<uint8_t, 6>(size, r_seed);
+    d_ary_heap_test<uint8_t, 13>(size, r_seed);
     d_ary_heap_test<uint16_t, 1>(size, r_seed);
     d_ary_heap_test<uint16_t, 2>(size, r_seed);
     d_ary_heap_test<uint16_t, 3>(size, r_seed);
@@ -171,6 +206,30 @@ int main() {
     d_ary_heap_test<uint16_t, 2, std::greater<uint16_t> >(size, r_seed);
     d_ary_heap_test<uint32_t, 2, std::greater<uint32_t> >(size, r_seed);
     d_ary_heap_test<uint64_t, 2, std::greater<uint64_t> >(size, r_seed);
+
+    // Basic heap APIs with default compare functions.
+    d_ary_addressable_int_heap_test<uint8_t, 1>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint8_t, 2>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint8_t, 3>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint8_t, 4>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint8_t, 6>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint8_t, 13>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint16_t, 1>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint16_t, 2>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint16_t, 3>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint32_t, 1>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint32_t, 2>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint32_t, 3>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint32_t, 2>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint32_t, 3>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint64_t, 1>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint64_t, 2>(size, r_seed);
+    d_ary_addressable_int_heap_test<uint64_t, 3>(size, r_seed);
+
+    d_ary_addressable_int_heap_test<uint8_t, 2, std::greater<uint8_t> >(size, r_seed);
+    d_ary_addressable_int_heap_test<uint16_t, 2, std::greater<uint16_t> >(size, r_seed);
+    d_ary_addressable_int_heap_test<uint32_t, 2, std::greater<uint32_t> >(size, r_seed);
+    d_ary_addressable_int_heap_test<uint64_t, 2, std::greater<uint64_t> >(size, r_seed);
 
     // Custom compare function.
     std::vector<double> prio(size);

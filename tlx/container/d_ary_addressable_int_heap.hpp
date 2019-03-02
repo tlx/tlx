@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/container/d_ary_heap.hpp
+ * tlx/container/d_ary_addressable_int_heap.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,8 +8,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_CONTAINER_D_ARY_HEAP_HEADER
-#define TLX_CONTAINER_D_ARY_HEAP_HEADER
+#ifndef TLX_CONTAINER_D_ARY_ADDRESSABLE_INT_HEAP_HEADER
+#define TLX_CONTAINER_D_ARY_ADDRESSABLE_INT_HEAP_HEADER
 
 #include <cassert>
 #include <cstddef>
@@ -32,8 +32,11 @@ namespace tlx {
  */
 template <typename KeyType, unsigned Arity = 2,
           class Compare = std::less<KeyType> >
-class DAryHeap
+class DAryAddressableIntHeap
 {
+    static_assert(std::numeric_limits<KeyType>::is_integer &&
+                  !std::numeric_limits<KeyType>::is_signed,
+                  "KeyType must be an unsigned integer type.");
     static_assert(Arity, "Arity must be greater than zero.");
 
 public:
@@ -46,6 +49,9 @@ protected:
     //! Cells in the heap.
     std::vector<key_type> heap_;
 
+    //! Positions of the keys in the heap vector.
+    std::vector<key_type> handles_;
+
     //! Compare function.
     compare_type cmp_;
 
@@ -56,24 +62,28 @@ protected:
 
 public:
     //! Allocates an empty heap.
-    explicit DAryHeap(compare_type cmp = compare_type())
-        : heap_(0), cmp_(cmp) { }
+    explicit DAryAddressableIntHeap(compare_type cmp = compare_type())
+        : heap_(0), handles_(0), cmp_(cmp) { }
 
     //! Allocates space for \c new_size items.
     void reserve(size_t new_size) {
-        heap_.reserve(new_size);
+        if (handles_.size() < new_size) {
+            handles_.resize(new_size, not_present());
+            heap_.reserve(new_size);
+        }
     }
 
     //! Copy.
-    DAryHeap(const DAryHeap&) = default;
-    DAryHeap& operator = (const DAryHeap&) = default;
+    DAryAddressableIntHeap(const DAryAddressableIntHeap&) = default;
+    DAryAddressableIntHeap& operator = (const DAryAddressableIntHeap&) = default;
 
     //! Move.
-    DAryHeap(DAryHeap&&) = default;
-    DAryHeap& operator = (DAryHeap&&) = default;
+    DAryAddressableIntHeap(DAryAddressableIntHeap&&) = default;
+    DAryAddressableIntHeap& operator = (DAryAddressableIntHeap&&) = default;
 
     //! Empties the heap.
     void clear() {
+        std::fill(handles_.begin(), handles_.end(), not_present());
         heap_.clear();
     }
 
@@ -90,10 +100,36 @@ public:
     void push(key_type new_key) {
         // Avoid to add the key that we use to mark non present keys.
         assert(new_key != not_present());
+        if (new_key >= handles_.size()) {
+            handles_.resize(new_key + 1, not_present());
+        }
+        else {
+            assert(handles_[new_key] == not_present());
+        }
 
         // Insert the new item at the end of the heap.
+        handles_[new_key] = static_cast<key_type>(heap_.size());
         heap_.push_back(std::move(new_key));
         sift_up(heap_.size() - 1);
+    }
+
+    //! Removes the item with key \c key.
+    void remove(key_type key) {
+        assert(contains(key));
+        key_type h = handles_[key];
+        std::swap(heap_[h], heap_.back());
+        handles_[heap_[h]] = h;
+        handles_[heap_.back()] = not_present();
+        heap_.pop_back();
+        // If we did not remove the last item in the heap vector.
+        if (h < size()) {
+            if (h && cmp_(heap_[h], heap_[parent(h)])) {
+                sift_up(h);
+            }
+            else {
+                sift_down(h);
+            }
+        }
     }
 
     //! Returns the top item.
@@ -103,18 +139,39 @@ public:
     }
 
     //! Removes the top item.
-    void pop() {
-        assert(!empty());
-        std::swap(heap_[0], heap_.back());
-        heap_.pop_back();
-        sift_down(0);
-    }
+    void pop() { remove(heap_[0]); }
 
     //! Removes and returns the top item.
     key_type extract_top() {
         key_type top_item = top();
         pop();
         return top_item;
+    }
+
+    /*!
+     * Updates the priority queue after the priority associated to the item with
+     * key \c key has been changed; if the key \c key is not present in the
+     * priority queue, it will be added.
+     *
+     * Note: if not called after a priority is changed, the behavior of the data
+     * structure is undefined.
+     */
+    void update(key_type key) {
+        if (key >= handles_.size() || handles_[key] == not_present()) {
+            push(key);
+        }
+        else if (handles_[key] &&
+                 cmp_(heap_[handles_[key]], heap_[parent(handles_[key])])) {
+            sift_up(handles_[key]);
+        }
+        else {
+            sift_down(handles_[key]);
+        }
+    }
+
+    //! Returns true if the key \c key is in the heap, false otherwise.
+    bool contains(key_type key) const {
+        return key < handles_.size() ? handles_[key] != not_present() : false;
     }
 
     //! For debugging: runs a BFS from the root node and verifies that the heap
@@ -157,6 +214,7 @@ private:
                 break;
             }
             std::swap(heap_[p], heap_[k]);
+            std::swap(handles_[heap_[p]], handles_[heap_[k]]);
             k = p;
         }
     }
@@ -186,6 +244,7 @@ private:
 
             // Swap current item with the child with minimum priority.
             std::swap(heap_[k], heap_[c]);
+            std::swap(handles_[heap_[k]], handles_[heap_[c]]);
             k = c;
         }
     }
@@ -193,6 +252,6 @@ private:
 
 } // namespace tlx
 
-#endif // !TLX_CONTAINER_D_ARY_HEAP_HEADER
+#endif // !TLX_CONTAINER_D_ARY_ADDRESSABLE_INT_HEAP_HEADER
 
 /******************************************************************************/

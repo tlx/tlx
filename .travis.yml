@@ -130,7 +130,7 @@ matrix:
       os: linux
       addons: *gcc7
 
-    # gcc 8.x, Debug & Release, Debug with UndefinedBehaviorSanitizer
+    # gcc 8.x, Debug & Release, Release with STL bounds checking
     - env: CMAKE_CC="gcc-8" CMAKE_CXX="g++-8" BUILD_TYPE="Debug" COMPILER_FLAGS=""
       os: linux
       addons: &gcc8
@@ -145,7 +145,7 @@ matrix:
             - g++-8
             - doxygen
 
-    - env: CMAKE_CC="gcc-8" CMAKE_CXX="g++-8" BUILD_TYPE="Release" COMPILER_FLAGS=""
+    - env: CMAKE_CC="gcc-8" CMAKE_CXX="g++-8" BUILD_TYPE="Release" COMPILER_FLAGS="-D_GLIBCXX_DEBUG"
       os: linux
       addons: *gcc8
 

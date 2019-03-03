@@ -106,7 +106,8 @@ public:
         assert(!empty());
         std::swap(heap_[0], heap_.back());
         heap_.pop_back();
-        sift_down(0);
+        if (!heap_.empty())
+            sift_down(0);
     }
 
     //! Removes and returns the top item.

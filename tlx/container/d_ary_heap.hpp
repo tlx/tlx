@@ -4,6 +4,7 @@
  * Part of tlx - http://panthema.net/tlx
  *
  * Copyright (C) 2019 Eugenio Angriman <angrimae@hu-berlin.de>
+ * Copyright (C) 2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -20,18 +21,19 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_container
+//! \{
+
 /*!
- * This class implements an addressable integer priority queue, precisely a
- * d-ary heap.
+ * This class implements a d-ary comparison-based heap usable as a priority
+ * queue. Higher arity yields better cache efficiency.
  *
- * Keys are unique and need to be unsigned integers.
- *
- * \tparam KeyType    Has to be an unsigned integer type.
+ * \tparam KeyType    Key type.
  * \tparam Arity      A positive integer.
- * \tparam Compare    Function object.
+ * \tparam Compare    Function object to order keys.
  */
 template <typename KeyType, unsigned Arity = 2,
-          class Compare = std::less<KeyType> >
+          typename Compare = std::less<KeyType> >
 class DAryHeap
 {
     static_assert(Arity, "Arity must be greater than zero.");
@@ -191,6 +193,13 @@ private:
         heap_[k] = std::move(value);
     }
 };
+
+//! make template alias due to similarity with std::priority_queue
+template <typename KeyType, unsigned Arity = 2,
+          typename Compare = std::less<KeyType> >
+using d_ary_heap = DAryHeap<KeyType, Arity, Compare>;
+
+//! \}
 
 } // namespace tlx
 

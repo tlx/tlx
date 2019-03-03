@@ -4,6 +4,7 @@
  * Part of tlx - http://panthema.net/tlx
  *
  * Copyright (C) 2019 Eugenio Angriman <angrimae@hu-berlin.de>
+ * Copyright (C) 2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -20,11 +21,16 @@
 
 namespace tlx {
 
+//! \addtogroup tlx_container
+//! \{
+
 /*!
  * This class implements an addressable integer priority queue, precisely a
  * d-ary heap.
  *
- * Keys are unique and need to be unsigned integers.
+ * Keys must be unique unsigned integers. The addressable heap holds an array
+ * indexed by the keys, hence it requires a multiple of the highest integer key
+ * as space!
  *
  * \tparam KeyType    Has to be an unsigned integer type.
  * \tparam Arity      A positive integer.
@@ -197,7 +203,7 @@ public:
         if (empty()) {
             return true;
         }
-        std::vector<uint8_t> mark(handles_.size());
+        std::vector<unsigned char> mark(handles_.size());
         std::queue<size_t> q;
         // Explore from the root.
         q.push(0);
@@ -282,6 +288,14 @@ private:
         heap_[k] = std::move(value);
     }
 };
+
+//! make template alias due to similarity with std::priority_queue
+template <typename KeyType, unsigned Arity = 2,
+          typename Compare = std::less<KeyType> >
+using d_ary_addressable_int_heap =
+    DAryAddressableIntHeap<KeyType, Arity, Compare>;
+
+//! \}
 
 } // namespace tlx
 

@@ -22,7 +22,7 @@ tlx is a collection of C++ helpers and extensions universally needed, but not fo
 - logger.hpp : `LOG`, `LOG1`, `LOGC`, `sLOG`.
 - Miscellaneous: `unused()`, `vector_free()`.
 - Algorithms : `merge_combine()`, `exclusive_scan()`, `multiway_merge()`, `parallel_multiway_merge()`, `multisequence_selection()`, `multisequence_partition()`.
-- Data Structures : `RingBuffer`, `SimpleVector`, B+ Trees, Loser Trees, `RadixHeap`
+- Data Structures : `RingBuffer`, `SimpleVector`, B+ Trees, Loser Trees, `RadixHeap`, `(Addressable) D-Ary Heap`
 - Defines and Macros : `TLX_LIKELY`, `TLX_UNLIKELY`, `TLX_ATTRIBUTE_PACKED`, `TLX_ATTRIBUTE_ALWAYS_INLINE`, `TLX_ATTRIBUTE_FORMAT_PRINTF`, `TLX_DEPRECATED_FUNC_DEF`.
 - Message Digests : `MD5`, `md5_hex()`, `SHA1`, `sha1_hex()`, `SHA256`, `sha256_hex()`, `SHA512`, `sha512_hex()`.
 - Math Functions : `integer_log2_floor()`, `is_power_of_two()`, `round_up_to_power_of_two()`, `round_down_to_power_of_two()`, `ffs()`, `clz()`, `abs_diff()`, `bswap32()`, `bswap64()`, `popcount()`, `Aggregate`, `PolynomialRegression`.

@@ -42,6 +42,7 @@ print "#include <$_>\n" foreach sort glob("tlx/string/"."*.hpp");
 #include <tlx/string/split.hpp>
 #include <tlx/string/split_quoted.hpp>
 #include <tlx/string/split_words.hpp>
+#include <tlx/string/ssprintf.hpp>
 #include <tlx/string/starts_with.hpp>
 #include <tlx/string/to_lower.hpp>
 #include <tlx/string/to_upper.hpp>

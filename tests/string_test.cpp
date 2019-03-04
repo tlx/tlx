@@ -512,6 +512,17 @@ static void test_split_words() {
     die_unequal(sv[4], "f  ");
 }
 
+static void test_ssprintf() {
+    die_unequal(
+        tlx::ssprintf("abc %d %s test", 42, "hello"),
+        "abc 42 hello test");
+    die_unequal(
+        tlx::ssnprintf(5, "abc %d %s test", 42, "hello"),
+        "abc 4");
+    die_unequal(
+        tlx::ssnprintf(5, "%d", 42), "42");
+}
+
 static void test_replace() {
     // copy variants
     die_unequal(
@@ -771,6 +782,7 @@ int main() {
     test_split();
     test_split_join_quoted();
     test_split_words();
+    test_ssprintf();
     test_starts_with_ends_with();
     test_toupper_tolower();
     test_trim();

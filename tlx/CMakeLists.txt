@@ -43,6 +43,7 @@ set(LIBTLX_SOURCES
   string/split.cpp
   string/split_quoted.cpp
   string/split_words.cpp
+  string/ssprintf.cpp
   string/starts_with.cpp
   string/to_lower.cpp
   string/to_upper.cpp

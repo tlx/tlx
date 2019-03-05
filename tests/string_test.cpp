@@ -14,6 +14,7 @@
 #include <tlx/die.hpp>
 #include <tlx/port/setenv.hpp>
 #include <tlx/string.hpp>
+#include <tlx/string/ssprintf_generic.hpp>
 
 //! Returns an initialized unsigned char[] array inside an std::string
 #define ARRAY_AS_STRING(array) \
@@ -521,6 +522,16 @@ static void test_ssprintf() {
         "abc 4");
     die_unequal(
         tlx::ssnprintf(5, "%d", 42), "42");
+
+    // "generic" version
+    die_unequal(
+        tlx::ssprintf_generic<std::string>("abc %d %s test", 42, "hello"),
+        "abc 42 hello test");
+    die_unequal(
+        tlx::ssnprintf_generic<std::string>(5, "abc %d %s test", 42, "hello"),
+        "abc 4");
+    die_unequal(
+        tlx::ssnprintf_generic<std::string>(5, "%d", 42), "42");
 }
 
 static void test_replace() {

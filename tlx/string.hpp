@@ -15,7 +15,9 @@
 //! Simple string manipulations
 
 /*[[[perl
-print "#include <$_>\n" foreach sort glob("tlx/string/"."*.hpp");
+my %exclude = ("tlx/string/ssprintf_generic.hpp" => 1);
+print "#include <$_>\n"
+    foreach grep {!$exclude{$_}} sort glob("tlx/string/"."*.hpp");
 ]]]*/
 #include <tlx/string/base64.hpp>
 #include <tlx/string/compare_icase.hpp>

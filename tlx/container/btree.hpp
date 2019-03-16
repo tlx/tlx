@@ -115,12 +115,12 @@ struct btree_default_traits {
  * This class is specialized into btree_set, btree_multiset, btree_map and
  * btree_multimap using default template parameters and facade functions.
  */
-template <typename Key_, typename Value_,
-          typename KeyOfValue_,
-          typename Compare_ = std::less<Key_>,
-          typename Traits_ = btree_default_traits<Key_, Value_>,
-          bool Duplicates_ = false,
-          typename Alloc_ = std::allocator<Value_> >
+template <typename Key, typename Value,
+          typename KeyOfValue,
+          typename Compare = std::less<Key>,
+          typename Traits = btree_default_traits<Key, Value>,
+          bool Duplicates = false,
+          typename Allocator = std::allocator<Value> >
 class BTree
 {
 public:
@@ -129,28 +129,28 @@ public:
 
     //! First template parameter: The key type of the B+ tree. This is stored in
     //! inner nodes.
-    typedef Key_ key_type;
+    typedef Key key_type;
 
     //! Second template parameter: Composition pair of key and data types, or
     //! just the key for set containers. This data type is stored in the leaves.
-    typedef Value_ value_type;
+    typedef Value value_type;
 
     //! Third template: key extractor class to pull key_type from value_type.
-    typedef KeyOfValue_ key_of_value;
+    typedef KeyOfValue key_of_value;
 
     //! Fourth template parameter: key_type comparison function object
-    typedef Compare_ key_compare;
+    typedef Compare key_compare;
 
     //! Fifth template parameter: Traits object used to define more parameters
     //! of the B+ tree
-    typedef Traits_ traits;
+    typedef Traits traits;
 
     //! Sixth template parameter: Allow duplicate keys in the B+ tree. Used to
     //! implement multiset and multimap.
-    static const bool allow_duplicates = Duplicates_;
+    static const bool allow_duplicates = Duplicates;
 
     //! Seventh template parameter: STL allocator for tree nodes
-    typedef Alloc_ allocator_type;
+    typedef Allocator allocator_type;
 
     //! \}
 
@@ -234,7 +234,7 @@ private:
     //! data items.
     struct InnerNode : public node {
         //! Define an related allocator for the InnerNode structs.
-        typedef typename Alloc_::template rebind<InnerNode>::other alloc_type;
+        typedef typename Allocator::template rebind<InnerNode>::other alloc_type;
 
         //! Keys of children or data pointers
         key_type slotkey[inner_slotmax]; // NOLINT
@@ -272,7 +272,7 @@ private:
     //! data items. Key and data slots are kept together in value_type.
     struct LeafNode : public node {
         //! Define an related allocator for the LeafNode structs.
-        typedef typename Alloc_::template rebind<LeafNode>::other alloc_type;
+        typedef typename Allocator::template rebind<LeafNode>::other alloc_type;
 
         //! Double linked list pointers to traverse the leaves
         LeafNode* prev_leaf;
@@ -1889,6 +1889,9 @@ private:
 
         if (newchild)
         {
+            // this only occurs if insert_descend() could not insert the key
+            // into the root node, this mean the root is full and a new root
+            // needs to be created.
             InnerNode* newroot = allocate_inner(root_->level + 1);
             newroot->slotkey[0] = newkey;
 

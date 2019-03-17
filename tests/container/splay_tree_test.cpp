@@ -12,6 +12,7 @@
 
 #include <tlx/die.hpp>
 
+#include <algorithm>
 #include <deque>
 #include <iterator>
 #include <random>

@@ -17,6 +17,7 @@
 
 #include <set>
 #include <tlx/container/btree_multiset.hpp>
+#include <tlx/container/splay_tree.hpp>
 #include <unordered_set>
 
 #include <map>
@@ -135,6 +136,9 @@ template <template <typename SetType> class TestClass>
 struct TestFactory_Set {
     //! Test the multiset red-black tree from STL
     typedef TestClass<std::multiset<size_t> > StdSet;
+
+    //! Test the multiset red-black tree from STL
+    typedef TestClass<tlx::splay_multiset<size_t> > SplaySet;
 
     //! Test the unordered_set from STL TR1
     typedef TestClass<std::unordered_multiset<size_t> > UnorderedSet;
@@ -340,6 +344,7 @@ void TestFactory_Set<TestClass>::call_testrunner(size_t items) {
 
     testrunner_loop<StdSet>(items, "std::multiset");
     testrunner_loop<UnorderedSet>(items, "std::unordered_multiset");
+    testrunner_loop<SplaySet>(items, "tlx::splay_multiset");
 
 #if 0
     btree_range<BtreeSet, min_nodeslots, max_nodeslots>()(

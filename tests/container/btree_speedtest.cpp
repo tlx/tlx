@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+#include <random>
 #include <string>
 
 #include <set>
@@ -32,7 +33,8 @@ const size_t min_items = 125;
 //! maximum number of items to insert
 const size_t max_items = 1024000 * 64;
 
-const int randseed = 34234235;
+//! random seed
+const int seed = 34234235;
 
 //! Time is measured using chrono::steady_clock
 static double timestamp() {
@@ -41,13 +43,13 @@ static double timestamp() {
 }
 
 //! Traits used for the speed tests, BTREE_DEBUG is not defined.
-template <int InnerSlots_, int LeafSlots_>
+template <int InnerSlots, int LeafSlots>
 struct btree_traits_speed : tlx::btree_default_traits<size_t, size_t> {
     static const bool self_verify = false;
     static const bool debug = false;
 
-    static const int leaf_slots = InnerSlots_;
-    static const int inner_slots = LeafSlots_;
+    static const int leaf_slots = InnerSlots;
+    static const int inner_slots = LeafSlots;
 
     static const size_t binsearch_threshold = 256 * 1024 * 1024; // never
 };
@@ -66,9 +68,9 @@ public:
     void run(size_t items) {
         SetType set;
 
-        srand(randseed);
+        std::default_random_engine rng(seed);
         for (size_t i = 0; i < items; i++)
-            set.insert(rand());
+            set.insert(rng());
 
         die_unless(set.size() == items);
     }
@@ -86,19 +88,19 @@ public:
     void run(size_t items) {
         SetType set;
 
-        srand(randseed);
+        std::default_random_engine rng(seed);
         for (size_t i = 0; i < items; i++)
-            set.insert(rand());
+            set.insert(rng());
 
         die_unless(set.size() == items);
 
-        srand(randseed);
+        rng.seed(seed);
         for (size_t i = 0; i < items; i++)
-            set.find(rand());
+            set.find(rng());
 
-        srand(randseed);
+        rng.seed(seed);
         for (size_t i = 0; i < items; i++)
-            set.erase(set.find(rand()));
+            set.erase(set.find(rng()));
 
         die_unless(set.empty());
     }
@@ -114,17 +116,17 @@ public:
     static const char * op() { return "set_find"; }
 
     Test_Set_Find(size_t items) {
-        srand(randseed);
+        std::default_random_engine rng(seed);
         for (size_t i = 0; i < items; i++)
-            set.insert(rand());
+            set.insert(rng());
 
         die_unless(set.size() == items);
     }
 
     void run(size_t items) {
-        srand(randseed);
+        std::default_random_engine rng(seed);
         for (size_t i = 0; i < items; i++)
-            set.find(rand());
+            set.find(rng());
     }
 };
 
@@ -167,9 +169,9 @@ public:
     void run(size_t items) {
         MapType map;
 
-        srand(randseed);
+        std::default_random_engine rng(seed);
         for (size_t i = 0; i < items; i++) {
-            size_t r = rand();
+            size_t r = rng();
             map.insert(std::make_pair(r, r));
         }
 
@@ -189,21 +191,21 @@ public:
     void run(size_t items) {
         MapType map;
 
-        srand(randseed);
+        std::default_random_engine rng(seed);
         for (size_t i = 0; i < items; i++) {
-            size_t r = rand();
+            size_t r = rng();
             map.insert(std::make_pair(r, r));
         }
 
         die_unless(map.size() == items);
 
-        srand(randseed);
+        rng.seed(seed);
         for (size_t i = 0; i < items; i++)
-            map.find(rand());
+            map.find(rng());
 
-        srand(randseed);
+        rng.seed(seed);
         for (size_t i = 0; i < items; i++)
-            map.erase(map.find(rand()));
+            map.erase(map.find(rng()));
 
         die_unless(map.empty());
     }
@@ -219,9 +221,9 @@ public:
     static const char * op() { return "map_find"; }
 
     Test_Map_Find(size_t items) {
-        srand(randseed);
+        std::default_random_engine rng(seed);
         for (size_t i = 0; i < items; i++) {
-            size_t r = rand();
+            size_t r = rng();
             map.insert(std::make_pair(r, r));
         }
 
@@ -229,9 +231,9 @@ public:
     }
 
     void run(size_t items) {
-        srand(randseed);
+        std::default_random_engine rng(seed);
         for (size_t i = 0; i < items; i++)
-            map.find(rand());
+            map.find(rng());
     }
 };
 
@@ -308,6 +310,7 @@ void testrunner_loop(size_t items, const std::string& container_name) {
               << " time_total=" << (ts2 - ts1)
               << " time="
               << std::fixed << std::setprecision(10) << ((ts2 - ts1) / repeat)
+              << " items_per_sec=" << items / (ts2 - ts1)
               << std::endl;
 }
 

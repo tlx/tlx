@@ -32,13 +32,13 @@ namespace tlx {
 #define die_if(X) \
     tlx_die_if(X)
 
-//! Check condition X and die miserably if false. Same as die_unless()
-//! except user additionally pass message.
+//! Check condition X and die miserably if false. Same as die_unless() except
+//! the user additionally passes a message.
 #define die_verbose_unless(X, msg) \
     tlx_die_verbose_unless(X, msg)
 
-//! Check condition X and die miserably if false. Same as die_if()
-//! except user additionally pass message.
+//! Check condition X and die miserably if false. Same as die_if() except the
+//! the user additionally passes a message.
 #define die_verbose_if(X, msg) \
     tlx_die_verbose_if(X, msg)
 
@@ -55,6 +55,12 @@ namespace tlx {
 #define assert_equal(X, Y) \
     tlx_assert_equal(X, Y)
 
+//! Check that X == Y or die miserably, but output the values of X and Y for
+//! better debugging. Same as die_unequal() except the user additionally passes
+//! a message.
+#define die_verbose_unequal(X, Y, msg) \
+    tlx_die_verbose_unequal(X, Y, msg)
+
 /******************************************************************************/
 // die_unequal_eps()
 
@@ -63,10 +69,22 @@ namespace tlx {
 #define die_unequal_eps(X, Y, eps) \
     tlx_die_unequal_eps(X, Y, eps)
 
+//! Check that ABS(X - Y) <= eps or die miserably, but output the values of X
+//! and Y for better debugging. Same as die_unequal_eps() except the user
+//! additionally passes a message.
+#define die_verbose_unequal_eps(X, Y, eps, msg) \
+    tlx_die_verbose_unequal_eps(X, Y, eps, msg)
+
 //! Check that ABS(X - Y) <= 0.000001 or die miserably, but output the values of
 //! X and Y for better debugging.
 #define die_unequal_eps6(X, Y) \
     tlx_die_unequal_eps6(X, Y)
+
+//! Check that ABS(X - Y) <= 0.000001 or die miserably, but output the values of
+//! X and Y for better debugging. Same as die_unequal_eps6() except the user
+//! additionally passes a message.
+#define die_verbose_unequal_eps6(X, Y, msg) \
+    tlx_die_verbose_unequal_eps6(X, Y, msg)
 
 /******************************************************************************/
 // die_equal()
@@ -80,6 +98,12 @@ namespace tlx {
 //! debugging. Only active if NDEBUG is not defined.
 #define assert_unequal(X, Y) \
     tlx_assert_unequal(X, Y)
+
+//! Die miserably if X == Y, but first output the values of X and Y for better
+//! debugging. Same as die_equal() except the user additionally passes a
+//! message.
+#define die_verbose_equal(X, Y, msg) \
+    tlx_die_verbose_equal(X, Y, msg)
 
 /******************************************************************************/
 // die_unless_throws()

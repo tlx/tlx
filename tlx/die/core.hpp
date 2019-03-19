@@ -80,23 +80,23 @@ bool set_die_with_exception(bool b);
     } while (false)
 
 //! Check condition X and die miserably if false. Same as tlx_die_unless()
-//! except user additionally pass message.
-#define tlx_die_verbose_unless(X, msg)                                  \
-    do {                                                                \
-        if (!(X)) {                                                     \
-            tlx_die_with_sstream(                                       \
-                "DIE: Assertion \"" #X "\" failed!\n " << msg << '\n'); \
-        }                                                               \
+//! except the user additionally passes a message.
+#define tlx_die_verbose_unless(X, msg)                                 \
+    do {                                                               \
+        if (!(X)) {                                                    \
+            tlx_die_with_sstream(                                      \
+                "DIE: Assertion \"" #X "\" failed!\n" << msg << '\n'); \
+        }                                                              \
     } while (false)
 
 //! Check condition X and die miserably if false. Same as tlx_die_if()
-//! except user additionally pass message.
-#define tlx_die_verbose_if(X, msg)                                         \
-    do {                                                                   \
-        if ((X)) {                                                         \
-            tlx_die_with_sstream(                                          \
-                "DIE: Assertion \"" #X "\" succeeded!\n " << msg << '\n'); \
-        }                                                                  \
+//! except the user additionally passes a message.
+#define tlx_die_verbose_if(X, msg)                                        \
+    do {                                                                  \
+        if ((X)) {                                                        \
+            tlx_die_with_sstream(                                         \
+                "DIE: Assertion \"" #X "\" succeeded!\n" << msg << '\n'); \
+        }                                                                 \
     } while (false)
 
 /******************************************************************************/
@@ -145,6 +145,19 @@ inline bool die_equal_compare(double a, double b) {
 #define tlx_assert_equal(X, Y)  die_unequal(X, Y)
 #endif
 
+//! Check that X == Y or die miserably, but output the values of X and Y for
+//! better debugging. Same as tlx_die_unequal() except the user additionally
+//! pass a message.
+#define tlx_die_verbose_unequal(X, Y, msg)                                     \
+    do {                                                                       \
+        auto x__ = (X);                                     /* NOLINT */       \
+        auto y__ = (Y);                                     /* NOLINT */       \
+        if (!::tlx::die_equal_compare(x__, y__))                               \
+            tlx_die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "            \
+                                 "\"" << x__ << "\" != \"" << y__ << "\"\n" << \
+                                 msg << '\n');                                 \
+    } while (false)
+
 /******************************************************************************/
 // die_unequal_eps()
 
@@ -173,10 +186,30 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps) {
                     << "\"" << x__ << "\" != \"" << y__ << "\"");        \
     } while (false)
 
+//! Check that ABS(X - Y) <= eps or die miserably, but output the values of X
+//! and Y for better debugging. Same as tlx_die_unequal_eps() except the user
+//! additionally passes a message.
+#define tlx_die_verbose_unequal_eps(X, Y, eps, msg)                      \
+    do {                                                                 \
+        auto x__ = (X);                                     /* NOLINT */ \
+        auto y__ = (Y);                                     /* NOLINT */ \
+        if (!::tlx::die_equal_eps_compare(x__, y__, eps))                \
+            tlx_die("DIE-UNEQUAL-EPS: " #X " != " #Y " : "               \
+                    << std::setprecision(18)                             \
+                    << "\"" << x__ << "\" != \"" << y__ << "\"\n" <<     \
+                    msg << '\n');                                        \
+    } while (false)
+
 //! Check that ABS(X - Y) <= 0.000001 or die miserably, but output the values of
 //! X and Y for better debugging.
 #define tlx_die_unequal_eps6(X, Y) \
     die_unequal_eps(X, Y, 1e-6)
+
+//! Check that ABS(X - Y) <= 0.000001 or die miserably, but output the values of
+//! X and Y for better debugging. Same as tlx_die_unequal_eps6() except the user
+//! additionally passes a message.
+#define tlx_die_verbose_unequal_eps6(X, Y, msg) \
+    die_verbose_unequal_eps(X, Y, 1e-6, msg)
 
 /******************************************************************************/
 // die_equal()
@@ -199,6 +232,19 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps) {
 #else
 #define tlx_assert_unequal(X, Y)  die_equal(X, Y)
 #endif
+
+//! Die miserably if X == Y, but first output the values of X and Y for better
+//! debugging. Same as tlx_die_equal() except the user additionally passes a
+//! message.
+#define tlx_die_verbose_equal(X, Y, msg)                                       \
+    do {                                                                       \
+        auto x__ = (X);                                     /* NOLINT */       \
+        auto y__ = (Y);                                     /* NOLINT */       \
+        if (::tlx::die_equal_compare(x__, y__))                                \
+            tlx_die_with_sstream("DIE-EQUAL: " #X " == " #Y " : "              \
+                                 "\"" << x__ << "\" == \"" << y__ << "\"\n" << \
+                                 msg << '\n');                                 \
+    } while (false)
 
 /******************************************************************************/
 // die_unless_throws()

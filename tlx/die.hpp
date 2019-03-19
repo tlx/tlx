@@ -32,6 +32,16 @@ namespace tlx {
 #define die_if(X) \
     tlx_die_if(X)
 
+//! Check condition X and die miserably if false. Same as die_unless()
+//! except user additionally pass message.
+#define die_verbose_unless(X, msg) \
+    tlx_die_verbose_unless(X, msg)
+
+//! Check condition X and die miserably if false. Same as die_if()
+//! except user additionally pass message.
+#define die_verbose_if(X, msg) \
+    tlx_die_verbose_if(X, msg)
+
 /******************************************************************************/
 // die_unequal()
 

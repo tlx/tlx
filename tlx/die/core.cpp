@@ -63,6 +63,9 @@ file/line information where it occurred.
 - `die(message)` - always terminates with given message.
 - `die_unless(condition)` - terminates if condition is false
 - `die_if(condition)` - terminates if condition is true
+- `die_verbose_unless(condition,message)` - terminates if condition is false
+- `die_verbose_if(condition,message)` - terminates if condition is true
+
 - `die_unequal(a,b)` - terminates unless a == b.
 - `die_unequal_eps6(a,b)` - terminates unless abs(a - b) < 1e-6 for approximate equality.
 - `die_equal(a,b)` - terminates if a == b.

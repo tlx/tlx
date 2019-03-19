@@ -79,6 +79,26 @@ bool set_die_with_exception(bool b);
         }                                                                    \
     } while (false)
 
+//! Check condition X and die miserably if false. Same as tlx_die_unless()
+//! except user additionally pass message.
+#define tlx_die_verbose_unless(X, msg)                                  \
+    do {                                                                \
+        if (!(X)) {                                                     \
+            tlx_die_with_sstream(                                       \
+                "DIE: Assertion \"" #X "\" failed!\n " << msg << '\n'); \
+        }                                                               \
+    } while (false)
+
+//! Check condition X and die miserably if false. Same as tlx_die_if()
+//! except user additionally pass message.
+#define tlx_die_verbose_if(X, msg)                                         \
+    do {                                                                   \
+        if ((X)) {                                                         \
+            tlx_die_with_sstream(                                          \
+                "DIE: Assertion \"" #X "\" succeeded!\n " << msg << '\n'); \
+        }                                                                  \
+    } while (false)
+
 /******************************************************************************/
 // die_unequal()
 

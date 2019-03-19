@@ -55,14 +55,24 @@ public:
         cv_.notify_all();
         return res;
     }
-    //! function decrements the semaphore and blocks if the semaphore is < delta
-    //! until another thread signals a change
-    size_t wait(size_t delta = 1) {
+    //! function decrements the semaphore by delta and blocks if the semaphore
+    //! is < (delta + slack) until another thread signals a change
+    size_t wait(size_t delta = 1, size_t slack = 0) {
         std::unique_lock<std::mutex> lock(mutex_);
-        while (value_ < delta)
+        while (value_ < delta + slack)
             cv_.wait(lock);
         value_ -= delta;
         return value_;
+    }
+    //! function decrements the semaphore by delta if (delta + slack) tokens are
+    //! available as a batch. the function will not block and returns true if
+    //! delta was acquired otherwise false.
+    bool try_acquire(size_t delta = 1, size_t slack = 0) {
+        std::unique_lock<std::mutex> lock(mutex_);
+        if (value_ < delta + slack)
+            return false;
+        value_ -= delta;
+        return true;
     }
 
     //! return the current value -- should only be used for debugging.

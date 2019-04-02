@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tlx/string/format_si_iec_units.hpp
+ * tlx/string/format_si_units.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
@@ -8,12 +8,24 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_STRING_FORMAT_SI_IEC_UNITS_HEADER
-#define TLX_STRING_FORMAT_SI_IEC_UNITS_HEADER
+#ifndef TLX_STRING_FORMAT_SI_UNITS_HEADER
+#define TLX_STRING_FORMAT_SI_UNITS_HEADER
 
-#include <tlx/string/format_iec_units.hpp>
-#include <tlx/string/format_si_units.hpp>
+#include <string>
 
-#endif // !TLX_STRING_FORMAT_SI_IEC_UNITS_HEADER
+namespace tlx {
+
+//! \addtogroup tlx_string
+//! \{
+
+//! Format a byte size using SI (K, M, G, T) suffixes (powers of ten). Returns
+//! "123 M" or similar.
+std::string format_si_units(uint64_t number, int precision = 3);
+
+//! \}
+
+} // namespace tlx
+
+#endif // !TLX_STRING_FORMAT_SI_UNITS_HEADER
 
 /******************************************************************************/

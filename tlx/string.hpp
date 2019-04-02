@@ -30,7 +30,9 @@ print "#include <$_>\n"
 #include <tlx/string/escape_uri.hpp>
 #include <tlx/string/expand_environment_variables.hpp>
 #include <tlx/string/extract_between.hpp>
+#include <tlx/string/format_iec_units.hpp>
 #include <tlx/string/format_si_iec_units.hpp>
+#include <tlx/string/format_si_units.hpp>
 #include <tlx/string/hexdump.hpp>
 #include <tlx/string/index_of.hpp>
 #include <tlx/string/join.hpp>

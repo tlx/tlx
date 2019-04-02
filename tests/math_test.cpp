@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -253,6 +253,15 @@ static void test_round_to_power_of_two() {
     }
 }
 
+static void test_round_up() {
+    for (size_t i = 0; i < 1000; ++i) {
+        for (size_t j = 1; j < 1000; ++j) {
+            die_unequal(tlx::round_up(i, j),
+                        std::ceil(static_cast<double>(i) / j) * j);
+        }
+    }
+}
+
 static void test_sgn() {
     die_unequal(tlx::sgn(42), +1);
     die_unequal(tlx::sgn(42.0), +1);
@@ -268,11 +277,12 @@ int main() {
     test_clz();
     test_ffs();
     test_integer_log2();
+    test_is_power_of_two();
     test_popcount();
     test_rol();
     test_ror();
     test_round_to_power_of_two();
-    test_is_power_of_two();
+    test_round_up();
     test_sgn();
 
     return 0;

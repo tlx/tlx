@@ -33,6 +33,7 @@ print "#include <$_>\n" foreach sort glob("tlx/math/"."*.hpp");
 #include <tlx/math/rol.hpp>
 #include <tlx/math/ror.hpp>
 #include <tlx/math/round_to_power_of_two.hpp>
+#include <tlx/math/round_up.hpp>
 #include <tlx/math/sgn.hpp>
 // [[[end]]]
 

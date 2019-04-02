@@ -1,15 +1,15 @@
 /*******************************************************************************
- * tlx/math/div_ceil.hpp
+ * tlx/math/round_up.hpp
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2016-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#ifndef TLX_MATH_DIV_CEIL_HEADER
-#define TLX_MATH_DIV_CEIL_HEADER
+#ifndef TLX_MATH_ROUND_UP_HEADER
+#define TLX_MATH_ROUND_UP_HEADER
 
 namespace tlx {
 
@@ -17,19 +17,19 @@ namespace tlx {
 //! \{
 
 /******************************************************************************/
-// div_ceil() - calculate n div k with rounding up
+// round_up() - round n up to the next multiple of k
 
-//! calculate n div k with rounding up, for n and k positive!
+//! round n up to the next multiple of k, for n and k positive!
 template <typename IntegralN, typename IntegralK>
 static inline constexpr
-auto div_ceil(const IntegralN& n, const IntegralK& k)->decltype(n + k) {
-    return (n + k - 1) / k;
+auto round_up(const IntegralN& n, const IntegralK& k)->decltype(n + k) {
+    return ((n + k - 1) / k) * k;
 }
 
 //! \}
 
 } // namespace tlx
 
-#endif // !TLX_MATH_DIV_CEIL_HEADER
+#endif // !TLX_MATH_ROUND_UP_HEADER
 
 /******************************************************************************/

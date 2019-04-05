@@ -33,6 +33,8 @@ print "#include <$_>\n"
 #include <tlx/string/format_iec_units.hpp>
 #include <tlx/string/format_si_iec_units.hpp>
 #include <tlx/string/format_si_units.hpp>
+#include <tlx/string/hash_djb2.hpp>
+#include <tlx/string/hash_sdbm.hpp>
 #include <tlx/string/hexdump.hpp>
 #include <tlx/string/index_of.hpp>
 #include <tlx/string/join.hpp>

@@ -203,6 +203,20 @@ static void test_format_si_iec_units() {
     die_unequal(tlx::format_iec_units(33 * 1024 * 1024 * 1024LLU), "33.000 Gi");
 }
 
+static void test_hash_djb2() {
+    die_unequal(
+        tlx::hash_djb2("hello hash me"), 0x2DA4090Fu);
+    die_unequal(
+        tlx::hash_djb2(std::string("hello hash me")), 0x2DA4090Fu);
+}
+
+static void test_hash_sdbm() {
+    die_unequal(
+        tlx::hash_sdbm("hello hash me"), 0x290130BCu);
+    die_unequal(
+        tlx::hash_sdbm(std::string("hello hash me")), 0x290130BCu);
+}
+
 static void test_hexdump() {
 
     // take hex data and dump it into a string, then parse back into array
@@ -785,6 +799,8 @@ int main() {
     test_expand_environment_variables();
     test_extract_between();
     test_format_si_iec_units();
+    test_hash_djb2();
+    test_hash_sdbm();
     test_hexdump();
     test_join();
     test_levenshtein();

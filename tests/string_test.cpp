@@ -589,28 +589,36 @@ static void test_replace() {
         tlx::replace_all(&str2, "a", "aaa"), "aaabcdef aaabcdef");
 }
 
+template <typename TypeA, typename TypeB>
+void test_starts_with_ends_with_template() {
+
+    die_unless(tlx::starts_with(TypeA("abcdef"), TypeB("abc")));
+    die_unless(!tlx::starts_with(TypeA("abcdef"), TypeB("def")));
+    die_unless(tlx::ends_with(TypeA("abcdef"), TypeB("def")));
+    die_unless(!tlx::ends_with(TypeA("abcdef"), TypeB("abc")));
+
+    die_unless(!tlx::starts_with(TypeA("abcdef"), TypeB("ABC")));
+
+    die_unless(tlx::starts_with_icase(TypeA("abcdef"), TypeB("ABC")));
+    die_unless(!tlx::starts_with_icase(TypeA("abcdef"), TypeB("DEF")));
+    die_unless(tlx::ends_with_icase(TypeA("abcdef"), TypeB("DEF")));
+    die_unless(!tlx::ends_with_icase(TypeA("abcdef"), TypeB("ABC")));
+
+    die_unless(tlx::starts_with(TypeA("abcdef"), TypeB("")));
+    die_unless(tlx::ends_with(TypeA("abcdef"), TypeB("")));
+
+    die_unless(!tlx::starts_with(TypeA(""), TypeB("abc")));
+    die_unless(!tlx::ends_with(TypeA(""), TypeB("abc")));
+
+    die_unless(tlx::starts_with(TypeA(""), TypeB("")));
+    die_unless(tlx::ends_with(TypeA(""), TypeB("")));
+}
+
 static void test_starts_with_ends_with() {
-
-    die_unless(tlx::starts_with("abcdef", "abc"));
-    die_unless(!tlx::starts_with("abcdef", "def"));
-    die_unless(tlx::ends_with("abcdef", "def"));
-    die_unless(!tlx::ends_with("abcdef", "abc"));
-
-    die_unless(!tlx::starts_with("abcdef", "ABC"));
-
-    die_unless(tlx::starts_with_icase("abcdef", "ABC"));
-    die_unless(!tlx::starts_with_icase("abcdef", "DEF"));
-    die_unless(tlx::ends_with_icase("abcdef", "DEF"));
-    die_unless(!tlx::ends_with_icase("abcdef", "ABC"));
-
-    die_unless(tlx::starts_with("abcdef", ""));
-    die_unless(tlx::ends_with("abcdef", ""));
-
-    die_unless(!tlx::starts_with("", "abc"));
-    die_unless(!tlx::ends_with("", "abc"));
-
-    die_unless(tlx::starts_with("", ""));
-    die_unless(tlx::ends_with("", ""));
+    test_starts_with_ends_with_template<const char*, const char*>();
+    test_starts_with_ends_with_template<const char*, std::string>();
+    test_starts_with_ends_with_template<std::string, const char*>();
+    test_starts_with_ends_with_template<std::string, std::string>();
 }
 
 static void test_toupper_tolower() {

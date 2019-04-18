@@ -96,6 +96,18 @@ static void test_base64() {
         tlx::base64_decode("FjXKA5!!RxGFAudA"), std::runtime_error);
 }
 
+static void test_bitdump() {
+    die_unequal(tlx::bitdump_le8("0123"),
+                "00110000 00110001 00110010 00110011");
+    die_unequal(tlx::bitdump_be8("0123"),
+                "00001100 10001100 01001100 11001100");
+
+    die_unequal(tlx::bitdump_le8_type(uint16_t(0x1234)),
+                "00110100 00010010");
+    die_unequal(tlx::bitdump_be8_type(uint16_t(0x1234)),
+                "00101100 01001000");
+}
+
 static void test_compare_icase() {
     die_unless(std::string("ABC") != std::string("abc"));
 
@@ -799,6 +811,7 @@ static void test_word_wrap() {
 int main() {
 
     test_base64();
+    test_bitdump();
     test_compare_icase();
     test_contains_word();
     test_erase_all();

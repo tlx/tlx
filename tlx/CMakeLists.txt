@@ -21,6 +21,7 @@ set(LIBTLX_SOURCES
   logger/core.cpp
   port/setenv.cpp
   string/base64.cpp
+  string/bitdump.cpp
   string/compare_icase.cpp
   string/contains.cpp
   string/contains_word.cpp

@@ -20,6 +20,7 @@ print "#include <$_>\n"
     foreach grep {!$exclude{$_}} sort glob("tlx/string/"."*.hpp");
 ]]]*/
 #include <tlx/string/base64.hpp>
+#include <tlx/string/bitdump.hpp>
 #include <tlx/string/compare_icase.hpp>
 #include <tlx/string/contains.hpp>
 #include <tlx/string/contains_word.hpp>

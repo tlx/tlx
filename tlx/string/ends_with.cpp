@@ -72,7 +72,6 @@ bool ends_with(const std::string& str, const std::string& match) {
 
 /******************************************************************************/
 
-
 bool ends_with_icase(const char* str, const char* match) {
     size_t str_size = 0, match_size = 0;
     while (*str != 0)

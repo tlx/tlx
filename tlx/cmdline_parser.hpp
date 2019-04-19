@@ -507,6 +507,9 @@ private:
                            const Argument* arg, std::ostream& os);
 
 public:
+    //! sort options by key (but not the positional parameters)
+    CmdlineParser& sort();
+
     //! parse command line options as specified by the options and parameters
     //! added.
     //! \return true if command line is okay and all required parameters are

@@ -78,6 +78,9 @@ struct CmdlineParser::Argument {
         if (key_ != 0) {
             s += '-', s += key_, s += ", ";
         }
+        else {
+            s += "    ";
+        }
         s += "--", s += longkey_;
         if (!keytype_.empty()) {
             s += ' ' + keytype_;
@@ -824,6 +827,14 @@ void CmdlineParser::add_opt_param_stringlist(
 }
 
 /******************************************************************************/
+
+CmdlineParser& CmdlineParser::sort() {
+    std::sort(option_list_.begin(), option_list_.end(),
+              [](const Argument* a, Argument* b) {
+                  return a->longkey_ < b->longkey_;
+              });
+    return *this;
+}
 
 void CmdlineParser::print_usage(std::ostream& os) {
     std::ios::fmtflags flags(os.flags());

@@ -187,9 +187,13 @@ public:
     virtual void append_log_line(const std::string& line) = 0;
 };
 
-//! Set new LoggerOutputHook instance to receive global log lines. Returns the
+//! set new LoggerOutputHook instance to receive global log lines. returns the
 //! old hook.
 LoggerOutputHook * set_logger_output_hook(LoggerOutputHook* hook);
+
+//! install default logger to cerr / stderr instead of stdout. returns the old
+//! hook.
+LoggerOutputHook * set_logger_to_stderr();
 
 /*----------------------------------------------------------------------------*/
 

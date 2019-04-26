@@ -107,7 +107,7 @@ public:
     void enqueue(Job&& job) {
         std::unique_lock<std::mutex> lock(mutex_);
         jobs_.emplace_back(std::move(job));
-        cv_jobs_.notify_all();
+        cv_jobs_.notify_one();
     }
 
     //! Loop until no more jobs are in the queue AND all threads are idle. When

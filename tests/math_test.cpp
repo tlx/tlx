@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <cstddef>
+#include <random>
 #include <vector>
 
 #include <tlx/die.hpp>
@@ -188,6 +189,45 @@ static void test_popcount() {
     }
 }
 
+template <unsigned D = 7>
+static void test_power_to_the_real() {
+    using T = double;
+    std::mt19937_64 prng(D);
+    std::uniform_real_distribution<T> dist(-1e2, 1e2);
+
+    for (int i = 0; i < 1000; ++i) {
+        const T x = dist(prng);
+        const auto tested = tlx::power_to_the<D>(x);
+
+        auto ref = T{ 1 };
+        for (int j = 0; j < static_cast<int>(D); ++j)
+            ref *= x;
+
+        die_unequal_eps(tested, ref, fabs(ref / 1e10));
+    }
+
+    if (D > 0)
+        test_power_to_the_real<(D > 0) ? D - 1 : 0>();
+}
+
+template <unsigned D = 7>
+static void test_power_to_the_int() {
+    using T = int64_t;
+
+    for (auto x = T{ -100 }; x < 100; ++x) {
+        const auto tested = tlx::power_to_the<D>(x);
+
+        auto ref = T{ 1 };
+        for (int j = 0; j < static_cast<int>(D); ++j)
+            ref *= x;
+
+        die_unequal(tested, ref);
+    }
+
+    if (D > 0)
+        test_power_to_the_real<(D > 0) ? D - 1 : 0>();
+}
+
 static void test_rol() {
     die_unequal(tlx::rol32_generic(0x12345678u, 1), 0x2468ACF0u);
     die_unequal(tlx::rol32(0x12345678u, 1), 0x2468ACF0u);
@@ -272,13 +312,14 @@ static void test_sgn() {
 }
 
 int main() {
-
     test_bswap();
     test_clz();
     test_ffs();
     test_integer_log2();
     test_is_power_of_two();
     test_popcount();
+    test_power_to_the_real<>();
+    test_power_to_the_int<>();
     test_rol();
     test_ror();
     test_round_to_power_of_two();

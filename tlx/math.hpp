@@ -30,6 +30,7 @@ print "#include <$_>\n" foreach sort glob("tlx/math/"."*.hpp");
 #include <tlx/math/is_power_of_two.hpp>
 #include <tlx/math/polynomial_regression.hpp>
 #include <tlx/math/popcount.hpp>
+#include <tlx/math/power_to_the.hpp>
 #include <tlx/math/rol.hpp>
 #include <tlx/math/ror.hpp>
 #include <tlx/math/round_to_power_of_two.hpp>

@@ -133,6 +133,19 @@ void d_ary_heap_test(size_t size, uint32_t r_seed = 42) {
     std::mt19937 gen(r_seed);
     std::shuffle(keys.begin(), keys.end(), gen);
     fill_heap_and_set(x, s, keys);
+
+    // Test build_heap().
+    x.clear();
+    x.build_heap(s.begin(), s.end());
+    check_heap(x, s);
+
+    tlx::DAryHeap<KeyType, Arity, Compare> y, z;
+    y.build_heap(keys);
+    check_heap(y, s);
+
+    z.build_heap(std::move(keys));
+    check_heap(z, s);
+
 }
 
 //! Basic APIs: push(), top(), pop(), and remove().
@@ -166,6 +179,19 @@ void d_ary_addressable_int_heap_test(size_t size, uint32_t r_seed = 42) {
         s.erase(s.find(key));
         check_heap(x, s);
     }
+
+    // Test build_heap().
+    fill_heap_and_set(x, s, keys);
+    x.clear();
+    x.build_heap(keys);
+    check_heap(x, s);
+
+    tlx::DAryAddressableIntHeap<KeyType, Arity, Compare> y, z;
+    y.build_heap(s.begin(), s.end());
+    check_heap(y, s);
+
+    z.build_heap(std::move(keys));
+    check_heap(z, s);
 }
 
 //! Tests update().
@@ -205,6 +231,16 @@ void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
     s.clear();
     for (auto key : keys) {
         s.insert(key);
+    }
+    check_heap(x, s);
+
+    //! Test update_all().
+    std::shuffle(prio.begin(), prio.end(), gen);
+    x.update_all();
+
+    s.clear();
+    for (auto key : keys){
+      s.insert(key);
     }
     check_heap(x, s);
 

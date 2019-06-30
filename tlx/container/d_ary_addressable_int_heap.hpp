@@ -173,7 +173,7 @@ public:
 
     //! Rebuilds the heap.
     void update_all() {
-      heapify();
+        heapify();
     }
 
     /*!
@@ -210,14 +210,14 @@ public:
     }
 
     //! Builds a heap from the vector \c keys. Items of \c keys are copied.
-    void build_heap(const std::vector<key_type> &keys) {
+    void build_heap(const std::vector<key_type>& keys) {
         heap_.resize(keys.size());
         std::copy(keys.begin(), keys.end(), heap_.begin());
         heapify();
     }
 
     //! Builds a heap from the vector \c keys. Items of \c keys are moved.
-    void build_heap(std::vector<key_type> &&keys) {
+    void build_heap(std::vector<key_type>&& keys) {
         if (!empty())
             heap_.clear();
         heap_ = std::move(keys);
@@ -317,48 +317,41 @@ private:
 
     //! Reorganize heap_ into a heap.
     void heapify() {
-        //! Initialize handles_ vector
-        auto assign_handles = [&]() {
-            handles_.resize(heap_.size());
-            for (size_t i = 0; i < heap_.size(); ++i)
-                handles_[heap_[i]] = i;
-        };
+        if (heap_.size() >= 2) {
+            // Iterate from the last internal node up to the root.
+            size_t last_internal = (heap_.size() - 2) / arity;
+            for (size_t i = last_internal + 1; i; --i) {
+                // Index of the current internal node.
+                size_t cur = i - 1;
+                key_type value = std::move(heap_[cur]);
 
-        if (heap_.size() < 2) {
-            assign_handles();
-            return;
+                do {
+                    size_t l = left(cur);
+                    // Find the minimum child of cur.
+                    size_t min_elem = l;
+                    for (size_t j = l + 1;
+                         j - l < arity && j < heap_.size(); ++j) {
+                        if (cmp_(heap_[j], heap_[min_elem]))
+                            min_elem = j;
+                    }
+
+                    // One of the children of cur is less then cur: swap and
+                    // do another iteration.
+                    if (cmp_(heap_[min_elem], value)) {
+                        heap_[cur] = std::move(heap_[min_elem]);
+                        cur = min_elem;
+                    }
+                    else
+                        break;
+                } while (cur <= last_internal);
+                heap_[cur] = std::move(value);
+            }
         }
-
-        // Iterate from the last internal node up to the root.
-        size_t last_internal = (heap_.size() - 2) / arity;
-        for (size_t i = last_internal + 1; i; --i) {
-            // Index of the current internal node.
-            size_t cur = i - 1;
-            key_type value = std::move(heap_[cur]);
-
-            do {
-                size_t l = left(cur);
-                // Find the minimum child of cur.
-                size_t min_elem = l;
-                for (size_t j = l + 1; j - l < arity && j < heap_.size(); ++j) {
-                    if (cmp_(heap_[j], heap_[min_elem]))
-                        min_elem = j;
-                }
-
-                // One of the children of cur is less then cur: swap and
-                // do another iteration.
-                if (cmp_(heap_[min_elem], value)) {
-                    heap_[cur] = std::move(heap_[min_elem]);
-                    cur = min_elem;
-                }
-                else
-                    break;
-            } while (cur <= last_internal);
-            heap_[cur] = std::move(value);
-        }
-        assign_handles();
+        // initialize handles_ vector
+        handles_.resize(heap_.size());
+        for (size_t i = 0; i < heap_.size(); ++i)
+            handles_[heap_[i]] = i;
     }
-
 };
 
 //! make template alias due to similarity with std::priority_queue

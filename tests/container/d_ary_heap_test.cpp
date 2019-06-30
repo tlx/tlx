@@ -145,7 +145,6 @@ void d_ary_heap_test(size_t size, uint32_t r_seed = 42) {
 
     z.build_heap(std::move(keys));
     check_heap(z, s);
-
 }
 
 //! Basic APIs: push(), top(), pop(), and remove().
@@ -239,8 +238,8 @@ void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
     x.update_all();
 
     s.clear();
-    for (auto key : keys){
-      s.insert(key);
+    for (auto key : keys) {
+        s.insert(key);
     }
     check_heap(x, s);
 

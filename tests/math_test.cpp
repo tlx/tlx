@@ -30,7 +30,13 @@ static void test_bswap() {
 
 static void test_clz() {
 
+    die_unequal(tlx::clz_template<uint8_t>(0), 8u);
+    die_unequal(tlx::clz_template<uint16_t>(0), 16u);
     die_unequal(tlx::clz_template<uint32_t>(0), 32u);
+    die_unequal(tlx::clz_template<uint64_t>(0), 64u);
+
+    die_unequal(tlx::clz<uint32_t>(0), 32u);
+    die_unequal(tlx::clz<uint64_t>(0), 64u);
 
     unsigned bitpos = 0;
     for (uint64_t i = 1llu << 63; i != 0; i >>= 1, ++bitpos)
@@ -54,6 +60,30 @@ static void test_clz() {
 
     die_unequal(tlx::clz_template<uint32_t>(0x0100), 31u - 8u);
     die_unequal(tlx::clz_template<uint64_t>(0x0100), 63u - 8u);
+}
+
+static void test_ctz() {
+
+    die_unequal(tlx::ctz_template<uint8_t>(0), 8u);
+    die_unequal(tlx::ctz_template<uint16_t>(0), 16u);
+    die_unequal(tlx::ctz_template<uint32_t>(0), 32u);
+    die_unequal(tlx::ctz_template<uint64_t>(0), 64u);
+
+    die_unequal(tlx::ctz<uint32_t>(0), 32u);
+    die_unequal(tlx::ctz<uint64_t>(0), 64u);
+
+    unsigned bitpos = 0;
+    for (uint64_t i = (~0llu); i != 0; i <<= 1, ++bitpos)
+    {
+        die_unequal(tlx::ctz(i), bitpos);
+        die_unequal(tlx::ctz_template(i), bitpos);
+    }
+
+    die_unequal(tlx::ctz<uint32_t>(0x0100), 8u);
+    die_unequal(tlx::ctz<uint64_t>(0x0100), 8u);
+
+    die_unequal(tlx::ctz_template<uint32_t>(0x0100), 8u);
+    die_unequal(tlx::ctz_template<uint64_t>(0x0100), 8u);
 }
 
 static void test_ffs() {
@@ -314,6 +344,7 @@ static void test_sgn() {
 int main() {
     test_bswap();
     test_clz();
+    test_ctz();
     test_ffs();
     test_integer_log2();
     test_is_power_of_two();

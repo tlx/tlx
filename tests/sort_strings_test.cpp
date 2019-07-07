@@ -5,13 +5,14 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
 #include <tlx/sort/strings/insertion_sort.hpp>
 #include <tlx/sort/strings/multikey_quicksort.hpp>
+#include <tlx/sort/strings/parallel_sample_sort.hpp>
 #include <tlx/sort/strings/radix_sort.hpp>
 
 #include <tlx/sort/strings.hpp>
@@ -43,6 +44,22 @@ void fill_random(Random& rng, const std::string& letters,
                  Iterator begin, Iterator end) {
     for (Iterator i = begin; i != end; ++i)
         *i = letters[(rng() / 100) % letters.size()];
+}
+
+template <typename Random, typename Iterator>
+void fill_random_lognormal(Random& rng, const std::string& letters,
+                           Iterator begin, Iterator end) {
+    std::lognormal_distribution<double> lognorm(0.0, 1.0);
+    for (Iterator i = begin; i != end; ++i) {
+        while (true) {
+            unsigned p = static_cast<unsigned>(
+                lognorm(rng) * letters.size() / 2.0);
+            if (p >= letters.size())
+                continue;
+            *i = letters[p];
+            break;
+        }
+    }
 }
 
 //! calculate lcp by scanning
@@ -96,7 +113,7 @@ void TestUCharString(const char* name,
         size_t slen = num_chars + (rng() >> 8) % (num_chars / 4);
 
         cstrings[i] = new uint8_t[slen + 1];
-        fill_random(rng, letters, cstrings[i], cstrings[i] + slen);
+        fill_random_lognormal(rng, letters, cstrings[i], cstrings[i] + slen);
         cstrings[i][slen] = 0;
     }
 
@@ -129,7 +146,7 @@ void TestUCharString(const char* name,
         if (0) ss.print();
 
         double ts2 = timestamp();
-        LOG1 << "sorting took " << ts2 - ts1 << " seconds";
+        LOG1 << "sorting+lcp took " << ts2 - ts1 << " seconds";
 
         // check result
         if (!ss.check_order()) {
@@ -204,7 +221,7 @@ void TestVectorStdString(const char* name,
         if (0) ss.print();
 
         double ts2 = timestamp();
-        LOG1 << "sorting took " << ts2 - ts1 << " seconds";
+        LOG1 << "sorting+lcp took " << ts2 - ts1 << " seconds";
 
         // check result
         if (!ss.check_order()) {
@@ -272,7 +289,7 @@ void TestUPtrStdString(const char* name,
         if (0) ss.print();
 
         double ts2 = timestamp();
-        LOG1 << "sorting took " << ts2 - ts1 << " seconds";
+        LOG1 << "sorting+lcp took " << ts2 - ts1 << " seconds";
 
         // check result
         if (!ss.check_order()) {
@@ -426,15 +443,15 @@ static const char* letters_alnum
     TestUCharString<UCharStringSet, func, uint32_t, func>(       \
         #func, num_strings, 16, letters_alnum, /* lcp */ false); \
     TestUCharString<UCharStringSet, func, uint32_t, func>(       \
-        #func, num_strings, 4, letters_alnum, /* lcp */ true);   \
+        #func, num_strings, 17, letters_alnum, /* lcp */ true);  \
     TestVectorStdString<StdStringSet, func, uint32_t, func>(     \
         #func, num_strings, 16, letters_alnum, /* lcp */ false); \
     TestVectorStdString<StdStringSet, func, uint32_t, func>(     \
-        #func, num_strings, 4, letters_alnum, /* lcp */ true);   \
+        #func, num_strings, 17, letters_alnum, /* lcp */ true);  \
     TestUPtrStdString<UPtrStdStringSet, func, uint32_t, func>(   \
         #func, num_strings, 16, letters_alnum, /* lcp */ false); \
     TestUPtrStdString<UPtrStdStringSet, func, uint32_t, func>(   \
-        #func, num_strings, 8, letters_alnum, /* lcp */ true);   \
+        #func, num_strings, 18, letters_alnum, /* lcp */ true);  \
     TestStringSuffixString<StringSuffixSet, func>(               \
         #func, num_strings, letters_alnum);                      \
 
@@ -442,23 +459,32 @@ void test_all(const size_t num_strings) {
     if (num_strings <= 1024) {
         run_tests(insertion_sort);
     }
-    run_tests(multikey_quicksort);
-    run_tests(radixsort_CE0);
-    run_tests(radixsort_CE2);
-    run_tests(radixsort_CE3);
-    run_tests(radixsort_CI2);
-    run_tests(radixsort_CI3);
 
-    TestFrontend(num_strings, 16, letters_alnum);
+    if (num_strings <= 1024 * 1024) {
+        run_tests(multikey_quicksort);
+        run_tests(radixsort_CE0);
+        run_tests(radixsort_CE2);
+        run_tests(radixsort_CE3);
+        run_tests(radixsort_CI2);
+        run_tests(radixsort_CI3);
+
+        TestFrontend(num_strings, 16, letters_alnum);
+    }
+
+    run_tests(parallel_sample_sort);
 }
 
 int main() {
+    // self verify calculations
+    sample_sort_detail::self_verify_tree_calculations();
+
+    // run tests
     test_all(16);
     test_all(256);
     test_all(65550);
     if (tlx_more_tests) {
         test_all(1024 * 1024);
-        // test_all(16 * 1024 * 1024);
+        test_all(16 * 1024 * 1024);
     }
 
     return 0;

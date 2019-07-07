@@ -47,6 +47,12 @@ template <typename StringSet, typename Traits>
 class StringSetBase
 {
 public:
+    //! index-based array access (readable and writable) to String objects.
+    typename Traits::String& at(size_t i) const {
+        const StringSet& ss = *static_cast<const StringSet*>(this);
+        return *(ss.begin() + i);
+    }
+
     //! \name CharIterator Comparisons
     //! \{
 
@@ -115,6 +121,60 @@ public:
         return v;
     }
 
+    //! Return up to 4 characters of string s at iterator i packed into a
+    //! uint32_t (only works correctly for 8-bit characters)
+    uint32_t get_uint32(
+        const typename Traits::String& s, typename Traits::CharIterator i) const {
+        const StringSet& ss = *static_cast<const StringSet*>(this);
+
+        uint32_t v = 0;
+        if (ss.is_end(s, i)) return v;
+        v = (uint32_t(*i) << 24);
+        ++i;
+        if (ss.is_end(s, i)) return v;
+        v |= (uint32_t(*i) << 16);
+        ++i;
+        if (ss.is_end(s, i)) return v;
+        v |= (uint32_t(*i) << 8);
+        ++i;
+        if (ss.is_end(s, i)) return v;
+        v |= (uint32_t(*i) << 0);
+        return v;
+    }
+
+    //! Return up to 8 characters of string s at iterator i packed into a
+    //! uint64_t (only works correctly for 8-bit characters)
+    uint64_t get_uint64(
+        const typename Traits::String& s, typename Traits::CharIterator i) const {
+        const StringSet& ss = *static_cast<const StringSet*>(this);
+
+        uint64_t v = 0;
+        if (ss.is_end(s, i)) return v;
+        v = (uint64_t(*i) << 56);
+        ++i;
+        if (ss.is_end(s, i)) return v;
+        v |= (uint64_t(*i) << 48);
+        ++i;
+        if (ss.is_end(s, i)) return v;
+        v |= (uint64_t(*i) << 40);
+        ++i;
+        if (ss.is_end(s, i)) return v;
+        v |= (uint64_t(*i) << 32);
+        ++i;
+        if (ss.is_end(s, i)) return v;
+        v |= (uint64_t(*i) << 24);
+        ++i;
+        if (ss.is_end(s, i)) return v;
+        v |= (uint64_t(*i) << 16);
+        ++i;
+        if (ss.is_end(s, i)) return v;
+        v |= (uint64_t(*i) << 8);
+        ++i;
+        if (ss.is_end(s, i)) return v;
+        v |= (uint64_t(*i) << 0);
+        return v;
+    }
+
     uint8_t get_uint8(const typename Traits::String& s, size_t depth) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
         return get_uint8(s, ss.get_chars(s, depth));
@@ -123,6 +183,16 @@ public:
     uint16_t get_uint16(const typename Traits::String& s, size_t depth) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
         return get_uint16(s, ss.get_chars(s, depth));
+    }
+
+    uint32_t get_uint32(const typename Traits::String& s, size_t depth) const {
+        const StringSet& ss = *static_cast<const StringSet*>(this);
+        return get_uint32(s, ss.get_chars(s, depth));
+    }
+
+    uint64_t get_uint64(const typename Traits::String& s, size_t depth) const {
+        const StringSet& ss = *static_cast<const StringSet*>(this);
+        return get_uint64(s, ss.get_chars(s, depth));
     }
 
     //! \}

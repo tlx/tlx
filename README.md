@@ -31,6 +31,7 @@ tlx is a collection of C++ helpers and extensions universally needed, but not fo
 - Sorting Algorithms : `sort_strings()` (using radix sort and multikey quicksort), `parallel_mergesort()` (experimental parallel mergesort from MCSTL).
 - Backtrace Printing : `print_cxx_backtrace()`.
 - Command Line Parsing : `CmdlineParser`.
+- Multi-Phase Timer: `MultiTimer`, `ScopedMultiTimerSwitch`, `ScopedMultiTimer`.
 - Fast Delegates : `Delegate` - a better `std::function<>` replacement.
 - SipHash : simple string hashing `siphash()`
 - StackAllocator : stack-local allocations

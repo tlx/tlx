@@ -19,6 +19,7 @@ set(LIBTLX_SOURCES
   digest/sha256.cpp
   digest/sha512.cpp
   logger/core.cpp
+  multi_timer.cpp
   port/setenv.cpp
   string/base64.cpp
   string/bitdump.cpp

@@ -48,6 +48,7 @@ List of the most commonly used components:
 - \ref tlx_sort : \ref sort_strings() (using radix sort and multikey quicksort), \ref parallel_mergesort() (experimental merge sort from MCSTL)
 - \ref backtrace.hpp "Backtrace Printing" : \ref print_cxx_backtrace().
 - \ref cmdline_parser.hpp "Command Line Parsing" : \ref CmdlineParser.
+- \ref multi_timer.hpp "Multi-Phase Timer" : \ref MultiTimer, \ref ScopedMultiTimerSwitch, \ref ScopedMultiTimer.
 - \ref delegate.hpp "Fast Delegates" : \ref Delegate - a better std::function<> replacement.
 - \ref siphash.hpp "SipHash" : simple string hashing
 - \ref stack_allocator.hpp "StackAllocator" : stack-local allocations

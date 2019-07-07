@@ -33,6 +33,12 @@ ThreadPool::~ThreadPool() {
         threads_[i].join();
 }
 
+void ThreadPool::enqueue(Job&& job) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    jobs_.emplace_back(std::move(job));
+    cv_jobs_.notify_one();
+}
+
 void ThreadPool::loop_until_empty() {
     std::unique_lock<std::mutex> lock(mutex_);
     cv_finished_.wait(lock, [this]() { return jobs_.empty() && (busy_ == 0); });
@@ -55,13 +61,39 @@ void ThreadPool::terminate() {
     cv_finished_.notify_one();
 }
 
+size_t ThreadPool::done() const {
+    return done_;
+}
+
+size_t ThreadPool::size() const {
+    return threads_.size();
+}
+
+size_t ThreadPool::idle() const {
+    return idle_;
+}
+
+bool ThreadPool::has_idle() const {
+    return (idle_.load(std::memory_order_relaxed) != 0);
+}
+
+std::thread& ThreadPool::thread(size_t i) {
+    assert(i < threads_.size());
+    return threads_[i];
+}
+
 void ThreadPool::worker() {
     // lock mutex, it is released during condition waits
     std::unique_lock<std::mutex> lock(mutex_);
 
     while (true) {
         // wait on condition variable until job arrives, frees lock
-        cv_jobs_.wait(lock, [this]() { return terminate_ || !jobs_.empty(); });
+        if (!terminate_ && jobs_.empty()) {
+            ++idle_;
+            cv_jobs_.wait(
+                lock, [this]() { return terminate_ || !jobs_.empty(); });
+            --idle_;
+        }
 
         if (terminate_)
             break;

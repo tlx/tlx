@@ -88,10 +88,14 @@ template <typename Integral>
 inline unsigned ctz<unsigned>(Integral i) {
     unsigned long trailing_zeros = 0;
     if (sizeof(i) > 4) {
+#if defined(_WIN64)
         if (_BitScanForward64(&trailing_zeros, i))
             return trailing_zeros;
         else
             return 8 * sizeof(i);
+#else
+        return ctz_template(i);
+#endif
     }
     else {
         if (_BitScanForward(&trailing_zeros, static_cast<unsigned>(i)))

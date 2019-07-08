@@ -98,8 +98,13 @@ template <typename Integral>
 inline unsigned popcount(Integral i) {
     if (sizeof(i) <= sizeof(int))
         return __popcnt(i);
-    else
+    else {
+#if defined(_WIN64)
         return __popcnt64(i);
+#else
+        return popcount_generic64(i);
+#endif
+    }
 }
 
 #else

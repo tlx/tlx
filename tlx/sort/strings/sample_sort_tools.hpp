@@ -22,7 +22,6 @@
 #include <tlx/math/ctz.hpp>
 #include <tlx/meta/log2.hpp>
 #include <tlx/string/hexdump.hpp>
-#include <tlx/string/hexdump.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -30,9 +29,6 @@
 
 namespace tlx {
 namespace sort_strings_detail {
-namespace sample_sort_detail {
-
-typedef uint64_t key_type;
 
 /******************************************************************************/
 
@@ -50,7 +46,7 @@ std::string to_binary(Type v, const size_t width = (8 * sizeof(Type))) {
 
 //! Class to transform in-order to level-order indexes in a perfect binary tree
 template <size_t TreeBits>
-struct TreeCalculations {
+struct PerfectTreeCalculations {
     static const bool debug = false;
 
     static const size_t treebits = TreeBits;
@@ -102,17 +98,17 @@ struct TreeCalculations {
     }
 };
 
-static inline void self_verify_tree_calculations() {
-    TreeCalculations<4>::self_verify();
-    TreeCalculations<5>::self_verify();
-    TreeCalculations<6>::self_verify();
-    TreeCalculations<10>::self_verify();
-    TreeCalculations<11>::self_verify();
-    TreeCalculations<12>::self_verify();
-    TreeCalculations<13>::self_verify();
-    TreeCalculations<14>::self_verify();
-    TreeCalculations<15>::self_verify();
-    TreeCalculations<16>::self_verify();
+static inline void perfect_tree_calculations_self_verify() {
+    PerfectTreeCalculations<4>::self_verify();
+    PerfectTreeCalculations<5>::self_verify();
+    PerfectTreeCalculations<6>::self_verify();
+    PerfectTreeCalculations<10>::self_verify();
+    PerfectTreeCalculations<11>::self_verify();
+    PerfectTreeCalculations<12>::self_verify();
+    PerfectTreeCalculations<13>::self_verify();
+    PerfectTreeCalculations<14>::self_verify();
+    PerfectTreeCalculations<15>::self_verify();
+    PerfectTreeCalculations<16>::self_verify();
 }
 
 /******************************************************************************/
@@ -120,22 +116,20 @@ static inline void self_verify_tree_calculations() {
 //! Recursive TreeBuilder for full-descent and unrolled variants, constructs a
 //! both a pre-order and level-order array of splitters and the corresponding
 //! LCPs.
-template <size_t num_splitters>
-class TreeBuilderPreAndLevelOrder
+template <typename key_type, size_t num_splitters>
+class SSTreeBuilderPreAndLevelOrder
 {
     static const bool debug_splitter = false;
 
 public:
-    // build tree: splitter[num_splitters], splitter_tree[num_splitters + 1], and
-    // splitter_lcp[num_splitters + 1].
-    TreeBuilderPreAndLevelOrder(key_type splitter[num_splitters],
-                                key_type tree[num_splitters + 1],
-                                unsigned char splitter_lcp[num_splitters + 1],
-                                const key_type* samples, size_t samplesize)
-        : splitter_(splitter),
-          tree_(tree),
-          lcp_iter_(splitter_lcp),
-          samples_(samples) {
+    // build tree: splitter[num_splitters], splitter_tree[num_splitters + 1],
+    // and splitter_lcp[num_splitters + 1].
+    SSTreeBuilderPreAndLevelOrder(key_type splitter[num_splitters],
+                                  key_type tree[num_splitters + 1],
+                                  unsigned char splitter_lcp[num_splitters + 1],
+                                  const key_type* samples, size_t samplesize)
+        : splitter_(splitter), tree_(tree),
+          lcp_iter_(splitter_lcp), samples_(samples) {
         key_type sentinel = 0;
         recurse(samples, samples + samplesize, 1, sentinel);
 
@@ -232,16 +226,16 @@ private:
 
 //! Recursive TreeBuilder for full-descent and unrolled variants, constructs
 //! only a level-order binary tree of splitters
-template <size_t num_splitters>
-class TreeBuilderLevelOrder
+template <typename key_type, size_t num_splitters>
+class SSTreeBuilderLevelOrder
 {
     static const bool debug_splitter = false;
 
 public:
     //! build tree, sizes: splitter_tree[num_splitters + 1] and
-    TreeBuilderLevelOrder(key_type tree[num_splitters],
-                          unsigned char splitter_lcp[num_splitters + 1],
-                          const key_type* samples, size_t samplesize)
+    SSTreeBuilderLevelOrder(key_type tree[num_splitters],
+                            unsigned char splitter_lcp[num_splitters + 1],
+                            const key_type* samples, size_t samplesize)
         : tree_(tree),
           lcp_iter_(splitter_lcp),
           samples_(samples) {
@@ -335,8 +329,8 @@ private:
 
 /******************************************************************************/
 
-template <size_t TreeBits, size_t Rollout = 4>
-class ClassifyTreeUnrollInterleave
+template <typename key_type, size_t TreeBits, size_t Rollout = 4>
+class SSClassifyTreeUnrollInterleave
 {
 public:
     static const size_t treebits = TreeBits;
@@ -345,7 +339,7 @@ public:
     //! build tree and splitter array from sample
     void build(key_type* samples, size_t samplesize,
                unsigned char* splitter_lcp) {
-        TreeBuilderPreAndLevelOrder<num_splitters>(
+        SSTreeBuilderPreAndLevelOrder<key_type, num_splitters>(
             splitter_, splitter_tree_, splitter_lcp,
             samples, samplesize);
     }
@@ -376,7 +370,8 @@ public:
 
     //! search in splitter tree for bucket number, unrolled for Rollout keys at
     //! once.
-    void find_bkt_unroll(const key_type key[Rollout], uint16_t obkt[Rollout]) const {
+    void find_bkt_unroll(
+        const key_type key[Rollout], uint16_t obkt[Rollout]) const {
         // binary tree traversal without left branch
 
         unsigned int i[Rollout];
@@ -450,7 +445,7 @@ public:
             {
                 key_type key[Rollout];
                 for (size_t u = 0; u < Rollout; ++u)
-                    key[u] = strset.get_uint64(begin[u], depth);
+                    key[u] = get_key<key_type>(strset, begin[u], depth);
 
                 find_bkt_unroll(key, bktout);
 
@@ -458,7 +453,7 @@ public:
             }
             else
             {
-                key_type key = strset.get_uint64(*begin++, depth);
+                key_type key = get_key<key_type>(strset, *begin++, depth);
                 *bktout++ = this->find_bkt(key);
             }
         }
@@ -475,18 +470,19 @@ private:
 
 /******************************************************************************/
 
-template <size_t TreeBits>
-class ClassifyEqualUnroll
+template <typename key_type, size_t TreeBits>
+class SSClassifyEqualUnroll
 {
 public:
     static const size_t treebits = TreeBits;
     static const size_t num_splitters = (1 << treebits) - 1;
 
-#define TLX_CLASSIFY_TREE_STEP                                           \
-    if (TLX_UNLIKELY(key == splitter_tree_[i])) {                        \
-        return 2 * TreeCalculations<treebits>::level_to_preorder(i) - 1; \
-    }                                                                    \
-    i = 2 * i + (key < splitter_tree_[i] ? 0 : 1);                       \
+#define TLX_CLASSIFY_TREE_STEP                                               \
+    if (TLX_UNLIKELY(key == splitter_tree_[i])) {                            \
+        return                                                               \
+            2 * PerfectTreeCalculations<treebits>::level_to_preorder(i) - 1; \
+    }                                                                        \
+    i = 2 * i + (key < splitter_tree_[i] ? 0 : 1);                           \
     TLX_ATTRIBUTE_FALLTHROUGH;
 
     //! binary search on splitter array for bucket number
@@ -547,7 +543,7 @@ public:
         uint16_t* bktout, size_t depth) const {
         while (begin != end)
         {
-            key_type key = strset.get_uint64(*begin++, depth);
+            key_type key = get_key<key_type>(strset, *begin++, depth);
             *bktout++ = find_bkt(key);
         }
     }
@@ -555,12 +551,12 @@ public:
     //! return a splitter
     key_type get_splitter(unsigned int i) const {
         return splitter_tree_[
-            TreeCalculations<treebits>::pre_to_levelorder(i)];
+            PerfectTreeCalculations<treebits>::pre_to_levelorder(i)];
     }
 
     //! build tree and splitter array from sample
     void build(key_type* samples, size_t samplesize, unsigned char* splitter_lcp) {
-        TreeBuilderLevelOrder<num_splitters>(
+        SSTreeBuilderLevelOrder<key_type, num_splitters>(
             splitter_tree_, splitter_lcp, samples, samplesize);
     }
 
@@ -570,8 +566,8 @@ private:
 
 /******************************************************************************/
 
-template <size_t TreeBits, unsigned Rollout = 4>
-class ClassifyTreeCalcUnrollInterleave
+template <typename key_type, size_t TreeBits, unsigned Rollout = 4>
+class SSClassifyTreeCalcUnrollInterleave
 {
 public:
     static const size_t treebits = TreeBits;
@@ -580,7 +576,7 @@ public:
     //! build tree and splitter array from sample
     void build(key_type* samples, size_t samplesize,
                unsigned char* splitter_lcp) {
-        TreeBuilderLevelOrder<num_splitters>(
+        SSTreeBuilderLevelOrder<key_type, num_splitters>(
             splitter_tree_, splitter_lcp, samples, samplesize);
     }
 
@@ -597,8 +593,12 @@ public:
 
         i -= num_splitters + 1;
 
-        size_t b = i * 2;                                         // < bucket
-        if (i < num_splitters && get_splitter(i) == key) b += 1;  // equal bucket
+        // < bucket
+        size_t b = i * 2;
+        if (i < num_splitters && get_splitter(i) == key) {
+            // equal bucket
+            b += 1;
+        }
 
         return b;
     }
@@ -612,7 +612,8 @@ public:
 
     //! search in splitter tree for bucket number, unrolled for Rollout keys at
     //! once.
-    void find_bkt_unroll(const key_type key[Rollout], uint16_t obkt[Rollout]) const {
+    void find_bkt_unroll(
+        const key_type key[Rollout], uint16_t obkt[Rollout]) const {
         // binary tree traversal without left branch
 
         unsigned int i[Rollout];
@@ -687,7 +688,7 @@ public:
             {
                 key_type key[Rollout];
                 for (size_t u = 0; u < Rollout; ++u)
-                    key[u] = strset.get_uint64(begin[u], depth);
+                    key[u] = get_key<key_type>(strset, begin[u], depth);
 
                 find_bkt_unroll(key, bktout);
 
@@ -695,7 +696,7 @@ public:
             }
             else
             {
-                key_type key = strset.get_uint64(*begin++, depth);
+                key_type key = get_key<key_type>(strset, *begin++, depth);
                 *bktout++ = this->find_bkt(key);
             }
         }
@@ -704,7 +705,7 @@ public:
     //! return a splitter
     key_type get_splitter(unsigned int i) const {
         return splitter_tree_[
-            TreeCalculations<treebits>::pre_to_levelorder(i + 1)];
+            PerfectTreeCalculations<treebits>::pre_to_levelorder(i + 1)];
     }
 
 private:
@@ -713,7 +714,6 @@ private:
 
 /******************************************************************************/
 
-} // namespace sample_sort_detail
 } // namespace sort_strings_detail
 } // namespace tlx
 

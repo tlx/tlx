@@ -71,15 +71,14 @@ public:
     //! set or on the whole string set.
     static const bool enable_rest_size = false;
 
-    //! key type for sample sort
-    typedef uint64_t key_type;
+    //! key type for sample sort: 32-bit or 64-bit
+    typedef size_t key_type;
 
     //! depth of classification tree used in sample sorts
     static const unsigned TreeBits = 10;
 
     //! classification tree variant for sample sorts
-    using Classify =
-        sample_sort_detail::ClassifyTreeCalcUnrollInterleave<TreeBits>;
+    using Classify = SSClassifyTreeCalcUnrollInterleave<key_type, TreeBits>;
 
     //! threshold to run sequential small sorts
     static const size_t smallsort_threshold = 1024 * 1024;
@@ -200,9 +199,9 @@ public:
 
 template <size_t bktnum, typename Context, typename Classify,
           typename StringPtr, typename BktSizeType>
-void sample_sort_lcp(const Context& ctx, const Classify& classifier,
-                     const StringPtr& strptr, size_t depth,
-                     const BktSizeType* bkt) {
+void ps5_sample_sort_lcp(const Context& ctx, const Classify& classifier,
+                         const StringPtr& strptr, size_t depth,
+                         const BktSizeType* bkt) {
     assert(!strptr.flipped());
 
     const typename StringPtr::StringSet& strset = strptr.active();
@@ -222,14 +221,14 @@ void sample_sort_lcp(const Context& ctx, const Classify& classifier,
         // odd bucket: = bkt
         if (bkt[b] != bkt[b + 1]) {
             prevkey = classifier.get_splitter(b / 2);
-            assert(prevkey == strset.get_uint64(strset.at(bkt[b + 1] - 1), depth));
+            assert(prevkey == get_key_at<key_type>(strset, bkt[b + 1] - 1, depth));
             break;
         }
         ++b;
 even_first:
         // even bucket: <, << or > bkt
         if (bkt[b] != bkt[b + 1]) {
-            prevkey = strset.get_uint64(strset.at(bkt[b + 1] - 1), depth);
+            prevkey = get_key_at<key_type>(strset, bkt[b + 1] - 1, depth);
             break;
         }
         ++b;
@@ -246,7 +245,7 @@ even_first:
         // odd bucket: = bkt
         if (bkt[b] != bkt[b + 1]) {
             key_type thiskey = classifier.get_splitter(b / 2);
-            assert(thiskey == strset.get_uint64(strset.at(bkt[b]), depth));
+            assert(thiskey == get_key_at<key_type>(strset, bkt[b], depth));
 
             int rlcp = lcpKeyType(prevkey, thiskey);
             strptr.set_lcp(bkt[b], depth + rlcp);
@@ -258,13 +257,13 @@ even_first:
                 << " is " << depth + rlcp;
 
             prevkey = thiskey;
-            assert(prevkey == strset.get_uint64(strset.at(bkt[b + 1] - 1), depth));
+            assert(prevkey == get_key_at<key_type>(strset, bkt[b + 1] - 1, depth));
         }
         ++b;
 even_bucket:
         // even bucket: <, << or > bkt
         if (bkt[b] != bkt[b + 1]) {
-            key_type thiskey = strset.get_uint64(strset.at(bkt[b]), depth);
+            key_type thiskey = get_key_at<key_type>(strset, bkt[b], depth);
 
             int rlcp = lcpKeyType(prevkey, thiskey);
             strptr.set_lcp(bkt[b], depth + rlcp);
@@ -275,7 +274,7 @@ even_bucket:
                 << " [" << bkt[b] << "," << bkt[b + 1] << ")"
                 << " is " << depth + rlcp;
 
-            prevkey = strset.get_uint64(strset.at(bkt[b + 1] - 1), depth);
+            prevkey = get_key_at<key_type>(strset, bkt[b + 1] - 1, depth);
         }
         ++b;
     }
@@ -379,12 +378,11 @@ public:
             simple_vector<key_type> samples(sample_size);
 
             const StringSet& strset = strptr_.active();
-            typename StringSet::Iterator begin = strset.begin();
 
             std::minstd_rand rng(reinterpret_cast<uintptr_t>(samples.data()));
 
             for (size_t i = 0; i < sample_size; ++i)
-                samples[i] = strset.get_uint64(strset[begin + rng() % n], depth_);
+                samples[i] = get_key_at<key_type>(strset, rng() % n, depth_);
 
             std::sort(samples.begin(), samples.end());
 
@@ -433,7 +431,7 @@ public:
         void calculate_lcp(Context& ctx) {
             TLX_LOGC(ctx.debug_lcp) << "Calculate LCP after sample sort step";
             if (strptr_.with_lcp) {
-                sample_sort_lcp<bktnum>(ctx, classifier, strptr_, depth_, bkt);
+                ps5_sample_sort_lcp<bktnum>(ctx, classifier, strptr_, depth_, bkt);
             }
         }
     };
@@ -768,7 +766,7 @@ public:
             if (CacheDirty) {
                 typename StringSet::Iterator it = strset.begin();
                 for (size_t i = 0; i < n; ++i, ++it) {
-                    cache_[i] = strset.get_uint64(*it, depth);
+                    cache_[i] = get_key<key_type>(strset, *it, depth);
                 }
             }
             // select median of 9
@@ -1219,7 +1217,6 @@ public:
         size_t sample_size = oversample_factor * num_splitters_;
 
         const StringSet& strset = strptr_.active();
-        StrIterator begin = strset.begin();
         size_t n = strset.size();
 
         simple_vector<key_type> samples(sample_size);
@@ -1227,7 +1224,7 @@ public:
         std::minstd_rand rng(reinterpret_cast<uintptr_t>(samples.data()));
 
         for (size_t i = 0; i < sample_size; ++i)
-            samples[i] = strset.get_uint64(strset[begin + rng() % n], depth_);
+            samples[i] = get_key_at<key_type>(strset, rng() % n, depth_);
 
         std::sort(samples.begin(), samples.end());
 
@@ -1422,7 +1419,7 @@ public:
             TLX_LOGC(ctx_.debug_steps)
                 << "pSampleSortStep[" << depth_ << "]: all substeps done.";
 
-            sample_sort_lcp<bktnum_>(ctx_, classifier_, strptr_, depth_, bkt_[0]);
+            ps5_sample_sort_lcp<bktnum_>(ctx_, classifier_, strptr_, depth_, bkt_[0]);
             delete[] bkt_[0];
         }
 
@@ -1441,7 +1438,7 @@ void PS5Context<Parameters>::enqueue(
         new PS5BigSortStep<PS5Context, StringPtr>(*this, pstep, strptr, depth);
     }
     else {
-        if (strptr.size() < (size_t(1) << 32)) {
+        if (strptr.size() < (1LLU << 32)) {
             auto j = new PS5SmallsortJob<PS5Context, StringPtr, uint32_t>(
                 *this, pstep, strptr, depth);
 
@@ -1483,6 +1480,7 @@ void parallel_sample_sort_base(const StringPtr& strptr, size_t depth) {
 
     TLX_LOG1
         << "RESULT"
+        << " sizeof(key_type)=" << sizeof(Context::key_type)
         << " splitter_treebits=" << size_t(BigSortStep::treebits_)
         << " num_splitters=" << size_t(BigSortStep::num_splitters_)
         << " enable_work_sharing=" << size_t(ctx.enable_work_sharing)

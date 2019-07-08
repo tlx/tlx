@@ -30,6 +30,7 @@
 
 #include <tlx/logger/core.hpp>
 #include <tlx/math/bswap.hpp>
+#include <tlx/meta/enable_if.hpp>
 
 namespace tlx {
 
@@ -240,6 +241,28 @@ public:
         }
     }
 };
+
+template <typename Type, typename StringSet>
+inline
+typename enable_if<sizeof(Type) == 4, uint32_t>::type
+get_key(const StringSet& strset,
+        const typename StringSet::String& s, size_t depth) {
+    return strset.get_uint32(s, depth);
+}
+
+template <typename Type, typename StringSet>
+inline
+typename enable_if<sizeof(Type) == 8, uint64_t>::type
+get_key(const StringSet& strset,
+        const typename StringSet::String& s, size_t depth) {
+    return strset.get_uint64(s, depth);
+}
+
+template <typename Type, typename StringSet>
+inline
+Type get_key_at(const StringSet& strset, size_t idx, size_t depth) {
+    return get_key<Type>(strset, strset.at(idx), depth);
+}
 
 /******************************************************************************/
 

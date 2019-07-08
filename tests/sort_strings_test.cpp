@@ -476,7 +476,7 @@ void test_all(const size_t num_strings) {
 
 int main() {
     // self verify calculations
-    sample_sort_detail::self_verify_tree_calculations();
+    perfect_tree_calculations_self_verify();
 
     // run tests
     test_all(16);

@@ -20,6 +20,9 @@
 class PS5ParametersTreeUnrollInterleave : public PS5ParametersDefault
 {
 public:
+    //! key type for sample sort: 32-bit or 64-bit
+    typedef size_t key_type;
+
     //! classification tree variant for sample sorts
     using Classify =
         SSClassifyTreeUnrollInterleave<key_type, /* TreeBits */ 13>;

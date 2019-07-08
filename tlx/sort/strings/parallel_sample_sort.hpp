@@ -1435,7 +1435,7 @@ void parallel_sample_sort_base(const StringPtr& strptr, size_t depth) {
 
     TLX_LOG1
         << "RESULT"
-        << " sizeof(key_type)=" << sizeof(typename Context::key_type)
+        << " sizeof(key_type)=" << sizeof(typename PS5Parameters::key_type)
         << " splitter_treebits=" << size_t(BigSortStep::treebits_)
         << " num_splitters=" << size_t(BigSortStep::num_splitters_)
         << " enable_work_sharing=" << size_t(ctx.enable_work_sharing)

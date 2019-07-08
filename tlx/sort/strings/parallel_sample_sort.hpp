@@ -312,7 +312,7 @@ public:
         ctx_.mtimer.add(mtimer_);
     }
 
-    uint16_t* bktcache_ = nullptr;
+    simple_vector<uint8_t> bktcache_;
     size_t bktcache_size_ = 0;
 
     void run() {
@@ -328,8 +328,7 @@ public:
 
         if (ctx_.enable_sequential_sample_sort && n >= ctx_.smallsort_threshold)
         {
-            bktcache_ = new uint16_t[n];
-            bktcache_size_ = n * sizeof(uint16_t);
+            bktcache_.resize(n * sizeof(uint16_t));
             sort_sample_sort(strptr_, depth_);
         }
         else
@@ -337,8 +336,6 @@ public:
             mtimer_.start("mkqs");
             sort_mkqs_cache(strptr_, depth_);
         }
-
-        delete[] bktcache_;
 
         // finish wrapper job, handler delete's this
         this->substep_notify_done();
@@ -445,8 +442,10 @@ public:
         assert(ss_front_ == 0);
         assert(ss_stack_.size() == 0);
 
+        uint16_t* bktcache = reinterpret_cast<uint16_t*>(bktcache_.data());
+
         // sort first level
-        ss_stack_.emplace_back(ctx_, strptr, depth, bktcache_);
+        ss_stack_.emplace_back(ctx_, strptr, depth, bktcache);
 
         // step 5: "recursion"
 
@@ -497,7 +496,7 @@ public:
                                 << int(s.splitter_lcp[i / 2] & 0x7F);
 
                         ss_stack_.emplace_back(
-                            ctx_, sp, s.depth_ + (s.splitter_lcp[i / 2] & 0x7F), bktcache_);
+                            ctx_, sp, s.depth_ + (s.splitter_lcp[i / 2] & 0x7F), bktcache);
                     }
                 }
                 // i is odd -> bkt[i] is equal bucket
@@ -535,7 +534,7 @@ public:
                             << i << " size " << bktsize << " lcp keydepth!";
 
                         ss_stack_.emplace_back(
-                            ctx_, sp, s.depth_ + sizeof(key_type), bktcache_);
+                            ctx_, sp, s.depth_ + sizeof(key_type), bktcache);
                     }
                 }
             }
@@ -909,14 +908,13 @@ public:
         TLX_LOGC(ctx_.debug_jobs)
             << "sort_mkqs_cache() size " << strptr.size() << " depth " << depth;
 
-        if (bktcache_size_ < strptr.size() * sizeof(key_type)) {
-            delete[] bktcache_;
-            bktcache_ = reinterpret_cast<uint16_t*>(new key_type[strptr.size()]);
-            bktcache_size_ = strptr.size() * sizeof(key_type);
+        if (bktcache_.size() < strptr.size() * sizeof(key_type)) {
+            bktcache_.destroy();
+            bktcache_.resize(strptr.size() * sizeof(key_type));
         }
 
         // reuse bktcache as keycache
-        key_type* cache = reinterpret_cast<key_type*>(bktcache_);
+        key_type* cache = reinterpret_cast<key_type*>(bktcache_.data());
 
         assert(ms_front_ == 0);
         assert(ms_stack_.size() == 0);
@@ -1124,9 +1122,9 @@ public:
     unsigned char splitter_lcp_[num_splitters_ + 1];
 
     //! individual bucket array of threads, keep bkt[0] for DistributeJob
-    std::vector<size_t*> bkt_;
+    simple_vector<simple_vector<size_t> > bkt_;
     //! bucket ids cache, created by classifier and later counted
-    std::vector<uint16_t*> bktcache_;
+    simple_vector<simple_vector<uint16_t> > bktcache_;
 
     /*------------------------------------------------------------------------*/
     // Constructor
@@ -1200,10 +1198,12 @@ public:
         StrIterator strE = strset.begin() + std::min((p + 1) * psize_, strptr_.size());
         if (strE < strB) strE = strB;
 
-        uint16_t* bktcache = bktcache_[p] = new uint16_t[strE - strB];
+        bktcache_[p].resize(strE - strB);
+        uint16_t* bktcache = bktcache_[p].data();
         classifier_.classify(strset, strB, strE, bktcache, depth_);
 
-        size_t* bkt = bkt_[p] = new size_t[bktnum_ + (p == 0 ? 1 : 0)];
+        bkt_[p].resize(bktnum_ + (p == 0 ? 1 : 0));
+        size_t* bkt = bkt_[p].data();
         memset(bkt, 0, bktnum_ * sizeof(size_t));
 
         for (uint16_t* bc = bktcache; bc != bktcache + (strE - strB); ++bc)
@@ -1254,16 +1254,16 @@ public:
         const StringSet& sorted = strptr_.shadow();
         typename StringSet::Iterator sbegin = sorted.begin();
 
-        uint16_t* bktcache = bktcache_[p];
-        size_t* bkt = bkt_[p];
+        uint16_t* bktcache = bktcache_[p].data();
+        size_t* bkt = bkt_[p].data();
 
         for (StrIterator str = strB; str != strE; ++str, ++bktcache)
             *(sbegin + --bkt[*bktcache]) = std::move(*str);
 
         if (p != 0) // p = 0 is needed for recursion into bkts
-            delete[] bkt_[p];
+            bkt_[p].destroy();
 
-        delete[] bktcache_[p];
+        bktcache_[p].destroy();
 
         if (--pwork_ == 0)
             distribute_finished();
@@ -1273,7 +1273,7 @@ public:
         TLX_LOGC(ctx_.debug_jobs)
             << "Finishing DistributeJob " << this << " with enqueuing subjobs";
 
-        size_t* bkt = bkt_[0];
+        size_t* bkt = bkt_[0].data();
         assert(bkt);
 
         // first processor's bkt pointers are boundaries between bkts, just add sentinel:
@@ -1358,9 +1358,8 @@ public:
 
         this->substep_notify_done(); // release anonymous subjob handle
 
-        if (!strptr_.with_lcp) {
-            delete[] bkt;
-        }
+        if (!strptr_.with_lcp)
+            bkt_[0].destroy();
     }
 
     /*------------------------------------------------------------------------*/
@@ -1372,8 +1371,9 @@ public:
             TLX_LOGC(ctx_.debug_steps)
                 << "pSampleSortStep[" << depth_ << "]: all substeps done.";
 
-            ps5_sample_sort_lcp<bktnum_>(ctx_, classifier_, strptr_, depth_, bkt_[0]);
-            delete[] bkt_[0];
+            ps5_sample_sort_lcp<bktnum_>(
+                ctx_, classifier_, strptr_, depth_, bkt_[0].data());
+            bkt_[0].destroy();
         }
 
         if (pstep_) pstep_->substep_notify_done();

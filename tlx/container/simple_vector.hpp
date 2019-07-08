@@ -174,6 +174,13 @@ public:
         }
     }
 
+    //! deallocate contained array
+    void destroy() {
+        destroy_array(array_, size_);
+        array_ = nullptr;
+        size_ = 0;
+    }
+
     //! Zero the whole array content.
     void fill(const value_type& v = value_type()) noexcept {
         std::fill(array_, array_ + size_, v);

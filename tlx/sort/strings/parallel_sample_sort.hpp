@@ -21,6 +21,7 @@
 #include <random>
 #include <vector>
 
+#include <tlx/sort/strings/insertion_sort.hpp>
 #include <tlx/sort/strings/sample_sort_tools.hpp>
 #include <tlx/sort/strings/string_ptr.hpp>
 
@@ -38,8 +39,8 @@ namespace sort_strings_detail {
 
 class PS5SortStep;
 
-// ****************************************************************************
-// *** Global Parallel Super Scalar String Sample Sort Context
+/******************************************************************************/
+//! Parallel Super Scalar String Sample Sort Parameter Struct
 
 class PS5ParametersDefault
 {
@@ -80,6 +81,9 @@ public:
     //! threshold to switch to insertion sort
     static const size_t inssort_threshold = 32;
 };
+
+/******************************************************************************/
+//! Parallel Super Scalar String Sample Sort Context
 
 template <typename Parameters>
 class PS5Context : public Parameters
@@ -132,8 +136,8 @@ public:
     }
 };
 
-// ****************************************************************************
-// *** Classification Variants
+/******************************************************************************/
+//! LCP calculation of Splitter Strings
 
 template <typename KeyType>
 static inline unsigned char
@@ -156,8 +160,8 @@ getCharAtDepth(const KeyType& a, unsigned char d) {
     return static_cast<unsigned char>(a >> (8 * (sizeof(KeyType) - 1 - d)));
 }
 
-// ****************************************************************************
-// *** PS5SortStep to Keep Track of Substeps
+/******************************************************************************/
+//! PS5SortStep Top-Level Class to Keep Track of Substeps
 
 class PS5SortStep
 {
@@ -189,8 +193,8 @@ public:
     }
 };
 
-// ****************************************************************************
-// *** LCP Calculation for finished Sample Sort Steps
+/******************************************************************************/
+//! LCP Calculation for Finished Sample Sort Steps
 
 template <size_t bktnum, typename Context, typename Classify,
           typename StringPtr, typename BktSizeType>
@@ -275,8 +279,8 @@ even_bucket:
     }
 }
 
-// ****************************************************************************
-// *** SampleSort non-recursive in-place sequential sample sort for small sorts
+/******************************************************************************/
+//! SampleSort: Non-Recursive In-Place Sequential Sample Sort for Small Sorts
 
 template <typename Context, typename StringPtr, typename BktSizeType>
 class PS5SmallsortJob : public PS5SortStep
@@ -340,7 +344,8 @@ public:
         this->substep_notify_done();
     }
 
-    // *** Stack of Recursive Sample Sort Steps
+    /*------------------------------------------------------------------------*/
+    //! Stack of Recursive Sample Sort Steps
 
     class SeqSampleSortStep
     {
@@ -431,13 +436,13 @@ public:
         }
     };
 
-    size_t ss_pop_front_ = 0;
+    size_t ss_front_ = 0;
     std::vector<SeqSampleSortStep> ss_stack_;
 
     void sort_sample_sort(const StringPtr& strptr, size_t depth) {
         typedef SeqSampleSortStep Step;
 
-        assert(ss_pop_front_ == 0);
+        assert(ss_front_ == 0);
         assert(ss_stack_.size() == 0);
 
         // sort first level
@@ -445,7 +450,7 @@ public:
 
         // step 5: "recursion"
 
-        while (ss_stack_.size() > ss_pop_front_)
+        while (ss_stack_.size() > ss_front_)
         {
             Step& s = ss_stack_.back();
             size_t i = s.idx_++; // process the bucket s.idx_
@@ -537,7 +542,7 @@ public:
             else
             {
                 // finished sort
-                assert(ss_stack_.size() > ss_pop_front_);
+                assert(ss_stack_.size() > ss_front_);
 
                 // after full sort: calculate LCPs at this level
                 ss_stack_.back().calculate_lcp(ctx_);
@@ -552,9 +557,9 @@ public:
     }
 
     void sample_sort_free_work() {
-        assert(ss_stack_.size() >= ss_pop_front_);
+        assert(ss_stack_.size() >= ss_front_);
 
-        if (ss_stack_.size() == ss_pop_front_) {
+        if (ss_stack_.size() == ss_front_) {
             // ss_stack_ is empty, check other stack
             return mkqs_free_work();
         }
@@ -564,7 +569,7 @@ public:
             << "Freeing top level of PS5SmallsortJob's sample_sort stack";
 
         typedef SeqSampleSortStep Step;
-        Step& s = ss_stack_[ss_pop_front_];
+        Step& s = ss_stack_[ss_front_];
 
         while (s.idx_ < Step::bktnum)
         {
@@ -611,7 +616,8 @@ public:
                     StringPtr spb = sp.copy_back();
 
                     if (sp.with_lcp) {
-                        spb.fill_lcp(s.depth_ + lcpKeyDepth(s.classifier.get_splitter(i / 2)));
+                        spb.fill_lcp(s.depth_ + lcpKeyDepth(
+                                         s.classifier.get_splitter(i / 2)));
                     }
                     ctx_.donesize(bktsize);
                 }
@@ -628,11 +634,11 @@ public:
         }
 
         // shorten the current stack
-        ++ss_pop_front_;
+        ++ss_front_;
     }
 
-    // *************************************************************************
-    // *** Stack of Recursive MKQS Steps
+    /*------------------------------------------------------------------------*/
+    //! Stack of Recursive MKQS Steps
 
     static inline int cmp(const key_type& a, const key_type& b) {
         return (a > b) ? 1 : (a < b) ? -1 : 0;
@@ -882,7 +888,7 @@ public:
         }
     };
 
-    size_t ms_pop_front_ = 0;
+    size_t ms_front_ = 0;
     std::vector<MKQSStep> ms_stack_;
 
     void sort_mkqs_cache(const StringPtr& strptr, size_t depth) {
@@ -912,14 +918,14 @@ public:
         // reuse bktcache as keycache
         key_type* cache = reinterpret_cast<key_type*>(bktcache_);
 
-        assert(ms_pop_front_ == 0);
+        assert(ms_front_ == 0);
         assert(ms_stack_.size() == 0);
 
         // std::deque is much slower than std::vector, so we use an artificial
         // pop_front variable.
         ms_stack_.emplace_back(ctx_, strptr, cache, depth, true);
 
-        while (ms_stack_.size() > ms_pop_front_)
+        while (ms_stack_.size() > ms_front_)
         {
             MKQSStep& ms = ms_stack_.back();
             ++ms.idx_; // increment here, because stack may change
@@ -990,7 +996,7 @@ public:
             // calculate lcps
             else {
                 // finished sort
-                assert(ms_stack_.size() > ms_pop_front_);
+                assert(ms_stack_.size() > ms_front_);
 
                 // calculate LCP after the three parts are sorted
                 ms_stack_.back().calculate_lcp();
@@ -1005,11 +1011,11 @@ public:
     }
 
     void mkqs_free_work() {
-        assert(ms_stack_.size() >= ms_pop_front_);
+        assert(ms_stack_.size() >= ms_front_);
 
         for (unsigned int fl = 0; fl < 8; ++fl)
         {
-            if (ms_stack_.size() == ms_pop_front_) {
+            if (ms_stack_.size() == ms_front_) {
                 return;
             }
 
@@ -1019,7 +1025,7 @@ public:
 
             // convert top level of stack into independent jobs
 
-            MKQSStep& ms = ms_stack_[ms_pop_front_];
+            MKQSStep& ms = ms_stack_[ms_front_];
 
             if (ms.idx_ == 0 && ms.num_lt_ != 0)
             {
@@ -1051,25 +1057,28 @@ public:
             }
 
             // shorten the current stack
-            ++ms_pop_front_;
+            ++ms_front_;
         }
     }
+
+    /*------------------------------------------------------------------------*/
+    // Called When PS5SmallsortJob is Finished
 
     void substep_all_done() final {
         TLX_LOGC(ctx_.debug_recursion)
             << "SmallSort[" << depth_ << "] "
             << "all substeps done -> LCP calculation";
 
-        while (ms_pop_front_ > 0) {
+        while (ms_front_ > 0) {
             TLX_LOGC(ctx_.debug_lcp)
-                << "SmallSort[" << depth_ << "] ms_pop_front_: " << ms_pop_front_;
-            ms_stack_[--ms_pop_front_].calculate_lcp();
+                << "SmallSort[" << depth_ << "] ms_front_: " << ms_front_;
+            ms_stack_[--ms_front_].calculate_lcp();
         }
 
-        while (ss_pop_front_ > 0) {
+        while (ss_front_ > 0) {
             TLX_LOGC(ctx_.debug_lcp)
-                << "SmallSort[" << depth_ << "] ss_pop_front_: " << ss_pop_front_;
-            ss_stack_[--ss_pop_front_].calculate_lcp(ctx_);
+                << "SmallSort[" << depth_ << "] ss_front_: " << ss_front_;
+            ss_stack_[--ss_front_].calculate_lcp(ctx_);
         }
 
         if (pstep_) pstep_->substep_notify_done();
@@ -1077,8 +1086,8 @@ public:
     }
 };
 
-// ****************************************************************************
-// *** PS5BigSortStep out-of-place parallel sample sort with separate Jobs
+/******************************************************************************/
+//! PS5BigSortStep Out-of-Place Parallel Sample Sort with Separate Jobs
 
 template <typename Context, typename StringPtr>
 class PS5BigSortStep : public PS5SortStep
@@ -1119,7 +1128,8 @@ public:
     //! bucket ids cache, created by classifier and later counted
     std::vector<uint16_t*> bktcache_;
 
-    // *** Constructor
+    /*------------------------------------------------------------------------*/
+    // Constructor
 
     PS5BigSortStep(Context& ctx, PS5SortStep* pstep,
                    const StringPtr& strptr, size_t depth)
@@ -1146,7 +1156,8 @@ public:
 
     virtual ~PS5BigSortStep() { }
 
-    // *** Sample Step
+    /*------------------------------------------------------------------------*/
+    // Sample Step
 
     void sample() {
         ScopedMultiTimer smt(ctx_.mtimer, "para_ss");
@@ -1176,7 +1187,8 @@ public:
         }
     }
 
-    // *** Counting Step
+    /*------------------------------------------------------------------------*/
+    // Counting Step
 
     void count(unsigned int p) {
         ScopedMultiTimer smt(ctx_.mtimer, "para_ss");
@@ -1225,7 +1237,8 @@ public:
         }
     }
 
-    // *** Distribute Step
+    /*------------------------------------------------------------------------*/
+    // Distribute Step
 
     void distribute(unsigned int p) {
         ScopedMultiTimer smt(ctx_.mtimer, "para_ss");
@@ -1350,7 +1363,8 @@ public:
         }
     }
 
-    // *** After Recursive Sorting
+    /*------------------------------------------------------------------------*/
+    // After Recursive Sorting
 
     void substep_all_done() final {
         ScopedMultiTimer smt(ctx_.mtimer, "para_ss");
@@ -1367,6 +1381,9 @@ public:
     }
 };
 
+/******************************************************************************/
+// PS5Context::enqueue()
+
 template <typename Parameters>
 template <typename StringPtr>
 void PS5Context<Parameters>::enqueue(
@@ -1380,7 +1397,6 @@ void PS5Context<Parameters>::enqueue(
         if (strptr.size() < (1LLU << 32)) {
             auto j = new PS5SmallsortJob<PS5Context, StringPtr, uint32_t>(
                 *this, pstep, strptr, depth);
-
             threads_.enqueue([j]() { j->run(); });
         }
         else {
@@ -1395,10 +1411,10 @@ void PS5Context<Parameters>::enqueue(
 // Externally Callable Sorting Methods
 
 //! Main Parallel Sample Sort Function. See below for more convenient wrappers.
-template <typename StringPtr>
+template <typename PS5Parameters, typename StringPtr>
 void parallel_sample_sort_base(const StringPtr& strptr, size_t depth) {
 
-    using Context = PS5Context<PS5ParametersDefault>;
+    using Context = PS5Context<PS5Parameters>;
     Context ctx(std::thread::hardware_concurrency());
     ctx.total_size = strptr.size();
     ctx.rest_size = strptr.size();
@@ -1419,7 +1435,7 @@ void parallel_sample_sort_base(const StringPtr& strptr, size_t depth) {
 
     TLX_LOG1
         << "RESULT"
-        << " sizeof(key_type)=" << sizeof(Context::key_type)
+        << " sizeof(key_type)=" << sizeof(typename Context::key_type)
         << " splitter_treebits=" << size_t(BigSortStep::treebits_)
         << " num_splitters=" << size_t(BigSortStep::num_splitters_)
         << " enable_work_sharing=" << size_t(ctx.enable_work_sharing)
@@ -1437,11 +1453,11 @@ void parallel_sample_sort_base(const StringPtr& strptr, size_t depth) {
         << " steps_base_sort=" << ctx.base_sort_steps;
 }
 
-//! call Sample Sort on a generic StringSet, this allocates the shadow array for
-//! flipping.
-template <typename StringPtr>
+//! Parallel Sample Sort Function for a generic StringSet, this allocates the
+//! shadow array for flipping.
+template <typename PS5Parameters, typename StringPtr>
 typename enable_if<!StringPtr::with_lcp, void>::type
-parallel_sample_sort(
+parallel_sample_sort_params(
     const StringPtr& strptr, size_t depth, size_t memory = 0) {
     tlx::unused(memory);
 
@@ -1455,14 +1471,16 @@ parallel_sample_sort(
     Container shadow = strset.allocate(strset.size());
     StringShadowPtr new_strptr(strset, StringSet(shadow));
 
-    parallel_sample_sort_base(new_strptr, depth);
+    parallel_sample_sort_base<PS5Parameters>(new_strptr, depth);
 
     StringSet::deallocate(shadow);
 }
 
-template <typename StringPtr>
+//! Parallel Sample Sort Function for a generic StringSet with LCPs, this
+//! allocates the shadow array for flipping.
+template <typename PS5Parameters, typename StringPtr>
 typename enable_if<StringPtr::with_lcp, void>::type
-parallel_sample_sort(
+parallel_sample_sort_params(
     const StringPtr& strptr, size_t depth, size_t memory = 0) {
     tlx::unused(memory);
 
@@ -1477,9 +1495,18 @@ parallel_sample_sort(
     Container shadow = strset.allocate(strset.size());
     StringShadowLcpPtr new_strptr(strset, StringSet(shadow), strptr.lcp());
 
-    parallel_sample_sort_base(new_strptr, depth);
+    parallel_sample_sort_base<PS5Parameters>(new_strptr, depth);
 
     StringSet::deallocate(shadow);
+}
+
+//! Parallel Sample Sort Function with default parameter size for a generic
+//! StringSet.
+template <typename StringPtr>
+void parallel_sample_sort(
+    const StringPtr& strptr, size_t depth, size_t memory) {
+    return parallel_sample_sort_params<PS5ParametersDefault>(
+        strptr, depth, memory);
 }
 
 } // namespace sort_strings_detail

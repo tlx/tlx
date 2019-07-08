@@ -91,6 +91,7 @@ tlx_build_test(multi_timer_test)
 tlx_build_test(semaphore_test)
 tlx_build_test(siphash_test)
 tlx_build_test(sort_parallel_mergesort_test)
+tlx_build_test(sort_strings_parallel_test)
 tlx_build_test(sort_strings_test)
 tlx_build_test(stack_allocator_test)
 tlx_build_test(string_test)
@@ -129,8 +130,8 @@ if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
   set_target_properties(tlx_algorithm_multiway_merge_test PROPERTIES COMPILE_FLAGS -pthread)
   set_target_properties(tlx_algorithm_multiway_merge_test PROPERTIES LINK_FLAGS -pthread)
 
-  set_target_properties(tlx_sort_strings_test PROPERTIES COMPILE_FLAGS -pthread)
-  set_target_properties(tlx_sort_strings_test PROPERTIES LINK_FLAGS -pthread)
+  set_target_properties(tlx_sort_strings_parallel_test PROPERTIES COMPILE_FLAGS -pthread)
+  set_target_properties(tlx_sort_strings_parallel_test PROPERTIES LINK_FLAGS -pthread)
 endif()
 
 ################################################################################

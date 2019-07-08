@@ -328,6 +328,7 @@ private:
 
 /******************************************************************************/
 
+//! Sample Sort Classification Tree Unrolled and Interleaved
 template <typename key_type, size_t TreeBits, size_t Rollout = 4>
 class SSClassifyTreeUnrollInterleave
 {
@@ -469,6 +470,7 @@ private:
 
 /******************************************************************************/
 
+//! Sample Sort Classification Tree Unrolled with Equal Comparisons
 template <typename key_type, size_t TreeBits>
 class SSClassifyEqualUnroll
 {
@@ -565,6 +567,8 @@ private:
 
 /******************************************************************************/
 
+//! Sample Sort Classification Tree Unrolled, Interleaved, and with Perfect Tree
+//! Index Calculations
 template <typename key_type, size_t TreeBits, unsigned Rollout = 4>
 class SSClassifyTreeCalcUnrollInterleave
 {

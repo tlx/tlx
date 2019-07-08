@@ -446,7 +446,7 @@ public:
         uint16_t* bktout, size_t depth) const {
         while (begin != end)
         {
-            if (begin + Rollout < end)
+            if (begin + Rollout <= end)
             {
                 key_type key[Rollout];
                 for (size_t u = 0; u < Rollout; ++u)
@@ -683,7 +683,7 @@ public:
         uint16_t* bktout, size_t depth) const {
         while (begin != end)
         {
-            if (begin + Rollout < end)
+            if (begin + Rollout <= end)
             {
                 key_type key[Rollout];
                 for (size_t u = 0; u < Rollout; ++u)

@@ -3,6 +3,9 @@
  *
  * Parallel Super Scalar String Sample Sort (pS5)
  *
+ * See also Timo Bingmann, Andreas Eberle, and Peter Sanders. "Engineering
+ * parallel string sorting." Algorithmica 77.1 (2017): 235-286.
+ *
  * Part of tlx - http://panthema.net/tlx
  *
  * Copyright (C) 2013-2019 Timo Bingmann <tb@panthema.net>

@@ -17,6 +17,7 @@
 
 #include <tlx/logger.hpp>
 #include <tlx/simple_vector.hpp>
+#include <tlx/timestamp.hpp>
 
 #include <chrono>
 #include <random>
@@ -85,13 +86,6 @@ bool check_lcp(const StringSet& ss, LcpType* lcp) {
     return good;
 }
 
-//! Returns number of seconds since the epoch, high resolution.
-static inline double timestamp() {
-    return static_cast<double>(
-        std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::steady_clock::now().time_since_epoch()).count()) / 1e6;
-}
-
 template <typename StringSet, StringSorter<StringSet> sorter,
           typename LcpType, StringLcpSorter<StringSet, LcpType> lcp_sorter>
 void TestUCharString(const char* name,
@@ -118,13 +112,13 @@ void TestUCharString(const char* name,
 
     if (!with_lcp) {
         // run sorting algorithm
-        double ts1 = timestamp();
+        double ts1 = tlx::timestamp();
 
         UCharStringSet ss(cstrings.data(), cstrings.data() + num_strings);
         sorter(StringPtr<UCharStringSet>(ss), /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
-        double ts2 = timestamp();
+        double ts2 = tlx::timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
         // check result
@@ -135,7 +129,7 @@ void TestUCharString(const char* name,
     }
     else {
         // run sorting algorithm with lcp output
-        double ts1 = timestamp();
+        double ts1 = tlx::timestamp();
 
         tlx::simple_vector<uint32_t> lcp(num_strings);
 
@@ -144,7 +138,7 @@ void TestUCharString(const char* name,
                    /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
-        double ts2 = timestamp();
+        double ts2 = tlx::timestamp();
         LOG1 << "sorting+lcp took " << ts2 - ts1 << " seconds";
 
         // check result
@@ -193,13 +187,13 @@ void TestVectorStdString(const char* name,
 
     if (!with_lcp) {
         // run sorting algorithm
-        double ts1 = timestamp();
+        double ts1 = tlx::timestamp();
 
         StdStringSet ss(strings.data(), strings.data() + strings.size());
         sorter(StringPtr<StdStringSet>(ss), /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
-        double ts2 = timestamp();
+        double ts2 = tlx::timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
         // check result
@@ -210,7 +204,7 @@ void TestVectorStdString(const char* name,
     }
     else {
         // run sorting algorithm with lcp output
-        double ts1 = timestamp();
+        double ts1 = tlx::timestamp();
 
         tlx::simple_vector<uint32_t> lcp(num_strings);
 
@@ -219,7 +213,7 @@ void TestVectorStdString(const char* name,
                    /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
-        double ts2 = timestamp();
+        double ts2 = tlx::timestamp();
         LOG1 << "sorting+lcp took " << ts2 - ts1 << " seconds";
 
         // check result
@@ -261,13 +255,13 @@ void TestUPtrStdString(const char* name,
 
     if (!with_lcp) {
         // run sorting algorithm
-        double ts1 = timestamp();
+        double ts1 = tlx::timestamp();
 
         UPtrStdStringSet ss(strings.data(), strings.data() + strings.size());
         sorter(StringPtr<UPtrStdStringSet>(ss), /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
-        double ts2 = timestamp();
+        double ts2 = tlx::timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
         // check result
@@ -278,7 +272,7 @@ void TestUPtrStdString(const char* name,
     }
     else {
         // run sorting algorithm with lcp output
-        double ts1 = timestamp();
+        double ts1 = tlx::timestamp();
 
         tlx::simple_vector<uint32_t> lcp(num_strings);
 
@@ -287,7 +281,7 @@ void TestUPtrStdString(const char* name,
                    /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
-        double ts2 = timestamp();
+        double ts2 = tlx::timestamp();
         LOG1 << "sorting+lcp took " << ts2 - ts1 << " seconds";
 
         // check result
@@ -319,12 +313,12 @@ void TestStringSuffixString(const char* name, const size_t num_chars,
     auto ss = StringSuffixSet::Initialize(text, suffixarray);
 
     // run sorting algorithm
-    double ts1 = timestamp();
+    double ts1 = tlx::timestamp();
 
     sorter(ss, /* depth */ 0, /* memory */ 0);
     if (0) ss.print();
 
-    double ts2 = timestamp();
+    double ts2 = tlx::timestamp();
     LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
     // check result

@@ -53,6 +53,7 @@ set(LIBTLX_SOURCES
   string/union_words.cpp
   string/word_wrap.cpp
   thread_pool.cpp
+  timestamp.cpp
 
   )
 

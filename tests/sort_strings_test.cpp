@@ -41,11 +41,11 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
 
     // run sorting algorithm
     {
-        double ts1 = timestamp();
+        double ts1 = tlx::timestamp();
 
         tlx::sort_strings(cstrings.data(), num_strings, /* memory */ 0);
 
-        double ts2 = timestamp();
+        double ts2 = tlx::timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
         // check result
@@ -66,11 +66,11 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
 
     // run sorting algorithm
     {
-        double ts1 = timestamp();
+        double ts1 = tlx::timestamp();
 
         tlx::sort_strings(ccstrings.data(), num_strings, /* memory */ 0);
 
-        double ts2 = timestamp();
+        double ts2 = tlx::timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
         // check result
@@ -89,14 +89,14 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
 
     // run sorting algorithm with LCP output
     {
-        double ts1 = timestamp();
+        double ts1 = tlx::timestamp();
 
         tlx::simple_vector<uint32_t> lcp(num_strings);
 
         tlx::sort_strings_lcp(
             ccstrings.data(), num_strings, lcp.data(), /* memory */ 0);
 
-        double ts2 = timestamp();
+        double ts2 = tlx::timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
 
         // check result

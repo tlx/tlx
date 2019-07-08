@@ -12,6 +12,8 @@
 
 #include "sort_strings_test.hpp"
 
+#include <tlx/sort/strings_parallel.hpp>
+
 #include <tlx/sort/strings/parallel_sample_sort.hpp>
 
 /******************************************************************************/
@@ -37,9 +39,112 @@ void parallel_sample_sort_unroll_interleave(
 
 /******************************************************************************/
 
+void TestFrontend(const size_t num_strings, const size_t num_chars,
+                  const std::string& letters) {
+
+    std::default_random_engine rng(seed);
+
+    LOG1 << "Running sort_strings() on " << num_strings
+         << " uint8_t* strings";
+
+    // array of string pointers
+    tlx::simple_vector<uint8_t*> cstrings(num_strings);
+
+    // generate random strings of length num_chars
+    for (size_t i = 0; i < num_strings; ++i)
+    {
+        size_t slen = num_chars + (rng() >> 8) % (num_chars / 4);
+
+        cstrings[i] = new uint8_t[slen + 1];
+        fill_random(rng, letters, cstrings[i], cstrings[i] + slen);
+        cstrings[i][slen] = 0;
+    }
+
+    // run sorting algorithm
+    {
+        double ts1 = timestamp();
+
+        tlx::sort_strings_parallel(cstrings.data(), num_strings);
+
+        double ts2 = timestamp();
+        LOG1 << "sorting took " << ts2 - ts1 << " seconds";
+
+        // check result
+        if (!UCharStringSet(cstrings.data(), cstrings.data() + num_strings)
+            .check_order())
+        {
+            LOG1 << "Result is not sorted!";
+            abort();
+        }
+    }
+
+    // array of const string pointers
+    tlx::simple_vector<const uint8_t*> ccstrings(num_strings);
+
+    for (size_t i = 0; i < num_strings; ++i)
+        ccstrings[i] = cstrings[i];
+    std::shuffle(ccstrings.begin(), ccstrings.end(), rng);
+
+    // run sorting algorithm
+    {
+        double ts1 = timestamp();
+
+        tlx::sort_strings_parallel(ccstrings.data(), num_strings);
+
+        double ts2 = timestamp();
+        LOG1 << "sorting took " << ts2 - ts1 << " seconds";
+
+        // check result
+        if (!CUCharStringSet(ccstrings.data(), ccstrings.data() + num_strings)
+            .check_order())
+        {
+            LOG1 << "Result is not sorted!";
+            abort();
+        }
+    }
+
+    // recreate array of const string pointers
+    for (size_t i = 0; i < num_strings; ++i)
+        ccstrings[i] = cstrings[i];
+    std::shuffle(ccstrings.begin(), ccstrings.end(), rng);
+
+    // run sorting algorithm with LCP output
+    {
+        double ts1 = timestamp();
+
+        tlx::simple_vector<uint32_t> lcp(num_strings);
+
+        tlx::sort_strings_parallel_lcp(
+            ccstrings.data(), num_strings, lcp.data());
+
+        double ts2 = timestamp();
+        LOG1 << "sorting took " << ts2 - ts1 << " seconds";
+
+        // check result
+        CUCharStringSet ss(ccstrings.data(), ccstrings.data() + num_strings);
+        if (!ss.check_order())
+        {
+            LOG1 << "Result is not sorted!";
+            abort();
+        }
+        if (!check_lcp(ss, lcp.data())) {
+            LOG1 << "LCP result is not correct!";
+            abort();
+        }
+    }
+
+    // free memory.
+    for (size_t i = 0; i < num_strings; ++i)
+        delete[] cstrings[i];
+}
+
+/******************************************************************************/
+
 void test_all(const size_t num_strings) {
     run_tests(parallel_sample_sort);
     run_tests(parallel_sample_sort_unroll_interleave);
+
+    TestFrontend(num_strings, 16, letters_alnum);
 }
 
 int main() {

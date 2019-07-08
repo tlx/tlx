@@ -55,6 +55,8 @@ public:
     static const bool debug_recursion = false;
     static const bool debug_lcp = false;
 
+    static const bool debug_result = false;
+
     //! enable/disable various sorting levels
     static const bool enable_parallel_sample_sort = true;
     static const bool enable_sequential_sample_sort = true;
@@ -105,7 +107,7 @@ public:
     MultiTimer mtimer;
 
     //! number of threads overall
-    size_t thread_num;
+    size_t num_threads;
 
     //! thread pool
     ThreadPool threads_;
@@ -113,7 +115,7 @@ public:
     //! context constructor
     PS5Context(size_t _thread_num)
         : para_ss_steps(0), sequ_ss_steps(0), base_sort_steps(0),
-          thread_num(_thread_num),
+          num_threads(_thread_num),
           threads_(_thread_num)
     { }
 
@@ -125,10 +127,10 @@ public:
     size_t sequential_threshold() {
         size_t threshold = this->smallsort_threshold;
         if (this->enable_rest_size) {
-            return std::max(threshold, rest_size / thread_num);
+            return std::max(threshold, rest_size / num_threads);
         }
         else {
-            return std::max(threshold, total_size / thread_num);
+            return std::max(threshold, total_size / num_threads);
         }
     }
 
@@ -1421,8 +1423,7 @@ void parallel_sample_sort_base(const StringPtr& strptr, size_t depth) {
     Context ctx(std::thread::hardware_concurrency());
     ctx.total_size = strptr.size();
     ctx.rest_size = strptr.size();
-    ctx.thread_num = ctx.threads_.size();
-    TLX_sLOG1 << "ctx.thread_num" << ctx.thread_num;
+    ctx.num_threads = ctx.threads_.size();
 
     MultiTimer timer;
     timer.start("sort");
@@ -1436,21 +1437,21 @@ void parallel_sample_sort_base(const StringPtr& strptr, size_t depth) {
 
     using BigSortStep = PS5BigSortStep<Context, StringPtr>;
 
-    TLX_LOG1
+    TLX_LOGC(ctx.debug_result)
         << "RESULT"
         << " sizeof(key_type)=" << sizeof(typename PS5Parameters::key_type)
         << " splitter_treebits=" << size_t(BigSortStep::treebits_)
         << " num_splitters=" << size_t(BigSortStep::num_splitters_)
+        << " num_threads=" << ctx.num_threads
         << " enable_work_sharing=" << size_t(ctx.enable_work_sharing)
         << " use_restsize=" << size_t(ctx.enable_rest_size)
-        << " thread_num=" << ctx.thread_num
         << " tm_para_ss=" << ctx.mtimer.get("para_ss")
         << " tm_seq_ss=" << ctx.mtimer.get("sequ_ss")
         << " tm_mkqs=" << ctx.mtimer.get("mkqs")
         << " tm_inssort=" << ctx.mtimer.get("inssort")
         << " tm_total=" << ctx.mtimer.total()
         << " tm_idle="
-        << (ctx.thread_num * timer.total()) - ctx.mtimer.total()
+        << (ctx.num_threads * timer.total()) - ctx.mtimer.total()
         << " steps_para_sample_sort=" << ctx.para_ss_steps
         << " steps_seq_sample_sort=" << ctx.sequ_ss_steps
         << " steps_base_sort=" << ctx.base_sort_steps;

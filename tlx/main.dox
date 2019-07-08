@@ -45,7 +45,7 @@ List of the most commonly used components:
 - \ref tlx_math : \ref integer_log2_floor(), \ref is_power_of_two(), \ref round_up_to_power_of_two(), \ref round_down_to_power_of_two(), \ref ffs(), \ref clz(), \ref ctz(), \ref abs_diff(), \ref bswap32(), \ref bswap64(), \ref popcount(), \ref Aggregate, \ref PolynomialRegression.
 - \ref tlx_string : \ref starts_with(), \ref ends_with(), \ref contains(), \ref contains_word(), \ref trim(), \ref replace_all(), \ref erase_all(), \ref join(), \ref split(), \ref split_words(), \ref union_words(), \ref split_quoted(), \ref join_quoted(), \ref to_lower(), \ref hexdump(), \ref bitdump_le8(), \ref word_wrap(), \ref escape_html(), \ref parse_si_iec_units(), \ref format_iec_units(), \ref ssprintf(), \ref expand_environment_variables(), \ref levenshtein(), \ref hash_djb2(), \ref hash_sdbm()
 - \ref tlx_meta : \ref call_foreach(), \ref apply_tuple(), \ref vmap_foreach(), \ref Log2Floor, \ref FunctionChain, \ref FunctionStack, \ref is_std_pair, \ref is_std_tuple, \ref is_std_vector, \ref is_std_array, \ref TLX_MAKE_HAS_MEMBER.
-- \ref tlx_sort : \ref sort_strings() (using radix sort and multikey quicksort), \ref parallel_mergesort() (experimental merge sort from MCSTL)
+- \ref tlx_sort : \ref parallel_mergesort() (experimental parallel merge sort from MCSTL), \ref sort_strings() (using radix sort and multikey quicksort), \ref sort_strings_parallel() (using parallel super scalar string sample sort)
 - \ref backtrace.hpp "Backtrace Printing" : \ref print_cxx_backtrace().
 - \ref cmdline_parser.hpp "Command Line Parsing" : \ref CmdlineParser.
 - \ref multi_timer.hpp "Multi-Phase Timer" : \ref MultiTimer, \ref ScopedMultiTimerSwitch, \ref ScopedMultiTimer.

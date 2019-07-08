@@ -30,7 +30,6 @@
 #include <tlx/meta/enable_if.hpp>
 #include <tlx/multi_timer.hpp>
 #include <tlx/simple_vector.hpp>
-#include <tlx/string/hexdump.hpp>
 #include <tlx/thread_pool.hpp>
 #include <tlx/unused.hpp>
 

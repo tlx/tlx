@@ -20,7 +20,6 @@
 #include <tlx/logger/core.hpp>
 #include <tlx/math/clz.hpp>
 #include <tlx/math/ctz.hpp>
-#include <tlx/meta/log2.hpp>
 #include <tlx/string/hexdump.hpp>
 
 #include <algorithm>
@@ -477,6 +476,12 @@ public:
     static const size_t treebits = TreeBits;
     static const size_t num_splitters = (1 << treebits) - 1;
 
+    //! build tree and splitter array from sample
+    void build(key_type* samples, size_t samplesize, unsigned char* splitter_lcp) {
+        SSTreeBuilderLevelOrder<key_type, num_splitters>(
+            splitter_tree_, splitter_lcp, samples, samplesize);
+    }
+
 #define TLX_CLASSIFY_TREE_STEP                                               \
     if (TLX_UNLIKELY(key == splitter_tree_[i])) {                            \
         return                                                               \
@@ -552,12 +557,6 @@ public:
     key_type get_splitter(unsigned int i) const {
         return splitter_tree_[
             PerfectTreeCalculations<treebits>::pre_to_levelorder(i)];
-    }
-
-    //! build tree and splitter array from sample
-    void build(key_type* samples, size_t samplesize, unsigned char* splitter_lcp) {
-        SSTreeBuilderLevelOrder<key_type, num_splitters>(
-            splitter_tree_, splitter_lcp, samples, samplesize);
     }
 
 private:

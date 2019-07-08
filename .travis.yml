@@ -219,6 +219,10 @@ before_script:
       CMAKE_ARGS="$CMAKE_ARGS -DTLX_USE_GCOV=ON";
     fi
 
+  # more tests in Release mode
+  - MORE_TESTS=OFF
+  - if [[ "$BUILD_TYPE" == "Release" ]]; then MORE_TESTS=ON; fi
+
   # configure
   - mkdir build
   - cd build
@@ -227,7 +231,7 @@ before_script:
       -DCMAKE_C_COMPILER="$CMAKE_CC" -DCMAKE_CXX_COMPILER="$CMAKE_CXX"
       -DCMAKE_C_FLAGS="$COMPILER_FLAGS" -DCMAKE_CXX_FLAGS="$COMPILER_FLAGS"
       -DTLX_BUILD_TESTS=ON -DTLX_TRY_COMPILE_HEADERS=ON
-      -DTLX_MORE_TESTS=ON
+      -DTLX_MORE_TESTS="$MORE_TESTS"
       $CMAKE_ARGS ..
 
 script:

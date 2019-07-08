@@ -1,5 +1,5 @@
 /*******************************************************************************
- * tests/sort_strings_test.cpp
+ * tests/sort_strings_parallel_test.cpp
  *
  * String sorting test program
  *
@@ -12,11 +12,32 @@
 
 #include "sort_strings_test.hpp"
 
-#include <tlx/sort/strings/insertion_sort.hpp>
-#include <tlx/sort/strings/multikey_quicksort.hpp>
-#include <tlx/sort/strings/radix_sort.hpp>
+#include <tlx/sort/strings_parallel.hpp>
 
-#include <tlx/sort/strings.hpp>
+#include <tlx/sort/strings/parallel_sample_sort.hpp>
+
+/******************************************************************************/
+// More PS5 Parameter Instantiations
+
+class PS5ParametersTreeUnrollInterleave : public PS5ParametersDefault
+{
+public:
+    //! key type for sample sort: 32-bit or 64-bit
+    typedef size_t key_type;
+
+    //! classification tree variant for sample sorts
+    using Classify =
+        SSClassifyTreeUnrollInterleave<key_type, /* TreeBits */ 13>;
+};
+
+template <typename StringPtr>
+void parallel_sample_sort_unroll_interleave(
+    const StringPtr& strptr, size_t depth, size_t memory) {
+    return parallel_sample_sort_params<PS5ParametersTreeUnrollInterleave>(
+        strptr, depth, memory);
+}
+
+/******************************************************************************/
 
 void TestFrontend(const size_t num_strings, const size_t num_chars,
                   const std::string& letters) {
@@ -43,7 +64,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
     {
         double ts1 = timestamp();
 
-        tlx::sort_strings(cstrings.data(), num_strings, /* memory */ 0);
+        tlx::sort_strings_parallel(cstrings.data(), num_strings);
 
         double ts2 = timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
@@ -68,7 +89,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
     {
         double ts1 = timestamp();
 
-        tlx::sort_strings(ccstrings.data(), num_strings, /* memory */ 0);
+        tlx::sort_strings_parallel(ccstrings.data(), num_strings);
 
         double ts2 = timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
@@ -93,8 +114,8 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
 
         tlx::simple_vector<uint32_t> lcp(num_strings);
 
-        tlx::sort_strings_lcp(
-            ccstrings.data(), num_strings, lcp.data(), /* memory */ 0);
+        tlx::sort_strings_parallel_lcp(
+            ccstrings.data(), num_strings, lcp.data());
 
         double ts2 = timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
@@ -117,24 +138,19 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
         delete[] cstrings[i];
 }
 
+/******************************************************************************/
+
 void test_all(const size_t num_strings) {
-    if (num_strings <= 1024) {
-        run_tests(insertion_sort);
-    }
+    run_tests(parallel_sample_sort);
+    run_tests(parallel_sample_sort_unroll_interleave);
 
-    if (num_strings <= 1024 * 1024) {
-        run_tests(multikey_quicksort);
-        run_tests(radixsort_CE0);
-        run_tests(radixsort_CE2);
-        run_tests(radixsort_CE3);
-        run_tests(radixsort_CI2);
-        run_tests(radixsort_CI3);
-
-        TestFrontend(num_strings, 16, letters_alnum);
-    }
+    TestFrontend(num_strings, 16, letters_alnum);
 }
 
 int main() {
+    // self verify calculations
+    perfect_tree_calculations_self_verify();
+
     // run tests
     test_all(16);
     test_all(256);

@@ -84,6 +84,8 @@ private:
 
     //! Counter for number of threads busy.
     std::atomic<size_t> busy_ = { 0 };
+    //! Counter for number of idle threads waiting for a job.
+    std::atomic<size_t> idle_ = { 0 };
     //! Counter for total number of jobs executed
     std::atomic<size_t> done_ = { 0 };
 
@@ -104,11 +106,7 @@ public:
     ~ThreadPool();
 
     //! enqueue a Job, the caller must pass in all context using captures.
-    void enqueue(Job&& job) {
-        std::unique_lock<std::mutex> lock(mutex_);
-        jobs_.emplace_back(std::move(job));
-        cv_jobs_.notify_one();
-    }
+    void enqueue(Job&& job);
 
     //! Loop until no more jobs are in the queue AND all threads are idle. When
     //! this occurs, this method exits, however, the threads remain active.
@@ -123,16 +121,19 @@ public:
     void terminate();
 
     //! Return number of jobs currently completed.
-    size_t done() const { return done_; }
+    size_t done() const;
 
     //! Return number of threads in pool
-    size_t size() const { return threads_.size(); }
+    size_t size() const;
+
+    //! return number of idle threads in pool
+    size_t idle() const;
+
+    //! true if any thread is idle (= waiting for jobs)
+    bool has_idle() const;
 
     //! Return thread handle to thread i
-    std::thread& thread(size_t i) {
-        assert(i < threads_.size());
-        return threads_[i];
-    }
+    std::thread& thread(size_t i);
 
 private:
     //! Worker function, one per thread is started.

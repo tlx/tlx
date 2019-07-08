@@ -8,6 +8,9 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+// this makes sleep_for() available in older GCC versions
+#define _GLIBCXX_USE_NANOSLEEP
+
 #include <numeric>
 #include <string>
 #include <vector>

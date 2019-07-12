@@ -100,6 +100,12 @@ void check_heap(DAryHeap& heap, Set& set) {
     }
 }
 
+template <typename DAryAddressableIntHeap, typename Set>
+void check_handles(DAryAddressableIntHeap& heap, Set& set) {
+    for (auto elem = set.begin(); elem != set.end(); ++elem)
+        die_unless(heap.contains(*elem));
+}
+
 template <typename DAryHeap, typename Set, typename KeysVector>
 void fill_heap_and_set(DAryHeap& heap, Set& set, KeysVector& keys) {
     for (const typename KeysVector::value_type& key : keys) {
@@ -166,6 +172,7 @@ void d_ary_addressable_int_heap_test(size_t size, uint32_t r_seed = 42) {
         x.pop();
         s.erase(s.begin());
         check_heap(x, s);
+        check_handles(x, s);
     }
 
     std::mt19937 gen(r_seed);
@@ -177,6 +184,7 @@ void d_ary_addressable_int_heap_test(size_t size, uint32_t r_seed = 42) {
         x.remove(key);
         s.erase(s.find(key));
         check_heap(x, s);
+        check_handles(x, s);
     }
 
     // Test build_heap().
@@ -184,13 +192,16 @@ void d_ary_addressable_int_heap_test(size_t size, uint32_t r_seed = 42) {
     x.clear();
     x.build_heap(keys);
     check_heap(x, s);
+    check_handles(x, s);
 
     tlx::DAryAddressableIntHeap<KeyType, Arity, Compare> y, z;
     y.build_heap(s.begin(), s.end());
     check_heap(y, s);
+    check_handles(y, s);
 
     z.build_heap(std::move(keys));
     check_heap(z, s);
+    check_handles(z, s);
 }
 
 //! Tests update().

@@ -317,6 +317,7 @@ private:
 
     //! Reorganize heap_ into a heap.
     void heapify() {
+        key_type max_key = heap_.empty() ? 0 : heap_.front();
         if (heap_.size() >= 2) {
             // Iterate from the last internal node up to the root.
             size_t last_internal = (heap_.size() - 2) / arity;
@@ -324,15 +325,18 @@ private:
                 // Index of the current internal node.
                 size_t cur = i - 1;
                 key_type value = std::move(heap_[cur]);
+                max_key = std::max(max_key, value);
 
                 do {
                     size_t l = left(cur);
+                    max_key = std::max(max_key, heap_[l]);
                     // Find the minimum child of cur.
                     size_t min_elem = l;
                     for (size_t j = l + 1;
                          j - l < arity && j < heap_.size(); ++j) {
                         if (cmp_(heap_[j], heap_[min_elem]))
                             min_elem = j;
+                        max_key = std::max(max_key, heap_[j]);
                     }
 
                     // One of the children of cur is less then cur: swap and
@@ -348,7 +352,7 @@ private:
             }
         }
         // initialize handles_ vector
-        handles_.resize(heap_.size());
+        handles_.resize(std::max(handles_.size(), static_cast<size_t>(max_key) + 1), not_present());
         for (size_t i = 0; i < heap_.size(); ++i)
             handles_[heap_[i]] = i;
     }

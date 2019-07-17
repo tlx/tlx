@@ -125,6 +125,7 @@ if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
   foreach(target
       tlx_algorithm_multiway_merge_test
       tlx_semaphore_test
+      tlx_sort_parallel_mergesort_test
       tlx_sort_strings_parallel_test
       tlx_thread_barrier_test
       tlx_thread_pool_test

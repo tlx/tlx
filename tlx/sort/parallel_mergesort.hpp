@@ -18,18 +18,21 @@
 #ifndef TLX_SORT_PARALLEL_MERGESORT_HEADER
 #define TLX_SORT_PARALLEL_MERGESORT_HEADER
 
-#if defined(_OPENMP)
-
 #include <algorithm>
 #include <functional>
+#include <thread>
 #include <utility>
-#include <vector>
+
+#if defined(_OPENMP)
+#include <omp.h>
+#endif
 
 #include <tlx/algorithm/multisequence_selection.hpp>
 #include <tlx/algorithm/parallel_multiway_merge.hpp>
 #include <tlx/simple_vector.hpp>
+#include <tlx/thread_barrier_mutex.hpp>
 
-#include <omp.h>
+#include <tlx/logger.hpp>
 
 namespace tlx {
 
@@ -71,7 +74,7 @@ struct PMWMSSortingData {
     /** Offsets to add to the found positions. */
     simple_vector<DiffType> offsets;
     /** PMWMSPieces of data to merge \c [thread][sequence] */
-    simple_vector<std::vector<PMWMSPiece<DiffType> > > pieces;
+    simple_vector<simple_vector<PMWMSPiece<DiffType> > > pieces;
 
     explicit PMWMSSortingData(size_t num_threads)
         : starts(num_threads + 1),
@@ -96,13 +99,14 @@ void determine_samples(PMWMSSortingData<RandomAccessIterator>* sd,
 
     num_samples = parallel_multiway_merge_oversampling * num_threads - 1;
 
-    std::vector<DiffType> es(num_samples + 2);
+    simple_vector<DiffType> es(num_samples + 2);
     multiway_merge_detail::equally_split(
         sd->starts[iam + 1] - sd->starts[iam],
         static_cast<size_t>(num_samples + 1), es.begin());
 
-    for (DiffType i = 0; i < num_samples; i++)
+    for (DiffType i = 0; i < num_samples; i++) {
         sd->samples[iam * num_samples + i] = sd->source[sd->starts[iam] + es[i + 1]];
+    }
 }
 
 /*!
@@ -117,6 +121,7 @@ template <bool Stable, typename RandomAccessIterator, typename Comparator>
 void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
                            size_t iam,
                            size_t num_threads,
+                           ThreadBarrierMutex& barrier,
                            Comparator& comp,
                            MultiwayMergeSplittingAlgorithm mwmsa) {
     using ValueType =
@@ -128,9 +133,11 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
     DiffType length_local = sd->starts[iam + 1] - sd->starts[iam];
 
     using SortingPlacesIterator = ValueType *;
+
     // sort in temporary storage, leave space for sentinel
-    sd->temporary[iam] =
-        static_cast<ValueType*>(::operator new (sizeof(ValueType) * (length_local + 1)));
+    sd->temporary[iam] = static_cast<ValueType*>(
+        ::operator new (sizeof(ValueType) * (length_local + 1)));
+
     // copy there
     std::uninitialized_copy(sd->source + sd->starts[iam],
                             sd->source + sd->starts[iam] + length_local,
@@ -152,12 +159,10 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
         DiffType num_samples;
         determine_samples(sd, num_samples, iam, num_threads);
 
-#pragma omp barrier
-
-#pragma omp single
-        std::sort(sd->samples.begin(), sd->samples.end(), comp);
-
-#pragma omp barrier
+        barrier.wait(
+            [&]() {
+                std::sort(sd->samples.begin(), sd->samples.end(), comp);
+            });
 
         for (size_t s = 0; s < num_threads; s++)
         {
@@ -187,7 +192,7 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
     }
     else if (mwmsa == MWMSA_EXACT)
     {
-#pragma omp barrier
+        barrier.wait();
 
         simple_vector<std::pair<SortingPlacesIterator,
                                 SortingPlacesIterator> > seqs(num_threads);
@@ -197,7 +202,7 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
                 sd->temporary[s],
                 sd->temporary[s] + sd->starts[s + 1] - sd->starts[s]);
 
-        std::vector<SortingPlacesIterator> offsets(num_threads);
+        simple_vector<SortingPlacesIterator> offsets(num_threads);
 
         // if not last thread
         if (iam < num_threads - 1)
@@ -214,7 +219,7 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
                 sd->pieces[iam][seq].end = sd->starts[seq + 1] - sd->starts[seq];
         }
 
-#pragma omp barrier
+        barrier.wait();
 
         for (size_t seq = 0; seq < num_threads; seq++)
         {
@@ -237,8 +242,8 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
 
     // merge directly to target
 
-    std::vector<std::pair<SortingPlacesIterator,
-                          SortingPlacesIterator> > seqs(num_threads);
+    simple_vector<std::pair<SortingPlacesIterator,
+                            SortingPlacesIterator> > seqs(num_threads);
 
     for (size_t s = 0; s < num_threads; s++)
     {
@@ -251,9 +256,9 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
         seqs.begin(), seqs.end(),
         sd->source + offset, length_am, comp);
 
-#pragma omp barrier
+    barrier.wait();
 
-    delete sd->temporary[iam];
+    operator delete (sd->temporary[iam]);
 }
 
 } // namespace parallel_mergesort_detail
@@ -297,9 +302,10 @@ void parallel_mergesort_base(
     PMWMSSortingData<RandomAccessIterator> sd(num_threads);
     sd.source = begin;
 
-    if (mwmsa == MWMSA_SAMPLING)
+    if (mwmsa == MWMSA_SAMPLING) {
         sd.samples.resize(
             num_threads * (parallel_multiway_merge_oversampling * num_threads - 1));
+    }
 
     for (size_t s = 0; s < num_threads; s++)
         sd.pieces[s].resize(num_threads);
@@ -316,11 +322,29 @@ void parallel_mergesort_base(
     starts[num_threads] = start;
 
     // now sort in parallel
+
+    ThreadBarrierMutex barrier(num_threads);
+
+#if defined(_OPENMP)
 #pragma omp parallel num_threads(num_threads)
     {
         size_t iam = omp_get_thread_num();
-        parallel_sort_mwms_pu<Stable>(&sd, iam, num_threads, comp, mwmsa);
+        parallel_sort_mwms_pu<Stable>(
+            &sd, iam, num_threads, barrier, comp, mwmsa);
     }
+#else
+    simple_vector<std::thread> threads(num_threads);
+    for (size_t iam = 0; iam < num_threads; ++iam) {
+        threads[iam] = std::thread(
+            [&, iam]() {
+                parallel_sort_mwms_pu<Stable>(
+                    &sd, iam, num_threads, barrier, comp, mwmsa);
+            });
+    }
+    for (size_t i = 0; i < num_threads; i++) {
+        threads[i].join();
+    }
+#endif // defined(_OPENMP)
 }
 
 /*!
@@ -373,8 +397,6 @@ void stable_parallel_mergesort(
 //! \}
 
 } // namespace tlx
-
-#endif // defined(_OPENMP)
 
 #endif // !TLX_SORT_PARALLEL_MERGESORT_HEADER
 

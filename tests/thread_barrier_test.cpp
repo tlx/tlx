@@ -10,6 +10,8 @@
 
 // this makes sleep_for() available in older GCC versions
 #define _GLIBCXX_USE_NANOSLEEP
+// this makes yield() available in older GCC versions
+#define _GLIBCXX_USE_SCHED_YIELD
 
 #include <random>
 #include <thread>
@@ -17,12 +19,14 @@
 #include <tlx/die.hpp>
 #include <tlx/simple_vector.hpp>
 #include <tlx/thread_barrier_mutex.hpp>
+#include <tlx/thread_barrier_spin.hpp>
 
+template <typename ThreadBarrier>
 static void TestWaitFor(int count, int slowThread = -1) {
 
     int maxWaitTime = 10000;
 
-    tlx::ThreadBarrierMutex barrier(count);
+    ThreadBarrier barrier(count);
 
     tlx::simple_vector<uint8_t> flags(count);
     tlx::simple_vector<std::thread> threads(count);
@@ -57,7 +61,7 @@ static void TestWaitFor(int count, int slowThread = -1) {
                         die_unequal(flags[i], true);
                     }
 
-                    barrier.wait(
+                    barrier.wait_yield(
                         [&]() {
                             // reset flags
                             for (int i = 0; i < count; i++) {
@@ -74,15 +78,25 @@ static void TestWaitFor(int count, int slowThread = -1) {
 }
 
 int main() {
+    int count = 8;
 
     // run with 8 threads, one slow one
-    int count = 8;
     for (int i = 0; i < count; i++) {
-        TestWaitFor(count, i);
+        TestWaitFor<tlx::ThreadBarrierMutex>(count, i);
     }
 
     // run with 32 threads
-    TestWaitFor(32);
+    TestWaitFor<tlx::ThreadBarrierMutex>(32);
+
+#if !defined(TLX_HAVE_THREAD_SANITIZER)
+    // run with 8 threads, one slow one
+    for (int i = 0; i < count; i++) {
+        TestWaitFor<tlx::ThreadBarrierSpin>(count, i);
+    }
+
+    // run with 32 threads
+    TestWaitFor<tlx::ThreadBarrierSpin>(32);
+#endif // !defined(TLX_HAVE_THREAD_SANITIZER)
 
     return 0;
 }

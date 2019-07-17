@@ -59,14 +59,22 @@ public:
         }
     }
 
+    /*!
+     * Waits for n threads to arrive. Identical with wait() for
+     * ThreadBarrierMutex.
+     *
+     * This method blocks and returns as soon as n threads are waiting inside
+     * the method. Prior to continuing work, the lambda functor is called by the
+     * last thread entering the barrier.
+     */
+    template <typename Lambda = NoOperation<void> >
+    void wait_yield(Lambda lambda = Lambda()) {
+        return wait(lambda);
+    }
+
     //! return generation step bit: 0 or 1
     size_t step() const {
         return step_;
-    }
-
-    //! return next generation step bit: 0 or 1
-    size_t next_step() const {
-        return step_ ? 0 : 1;
     }
 
 protected:

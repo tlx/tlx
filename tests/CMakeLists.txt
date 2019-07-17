@@ -95,6 +95,7 @@ tlx_build_test(sort_strings_parallel_test)
 tlx_build_test(sort_strings_test)
 tlx_build_test(stack_allocator_test)
 tlx_build_test(string_test)
+tlx_build_test(thread_barrier_test)
 tlx_build_test(thread_pool_test)
 if(TLX_CXX_HAS_CXX14)
   tlx_build_test(meta/call_for_test)
@@ -121,17 +122,16 @@ if(MSVC)
 endif()
 if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
   # failed with a weird exception without -pthreads
-  set_target_properties(tlx_thread_pool_test PROPERTIES COMPILE_FLAGS -pthread)
-  set_target_properties(tlx_thread_pool_test PROPERTIES LINK_FLAGS -pthread)
-
-  set_target_properties(tlx_semaphore_test PROPERTIES COMPILE_FLAGS -pthread)
-  set_target_properties(tlx_semaphore_test PROPERTIES LINK_FLAGS -pthread)
-
-  set_target_properties(tlx_algorithm_multiway_merge_test PROPERTIES COMPILE_FLAGS -pthread)
-  set_target_properties(tlx_algorithm_multiway_merge_test PROPERTIES LINK_FLAGS -pthread)
-
-  set_target_properties(tlx_sort_strings_parallel_test PROPERTIES COMPILE_FLAGS -pthread)
-  set_target_properties(tlx_sort_strings_parallel_test PROPERTIES LINK_FLAGS -pthread)
+  foreach(target
+      tlx_algorithm_multiway_merge_test
+      tlx_semaphore_test
+      tlx_sort_strings_parallel_test
+      tlx_thread_barrier_test
+      tlx_thread_pool_test
+      )
+    set_target_properties(${target} PROPERTIES COMPILE_FLAGS -pthread)
+    set_target_properties(${target} PROPERTIES LINK_FLAGS -pthread)
+  endforeach()
 endif()
 
 ################################################################################

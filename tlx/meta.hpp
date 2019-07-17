@@ -38,6 +38,7 @@ print "#include <$_>\n" foreach sort glob("tlx/meta/"."*.hpp");
 #include <tlx/meta/is_std_tuple.hpp>
 #include <tlx/meta/is_std_vector.hpp>
 #include <tlx/meta/log2.hpp>
+#include <tlx/meta/no_operation.hpp>
 #include <tlx/meta/static_index.hpp>
 #include <tlx/meta/vexpand.hpp>
 #include <tlx/meta/vmap_for_range.hpp>

@@ -11,10 +11,8 @@
 // this makes sleep_for() available in older GCC versions
 #define _GLIBCXX_USE_NANOSLEEP
 
-#include <atomic>
 #include <random>
 #include <thread>
-#include <vector>
 
 #include <tlx/die.hpp>
 #include <tlx/simple_vector.hpp>
@@ -22,45 +20,56 @@
 
 static void TestWaitFor(int count, int slowThread = -1) {
 
-    int maxWaitTime = 100000;
+    int maxWaitTime = 10000;
 
     tlx::ThreadBarrierMutex barrier(count);
 
-    // Need to use atomic here, since setting a bool might not be atomic.
-    tlx::simple_vector<std::atomic<uint8_t> > flags(count);
+    tlx::simple_vector<uint8_t> flags(count);
     tlx::simple_vector<std::thread> threads(count);
 
     for (int i = 0; i < count; i++) {
         flags[i] = false;
     }
 
-    for (int i = 0; i < count; i++) {
-        threads[i] = std::thread(
-            [maxWaitTime, count, slowThread, &barrier, &flags, i] {
-                std::minstd_rand0 rng(i);
-                rng();
+    for (int t = 0; t < count; t++) {
+        threads[t] = std::thread(
+            [maxWaitTime, count, slowThread, &barrier, &flags, t] {
+                for (size_t r = 0; r < 100; ++r) {
+                    std::minstd_rand0 rng(t + r);
+                    rng();
 
-                if (slowThread == -1) {
-                    std::this_thread::sleep_for(
-                        std::chrono::microseconds(rng() % maxWaitTime));
-                }
-                else if (i == slowThread) {
-                    std::this_thread::sleep_for(
-                        std::chrono::microseconds(rng() % maxWaitTime));
-                }
+                    if (slowThread == -1) {
+                        std::this_thread::sleep_for(
+                            std::chrono::microseconds(rng() % maxWaitTime));
+                    }
+                    else if (t == slowThread) {
+                        std::this_thread::sleep_for(
+                            std::chrono::microseconds(rng() % maxWaitTime));
+                    }
 
-                flags[i] = true;
+                    // every thread sets a flag
+                    flags[t] = true;
 
-                barrier.wait();
+                    barrier.wait();
 
-                for (int j = 0; j < count; j++) {
-                    die_unequal(flags[j].load(), true);
+                    for (int i = 0; i < count; i++) {
+                        // check flags
+                        die_unequal(flags[i], true);
+                    }
+
+                    barrier.wait(
+                        [&]() {
+                            // reset flags
+                            for (int i = 0; i < count; i++) {
+                                flags[i] = false;
+                            }
+                        });
                 }
             });
     }
 
-    for (int i = 0; i < count; i++) {
-        threads[i].join();
+    for (int t = 0; t < count; t++) {
+        threads[t].join();
     }
 }
 

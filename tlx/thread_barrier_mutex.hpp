@@ -42,11 +42,11 @@ public:
     void wait(Lambda lambda = Lambda()) {
         std::unique_lock<std::mutex> lock(mutex_);
 
-        size_t local_ = step_;
-        counts_[local_]++;
+        size_t current = step_;
+        counts_[current]++;
 
-        if (counts_[local_] < thread_count_) {
-            while (counts_[local_] < thread_count_) {
+        if (counts_[current] < thread_count_) {
+            while (counts_[current] < thread_count_) {
                 cv_.wait(lock);
             }
         }

@@ -377,6 +377,13 @@ if(TLX_TRY_COMPILE_HEADERS)
 
   endforeach()
 
+  # add special definitions for try_compile targets
+  if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
+    set_target_properties(
+      tlx_try_compile_tlx_thread_barrier_spin_hpp
+      PROPERTIES COMPILE_DEFINITIONS "_GLIBCXX_USE_SCHED_YIELD")
+  endif()
+
 endif(TLX_TRY_COMPILE_HEADERS)
 
 ################################################################################

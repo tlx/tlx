@@ -39,6 +39,18 @@ public:
     //! constructor
     MultiTimer();
 
+    //! default copy-constructor
+    MultiTimer(const MultiTimer&);
+    //! default assignment operator
+    MultiTimer& operator = (const MultiTimer&);
+    //! move-constructor: default
+    MultiTimer(MultiTimer&&);
+    //! move-assignment operator: default
+    MultiTimer& operator = (MultiTimer&&);
+
+    //! destructor
+    ~MultiTimer();
+
     //! start new timer phase, stop the currently running one.
     void start(const char* timer);
 
@@ -71,14 +83,7 @@ public:
 
 private:
     //! timer entry
-    struct Entry {
-        //! hash of name for faster search
-        uint32_t hash;
-        //! reference to original string for comparison
-        const char* name;
-        //! duration of this timer
-        std::chrono::duration<double> duration;
-    };
+    struct Entry;
 
     //! array of timers
     std::vector<Entry> timers_;

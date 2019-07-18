@@ -22,6 +22,18 @@ namespace tlx {
 static std::mutex s_timer_add_mutex;
 
 /******************************************************************************/
+// MultiTimer::Entry
+
+struct MultiTimer::Entry {
+    //! hash of name for faster search
+    uint32_t hash;
+    //! reference to original string for comparison
+    const char* name;
+    //! duration of this timer
+    std::chrono::duration<double> duration;
+};
+
+/******************************************************************************/
 // MultiTimer
 
 MultiTimer::MultiTimer()
@@ -29,6 +41,13 @@ MultiTimer::MultiTimer()
       running_(nullptr),
       running_hash_(0)
 { }
+
+MultiTimer::MultiTimer(const MultiTimer&) = default;
+MultiTimer& MultiTimer::operator = (const MultiTimer&) = default;
+MultiTimer::MultiTimer(MultiTimer&&) = default;
+MultiTimer& MultiTimer::operator = (MultiTimer&&) = default;
+
+MultiTimer::~MultiTimer() = default;
 
 MultiTimer::Entry& MultiTimer::find_or_create(const char* name) {
     uint32_t hash = hash_djb2(name);
@@ -47,7 +66,7 @@ MultiTimer::Entry& MultiTimer::find_or_create(const char* name) {
 void MultiTimer::start(const char* timer) {
     tlx_die_unless(timer);
     uint32_t hash = hash_djb2(timer);
-    if (hash == running_hash_ && strcmp(running_, timer) == 0) {
+    if (running_ && hash == running_hash_ && strcmp(running_, timer) == 0) {
         static bool warning_shown = false;
         if (!warning_shown) {
             TLX_LOG1 << "MultiTimer: trying to start timer "

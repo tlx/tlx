@@ -32,8 +32,6 @@
 #include <tlx/simple_vector.hpp>
 #include <tlx/thread_barrier_mutex.hpp>
 
-#include <tlx/logger.hpp>
-
 namespace tlx {
 
 //! \addtogroup tlx_sort

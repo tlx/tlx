@@ -52,7 +52,7 @@ List of the most commonly used components:
 - \ref delegate.hpp "Fast Delegates" : \ref Delegate - a better std::function<> replacement.
 - \ref siphash.hpp "SipHash" : simple string hashing
 - \ref stack_allocator.hpp "StackAllocator" : stack-local allocations
-- Threading : \ref ThreadPool, \ref Semaphore, \ref ThreadBarrierMutex
+- Threading : \ref ThreadPool, \ref Semaphore, \ref ThreadBarrierMutex, \ref ThreadBarrierSpin
 
 \author Timo Bingmann (2018)
 

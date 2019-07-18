@@ -35,4 +35,4 @@ tlx is a collection of C++ helpers and extensions universally needed, but not fo
 - Fast Delegates : `Delegate` - a better `std::function<>` replacement.
 - SipHash : simple string hashing `siphash()`
 - StackAllocator : stack-local allocations
-- Threading : `ThreadPool`, `Semaphore`, `ThreadBarrierMutex`.
+- Threading : `ThreadPool`, `Semaphore`, `ThreadBarrierMutex`, `ThreadBarrierSpin`.

@@ -1313,7 +1313,7 @@ private:
         {
             LeafNode* leafnode = static_cast<LeafNode*>(n);
 
-            for (unsigned int slot = 0; slot < leafnode->slotuse; ++slot)
+            for (unsigned short slot = 0; slot < leafnode->slotuse; ++slot)
             {
                 // data objects are deleted by LeafNode's destructor
             }
@@ -1395,16 +1395,16 @@ private:
     //! template function, because the slotkey array is located at different
     //! places in LeafNode and InnerNode.
     template <typename node_type>
-    int find_lower(const node_type* n, const key_type& key) const {
+    unsigned short find_lower(const node_type* n, const key_type& key) const {
         if (sizeof(*n) > traits::binsearch_threshold)
         {
             if (n->slotuse == 0) return 0;
 
-            int lo = 0, hi = n->slotuse;
+            unsigned short lo = 0, hi = n->slotuse;
 
             while (lo < hi)
             {
-                int mid = (lo + hi) >> 1;
+                unsigned short mid = (lo + hi) >> 1;
 
                 if (key_lessequal(key, n->key(mid))) {
                     hi = mid; // key <= mid
@@ -1420,7 +1420,7 @@ private:
             // verify result using simple linear search
             if (self_verify)
             {
-                int i = 0;
+                unsigned short i = 0;
                 while (i < n->slotuse && key_less(n->key(i), key)) ++i;
 
                 TLX_BTREE_PRINT("BTree::find_lower: testfind: " << i);
@@ -1431,7 +1431,7 @@ private:
         }
         else // for nodes <= binsearch_threshold do linear search.
         {
-            int lo = 0;
+            unsigned short lo = 0;
             while (lo < n->slotuse && key_less(n->key(lo), key)) ++lo;
             return lo;
         }
@@ -1442,16 +1442,16 @@ private:
     //! function, because the slotkey array is located at different places in
     //! LeafNode and InnerNode.
     template <typename node_type>
-    int find_upper(const node_type* n, const key_type& key) const {
+    unsigned short find_upper(const node_type* n, const key_type& key) const {
         if (sizeof(*n) > traits::binsearch_threshold)
         {
             if (n->slotuse == 0) return 0;
 
-            int lo = 0, hi = n->slotuse;
+            unsigned short lo = 0, hi = n->slotuse;
 
             while (lo < hi)
             {
-                int mid = (lo + hi) >> 1;
+                unsigned short mid = (lo + hi) >> 1;
 
                 if (key_less(key, n->key(mid))) {
                     hi = mid; // key < mid
@@ -1467,7 +1467,7 @@ private:
             // verify result using simple linear search
             if (self_verify)
             {
-                int i = 0;
+                unsigned short i = 0;
                 while (i < n->slotuse && key_lessequal(n->key(i), key)) ++i;
 
                 TLX_BTREE_PRINT("BTree::find_upper testfind: " << i);
@@ -1478,7 +1478,7 @@ private:
         }
         else // for nodes <= binsearch_threshold do linear search.
         {
-            int lo = 0;
+            unsigned short lo = 0;
             while (lo < n->slotuse && key_lessequal(n->key(lo), key)) ++lo;
             return lo;
         }
@@ -1526,14 +1526,14 @@ public:
         while (!n->is_leafnode())
         {
             const InnerNode* inner = static_cast<const InnerNode*>(n);
-            int slot = find_lower(inner, key);
+            unsigned short slot = find_lower(inner, key);
 
             n = inner->childid[slot];
         }
 
         const LeafNode* leaf = static_cast<const LeafNode*>(n);
 
-        int slot = find_lower(leaf, key);
+        unsigned short slot = find_lower(leaf, key);
         return (slot < leaf->slotuse && key_equal(key, leaf->key(slot)));
     }
 
@@ -1546,14 +1546,14 @@ public:
         while (!n->is_leafnode())
         {
             const InnerNode* inner = static_cast<const InnerNode*>(n);
-            int slot = find_lower(inner, key);
+            unsigned short slot = find_lower(inner, key);
 
             n = inner->childid[slot];
         }
 
         LeafNode* leaf = static_cast<LeafNode*>(n);
 
-        int slot = find_lower(leaf, key);
+        unsigned short slot = find_lower(leaf, key);
         return (slot < leaf->slotuse && key_equal(key, leaf->key(slot)))
                ? iterator(leaf, slot) : end();
     }
@@ -1567,14 +1567,14 @@ public:
         while (!n->is_leafnode())
         {
             const InnerNode* inner = static_cast<const InnerNode*>(n);
-            int slot = find_lower(inner, key);
+            unsigned short slot = find_lower(inner, key);
 
             n = inner->childid[slot];
         }
 
         const LeafNode* leaf = static_cast<const LeafNode*>(n);
 
-        int slot = find_lower(leaf, key);
+        unsigned short slot = find_lower(leaf, key);
         return (slot < leaf->slotuse && key_equal(key, leaf->key(slot)))
                ? const_iterator(leaf, slot) : end();
     }
@@ -1588,14 +1588,14 @@ public:
         while (!n->is_leafnode())
         {
             const InnerNode* inner = static_cast<const InnerNode*>(n);
-            int slot = find_lower(inner, key);
+            unsigned short slot = find_lower(inner, key);
 
             n = inner->childid[slot];
         }
 
         const LeafNode* leaf = static_cast<const LeafNode*>(n);
 
-        int slot = find_lower(leaf, key);
+        unsigned short slot = find_lower(leaf, key);
         size_type num = 0;
 
         while (leaf && slot < leaf->slotuse && key_equal(key, leaf->key(slot)))
@@ -1620,14 +1620,14 @@ public:
         while (!n->is_leafnode())
         {
             const InnerNode* inner = static_cast<const InnerNode*>(n);
-            int slot = find_lower(inner, key);
+            unsigned short slot = find_lower(inner, key);
 
             n = inner->childid[slot];
         }
 
         LeafNode* leaf = static_cast<LeafNode*>(n);
 
-        int slot = find_lower(leaf, key);
+        unsigned short slot = find_lower(leaf, key);
         return iterator(leaf, slot);
     }
 
@@ -1640,14 +1640,14 @@ public:
         while (!n->is_leafnode())
         {
             const InnerNode* inner = static_cast<const InnerNode*>(n);
-            int slot = find_lower(inner, key);
+            unsigned short slot = find_lower(inner, key);
 
             n = inner->childid[slot];
         }
 
         const LeafNode* leaf = static_cast<const LeafNode*>(n);
 
-        int slot = find_lower(leaf, key);
+        unsigned short slot = find_lower(leaf, key);
         return const_iterator(leaf, slot);
     }
 
@@ -1660,14 +1660,14 @@ public:
         while (!n->is_leafnode())
         {
             const InnerNode* inner = static_cast<const InnerNode*>(n);
-            int slot = find_upper(inner, key);
+            unsigned short slot = find_upper(inner, key);
 
             n = inner->childid[slot];
         }
 
         LeafNode* leaf = static_cast<LeafNode*>(n);
 
-        int slot = find_upper(leaf, key);
+        unsigned short slot = find_upper(leaf, key);
         return iterator(leaf, slot);
     }
 
@@ -1680,14 +1680,14 @@ public:
         while (!n->is_leafnode())
         {
             const InnerNode* inner = static_cast<const InnerNode*>(n);
-            int slot = find_upper(inner, key);
+            unsigned short slot = find_upper(inner, key);
 
             n = inner->childid[slot];
         }
 
         const LeafNode* leaf = static_cast<const LeafNode*>(n);
 
-        int slot = find_upper(leaf, key);
+        unsigned short slot = find_upper(leaf, key);
         return const_iterator(leaf, slot);
     }
 
@@ -1936,7 +1936,7 @@ private:
             key_type newkey = key_type();
             node* newchild = nullptr;
 
-            int slot = find_lower(inner, key);
+            unsigned short slot = find_lower(inner, key);
 
             TLX_BTREE_PRINT(
                 "BTree::insert_descend into " << inner->childid[slot]);
@@ -2029,7 +2029,7 @@ private:
         {
             LeafNode* leaf = static_cast<LeafNode*>(n);
 
-            int slot = find_lower(leaf, key);
+            unsigned short slot = find_lower(leaf, key);
 
             if (!allow_duplicates &&
                 slot < leaf->slotuse && key_equal(key, leaf->key(slot))) {
@@ -2075,7 +2075,7 @@ private:
                          key_type* out_newkey, node** out_newleaf) {
         TLX_BTREE_ASSERT(leaf->is_full());
 
-        unsigned int mid = (leaf->slotuse >> 1);
+        unsigned short mid = (leaf->slotuse >> 1);
 
         TLX_BTREE_PRINT("BTree::split_leaf_node on " << leaf);
 
@@ -2111,7 +2111,7 @@ private:
                           node** out_newinner, unsigned int addslot) {
         TLX_BTREE_ASSERT(inner->is_full());
 
-        unsigned int mid = (inner->slotuse >> 1);
+        unsigned short mid = (inner->slotuse >> 1);
 
         TLX_BTREE_PRINT("BTree::split_inner: mid " << mid <<
                         " addslot " << addslot);
@@ -2457,7 +2457,7 @@ private:
             LeafNode* left_leaf = static_cast<LeafNode*>(left);
             LeafNode* right_leaf = static_cast<LeafNode*>(right);
 
-            int slot = find_lower(leaf, key);
+            unsigned short slot = find_lower(leaf, key);
 
             if (slot >= leaf->slotuse || !key_equal(key, leaf->key(slot)))
             {
@@ -2590,7 +2590,7 @@ private:
             node* myleft, * myright;
             InnerNode* myleft_parent, * myright_parent;
 
-            int slot = find_lower(inner, key);
+            unsigned short slot = find_lower(inner, key);
 
             if (slot == 0) {
                 myleft =
@@ -2803,7 +2803,7 @@ private:
                 return btree_not_found;
             }
 
-            int slot = iter.curr_slot;
+            unsigned short slot = iter.curr_slot;
 
             TLX_BTREE_PRINT("Found iterator in leaf " <<
                             curr << " at slot " << slot);
@@ -2938,7 +2938,7 @@ private:
             // located.
 
             result_t result;
-            int slot = find_lower(inner, iter.key());
+            unsigned short slot = find_lower(inner, iter.key());
 
             while (slot <= inner->slotuse)
             {
@@ -3495,7 +3495,7 @@ private:
 
             for (unsigned int i = 0; i < depth; i++) os << "  ";
 
-            for (unsigned int slot = 0; slot < leafnode->slotuse; ++slot)
+            for (unsigned short slot = 0; slot < leafnode->slotuse; ++slot)
             {
                 // os << leafnode->key(slot) << " "
                 //    << "(data: " << leafnode->slotdata[slot] << ") ";

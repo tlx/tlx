@@ -112,6 +112,7 @@ void determine_samples(PMWMSSortingData<RandomAccessIterator>* sd,
  * \param sd Pointer to sorting data struct.
  * \param iam my thread number
  * \param num_threads number of threads in group
+ * \param barrier thread barrier from main function
  * \param comp Comparator.
  * \param mwmsa MultiwayMergeSplittingAlgorithm to use.
  */

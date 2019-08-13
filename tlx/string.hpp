@@ -48,6 +48,7 @@ print "#include <$_>\n"
 #include <tlx/string/replace.hpp>
 #include <tlx/string/split.hpp>
 #include <tlx/string/split_quoted.hpp>
+#include <tlx/string/split_view.hpp>
 #include <tlx/string/split_words.hpp>
 #include <tlx/string/ssprintf.hpp>
 #include <tlx/string/starts_with.hpp>

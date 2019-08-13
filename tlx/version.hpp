@@ -24,7 +24,7 @@ namespace tlx {
   print "#define TLX_MINOR_VERSION     $date\n";
 ]]]*/
 //! TLX_MINOR is the date of the last commit.
-#define TLX_MINOR_VERSION     20190727
+#define TLX_MINOR_VERSION     20190813
 // [[[end]]]
 
 //! TLX_VERSION is a combination of TLX_MAJOR_VERSION and TLX_MINOR_VERSION

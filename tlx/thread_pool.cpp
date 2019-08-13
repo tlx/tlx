@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -14,12 +14,12 @@
 
 namespace tlx {
 
-ThreadPool::ThreadPool(size_t num_threads, Job&& init)
-    : init_(std::move(init))
-    , threads_(num_threads) {
+ThreadPool::ThreadPool(size_t num_threads, InitThread&& init_thread)
+    : threads_(num_threads),
+      init_thread_(std::move(init_thread)) {
     // immediately construct worker threads
     for (size_t i = 0; i < num_threads; ++i)
-        threads_[i] = std::thread(&ThreadPool::worker, this);
+        threads_[i] = std::thread(&ThreadPool::worker, this, i);
 }
 
 ThreadPool::~ThreadPool() {
@@ -83,8 +83,9 @@ std::thread& ThreadPool::thread(size_t i) {
     return threads_[i];
 }
 
-void ThreadPool::worker() {
-    init_();
+void ThreadPool::worker(size_t p) {
+    if (init_thread_)
+        init_thread_(p);
 
     // lock mutex, it is released during condition waits
     std::unique_lock<std::mutex> lock(mutex_);

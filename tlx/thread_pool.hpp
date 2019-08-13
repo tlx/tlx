@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -65,11 +65,9 @@ class ThreadPool
 {
 public:
     using Job = Delegate<void ()>;
+    using InitThread = Delegate<void (size_t)>;
 
 private:
-    //! Run once per worker
-    Job init_;
-
     //! Deque of scheduled jobs.
     std::deque<Job> jobs_;
 
@@ -77,7 +75,7 @@ private:
     std::mutex mutex_;
 
     //! threads in pool
-    SimpleVector<std::thread> threads_;
+    simple_vector<std::thread> threads_;
 
     //! Condition variable used to notify that a new job has been inserted in
     //! the queue.
@@ -95,11 +93,14 @@ private:
     //! Flag whether to terminate
     std::atomic<bool> terminate_ = { false };
 
+    //! Run once per worker thread
+    InitThread init_thread_;
+
 public:
     //! Construct running thread pool of num_threads
     ThreadPool(
         size_t num_threads = std::thread::hardware_concurrency(),
-        Job&& init = []{});
+        InitThread&& init_thread = InitThread());
 
     //! non-copyable: delete copy-constructor
     ThreadPool(const ThreadPool&) = delete;
@@ -141,7 +142,7 @@ public:
 
 private:
     //! Worker function, one per thread is started.
-    void worker();
+    void worker(size_t p);
 };
 
 } // namespace tlx

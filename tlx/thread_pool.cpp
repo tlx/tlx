@@ -14,8 +14,9 @@
 
 namespace tlx {
 
-ThreadPool::ThreadPool(size_t num_threads)
-    : threads_(num_threads) {
+ThreadPool::ThreadPool(size_t num_threads, Job&& init)
+    : init_(std::move(init))
+    , threads_(num_threads) {
     // immediately construct worker threads
     for (size_t i = 0; i < num_threads; ++i)
         threads_[i] = std::thread(&ThreadPool::worker, this);
@@ -83,6 +84,8 @@ std::thread& ThreadPool::thread(size_t i) {
 }
 
 void ThreadPool::worker() {
+    init_();
+
     // lock mutex, it is released during condition waits
     std::unique_lock<std::mutex> lock(mutex_);
 

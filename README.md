@@ -19,7 +19,7 @@ tlx is a collection of C++ helpers and extensions universally needed, but not fo
 
 - `CountingPtr` – an intrusive reference counting pointer
 - `die()` - Simple Invariant Testing : `die()`, `die_unless()`, `die_if()`, `die_unequal()`.
-- logger.hpp : `LOG`, `LOG1`, `LOGC`, `sLOG`.
+- logger.hpp : `LOG`, `LOG1`, `LOGC`, `sLOG`, `wrap_unprintable()`.
 - Miscellaneous: `timestamp()`, `unused()`, `vector_free()`.
 - Algorithms : `merge_combine()`, `exclusive_scan()`, `multiway_merge()`, `parallel_multiway_merge()`, `multisequence_selection()`, `multisequence_partition()`.
 - Data Structures : `RingBuffer`, `SimpleVector`, `StringView`, B+ Trees, Loser Trees, `RadixHeap`, `(Addressable) D-Ary Heap`

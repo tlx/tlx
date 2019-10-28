@@ -15,7 +15,8 @@
 //! Simple string manipulations
 
 /*[[[perl
-my %exclude = ("tlx/string/ssprintf_generic.hpp" => 1);
+my %exclude = ("tlx/string/appendline.hpp" => 1,
+               "tlx/string/ssprintf_generic.hpp" => 1);
 print "#include <$_>\n"
     foreach grep {!$exclude{$_}} sort glob("tlx/string/"."*.hpp");
 ]]]*/

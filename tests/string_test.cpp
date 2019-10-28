@@ -14,6 +14,7 @@
 #include <tlx/die.hpp>
 #include <tlx/port/setenv.hpp>
 #include <tlx/string.hpp>
+#include <tlx/string/appendline.hpp>
 #include <tlx/string/ssprintf_generic.hpp>
 
 //! Returns an initialized unsigned char[] array inside an std::string
@@ -40,6 +41,39 @@ std::string random_binary(std::string::size_type size) {
         out[i] = static_cast<unsigned char>(prng() % 256);
 
     return out;
+}
+
+static void test_appendline() {
+    std::string input =
+        "abc\n" "def\n" "ghi\n" "jk";
+
+    std::stringstream ss1(input);
+    std::string line;
+
+    die_unless(tlx::appendline(ss1, line));
+    die_unequal(line, "abc");
+    die_unless(tlx::appendline(ss1, line));
+    die_unequal(line, "abcdef");
+    die_unless(tlx::appendline(ss1, line));
+    die_unequal(line, "abcdefghi");
+    die_unless(tlx::appendline(ss1, line));
+    die_unequal(line, "abcdefghijk");
+    die_if(tlx::appendline(ss1, line));
+
+    // add one last newline
+    input += "\n";
+    std::stringstream ss2(input);
+
+    line.clear();
+    die_unless(tlx::appendline(ss2, line));
+    die_unequal(line, "abc");
+    die_unless(tlx::appendline(ss2, line));
+    die_unequal(line, "abcdef");
+    die_unless(tlx::appendline(ss2, line));
+    die_unequal(line, "abcdefghi");
+    die_unless(tlx::appendline(ss2, line));
+    die_unequal(line, "abcdefghijk");
+    die_if(tlx::appendline(ss2, line));
 }
 
 static void test_base64() {
@@ -810,6 +844,7 @@ static void test_word_wrap() {
 
 int main() {
 
+    test_appendline();
     test_base64();
     test_bitdump();
     test_compare_icase();

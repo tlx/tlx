@@ -21,6 +21,7 @@ set(LIBTLX_SOURCES
   logger/core.cpp
   multi_timer.cpp
   port/setenv.cpp
+  string/appendline.cpp
   string/base64.cpp
   string/bitdump.cpp
   string/compare_icase.cpp

@@ -26,7 +26,7 @@ public:
         for (typename std::map<K, V, C, A>::const_iterator it = data.begin();
              it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin()) os << ", ";
             LoggerFormatter<K>::print(os, it->first);
             os << '=';
             LoggerFormatter<V>::print(os, it->second);
@@ -44,7 +44,7 @@ public:
         for (typename std::multimap<K, V, C, A>::const_iterator it = data.begin();
              it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin()) os << ", ";
             LoggerFormatter<K>::print(os, it->first);
             os << '=';
             LoggerFormatter<V>::print(os, it->second);

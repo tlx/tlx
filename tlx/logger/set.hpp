@@ -26,7 +26,7 @@ public:
         for (typename std::set<T, C, A>::const_iterator it = data.begin();
              it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin()) os << ", ";
             LoggerFormatter<T>::print(os, *it);
         }
         os << '}';
@@ -42,7 +42,7 @@ public:
         for (typename std::multiset<T, C, A>::const_iterator it = data.begin();
              it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin()) os << ", ";
             LoggerFormatter<T>::print(os, *it);
         }
         os << '}';

@@ -27,7 +27,7 @@ public:
         for (typename std::unordered_map<K, V, H, E, A>::const_iterator
              it = data.begin(); it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin()) os << ", ";
             LoggerFormatter<K>::print(os, it->first);
             os << '=';
             LoggerFormatter<V>::print(os, it->second);
@@ -46,7 +46,7 @@ public:
         for (typename std::unordered_multimap<K, V, H, E, A>::const_iterator
              it = data.begin(); it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin()) os << ", ";
             LoggerFormatter<K>::print(os, it->first);
             os << '=';
             LoggerFormatter<V>::print(os, it->second);

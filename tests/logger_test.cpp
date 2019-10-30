@@ -45,19 +45,19 @@ int main() {
               sLOG1 << 42 << "abc";
           });
 
-    check("(42,abc)\n(42,abc)\n",
+    check("(42, abc)\n(42, abc)\n",
           []() {
               LOG1 << std::make_pair(42, "abc");
               sLOG1 << std::make_pair(42, "abc");
           });
 
-    check("(42,abc,5)\n(42,abc,5)\n",
+    check("(42, abc, 5)\n(42, abc, 5)\n",
           []() {
               LOG1 << std::make_tuple(42, "abc", 5);
               sLOG1 << std::make_tuple(42, "abc", 5);
           });
 
-    check("(42,abc)\n(42,abc)\n",
+    check("(42, abc)\n(42, abc)\n",
           []() {
               LOG1 << std::make_tuple(42, "abc");
               sLOG1 << std::make_tuple(42, "abc");
@@ -75,13 +75,13 @@ int main() {
               sLOG1 << std::make_tuple();
           });
 
-    check("(42,(abc,10),5)\n(42,(abc,10),5)\n",
+    check("(42, (abc, 10), 5)\n(42, (abc, 10), 5)\n",
           []() {
               LOG1 << std::make_tuple(42, std::make_pair("abc", 10), 5);
               sLOG1 << std::make_tuple(42, std::make_pair("abc", 10), 5);
           });
 
-    check("[42,5,31]\n[42,5,31]\n",
+    check("[42, 5, 31]\n[42, 5, 31]\n",
           []() {
               std::vector<int> v {
                   { 42, 5, 31 }
@@ -90,7 +90,7 @@ int main() {
               sLOG1 << v;
           });
 
-    check("[42,5,31]\n[42,5,31]\n",
+    check("[42, 5, 31]\n[42, 5, 31]\n",
           []() {
               std::array<int, 3> a {
                   { 42, 5, 31 }
@@ -99,7 +99,7 @@ int main() {
               sLOG1 << a;
           });
 
-    check("[42,5,31]\n[42,5,31]\n",
+    check("[42, 5, 31]\n[42, 5, 31]\n",
           []() {
               std::deque<int> d {
                   { 42, 5, 31 }
@@ -108,7 +108,7 @@ int main() {
               sLOG1 << d;
           });
 
-    check("{5,31,42}\n{5,31,42}\n",
+    check("{5, 31, 42}\n{5, 31, 42}\n",
           []() {
               std::set<int> s {
                   { 42, 5, 31 }
@@ -117,7 +117,7 @@ int main() {
               sLOG1 << s;
           });
 
-    check("{5,5,31,42}\n{5,5,31,42}\n",
+    check("{5, 5, 31, 42}\n{5, 5, 31, 42}\n",
           []() {
               std::multiset<int> s {
                   { 42, 5, 31, 5 }
@@ -126,7 +126,7 @@ int main() {
               sLOG1 << s;
           });
 
-    check("{5=b,31=c,42=a}\n{5=b,31=c,42=a}\n",
+    check("{5=b, 31=c, 42=a}\n{5=b, 31=c, 42=a}\n",
           []() {
               std::map<int, const char*> m {
                   { 42, "a" }, { 5, "b" }, { 31, "c" }
@@ -135,7 +135,7 @@ int main() {
               sLOG1 << m;
           });
 
-    check("{5=b,31=c,42=a}\n{5=b,31=c,42=a}\n",
+    check("{5=b, 31=c, 42=a}\n{5=b, 31=c, 42=a}\n",
           []() {
               std::multimap<int, const char*> m {
                   { 42, "a" }, { 5, "b" }, { 31, "c" }
@@ -151,7 +151,7 @@ int main() {
               sLOG1 << s;
           });
 
-    check("{42,42}\n{42,42}\n",
+    check("{42, 42}\n{42, 42}\n",
           []() {
               std::unordered_multiset<int> s { 42, 42 };
               LOG1 << s;

@@ -27,7 +27,7 @@ public:
         for (typename std::unordered_set<T, H, E, A>::const_iterator
              it = data.begin(); it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin()) os << ", ";
             LoggerFormatter<T>::print(os, *it);
         }
         os << '}';
@@ -44,7 +44,7 @@ public:
         for (typename std::unordered_multiset<T, H, E, A>::const_iterator
              it = data.begin(); it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin()) os << ", ";
             LoggerFormatter<T>::print(os, *it);
         }
         os << '}';

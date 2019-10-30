@@ -243,7 +243,7 @@ public:
     static void print(std::ostream& os, const std::pair<A, B>& p) {
         os << '(';
         LoggerFormatter<A>::print(os, p.first);
-        os << ',';
+        os << ", ";
         LoggerFormatter<B>::print(os, p.second);
         os << ')';
     }
@@ -258,7 +258,7 @@ public:
         for (typename std::vector<T>::const_iterator it = data.begin();
              it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin()) os << ", ";
             LoggerFormatter<T>::print(os, *it);
         }
         os << ']';

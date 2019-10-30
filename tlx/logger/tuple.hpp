@@ -24,7 +24,7 @@ public:
     explicit LoggerTupleFormatter(std::ostream& os) : os_(os) { }
     template <typename Index, typename Arg>
     void operator () (const Index&, const Arg& a) const {
-        if (Index::index != 0) os_ << ',';
+        if (Index::index != 0) os_ << ", ";
         LoggerFormatter<typename std::decay<Arg>::type>::print(os_, a);
     }
     std::ostream& os_;

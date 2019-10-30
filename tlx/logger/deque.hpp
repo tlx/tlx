@@ -21,13 +21,14 @@ template <typename T, typename A>
 class LoggerFormatter<std::deque<T, A> >
 {
 public:
-    static void print(std::ostream& os, const std::deque<T, A>& data) {
+    static void print(std::ostream& os, const std::deque<T, A>& data, const bool addSpace) {
         os << '[';
         for (typename std::deque<T, A>::const_iterator it = data.begin();
              it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ", ";
-            LoggerFormatter<T>::print(os, *it);
+            if (it != data.begin()) os << ',';
+            if (it != data.begin() && addSpace) os << ' ';
+            LoggerFormatter<T>::print(os, *it, addSpace);
         }
         os << ']';
     }

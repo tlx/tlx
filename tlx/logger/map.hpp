@@ -21,15 +21,16 @@ template <typename K, typename V, typename C, typename A>
 class LoggerFormatter<std::map<K, V, C, A> >
 {
 public:
-    static void print(std::ostream& os, const std::map<K, V, C, A>& data) {
+    static void print(std::ostream& os, const std::map<K, V, C, A>& data, const bool addSpace) {
         os << '{';
         for (typename std::map<K, V, C, A>::const_iterator it = data.begin();
              it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ", ";
-            LoggerFormatter<K>::print(os, it->first);
+            if (it != data.begin()) os << ',';
+            if (it != data.begin() && addSpace) os << ' ';
+            LoggerFormatter<K>::print(os, it->first, addSpace);
             os << '=';
-            LoggerFormatter<V>::print(os, it->second);
+            LoggerFormatter<V>::print(os, it->second, addSpace);
         }
         os << '}';
     }
@@ -39,15 +40,16 @@ template <typename K, typename V, typename C, typename A>
 class LoggerFormatter<std::multimap<K, V, C, A> >
 {
 public:
-    static void print(std::ostream& os, const std::multimap<K, V, C, A>& data) {
+    static void print(std::ostream& os, const std::multimap<K, V, C, A>& data, const bool addSpace) {
         os << '{';
         for (typename std::multimap<K, V, C, A>::const_iterator it = data.begin();
              it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ", ";
-            LoggerFormatter<K>::print(os, it->first);
+            if (it != data.begin()) os << ',';
+            if (it != data.begin() && addSpace) os << ' ';
+            LoggerFormatter<K>::print(os, it->first, addSpace);
             os << '=';
-            LoggerFormatter<V>::print(os, it->second);
+            LoggerFormatter<V>::print(os, it->second, addSpace);
         }
         os << '}';
     }

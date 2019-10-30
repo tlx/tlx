@@ -22,13 +22,14 @@ class LoggerFormatter<std::unordered_set<T, H, E, A> >
 {
 public:
     static void print(std::ostream& os,
-                      const std::unordered_set<T, H, E, A>& data) {
+                      const std::unordered_set<T, H, E, A>& data, const bool addSpace) {
         os << '{';
         for (typename std::unordered_set<T, H, E, A>::const_iterator
              it = data.begin(); it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ", ";
-            LoggerFormatter<T>::print(os, *it);
+            if (it != data.begin()) os << ',';
+            if (it != data.begin() && addSpace) os << ' ';
+            LoggerFormatter<T>::print(os, *it, addSpace);
         }
         os << '}';
     }
@@ -39,13 +40,14 @@ class LoggerFormatter<std::unordered_multiset<T, H, E, A> >
 {
 public:
     static void print(std::ostream& os,
-                      const std::unordered_multiset<T, H, E, A>& data) {
+                      const std::unordered_multiset<T, H, E, A>& data, const bool addSpace) {
         os << '{';
         for (typename std::unordered_multiset<T, H, E, A>::const_iterator
              it = data.begin(); it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ", ";
-            LoggerFormatter<T>::print(os, *it);
+            if (it != data.begin()) os << ',';
+            if (it != data.begin() && addSpace) os << ' ';
+            LoggerFormatter<T>::print(os, *it, addSpace);
         }
         os << '}';
     }

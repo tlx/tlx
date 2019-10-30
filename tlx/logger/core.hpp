@@ -88,7 +88,7 @@ public:
     //! output any type, including io manipulators
     template <typename AnyType>
     Logger& operator << (const AnyType& at) {
-        LoggerFormatter<AnyType>::print(oss_, at);
+        LoggerFormatter<AnyType>::print(oss_, at, false);
         return *this;
     }
 
@@ -118,7 +118,7 @@ public:
     SpacingLogger& operator << (const AnyType& at) {
         if (!first_) oss_ << ' ';
         else first_ = false;
-        LoggerFormatter<AnyType>::print(oss_, at);
+        LoggerFormatter<AnyType>::print(oss_, at, true);
         return *this;
     }
 
@@ -231,7 +231,8 @@ template <typename AnyType>
 class LoggerFormatter<AnyType>
 {
 public:
-    static void print(std::ostream& os, const AnyType& t) {
+    static void print(std::ostream& os, const AnyType& t, const bool addSpace) {
+	(void)addSpace;
         os << t;
     }
 };
@@ -240,11 +241,12 @@ template <typename A, typename B>
 class LoggerFormatter<std::pair<A, B> >
 {
 public:
-    static void print(std::ostream& os, const std::pair<A, B>& p) {
+    static void print(std::ostream& os, const std::pair<A, B>& p, const bool addSpace) {
         os << '(';
-        LoggerFormatter<A>::print(os, p.first);
-        os << ", ";
-        LoggerFormatter<B>::print(os, p.second);
+        LoggerFormatter<A>::print(os, p.first, addSpace);
+        os << ',';
+	if (addSpace) os << ' ';
+        LoggerFormatter<B>::print(os, p.second, addSpace);
         os << ')';
     }
 };
@@ -253,13 +255,14 @@ template <typename T, class A>
 class LoggerFormatter<std::vector<T, A> >
 {
 public:
-    static void print(std::ostream& os, const std::vector<T, A>& data) {
+    static void print(std::ostream& os, const std::vector<T, A>& data, const bool addSpace) {
         os << '[';
         for (typename std::vector<T>::const_iterator it = data.begin();
              it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ", ";
-            LoggerFormatter<T>::print(os, *it);
+            if (it != data.begin()) os << ',';
+            if (it != data.begin() && addSpace) os << ' ';
+            LoggerFormatter<T>::print(os, *it, addSpace);
         }
         os << ']';
     }

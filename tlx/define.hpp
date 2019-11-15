@@ -25,6 +25,7 @@ print "#include <$_>\n" foreach sort glob("tlx/define/"."*.hpp");
 #include <tlx/define/deprecated.hpp>
 #include <tlx/define/endian.hpp>
 #include <tlx/define/likely.hpp>
+#include <tlx/define/visibility_hidden.hpp>
 // [[[end]]]
 
 #endif // !TLX_DEFINE_HEADER

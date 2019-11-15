@@ -7,7 +7,7 @@ sudo: false
 matrix:
   include:
     # gcc 4.7, Debug only
-    - env: CMAKE_CC="gcc-4.7" CMAKE_CXX="g++-4.7" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+    - env: CMAKE_CC="gcc-4.7" CMAKE_CXX="g++-4.7" BUILD_TYPE="Debug"
       os: linux
       addons: &gcc48
         apt:
@@ -21,7 +21,7 @@ matrix:
             - g++-4.7
 
     # gcc 4.8, Debug only
-    - env: CMAKE_CC="gcc-4.8" CMAKE_CXX="g++-4.8" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+    - env: CMAKE_CC="gcc-4.8" CMAKE_CXX="g++-4.8" BUILD_TYPE="Debug"
       os: linux
       addons: &gcc48
         apt:
@@ -49,7 +49,7 @@ matrix:
             - g++-4.9
 
     # gcc 5.x, Debug & Release
-    - env: CMAKE_CC="gcc-5" CMAKE_CXX="g++-5" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+    - env: CMAKE_CC="gcc-5" CMAKE_CXX="g++-5" BUILD_TYPE="Debug"
       dist: trusty
       os: linux
       addons: &gcc5
@@ -65,11 +65,11 @@ matrix:
             - doxygen
             - lcov
 
-    - env: CMAKE_CC="gcc-5" CMAKE_CXX="g++-5" BUILD_TYPE="Release" COMPILER_FLAGS="" BUILD_DOXYGEN="1"
+    - env: CMAKE_CC="gcc-5" CMAKE_CXX="g++-5" BUILD_TYPE="Release" BUILD_DOXYGEN="1"
       os: linux
       addons: *gcc5
 
-    - env: CMAKE_CC="gcc-5" CMAKE_CXX="g++-5" BUILD_TYPE="Release" COMPILER_FLAGS="" BUILD_COVERAGE="1"
+    - env: CMAKE_CC="gcc-5" CMAKE_CXX="g++-5" BUILD_TYPE="Release" BUILD_COVERAGE="1"
       os: linux
       addons: *gcc5
 
@@ -112,7 +112,7 @@ matrix:
       addons: *gcc6
 
     # gcc 7.x, Debug & Release, Debug with UndefinedBehaviorSanitizer
-    - env: CMAKE_CC="gcc-7" CMAKE_CXX="g++-7" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+    - env: CMAKE_CC="gcc-7" CMAKE_CXX="g++-7" BUILD_TYPE="Debug"
       os: linux
       addons: &gcc7
         apt:
@@ -126,12 +126,12 @@ matrix:
             - g++-7
             - doxygen
 
-    - env: CMAKE_CC="gcc-7" CMAKE_CXX="g++-7" BUILD_TYPE="Release" COMPILER_FLAGS=""
+    - env: CMAKE_CC="gcc-7" CMAKE_CXX="g++-7" BUILD_TYPE="Release" CMAKE_ARGS="-DTLX_BUILD_SHARED_LIBS=ON -DTLX_BUILD_STATIC_LIBS=OFF"
       os: linux
       addons: *gcc7
 
     # gcc 8.x, Debug & Release, Release with STL bounds checking
-    - env: CMAKE_CC="gcc-8" CMAKE_CXX="g++-8" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+    - env: CMAKE_CC="gcc-8" CMAKE_CXX="g++-8" BUILD_TYPE="Debug"
       os: linux
       addons: &gcc8
         apt:
@@ -150,7 +150,7 @@ matrix:
       addons: *gcc8
 
     # clang 3.7 without AddressSanitizer, Debug & Release
-    - env: CMAKE_CC="clang-3.7" CMAKE_CXX="clang++-3.7" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+    - env: CMAKE_CC="clang-3.7" CMAKE_CXX="clang++-3.7" BUILD_TYPE="Debug"
       os: linux
       addons: &clang37
         apt:
@@ -165,12 +165,12 @@ matrix:
             - clang-3.7
 
     # clang 3.7 without AddressSanitizer (there are some system-dependent LeakSanitizer errors)
-    - env: CMAKE_CC="clang-3.7" CMAKE_CXX="clang++-3.7" BUILD_TYPE="Release" COMPILER_FLAGS=""
+    - env: CMAKE_CC="clang-3.7" CMAKE_CXX="clang++-3.7" BUILD_TYPE="Release"
       os: linux
       addons: *clang37
 
     # clang 4.0 without AddressSanitizer, Debug & Release
-    - env: CMAKE_CC="clang-4.0" CMAKE_CXX="clang++-4.0" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+    - env: CMAKE_CC="clang-4.0" CMAKE_CXX="clang++-4.0" BUILD_TYPE="Debug"
       os: linux
       dist: trusty
       addons: &clang40
@@ -185,16 +185,16 @@ matrix:
             - clang-4.0
 
     # clang 4.0 without AddressSanitizer (there are some system-dependent LeakSanitizer errors)
-    - env: CMAKE_CC="clang-4.0" CMAKE_CXX="clang++-4.0" BUILD_TYPE="Release" COMPILER_FLAGS=""
+    - env: CMAKE_CC="clang-4.0" CMAKE_CXX="clang++-4.0" BUILD_TYPE="Release"
       os: linux
       dist: trusty
       addons: *clang40
 
     # clang 3.7 on MacOSX without AddressSanitizer, Debug & Release, not FULL_BUILD
-    - env: CMAKE_CC="clang" CMAKE_CXX="clang++" BUILD_TYPE="Debug" COMPILER_FLAGS=""
+    - env: CMAKE_CC="clang" CMAKE_CXX="clang++" BUILD_TYPE="Debug"
       os: osx
 
-    - env: CMAKE_CC="clang" CMAKE_CXX="clang++" BUILD_TYPE="Release" COMPILER_FLAGS=""
+    - env: CMAKE_CC="clang" CMAKE_CXX="clang++" BUILD_TYPE="Release"
       os: osx
 
 env:

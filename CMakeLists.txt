@@ -330,6 +330,7 @@ set(TLX_LIBRARIES tlx)
 # install header files
 install(DIRECTORY tlx
   DESTINATION ${TLX_INSTALL_INCLUDE_DIR}
+  COMPONENT Development
   FILES_MATCHING PATTERN "*.hpp")
 
 ###############################################################################

@@ -33,6 +33,7 @@ endif()
 ### Set Version
 
 set(TLX_VERSION "0.1.0")
+set(TLX_SOVERSION "0")
 
 ################################################################################
 ### Options and Switches
@@ -51,8 +52,7 @@ option(TLX_MORE_TESTS
 
 ### building shared and/or static libraries
 
-# by default we currently only build a static library, since we do not aim to
-# keep a stable binary interface.
+# by default we currently only build a static library
 option(TLX_BUILD_STATIC_LIBS "Build static library version of libtlx" ON)
 option(TLX_BUILD_SHARED_LIBS "Build shared library version of libtlx" OFF)
 

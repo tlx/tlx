@@ -71,8 +71,10 @@ if(TLX_BUILD_SHARED_LIBS)
 
   # build tlx SHARED library and link all programs again it
   add_library(tlx SHARED ${LIBTLX_SOURCES})
-  set_target_properties(tlx PROPERTIES OUTPUT_NAME "${TLX_LIBNAME}")
-  set_target_properties(tlx PROPERTIES VERSION "${TLX_VERSION}")
+  set_target_properties(tlx PROPERTIES
+    OUTPUT_NAME "${TLX_LIBNAME}"
+    VERSION "${TLX_VERSION}"
+    SOVERSION "${TLX_SOVERSION}")
 
   target_compile_definitions(tlx PUBLIC ${TLX_DEFINITIONS})
   target_include_directories(tlx PUBLIC
@@ -89,8 +91,9 @@ if(TLX_BUILD_SHARED_LIBS)
   if(TLX_BUILD_STATIC_LIBS)
     # but also build STATIC library
     add_library(tlx_static STATIC ${LIBTLX_SOURCES})
-    set_target_properties(tlx_static PROPERTIES OUTPUT_NAME "${TLX_LIBNAME}")
-    set_target_properties(tlx_static PROPERTIES VERSION "${TLX_VERSION}")
+    set_target_properties(tlx_static PROPERTIES
+      OUTPUT_NAME "${TLX_LIBNAME}"
+      VERSION "${TLX_VERSION}")
 
     target_compile_definitions(tlx_static PUBLIC ${TLX_DEFINITIONS})
     target_include_directories(tlx_static PUBLIC
@@ -112,8 +115,9 @@ else()
 
   # build tlx STATIC library and link all programs again it
   add_library(tlx STATIC ${LIBTLX_SOURCES})
-  set_target_properties(tlx PROPERTIES OUTPUT_NAME "${TLX_LIBNAME}")
-  set_target_properties(tlx PROPERTIES VERSION "${TLX_VERSION}")
+  set_target_properties(tlx PROPERTIES
+    OUTPUT_NAME "${TLX_LIBNAME}"
+    VERSION "${TLX_VERSION}")
 
   target_compile_definitions(tlx PUBLIC ${TLX_DEFINITIONS})
   target_include_directories(tlx PUBLIC

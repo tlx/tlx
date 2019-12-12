@@ -30,9 +30,21 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 ################################################################################
-### Set Version
+### Set Version -- synchronized with <tlx/version.hpp>
 
-set(TLX_VERSION "0.1.0")
+#[[perl
+#  return "keep" if $ENV{USER} ne "tb";
+#  use POSIX qw(strftime);
+#  my $date = strftime("%Y%m%d", localtime);
+#  open(F, "tlx/version.hpp") or die;
+#  my @lines = grep(m/^#define TLX_MINOR_VERSION /, <F>);
+#  close(F);
+#  die unless @lines == 1;
+#  $lines[0] =~ m/TLX_MINOR_VERSION\s+([0-9]+)/;
+#  print("set(TLX_VERSION \"0.$1.$date\")\n");
+#]]
+set(TLX_VERSION "0.5.20191212")
+#[[end]]
 set(TLX_SOVERSION "0")
 
 ################################################################################

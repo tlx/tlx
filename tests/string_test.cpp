@@ -11,6 +11,7 @@
 #include <random>
 #include <stdexcept>
 
+#include <tlx/define/endian.hpp>
 #include <tlx/die.hpp>
 #include <tlx/port/setenv.hpp>
 #include <tlx/string.hpp>
@@ -131,15 +132,40 @@ static void test_base64() {
 }
 
 static void test_bitdump() {
+    die_unequal(tlx::bitdump_8_msb("0123"),
+                "00110000 00110001 00110010 00110011");
+    die_unequal(tlx::bitdump_8_lsb("0123"),
+                "00001100 10001100 01001100 11001100");
+
+#if TLX_LITTLE_ENDIAN
+    die_unequal(tlx::bitdump_8_msb_type(uint16_t(0x1234)),
+                "00110100 00010010");
+    die_unequal(tlx::bitdump_8_lsb_type(uint16_t(0x1234)),
+                "00101100 01001000");
+#else
+    die_unequal(tlx::bitdump_8_msb_type(uint16_t(0x1234)),
+                "00010010 00110100");
+    die_unequal(tlx::bitdump_8_lsb_type(uint16_t(0x1234)),
+                "01001000 00101100");
+#endif
+
+    // deprecated methods:
     die_unequal(tlx::bitdump_le8("0123"),
                 "00110000 00110001 00110010 00110011");
     die_unequal(tlx::bitdump_be8("0123"),
                 "00001100 10001100 01001100 11001100");
 
+#if TLX_LITTLE_ENDIAN
     die_unequal(tlx::bitdump_le8_type(uint16_t(0x1234)),
                 "00110100 00010010");
     die_unequal(tlx::bitdump_be8_type(uint16_t(0x1234)),
                 "00101100 01001000");
+#else
+    die_unequal(tlx::bitdump_le8_type(uint16_t(0x1234)),
+                "00010010 00110100");
+    die_unequal(tlx::bitdump_be8_type(uint16_t(0x1234)),
+                "01001000 00101100");
+#endif
 }
 
 static void test_compare_icase() {

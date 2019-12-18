@@ -13,9 +13,9 @@
 namespace tlx {
 
 /******************************************************************************/
-// Bitdump 8-bit Little-Endian Methods
+// Bitdump 8-bit Bytes in Most-Significant-Bit First Order
 
-std::string bitdump_le8(const void* const data, size_t size) {
+std::string bitdump_8_msb(const void* const data, size_t size) {
     const unsigned char* const cdata =
         static_cast<const unsigned char*>(data);
 
@@ -41,14 +41,22 @@ std::string bitdump_le8(const void* const data, size_t size) {
     return out;
 }
 
+std::string bitdump_8_msb(const std::string& str) {
+    return bitdump_8_msb(str.data(), str.size());
+}
+
+std::string bitdump_le8(const void* const data, size_t size) {
+    return bitdump_8_msb(data, size);
+}
+
 std::string bitdump_le8(const std::string& str) {
-    return bitdump_le8(str.data(), str.size());
+    return bitdump_8_msb(str);
 }
 
 /******************************************************************************/
-// Bitdump 8-bit Big-Endian Methods
+// Bitdump 8-bit Bytes in Least-Significant-Bit First Order
 
-std::string bitdump_be8(const void* const data, size_t size) {
+std::string bitdump_8_lsb(const void* const data, size_t size) {
     const unsigned char* const cdata =
         static_cast<const unsigned char*>(data);
 
@@ -74,8 +82,16 @@ std::string bitdump_be8(const void* const data, size_t size) {
     return out;
 }
 
+std::string bitdump_8_lsb(const std::string& str) {
+    return bitdump_8_lsb(str.data(), str.size());
+}
+
+std::string bitdump_be8(const void* const data, size_t size) {
+    return bitdump_8_lsb(data, size);
+}
+
 std::string bitdump_be8(const std::string& str) {
-    return bitdump_be8(str.data(), str.size());
+    return bitdump_8_lsb(str);
 }
 
 /******************************************************************************/

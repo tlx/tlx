@@ -25,62 +25,104 @@ namespace tlx {
 // Bitdump Methods
 
 /*!
- * Dump a (binary) string as a sequence of 8-bit little-endian bytes.
+ * Dump a (binary) string of 8-bit bytes as a sequence of '0' and '1'
+ * characters, with the most significant bits (msb) first. Each 8-bit byte is
+ * represented with a block of '0'/'1's separated by spaces.
  *
  * \param data  binary data to output as bits
  * \param size  length of binary data
  * \return      string of binary digits
  */
-std::string bitdump_le8(const void* const data, size_t size);
+std::string bitdump_8_msb(const void* const data, size_t size);
 
 /*!
- * Dump a (binary) string as a sequence of 8-bit little-endian bytes.
+ * Dump a (binary) string of 8-bit bytes as a sequence of '0' and '1'
+ * characters, with the most significant bits (msb) first. Each 8-bit byte is
+ * represented with a block of '0'/'1's separated by spaces.
  *
  * \param str  binary data to output as bits
  * \return     string of binary digits
  */
-std::string bitdump_le8(const std::string& str);
+std::string bitdump_8_msb(const std::string& str);
 
 /*!
- * Dump a (binary) item as a sequence of 8-bit little-endian bytes.
+ * Dump a (binary) item of 8-bit bytes as a sequence of '0' and '1' characters,
+ * with the most significant bits (msb) first. Each 8-bit byte is represented
+ * with a block of '0'/'1's separated by spaces.
  *
  * \param t  binary data to output as bits
  * \return   string of binary digits
  */
 template <typename Type>
+std::string bitdump_8_msb_type(const Type& t) {
+    return bitdump_8_msb(&t, sizeof(t));
+}
+
+/*----------------------------------------------------------------------------*/
+
+//! deprecated method: unclear naming and documentation.
+std::string bitdump_le8(const void* const data, size_t size);
+
+//! deprecated method: unclear naming and documentation.
+std::string bitdump_le8(const std::string& str);
+
+//! deprecated method: unclear naming and documentation.
+template <typename Type>
 std::string bitdump_le8_type(const Type& t) {
-    return bitdump_le8(&t, sizeof(t));
+    return bitdump_8_msb_type(t);
 }
 
 /*----------------------------------------------------------------------------*/
 
 /*!
- * Dump a (binary) string as a sequence of 8-bit big-endian bytes.
+ * Dump a (binary) string of 8-bit bytes as a sequence of '0' and '1'
+ * characters, with the least significant bits (lsb) first. Each 8-bit byte is
+ * represented with a block of '0'/'1's separated by spaces.
  *
  * \param data  binary data to output as bits
  * \param size  length of binary data
  * \return      string of binary digits
  */
-std::string bitdump_be8(const void* const data, size_t size);
+std::string bitdump_8_lsb(const void* const data, size_t size);
 
 /*!
- * Dump a (binary) string as a sequence of 8-bit big-endian bytes.
+ * Dump a (binary) string of 8-bit bytes as a sequence of '0' and '1'
+ * characters, with the least significant bits (lsb) first. Each 8-bit byte is
+ * represented with a block of '0'/'1's separated by spaces.
  *
  * \param str  binary data to output as bits
  * \return     string of binary digits
  */
-std::string bitdump_be8(const std::string& str);
+std::string bitdump_8_lsb(const std::string& str);
 
 /*!
- * Dump a (binary) item as a sequence of 8-bit big-endian bytes.
+ * Dump a (binary) item of 8-bit bytes as a sequence of '0' and '1' characters,
+ * with the least significant bits (lsb) first. Each 8-bit byte is represented
+ * with a block of '0'/'1's separated by spaces.
  *
  * \param t  binary data to output as bits
  * \return   string of binary digits
  */
 template <typename Type>
-std::string bitdump_be8_type(const Type& t) {
-    return bitdump_be8(&t, sizeof(t));
+std::string bitdump_8_lsb_type(const Type& t) {
+    return bitdump_8_lsb(&t, sizeof(t));
 }
+
+/*----------------------------------------------------------------------------*/
+
+//! deprecated method: unclear naming and documentation.
+std::string bitdump_be8(const void* const data, size_t size);
+
+//! deprecated method: unclear naming and documentation.
+std::string bitdump_be8(const std::string& str);
+
+//! deprecated method: unclear naming and documentation.
+template <typename Type>
+std::string bitdump_be8_type(const Type& t) {
+    return bitdump_8_lsb_type(t);
+}
+
+/*----------------------------------------------------------------------------*/
 
 //! \}
 //! \}

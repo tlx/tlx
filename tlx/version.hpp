@@ -30,7 +30,7 @@ namespace tlx {
   print "#define TLX_PATCH_VERSION     $date\n";
 ]]]*/
 //! TLX_PATCH_VERSION is the date of the last commit.
-#define TLX_PATCH_VERSION     20191212
+#define TLX_PATCH_VERSION     20191218
 // [[[end]]]
 
 //! TLX_VERSION is a combination of TLX_MAJOR_VERSION, TLX_MINOR_VERSION, and

@@ -431,6 +431,7 @@ public:
 
 public:
     //! \name Fast Copy: Assign Operator and Copy Constructors
+    //! \{
 
     //! Assignment operator. All the keys are copied
     btree_set& operator = (const btree_set& other) {

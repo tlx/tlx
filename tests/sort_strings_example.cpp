@@ -16,10 +16,9 @@
 #include <tlx/sort/strings.hpp>
 #include <tlx/sort/strings_parallel.hpp>
 
+#include <cstring>
 #include <fstream>
 #include <iostream>
-
-#include <string.h>
 
 int main(int argc, char* argv[]) {
     tlx::CmdlineParser cp;

@@ -21,7 +21,7 @@
 
 namespace tlx {
 
-//! Implementations of sorting networks
+//! Implementations of sorting networks for up to sixteen elements.
 namespace sort_networks {
 
 //! \addtogroup tlx_sort

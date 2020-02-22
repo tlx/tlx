@@ -23,7 +23,7 @@ namespace tlx {
 //! \name Implementations of Sorting Networks
 //! \{
 
-//! Implementations of sorting networks
+//! Implementations of sorting networks for up to sixteen elements.
 namespace sort_networks {
 
 //! Conditional swap implementation used for sorting networks: trivial portable

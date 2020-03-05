@@ -36,3 +36,22 @@ tlx is a collection of C++ helpers and extensions universally needed, but not fo
 - SipHash : simple string hashing `siphash()`
 - StackAllocator : stack-local allocations
 - Threading : `ThreadPool`, `Semaphore`, `ThreadBarrierMutex`, `ThreadBarrierSpin`.
+
+## Bugs
+
+Please report bugs via the [github issue tracking system](https://github.com/tlx/tlx/issues).
+
+## License
+
+tlx is licensed under the [Boost Software License - Version 1.0](https://github.com/tlx/tlx/blob/master/LICENSE).
+
+If you use tlx in an academic context or publication, please cite it as
+
+```
+@Misc{TLX,
+  title = 	 {{TLX}: Collection of Sophisticated {C++} Data Structures, Algorithms, and Miscellaneous Helpers},
+  author = 	 {Timo Bingmann},
+  year = 	 2018,
+  note = 	 {\url{https://panthema.net/tlx}, retrieved {Oct.} 7, 2020},
+}
+```

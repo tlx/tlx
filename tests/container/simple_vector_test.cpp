@@ -39,7 +39,6 @@ template class SimpleVector<MyInteger2>;
 } // namespace tlx
 
 int main() {
-
     tlx::SimpleVector<MyInteger> x;
     die_unequal(x.size(), 0u);
 
@@ -57,6 +56,12 @@ int main() {
 
     for (size_t i = 0; i < y.size(); ++i)
         die_unequal(y[i].val_, y.size() - 1 - i);
+
+    for (size_t i = 0; i < y.size(); ++i)
+        die_unequal(y.at(i).val_, y.size() - 1 - i);
+
+    die_unequal(y.front().val_, y.size() - 1);
+    die_unequal(y.back().val_, 0u);
 
     std::sort(y.begin(), y.end(),
               [](const MyInteger& a, const MyInteger& b) {

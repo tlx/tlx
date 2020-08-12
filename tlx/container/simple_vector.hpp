@@ -150,12 +150,38 @@ public:
         return end();
     }
 
+    //! returns reference to the last element in the container
+    reference front() noexcept {
+        return array_[0];
+    }
+    //! returns reference to the first element in the container
+    const_reference front() const noexcept {
+        return array_[0];
+    }
+    //! returns reference to the first element in the container
+    reference back() noexcept {
+        return array_[size_ - 1];
+    }
+    //! returns reference to the last element in the container
+    const_reference back() const noexcept {
+        return array_[size_ - 1];
+    }
+
     //! return the i-th position of the vector
     reference operator [] (size_type i) noexcept {
         return *(begin() + i);
     }
     //! return constant reference to the i-th position of the vector
     const_reference operator [] (size_type i) const noexcept {
+        return *(begin() + i);
+    }
+
+    //! return the i-th position of the vector
+    reference at(size_type i) noexcept {
+        return *(begin() + i);
+    }
+    //! return constant reference to the i-th position of the vector
+    const_reference at(size_type i) const noexcept {
         return *(begin() + i);
     }
 

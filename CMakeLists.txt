@@ -38,7 +38,7 @@ endif()
 #  $lines[0] =~ m/TLX_MINOR_VERSION\s+([0-9]+)/;
 #  print("set(TLX_VERSION \"0.$1.$date\")\n");
 #]]
-set(TLX_VERSION "0.5.20200222")
+set(TLX_VERSION "0.5.20200812")
 #[[end]]
 set(TLX_SOVERSION "0")
 

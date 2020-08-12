@@ -66,10 +66,10 @@ If you use tlx in an academic context or publication, please cite it as
 
 ```
 @Misc{TLX,
-  title = 	 {{TLX}: Collection of Sophisticated {C++} Data Structures, Algorithms, and Miscellaneous Helpers},
-  author = 	 {Timo Bingmann},
-  year = 	 2018,
-  note = 	 {\url{https://panthema.net/tlx}, retrieved {Oct.} 7, 2020},
+  title =        {{TLX}: Collection of Sophisticated {C++} Data Structures, Algorithms, and Miscellaneous Helpers},
+  author =       {Timo Bingmann},
+  year =         2018,
+  note =         {\url{https://panthema.net/tlx}, retrieved {Oct.} 7, 2020},
 }
 ```
 

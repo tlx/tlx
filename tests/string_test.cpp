@@ -369,6 +369,76 @@ static void test_parse_si_iec_units() {
     die_if(tlx::parse_si_iec_units(" 33 GiBX ", &size));
 }
 
+static void test_parse_uri() {
+    tlx::string_view path, query_string, fragment;
+
+    tlx::parse_uri("/path/path1?qkey=qval#frag",
+                   &path, &query_string, &fragment);
+    die_unequal(path, "/path/path1");
+    die_unequal(query_string, "qkey=qval");
+    die_unequal(fragment, "frag");
+
+    tlx::parse_uri("/path/path1?qkey=qval",
+                   &path, &query_string, &fragment);
+    die_unequal(path, "/path/path1");
+    die_unequal(query_string, "qkey=qval");
+    die_unequal(fragment, "");
+
+    tlx::parse_uri("/path/path1",
+                   &path, &query_string, &fragment);
+    die_unequal(path, "/path/path1");
+    die_unequal(query_string, "");
+    die_unequal(fragment, "");
+}
+
+static void test_parse_uri_form_data() {
+    std::vector<std::string> key, value;
+
+    tlx::parse_uri_form_data("qkey=qval&qke+y2=qval2%21-&q=abc%3zdf",
+                             &key, &value);
+
+    die_unequal(key.size(), 3u);
+    die_unequal(value.size(), 3u);
+    die_unequal(key[0], "qkey");
+    die_unequal(value[0], "qval");
+    die_unequal(key[1], "qke y2");
+    die_unequal(value[1], "qval2!-");
+    die_unequal(key[2], "q");
+    die_unequal(value[2], "abc%3zdf");
+
+    tlx::parse_uri_form_data("qkey",
+                             &key, &value);
+
+    die_unequal(key.size(), 1u);
+    die_unequal(value.size(), 1u);
+    die_unequal(key[0], "qkey");
+    die_unequal(value[0], "");
+
+    tlx::parse_uri_form_data("qkey=",
+                             &key, &value);
+
+    die_unequal(key.size(), 1u);
+    die_unequal(value.size(), 1u);
+    die_unequal(key[0], "qkey");
+    die_unequal(value[0], "");
+
+    tlx::parse_uri_form_data("qkey=&",
+                             &key, &value);
+
+    die_unequal(key.size(), 1u);
+    die_unequal(value.size(), 1u);
+    die_unequal(key[0], "qkey");
+    die_unequal(value[0], "");
+
+    tlx::parse_uri_form_data("qkey=%01%02%03%AA%aa%0D%A0&",
+                             &key, &value);
+
+    die_unequal(key.size(), 1u);
+    die_unequal(value.size(), 1u);
+    die_unequal(key[0], "qkey");
+    die_unequal(value[0], "\x01\x02\x03\xAA\xAA\x0D\xA0");
+}
+
 static void test_split() {
     // simple char split
     std::vector<std::string> sv = tlx::split('/', "/usr/bin/test/");
@@ -887,6 +957,8 @@ int main() {
     test_join();
     test_levenshtein();
     test_parse_si_iec_units();
+    test_parse_uri();
+    test_parse_uri_form_data();
     test_replace();
     test_split();
     test_split_join_quoted();

@@ -46,6 +46,8 @@ print "#include <$_>\n"
 #include <tlx/string/levenshtein.hpp>
 #include <tlx/string/pad.hpp>
 #include <tlx/string/parse_si_iec_units.hpp>
+#include <tlx/string/parse_uri.hpp>
+#include <tlx/string/parse_uri_form_data.hpp>
 #include <tlx/string/replace.hpp>
 #include <tlx/string/split.hpp>
 #include <tlx/string/split_quoted.hpp>

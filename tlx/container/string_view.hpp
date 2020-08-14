@@ -5,7 +5,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2016-2019 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2016-2020 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -38,6 +38,15 @@ public:
     StringView() = default;
 
     /*!
+     * Creates an empty StringView to a nullptr.
+     *
+     * \param ptr null pointer
+     * \return new StringView object.
+     */
+    StringView(const std::nullptr_t ptr) noexcept
+        : data_(ptr), size_(0) { }
+
+    /*!
      * Creates a new StringView, given a const char* and the size.
      *
      * \param data pointer to start of data
@@ -46,6 +55,17 @@ public:
      */
     StringView(const char* data, size_t size) noexcept
         : data_(data), size_(size) { }
+
+    /*!
+     * Creates a new StringView, given two const char*: the beginning and end of
+     * a range of characters.
+     *
+     * \param begin iterator to start of data
+     * \param end iterator to the end of data.
+     * \return new StringView object.
+     */
+    StringView(const char* begin, const char* end) noexcept
+        : StringView(begin, end - begin) { }
 
     /*!
      * Creates a new StringView, given a const iterator to a std::string and the

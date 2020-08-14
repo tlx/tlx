@@ -14,7 +14,7 @@
 #include <tlx/die.hpp>
 
 void construct_empty() {
-    tlx::StringView empty(nullptr, 0);
+    tlx::StringView empty(nullptr);
     die_unequal(empty.size(), 0u);
 }
 

@@ -36,6 +36,11 @@ namespace tlx {
 //! \addtogroup tlx_container
 //! \{
 
+/*!
+ * StringView is a reference to a part of a string, consisting of only a char
+ * pointer and a length. It does not have ownership of the substring and is used
+ * mainly for temporary objects.
+ */
 class StringView
 {
 public:

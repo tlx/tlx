@@ -33,9 +33,9 @@ void parse_uri(const char* uri, tlx::string_view* path,
     while (!(*c == '?' || *c == '#' || *c == 0)) {
         ++c;
     }
-    *path = tlx::string_view(begin, c);
+    *path = tlx::string_view(begin, c - begin);
 
-    // find querystring
+    // find query string
     begin = c;
     if (*c == '?') {
         begin = ++c;
@@ -43,7 +43,7 @@ void parse_uri(const char* uri, tlx::string_view* path,
             ++c;
         }
     }
-    *query_string = tlx::string_view(begin, c);
+    *query_string = tlx::string_view(begin, c - begin);
 
     // find fragment
     begin = c;
@@ -53,7 +53,7 @@ void parse_uri(const char* uri, tlx::string_view* path,
             ++c;
         }
     }
-    *fragment = tlx::string_view(begin, c);
+    *fragment = tlx::string_view(begin, c - begin);
 }
 
 /*!

@@ -11,13 +11,9 @@
 #ifndef TLX_MATH_INTEGER_LOG2_HEADER
 #define TLX_MATH_INTEGER_LOG2_HEADER
 
-namespace tlx {
+#include <tlx/define/constexpr.hpp>
 
-#if __cplusplus >= 201402L
-    #define TLX_ADVANCED_CONSTEXPR constexpr
-#else
-    #define TLX_ADVANCED_CONSTEXPR inline
-#endif
+namespace tlx {
 
 //! \addtogroup tlx_math
 //! \{

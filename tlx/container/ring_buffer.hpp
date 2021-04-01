@@ -41,10 +41,10 @@ public:
 
     using alloc_traits = std::allocator_traits<allocator_type>;
 
-    using reference = typename allocator_type::reference;
-    using const_reference = typename allocator_type::const_reference;
-    using pointer = typename allocator_type::pointer;
-    using const_pointer = typename allocator_type::const_pointer;
+    typedef Type& reference;
+    typedef const Type& const_reference;
+    typedef Type* pointer;
+    typedef const Type* const_pointer;
 
     using size_type = typename allocator_type::size_type;
     using difference_type = typename allocator_type::difference_type;

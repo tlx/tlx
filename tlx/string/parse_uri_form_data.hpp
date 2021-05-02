@@ -125,6 +125,7 @@ void parse_uri_form_data(const char* query_string,
  * into a list of keys and values. The keys and values are returned as pairs in
  * the two vectors, to avoid using std::pair or another struct.
  */
+static inline
 void parse_uri_form_data(const std::string& query_string,
                          std::vector<std::string>* key,
                          std::vector<std::string>* value) {

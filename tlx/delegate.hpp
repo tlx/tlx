@@ -182,16 +182,17 @@ public:
     Delegate(T&& f)
         : store_(
               // allocate memory for T in shared_ptr with appropriate deleter
-              typename Allocator::template rebind<
-                  typename std::decay<T>::type>::other().allocate(1),
+              typename std::allocator_traits<Allocator>::template rebind_alloc<
+                  typename std::decay<T>::type>{}.allocate(1),
               store_deleter<typename std::decay<T>::type>, Allocator()) {
 
         using Functor = typename std::decay<T>::type;
-        using Rebind = typename Allocator::template rebind<Functor>::other;
+        using Rebind = typename std::allocator_traits<Allocator>::template rebind_alloc<Functor>;
 
         // copy-construct T into shared_ptr memory.
-        Rebind().construct(
-            static_cast<Functor*>(store_.get()), Functor(std::forward<T>(f)));
+        Rebind rebind{};
+        std::allocator_traits<Rebind>::construct(
+            rebind, static_cast<Functor*>(store_.get()), Functor(std::forward<T>(f)));
 
         object_ptr_ = store_.get();
 
@@ -332,10 +333,11 @@ private:
     //! deleter for stored functor closures
     template <typename T>
     static void store_deleter(void* const ptr) {
-        using Rebind = typename Allocator::template rebind<T>::other;
+        using Rebind = typename std::allocator_traits<Allocator>::template rebind_alloc<T>;
+        Rebind rebind{};
 
-        Rebind().destroy(static_cast<T*>(ptr));
-        Rebind().deallocate(static_cast<T*>(ptr), 1);
+        std::allocator_traits<Rebind>::destroy(rebind, static_cast<T*>(ptr));
+        std::allocator_traits<Rebind>::deallocate(rebind, static_cast<T*>(ptr), 1);
     }
 
     //! \name Callers for simple function and immediate class::method calls.

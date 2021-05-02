@@ -25,7 +25,7 @@ namespace tlx {
 /******************************************************************************/
 // bswap16_be() - swap 16-bit integers to big-endian
 
-#if TLX_LITTBE_ENDIAN
+#if TLX_LITTLE_ENDIAN
 static inline uint16_t bswap16_be(const uint16_t& v) {
     return bswap16(v);
 }
@@ -38,7 +38,7 @@ static inline uint16_t bswap16_be(const uint16_t& v) {
 /******************************************************************************/
 // bswap32_be() - swap 32-bit integers to big-endian
 
-#if TLX_LITTBE_ENDIAN
+#if TLX_LITTLE_ENDIAN
 static inline uint32_t bswap32_be(const uint32_t& v) {
     return bswap32(v);
 }
@@ -51,7 +51,7 @@ static inline uint32_t bswap32_be(const uint32_t& v) {
 /******************************************************************************/
 // bswap64_be() - swap 64-bit integers to big-endian
 
-#if TLX_LITTBE_ENDIAN
+#if TLX_LITTLE_ENDIAN
 static inline uint64_t bswap64_be(const uint64_t& v) {
     return bswap64(v);
 }

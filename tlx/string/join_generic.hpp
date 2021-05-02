@@ -60,7 +60,7 @@ std::string join(Glue glue, Iterator first, Iterator last) {
 template <typename Container>
 static inline
 std::string join(char glue, const Container& parts) {
-    return join(glue, parts.begin(), parts.end());
+    return join(glue, std::begin(parts), std::end(parts));
 }
 
 /*!
@@ -74,7 +74,7 @@ std::string join(char glue, const Container& parts) {
 template <typename Container>
 static inline
 std::string join(const char* glue, const Container& parts) {
-    return join(glue, parts.begin(), parts.end());
+    return join(glue, std::begin(parts), std::end(parts));
 }
 
 /*!
@@ -88,7 +88,7 @@ std::string join(const char* glue, const Container& parts) {
 template <typename Container>
 static inline
 std::string join(const std::string& glue, const Container& parts) {
-    return join(glue, parts.begin(), parts.end());
+    return join(glue, std::begin(parts), std::end(parts));
 }
 
 //! \}

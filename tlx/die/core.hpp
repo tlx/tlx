@@ -12,6 +12,7 @@
 #define TLX_DIE_CORE_HEADER
 
 #include <cstring>
+#include <iomanip>
 #include <sstream>
 #include <stdexcept>
 #include <string>

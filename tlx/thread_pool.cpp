@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -14,11 +14,12 @@
 
 namespace tlx {
 
-ThreadPool::ThreadPool(size_t num_threads)
-    : threads_(num_threads) {
+ThreadPool::ThreadPool(size_t num_threads, InitThread&& init_thread)
+    : threads_(num_threads),
+      init_thread_(std::move(init_thread)) {
     // immediately construct worker threads
     for (size_t i = 0; i < num_threads; ++i)
-        threads_[i] = std::thread(&ThreadPool::worker, this);
+        threads_[i] = std::thread(&ThreadPool::worker, this, i);
 }
 
 ThreadPool::~ThreadPool() {
@@ -31,6 +32,12 @@ ThreadPool::~ThreadPool() {
     // all threads terminate, then we're done
     for (size_t i = 0; i < threads_.size(); ++i)
         threads_[i].join();
+}
+
+void ThreadPool::enqueue(Job&& job) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    jobs_.emplace_back(std::move(job));
+    cv_jobs_.notify_one();
 }
 
 void ThreadPool::loop_until_empty() {
@@ -55,13 +62,42 @@ void ThreadPool::terminate() {
     cv_finished_.notify_one();
 }
 
-void ThreadPool::worker() {
+size_t ThreadPool::done() const {
+    return done_;
+}
+
+size_t ThreadPool::size() const {
+    return threads_.size();
+}
+
+size_t ThreadPool::idle() const {
+    return idle_;
+}
+
+bool ThreadPool::has_idle() const {
+    return (idle_.load(std::memory_order_relaxed) != 0);
+}
+
+std::thread& ThreadPool::thread(size_t i) {
+    assert(i < threads_.size());
+    return threads_[i];
+}
+
+void ThreadPool::worker(size_t p) {
+    if (init_thread_)
+        init_thread_(p);
+
     // lock mutex, it is released during condition waits
     std::unique_lock<std::mutex> lock(mutex_);
 
     while (true) {
         // wait on condition variable until job arrives, frees lock
-        cv_jobs_.wait(lock, [this]() { return terminate_ || !jobs_.empty(); });
+        if (!terminate_ && jobs_.empty()) {
+            ++idle_;
+            cv_jobs_.wait(
+                lock, [this]() { return terminate_ || !jobs_.empty(); });
+            --idle_;
+        }
 
         if (terminate_)
             break;

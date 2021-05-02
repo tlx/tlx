@@ -30,6 +30,7 @@ print "#include <$_>\n" foreach sort glob("tlx/container/"."*.hpp");
 #include <tlx/container/ring_buffer.hpp>
 #include <tlx/container/simple_vector.hpp>
 #include <tlx/container/splay_tree.hpp>
+#include <tlx/container/string_view.hpp>
 // [[[end]]]
 
 #endif // !TLX_CONTAINER_HEADER

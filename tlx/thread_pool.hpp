@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -65,6 +65,7 @@ class ThreadPool
 {
 public:
     using Job = Delegate<void ()>;
+    using InitThread = Delegate<void (size_t)>;
 
 private:
     //! Deque of scheduled jobs.
@@ -74,7 +75,7 @@ private:
     std::mutex mutex_;
 
     //! threads in pool
-    SimpleVector<std::thread> threads_;
+    simple_vector<std::thread> threads_;
 
     //! Condition variable used to notify that a new job has been inserted in
     //! the queue.
@@ -84,16 +85,22 @@ private:
 
     //! Counter for number of threads busy.
     std::atomic<size_t> busy_ = { 0 };
+    //! Counter for number of idle threads waiting for a job.
+    std::atomic<size_t> idle_ = { 0 };
     //! Counter for total number of jobs executed
     std::atomic<size_t> done_ = { 0 };
 
     //! Flag whether to terminate
     std::atomic<bool> terminate_ = { false };
 
+    //! Run once per worker thread
+    InitThread init_thread_;
+
 public:
     //! Construct running thread pool of num_threads
-    explicit ThreadPool(
-        size_t num_threads = std::thread::hardware_concurrency());
+    ThreadPool(
+        size_t num_threads = std::thread::hardware_concurrency(),
+        InitThread&& init_thread = InitThread());
 
     //! non-copyable: delete copy-constructor
     ThreadPool(const ThreadPool&) = delete;
@@ -104,11 +111,7 @@ public:
     ~ThreadPool();
 
     //! enqueue a Job, the caller must pass in all context using captures.
-    void enqueue(Job&& job) {
-        std::unique_lock<std::mutex> lock(mutex_);
-        jobs_.emplace_back(std::move(job));
-        cv_jobs_.notify_all();
-    }
+    void enqueue(Job&& job);
 
     //! Loop until no more jobs are in the queue AND all threads are idle. When
     //! this occurs, this method exits, however, the threads remain active.
@@ -123,20 +126,23 @@ public:
     void terminate();
 
     //! Return number of jobs currently completed.
-    size_t done() const { return done_; }
+    size_t done() const;
 
     //! Return number of threads in pool
-    size_t size() const { return threads_.size(); }
+    size_t size() const;
+
+    //! return number of idle threads in pool
+    size_t idle() const;
+
+    //! true if any thread is idle (= waiting for jobs)
+    bool has_idle() const;
 
     //! Return thread handle to thread i
-    std::thread& thread(size_t i) {
-        assert(i < threads_.size());
-        return threads_[i];
-    }
+    std::thread& thread(size_t i);
 
 private:
     //! Worker function, one per thread is started.
-    void worker();
+    void worker(size_t p);
 };
 
 } // namespace tlx

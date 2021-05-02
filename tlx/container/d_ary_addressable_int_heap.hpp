@@ -171,6 +171,11 @@ public:
         return top_item;
     }
 
+    //! Rebuilds the heap.
+    void update_all() {
+        heapify();
+    }
+
     /*!
      * Updates the priority queue after the priority associated to the item with
      * key \c key has been changed; if the key \c key is not present in the
@@ -195,6 +200,28 @@ public:
     //! Returns true if the key \c key is in the heap, false otherwise.
     bool contains(key_type key) const {
         return key < handles_.size() ? handles_[key] != not_present() : false;
+    }
+
+    //! Builds a heap from a container.
+    template <class InputIterator>
+    void build_heap(InputIterator first, InputIterator last) {
+        heap_.assign(first, last);
+        heapify();
+    }
+
+    //! Builds a heap from the vector \c keys. Items of \c keys are copied.
+    void build_heap(const std::vector<key_type>& keys) {
+        heap_.resize(keys.size());
+        std::copy(keys.begin(), keys.end(), heap_.begin());
+        heapify();
+    }
+
+    //! Builds a heap from the vector \c keys. Items of \c keys are moved.
+    void build_heap(std::vector<key_type>&& keys) {
+        if (!empty())
+            heap_.clear();
+        heap_ = std::move(keys);
+        heapify();
     }
 
     //! For debugging: runs a BFS from the root node and verifies that the heap
@@ -286,6 +313,48 @@ private:
         }
         handles_[value] = k;
         heap_[k] = std::move(value);
+    }
+
+    //! Reorganize heap_ into a heap.
+    void heapify() {
+        key_type max_key = heap_.empty() ? 0 : heap_.front();
+        if (heap_.size() >= 2) {
+            // Iterate from the last internal node up to the root.
+            size_t last_internal = (heap_.size() - 2) / arity;
+            for (size_t i = last_internal + 1; i; --i) {
+                // Index of the current internal node.
+                size_t cur = i - 1;
+                key_type value = std::move(heap_[cur]);
+                max_key = std::max(max_key, value);
+
+                do {
+                    size_t l = left(cur);
+                    max_key = std::max(max_key, heap_[l]);
+                    // Find the minimum child of cur.
+                    size_t min_elem = l;
+                    for (size_t j = l + 1;
+                         j - l < arity && j < heap_.size(); ++j) {
+                        if (cmp_(heap_[j], heap_[min_elem]))
+                            min_elem = j;
+                        max_key = std::max(max_key, heap_[j]);
+                    }
+
+                    // One of the children of cur is less then cur: swap and
+                    // do another iteration.
+                    if (cmp_(heap_[min_elem], value)) {
+                        heap_[cur] = std::move(heap_[min_elem]);
+                        cur = min_elem;
+                    }
+                    else
+                        break;
+                } while (cur <= last_internal);
+                heap_[cur] = std::move(value);
+            }
+        }
+        // initialize handles_ vector
+        handles_.resize(std::max(handles_.size(), static_cast<size_t>(max_key) + 1), not_present());
+        for (size_t i = 0; i < heap_.size(); ++i)
+            handles_[heap_[i]] = i;
     }
 };
 

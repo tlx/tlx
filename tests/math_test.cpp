@@ -3,13 +3,14 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2019 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
 #include <cmath>
 #include <cstddef>
+#include <random>
 #include <vector>
 
 #include <tlx/die.hpp>
@@ -29,7 +30,13 @@ static void test_bswap() {
 
 static void test_clz() {
 
+    die_unequal(tlx::clz_template<uint8_t>(0), 8u);
+    die_unequal(tlx::clz_template<uint16_t>(0), 16u);
     die_unequal(tlx::clz_template<uint32_t>(0), 32u);
+    die_unequal(tlx::clz_template<uint64_t>(0), 64u);
+
+    die_unequal(tlx::clz<uint32_t>(0), 32u);
+    die_unequal(tlx::clz<uint64_t>(0), 64u);
 
     unsigned bitpos = 0;
     for (uint64_t i = 1llu << 63; i != 0; i >>= 1, ++bitpos)
@@ -53,6 +60,30 @@ static void test_clz() {
 
     die_unequal(tlx::clz_template<uint32_t>(0x0100), 31u - 8u);
     die_unequal(tlx::clz_template<uint64_t>(0x0100), 63u - 8u);
+}
+
+static void test_ctz() {
+
+    die_unequal(tlx::ctz_template<uint8_t>(0), 8u);
+    die_unequal(tlx::ctz_template<uint16_t>(0), 16u);
+    die_unequal(tlx::ctz_template<uint32_t>(0), 32u);
+    die_unequal(tlx::ctz_template<uint64_t>(0), 64u);
+
+    die_unequal(tlx::ctz<uint32_t>(0), 32u);
+    die_unequal(tlx::ctz<uint64_t>(0), 64u);
+
+    unsigned bitpos = 0;
+    for (uint64_t i = (~0llu); i != 0; i <<= 1, ++bitpos)
+    {
+        die_unequal(tlx::ctz(i), bitpos);
+        die_unequal(tlx::ctz_template(i), bitpos);
+    }
+
+    die_unequal(tlx::ctz<uint32_t>(0x0100), 8u);
+    die_unequal(tlx::ctz<uint64_t>(0x0100), 8u);
+
+    die_unequal(tlx::ctz_template<uint32_t>(0x0100), 8u);
+    die_unequal(tlx::ctz_template<uint64_t>(0x0100), 8u);
 }
 
 static void test_ffs() {
@@ -188,6 +219,45 @@ static void test_popcount() {
     }
 }
 
+template <unsigned D = 7>
+static void test_power_to_the_real() {
+    using T = double;
+    std::mt19937_64 prng(D);
+    std::uniform_real_distribution<T> dist(-1e2, 1e2);
+
+    for (int i = 0; i < 1000; ++i) {
+        const T x = dist(prng);
+        const auto tested = tlx::power_to_the<D>(x);
+
+        auto ref = T{ 1 };
+        for (int j = 0; j < static_cast<int>(D); ++j)
+            ref *= x;
+
+        die_unequal_eps(tested, ref, fabs(ref / 1e10));
+    }
+
+    if (D > 0)
+        test_power_to_the_real<(D > 0) ? D - 1 : 0>();
+}
+
+template <unsigned D = 7>
+static void test_power_to_the_int() {
+    using T = int64_t;
+
+    for (auto x = T{ -100 }; x < 100; ++x) {
+        const auto tested = tlx::power_to_the<D>(x);
+
+        auto ref = T{ 1 };
+        for (int j = 0; j < static_cast<int>(D); ++j)
+            ref *= x;
+
+        die_unequal(tested, ref);
+    }
+
+    if (D > 0)
+        test_power_to_the_real<(D > 0) ? D - 1 : 0>();
+}
+
 static void test_rol() {
     die_unequal(tlx::rol32_generic(0x12345678u, 1), 0x2468ACF0u);
     die_unequal(tlx::rol32(0x12345678u, 1), 0x2468ACF0u);
@@ -253,6 +323,15 @@ static void test_round_to_power_of_two() {
     }
 }
 
+static void test_round_up() {
+    for (size_t i = 0; i < 1000; ++i) {
+        for (size_t j = 1; j < 1000; ++j) {
+            die_unequal(tlx::round_up(i, j),
+                        std::ceil(static_cast<double>(i) / j) * j);
+        }
+    }
+}
+
 static void test_sgn() {
     die_unequal(tlx::sgn(42), +1);
     die_unequal(tlx::sgn(42.0), +1);
@@ -263,16 +342,19 @@ static void test_sgn() {
 }
 
 int main() {
-
     test_bswap();
     test_clz();
+    test_ctz();
     test_ffs();
     test_integer_log2();
+    test_is_power_of_two();
     test_popcount();
+    test_power_to_the_real<>();
+    test_power_to_the_int<>();
     test_rol();
     test_ror();
     test_round_to_power_of_two();
-    test_is_power_of_two();
+    test_round_up();
     test_sgn();
 
     return 0;

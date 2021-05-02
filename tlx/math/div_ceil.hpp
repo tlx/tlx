@@ -19,7 +19,7 @@ namespace tlx {
 /******************************************************************************/
 // div_ceil() - calculate n div k with rounding up
 
-//! calculate n div k with rounding up
+//! calculate n div k with rounding up, for n and k positive!
 template <typename IntegralN, typename IntegralK>
 static inline constexpr
 auto div_ceil(const IntegralN& n, const IntegralK& k)->decltype(n + k) {

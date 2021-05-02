@@ -25,6 +25,7 @@ foreach (sort glob("tlx/logger/"."*.hpp")) {
 #include <tlx/logger/tuple.hpp>
 #include <tlx/logger/unordered_map.hpp>
 #include <tlx/logger/unordered_set.hpp>
+#include <tlx/logger/wrap_unprintable.hpp>
 // [[[end]]]
 
 #endif // !TLX_LOGGER_ALL_HEADER

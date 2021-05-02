@@ -26,6 +26,7 @@
 #include <tlx/die.hpp>
 #include <tlx/logger.hpp>
 #include <tlx/string/format_si_iec_units.hpp>
+#include <tlx/timestamp.hpp>
 
 #if defined(_OPENMP)
 #include <parallel/algorithm>
@@ -79,13 +80,6 @@ enum benchmark_type {
     PARA_GNU_MWM_SAMPLING
 };
 
-//! Returns number of seconds since the epoch, high resolution.
-static inline double timestamp() {
-    return static_cast<double>(
-        std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::steady_clock::now().time_since_epoch()).count()) / 1e6;
-}
-
 /*!
  * Simple scoped timer, which takes a text message and prints the duration
  * until the scope is destroyed.
@@ -107,13 +101,13 @@ public:
     explicit scoped_print_timer(const std::string& message, const uint64_t bytes = 0)
         : message_(message),
           bytes_(bytes),
-          ts_(timestamp()) {
+          ts_(tlx::timestamp()) {
         LOG1 << "Starting " << message;
     }
 
     //! on destruction: tell the time
     ~scoped_print_timer() {
-        double elapsed = timestamp() - ts_;
+        double elapsed = tlx::timestamp() - ts_;
 
         if (bytes_ == 0) {
             LOG1 << "Finished "
@@ -186,7 +180,7 @@ void test_multiway_merge(size_t seq_count, const size_t seq_size) {
 
     {
         scoped_print_timer spt("Merging", total_bytes);
-        double ts1 = timestamp();
+        double ts1 = tlx::timestamp();
 
         const char* method_name = nullptr;
         using sequence_iterator_pair_type = std::pair<
@@ -321,7 +315,7 @@ void test_multiway_merge(size_t seq_count, const size_t seq_size) {
             }
         }
 
-        double ts2 = timestamp();
+        double ts2 = tlx::timestamp();
 
         std::cout
             << "RESULT"

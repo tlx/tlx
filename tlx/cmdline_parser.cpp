@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include <tlx/define/visibility_hidden.hpp>
 #include <tlx/string/parse_si_iec_units.hpp>
 #include <tlx/unused.hpp>
 
@@ -28,8 +29,9 @@ namespace tlx {
 // Argument and Struct Hierarchy below it.
 
 //! base class of all options and parameters
-struct CmdlineParser::Argument {
-
+class TLX_VISIBILITY_HIDDEN CmdlineParser::Argument
+{
+public:
     //! single letter short option, or 0 is none
     char key_;
     //! long option key or name for parameters
@@ -45,6 +47,7 @@ struct CmdlineParser::Argument {
     //! repeated argument, i.e. std::vector<std::string>
     bool repeated_ = false;
 
+public:
     //! contructor filling most attributes
     Argument(char key, const std::string& longkey, const std::string& keytype,
              const std::string& desc, bool required)
@@ -58,7 +61,7 @@ struct CmdlineParser::Argument {
     virtual const char * type_name() const = 0;
 
     //! process one item from command line for this argument
-    virtual bool process(int& argc, const char* const*& argv) = 0; // NOLINT
+    virtual bool process(int& argc, const char* const*& argv) = 0;  // NOLINT
 
     //! format value to ostream
     virtual void print_value(std::ostream& os) const = 0;
@@ -78,6 +81,9 @@ struct CmdlineParser::Argument {
         if (key_ != 0) {
             s += '-', s += key_, s += ", ";
         }
+        else {
+            s += "    ";
+        }
         s += "--", s += longkey_;
         if (!keytype_.empty()) {
             s += ' ' + keytype_;
@@ -87,10 +93,14 @@ struct CmdlineParser::Argument {
 };
 
 //! specialization of argument for boolean flags (can only be set to true).
-struct CmdlineParser::ArgumentBool final : public Argument {
+class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentBool final
+    : public Argument
+{
+protected:
     //! reference to boolean to set to true
     bool& dest_;
 
+public:
     //! contructor filling most attributes
     ArgumentBool(char key, const std::string& longkey,
                  const std::string& keytype, const std::string& desc,
@@ -112,9 +122,13 @@ struct CmdlineParser::ArgumentBool final : public Argument {
 };
 
 //! specialization of argument for integer options or parameters
-struct CmdlineParser::ArgumentInt final : public Argument {
+class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentInt final
+    : public Argument
+{
+protected:
     int& dest_;
 
+public:
     //! contructor filling most attributes
     ArgumentInt(char key, const std::string& longkey,
                 const std::string& keytype, const std::string& desc,
@@ -144,9 +158,13 @@ struct CmdlineParser::ArgumentInt final : public Argument {
 };
 
 //! specialization of argument for unsigned integer options or parameters
-struct CmdlineParser::ArgumentUnsigned final : public Argument {
+class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentUnsigned final
+    : public Argument
+{
+protected:
     unsigned int& dest_;
 
+public:
     //! contructor filling most attributes
     ArgumentUnsigned(char key, const std::string& longkey,
                      const std::string& keytype, const std::string& desc,
@@ -176,9 +194,13 @@ struct CmdlineParser::ArgumentUnsigned final : public Argument {
 };
 
 //! specialization of argument for size_t options or parameters
-struct CmdlineParser::ArgumentSizeT final : public Argument {
+class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentSizeT final
+    : public Argument
+{
+protected:
     size_t& dest_;
 
+public:
     //! contructor filling most attributes
     ArgumentSizeT(char key, const std::string& longkey,
                   const std::string& keytype, const std::string& desc,
@@ -208,9 +230,13 @@ struct CmdlineParser::ArgumentSizeT final : public Argument {
 };
 
 //! specialization of argument for float options or parameters
-struct CmdlineParser::ArgumentFloat final : public Argument {
+class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentFloat final
+    : public Argument
+{
+protected:
     float& dest_;
 
+public:
     //! contructor filling most attributes
     ArgumentFloat(char key, const std::string& longkey,
                   const std::string& keytype, const std::string& desc,
@@ -238,9 +264,12 @@ struct CmdlineParser::ArgumentFloat final : public Argument {
 };
 
 //! specialization of argument for double options or parameters
-struct CmdlineParser::ArgumentDouble final : public Argument {
+class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentDouble final : public Argument
+{
+protected:
     double& dest_;
 
+public:
     //! contructor filling most attributes
     ArgumentDouble(char key, const std::string& longkey,
                    const std::string& keytype, const std::string& desc,
@@ -269,9 +298,13 @@ struct CmdlineParser::ArgumentDouble final : public Argument {
 
 //! specialization of argument for SI/IEC suffixes byte size options or
 //! parameters
-struct CmdlineParser::ArgumentBytes32 final : public Argument {
+class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentBytes32 final
+    : public Argument
+{
+protected:
     uint32_t& dest_;
 
+public:
     //! contructor filling most attributes
     ArgumentBytes32(char key, const std::string& longkey,
                     const std::string& keytype, const std::string& desc,
@@ -301,9 +334,12 @@ struct CmdlineParser::ArgumentBytes32 final : public Argument {
 
 //! specialization of argument for SI/IEC suffixes byte size options or
 //! parameters
-struct CmdlineParser::ArgumentBytes64 final : public Argument {
+class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentBytes64 final : public Argument
+{
+protected:
     uint64_t& dest_;
 
+public:
     //! contructor filling most attributes
     ArgumentBytes64(char key, const std::string& longkey,
                     const std::string& keytype, const std::string& desc,
@@ -329,9 +365,13 @@ struct CmdlineParser::ArgumentBytes64 final : public Argument {
 };
 
 //! specialization of argument for string options or parameters
-struct CmdlineParser::ArgumentString final : public Argument {
+class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentString final
+    : public Argument
+{
+protected:
     std::string& dest_;
 
+public:
     //! contructor filling most attributes
     ArgumentString(char key, const std::string& longkey,
                    const std::string& keytype, const std::string& desc,
@@ -355,9 +395,13 @@ struct CmdlineParser::ArgumentString final : public Argument {
 };
 
 //! specialization of argument for multiple string options or parameters
-struct CmdlineParser::ArgumentStringlist final : public Argument {
+class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentStringlist final
+    : public Argument
+{
+protected:
     std::vector<std::string>& dest_;
 
+public:
     //! contructor filling most attributes
     ArgumentStringlist(char key, const std::string& longkey,
                        const std::string& keytype, const std::string& desc,
@@ -824,6 +868,14 @@ void CmdlineParser::add_opt_param_stringlist(
 }
 
 /******************************************************************************/
+
+CmdlineParser& CmdlineParser::sort() {
+    std::sort(option_list_.begin(), option_list_.end(),
+              [](const Argument* a, Argument* b) {
+                  return a->longkey_ < b->longkey_;
+              });
+    return *this;
+}
 
 void CmdlineParser::print_usage(std::ostream& os) {
     std::ios::fmtflags flags(os.flags());

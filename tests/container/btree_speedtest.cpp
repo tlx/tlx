@@ -25,6 +25,7 @@
 #include <unordered_map>
 
 #include <tlx/die.hpp>
+#include <tlx/timestamp.hpp>
 
 // *** Settings
 
@@ -36,12 +37,6 @@ const size_t max_items = 1024000 * 64;
 
 //! random seed
 const int seed = 34234235;
-
-//! Time is measured using chrono::steady_clock
-static double timestamp() {
-    return std::chrono::duration_cast<std::chrono::duration<double> >(
-        std::chrono::steady_clock::now().time_since_epoch()).count();
-}
 
 //! Traits used for the speed tests, BTREE_DEBUG is not defined.
 template <int InnerSlots, int LeafSlots>
@@ -286,7 +281,7 @@ void testrunner_loop(size_t items, const std::string& container_name) {
             // initialize test structures
             TestClass test(items);
 
-            ts1 = timestamp();
+            ts1 = tlx::timestamp();
 
             for (size_t r = 0; r <= repeat_until; r += items)
             {
@@ -295,7 +290,7 @@ void testrunner_loop(size_t items, const std::string& container_name) {
                 ++repeat;
             }
 
-            ts2 = timestamp();
+            ts2 = tlx::timestamp();
         }
 
         std::cout << "Insert " << items << " repeat " << (repeat_until / items)

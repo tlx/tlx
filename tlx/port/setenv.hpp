@@ -17,8 +17,8 @@ namespace tlx {
 //! \{
 
 /*!
- * setenv - change or add an environment variable
- * Windows porting madness because setenv() is apparently dangerous
+ * setenv - change or add an environment variable.
+ * Windows porting madness because setenv() is apparently dangerous.
  */
 int setenv(const char* name, const char* value, int overwrite);
 

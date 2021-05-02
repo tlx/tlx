@@ -11,9 +11,11 @@
 #include <random>
 #include <stdexcept>
 
+#include <tlx/define/endian.hpp>
 #include <tlx/die.hpp>
 #include <tlx/port/setenv.hpp>
 #include <tlx/string.hpp>
+#include <tlx/string/appendline.hpp>
 #include <tlx/string/ssprintf_generic.hpp>
 
 //! Returns an initialized unsigned char[] array inside an std::string
@@ -40,6 +42,39 @@ std::string random_binary(std::string::size_type size) {
         out[i] = static_cast<unsigned char>(prng() % 256);
 
     return out;
+}
+
+static void test_appendline() {
+    std::string input =
+        "abc\n" "def\n" "ghi\n" "jk";
+
+    std::stringstream ss1(input);
+    std::string line;
+
+    die_unless(tlx::appendline(ss1, line));
+    die_unequal(line, "abc");
+    die_unless(tlx::appendline(ss1, line));
+    die_unequal(line, "abcdef");
+    die_unless(tlx::appendline(ss1, line));
+    die_unequal(line, "abcdefghi");
+    die_unless(tlx::appendline(ss1, line));
+    die_unequal(line, "abcdefghijk");
+    die_if(tlx::appendline(ss1, line));
+
+    // add one last newline
+    input += "\n";
+    std::stringstream ss2(input);
+
+    line.clear();
+    die_unless(tlx::appendline(ss2, line));
+    die_unequal(line, "abc");
+    die_unless(tlx::appendline(ss2, line));
+    die_unequal(line, "abcdef");
+    die_unless(tlx::appendline(ss2, line));
+    die_unequal(line, "abcdefghi");
+    die_unless(tlx::appendline(ss2, line));
+    die_unequal(line, "abcdefghijk");
+    die_if(tlx::appendline(ss2, line));
 }
 
 static void test_base64() {
@@ -94,6 +129,43 @@ static void test_base64() {
 
     die_unless_throws(
         tlx::base64_decode("FjXKA5!!RxGFAudA"), std::runtime_error);
+}
+
+static void test_bitdump() {
+    die_unequal(tlx::bitdump_8_msb("0123"),
+                "00110000 00110001 00110010 00110011");
+    die_unequal(tlx::bitdump_8_lsb("0123"),
+                "00001100 10001100 01001100 11001100");
+
+#if TLX_LITTLE_ENDIAN
+    die_unequal(tlx::bitdump_8_msb_type(uint16_t(0x1234)),
+                "00110100 00010010");
+    die_unequal(tlx::bitdump_8_lsb_type(uint16_t(0x1234)),
+                "00101100 01001000");
+#else
+    die_unequal(tlx::bitdump_8_msb_type(uint16_t(0x1234)),
+                "00010010 00110100");
+    die_unequal(tlx::bitdump_8_lsb_type(uint16_t(0x1234)),
+                "01001000 00101100");
+#endif
+
+    // deprecated methods:
+    die_unequal(tlx::bitdump_le8("0123"),
+                "00110000 00110001 00110010 00110011");
+    die_unequal(tlx::bitdump_be8("0123"),
+                "00001100 10001100 01001100 11001100");
+
+#if TLX_LITTLE_ENDIAN
+    die_unequal(tlx::bitdump_le8_type(uint16_t(0x1234)),
+                "00110100 00010010");
+    die_unequal(tlx::bitdump_be8_type(uint16_t(0x1234)),
+                "00101100 01001000");
+#else
+    die_unequal(tlx::bitdump_le8_type(uint16_t(0x1234)),
+                "00010010 00110100");
+    die_unequal(tlx::bitdump_be8_type(uint16_t(0x1234)),
+                "01001000 00101100");
+#endif
 }
 
 static void test_compare_icase() {
@@ -203,6 +275,20 @@ static void test_format_si_iec_units() {
     die_unequal(tlx::format_iec_units(33 * 1024 * 1024 * 1024LLU), "33.000 Gi");
 }
 
+static void test_hash_djb2() {
+    die_unequal(
+        tlx::hash_djb2("hello hash me"), 0x2DA4090Fu);
+    die_unequal(
+        tlx::hash_djb2(std::string("hello hash me")), 0x2DA4090Fu);
+}
+
+static void test_hash_sdbm() {
+    die_unequal(
+        tlx::hash_sdbm("hello hash me"), 0x290130BCu);
+    die_unequal(
+        tlx::hash_sdbm(std::string("hello hash me")), 0x290130BCu);
+}
+
 static void test_hexdump() {
 
     // take hex data and dump it into a string, then parse back into array
@@ -281,6 +367,76 @@ static void test_parse_si_iec_units() {
     die_unequal(33 * 1024 * 1024 * 1024LLU, size);
 
     die_if(tlx::parse_si_iec_units(" 33 GiBX ", &size));
+}
+
+static void test_parse_uri() {
+    tlx::string_view path, query_string, fragment;
+
+    tlx::parse_uri("/path/path1?qkey=qval#frag",
+                   &path, &query_string, &fragment);
+    die_unequal(path, "/path/path1");
+    die_unequal(query_string, "qkey=qval");
+    die_unequal(fragment, "frag");
+
+    tlx::parse_uri("/path/path1?qkey=qval",
+                   &path, &query_string, &fragment);
+    die_unequal(path, "/path/path1");
+    die_unequal(query_string, "qkey=qval");
+    die_unequal(fragment, "");
+
+    tlx::parse_uri("/path/path1",
+                   &path, &query_string, &fragment);
+    die_unequal(path, "/path/path1");
+    die_unequal(query_string, "");
+    die_unequal(fragment, "");
+}
+
+static void test_parse_uri_form_data() {
+    std::vector<std::string> key, value;
+
+    tlx::parse_uri_form_data("qkey=qval&qke+y2=qval2%21-&q=abc%3zdf",
+                             &key, &value);
+
+    die_unequal(key.size(), 3u);
+    die_unequal(value.size(), 3u);
+    die_unequal(key[0], "qkey");
+    die_unequal(value[0], "qval");
+    die_unequal(key[1], "qke y2");
+    die_unequal(value[1], "qval2!-");
+    die_unequal(key[2], "q");
+    die_unequal(value[2], "abc%3zdf");
+
+    tlx::parse_uri_form_data("qkey",
+                             &key, &value);
+
+    die_unequal(key.size(), 1u);
+    die_unequal(value.size(), 1u);
+    die_unequal(key[0], "qkey");
+    die_unequal(value[0], "");
+
+    tlx::parse_uri_form_data("qkey=",
+                             &key, &value);
+
+    die_unequal(key.size(), 1u);
+    die_unequal(value.size(), 1u);
+    die_unequal(key[0], "qkey");
+    die_unequal(value[0], "");
+
+    tlx::parse_uri_form_data("qkey=&",
+                             &key, &value);
+
+    die_unequal(key.size(), 1u);
+    die_unequal(value.size(), 1u);
+    die_unequal(key[0], "qkey");
+    die_unequal(value[0], "");
+
+    tlx::parse_uri_form_data("qkey=%01%02%03%AA%aa%0D%A0&",
+                             &key, &value);
+
+    die_unequal(key.size(), 1u);
+    die_unequal(value.size(), 1u);
+    die_unequal(key[0], "qkey");
+    die_unequal(value[0], "\x01\x02\x03\xAA\xAA\x0D\xA0");
 }
 
 static void test_split() {
@@ -575,28 +731,36 @@ static void test_replace() {
         tlx::replace_all(&str2, "a", "aaa"), "aaabcdef aaabcdef");
 }
 
+template <typename TypeA, typename TypeB>
+void test_starts_with_ends_with_template() {
+
+    die_unless(tlx::starts_with(TypeA("abcdef"), TypeB("abc")));
+    die_unless(!tlx::starts_with(TypeA("abcdef"), TypeB("def")));
+    die_unless(tlx::ends_with(TypeA("abcdef"), TypeB("def")));
+    die_unless(!tlx::ends_with(TypeA("abcdef"), TypeB("abc")));
+
+    die_unless(!tlx::starts_with(TypeA("abcdef"), TypeB("ABC")));
+
+    die_unless(tlx::starts_with_icase(TypeA("abcdef"), TypeB("ABC")));
+    die_unless(!tlx::starts_with_icase(TypeA("abcdef"), TypeB("DEF")));
+    die_unless(tlx::ends_with_icase(TypeA("abcdef"), TypeB("DEF")));
+    die_unless(!tlx::ends_with_icase(TypeA("abcdef"), TypeB("ABC")));
+
+    die_unless(tlx::starts_with(TypeA("abcdef"), TypeB("")));
+    die_unless(tlx::ends_with(TypeA("abcdef"), TypeB("")));
+
+    die_unless(!tlx::starts_with(TypeA(""), TypeB("abc")));
+    die_unless(!tlx::ends_with(TypeA(""), TypeB("abc")));
+
+    die_unless(tlx::starts_with(TypeA(""), TypeB("")));
+    die_unless(tlx::ends_with(TypeA(""), TypeB("")));
+}
+
 static void test_starts_with_ends_with() {
-
-    die_unless(tlx::starts_with("abcdef", "abc"));
-    die_unless(!tlx::starts_with("abcdef", "def"));
-    die_unless(tlx::ends_with("abcdef", "def"));
-    die_unless(!tlx::ends_with("abcdef", "abc"));
-
-    die_unless(!tlx::starts_with("abcdef", "ABC"));
-
-    die_unless(tlx::starts_with_icase("abcdef", "ABC"));
-    die_unless(!tlx::starts_with_icase("abcdef", "DEF"));
-    die_unless(tlx::ends_with_icase("abcdef", "DEF"));
-    die_unless(!tlx::ends_with_icase("abcdef", "ABC"));
-
-    die_unless(tlx::starts_with("abcdef", ""));
-    die_unless(tlx::ends_with("abcdef", ""));
-
-    die_unless(!tlx::starts_with("", "abc"));
-    die_unless(!tlx::ends_with("", "abc"));
-
-    die_unless(tlx::starts_with("", ""));
-    die_unless(tlx::ends_with("", ""));
+    test_starts_with_ends_with_template<const char*, const char*>();
+    test_starts_with_ends_with_template<const char*, std::string>();
+    test_starts_with_ends_with_template<std::string, const char*>();
+    test_starts_with_ends_with_template<std::string, std::string>();
 }
 
 static void test_toupper_tolower() {
@@ -776,7 +940,9 @@ static void test_word_wrap() {
 
 int main() {
 
+    test_appendline();
     test_base64();
+    test_bitdump();
     test_compare_icase();
     test_contains_word();
     test_erase_all();
@@ -785,10 +951,14 @@ int main() {
     test_expand_environment_variables();
     test_extract_between();
     test_format_si_iec_units();
+    test_hash_djb2();
+    test_hash_sdbm();
     test_hexdump();
     test_join();
     test_levenshtein();
     test_parse_si_iec_units();
+    test_parse_uri();
+    test_parse_uri_form_data();
     test_replace();
     test_split();
     test_split_join_quoted();

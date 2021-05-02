@@ -11,24 +11,8 @@
 #ifndef TLX_STRING_FORMAT_SI_IEC_UNITS_HEADER
 #define TLX_STRING_FORMAT_SI_IEC_UNITS_HEADER
 
-#include <string>
-
-namespace tlx {
-
-//! \addtogroup tlx_string
-//! \{
-
-//! Format a byte size using SI (K, M, G, T) suffixes (powers of ten). Returns
-//! "123 M" or similar.
-std::string format_si_units(uint64_t number, int precision = 3);
-
-//! Format a byte size using IEC (Ki, Mi, Gi, Ti) suffixes (powers of
-//! two). Returns "123 Ki" or similar.
-std::string format_iec_units(uint64_t number, int precision = 3);
-
-//! \}
-
-} // namespace tlx
+#include <tlx/string/format_iec_units.hpp>
+#include <tlx/string/format_si_units.hpp>
 
 #endif // !TLX_STRING_FORMAT_SI_IEC_UNITS_HEADER
 

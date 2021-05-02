@@ -18,11 +18,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake)
 # project
 project(tlx)
 
-# prohibit in-source builds
-if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-  message(SEND_ERROR "In-source builds are not allowed.")
-endif()
-
 # default to Debug building for single-config generators
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message("Defaulting CMAKE_BUILD_TYPE to Debug")
@@ -30,9 +25,22 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 ################################################################################
-### Set Version
+### Set Version -- synchronized with <tlx/version.hpp>
 
-set(TLX_VERSION "0.1.0")
+#[[perl
+#  return "keep" if $ENV{USER} ne "tb";
+#  use POSIX qw(strftime);
+#  my $date = strftime("%Y%m%d", localtime);
+#  open(F, "tlx/version.hpp") or die;
+#  my @lines = grep(m/^#define TLX_MINOR_VERSION /, <F>);
+#  close(F);
+#  die unless @lines == 1;
+#  $lines[0] =~ m/TLX_MINOR_VERSION\s+([0-9]+)/;
+#  print("set(TLX_VERSION \"0.$1.$date\")\n");
+#]]
+set(TLX_VERSION "0.5.20210401")
+#[[end]]
+set(TLX_SOVERSION "0")
 
 ################################################################################
 ### Options and Switches
@@ -51,8 +59,7 @@ option(TLX_MORE_TESTS
 
 ### building shared and/or static libraries
 
-# by default we currently only build a static library, since we do not aim to
-# keep a stable binary interface.
+# by default we currently only build a static library
 option(TLX_BUILD_STATIC_LIBS "Build static library version of libtlx" ON)
 option(TLX_BUILD_SHARED_LIBS "Build shared library version of libtlx" OFF)
 
@@ -153,6 +160,9 @@ if(NOT MSVC)
 
   # enable UndefinedBehaviorSanitizer
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
+
+  # enable STL debug
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_DEBUG")
 
   # enable extra warnings on gcc
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -327,6 +337,7 @@ set(TLX_LIBRARIES tlx)
 # install header files
 install(DIRECTORY tlx
   DESTINATION ${TLX_INSTALL_INCLUDE_DIR}
+  COMPONENT Development
   FILES_MATCHING PATTERN "*.hpp")
 
 ###############################################################################
@@ -373,6 +384,13 @@ if(TLX_TRY_COMPILE_HEADERS)
       PROPERTY RUNTIME_OUTPUT_DIRECTORY "try_compile/")
 
   endforeach()
+
+  # add special definitions for try_compile targets
+  if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
+    set_target_properties(
+      tlx_try_compile_tlx_thread_barrier_spin_hpp
+      PROPERTIES COMPILE_DEFINITIONS "_GLIBCXX_USE_SCHED_YIELD")
+  endif()
 
 endif(TLX_TRY_COMPILE_HEADERS)
 

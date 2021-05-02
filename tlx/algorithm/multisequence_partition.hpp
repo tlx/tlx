@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <functional>
 #include <queue>
 #include <utility>
 #include <vector>
@@ -38,7 +37,6 @@ namespace multisequence_partition_detail {
 //! Compare a pair of types lexicographically, ascending.
 template <typename T1, typename T2, typename Comparator>
 class lexicographic
-    : public std::binary_function<std::pair<T1, T2>, std::pair<T1, T2>, bool>
 {
 protected:
     Comparator& comp_;
@@ -62,7 +60,6 @@ public:
 //! Compare a pair of types lexicographically, descending.
 template <typename T1, typename T2, typename Comparator>
 class lexicographic_rev
-    : public std::binary_function<std::pair<T1, T2>, std::pair<T1, T2>, bool>
 {
 protected:
     Comparator& comp_;

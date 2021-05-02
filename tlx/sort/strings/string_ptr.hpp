@@ -78,6 +78,10 @@ public:
     template <typename LcpType>
     void set_lcp(size_t /* i */, const LcpType& /* v */) const { }
 
+    //! fill entire LCP array with v, excluding the first lcp[0] position!
+    template <typename LcpType>
+    void fill_lcp(const LcpType& /* v */) const { }
+
     //! objectified string and shadow pointer class
     typedef StringShadowPtr<StringSet_> WithShadow;
 
@@ -125,6 +129,11 @@ public:
     //! if we want to save the LCPs
     static const bool with_lcp = true;
 
+    //! return LCP array pointer
+    LcpType * lcp() const {
+        return lcp_;
+    }
+
     //! return LCP array value
     LcpType get_lcp(size_t i) const {
         assert(i < size());
@@ -135,6 +144,12 @@ public:
     void set_lcp(size_t i, const LcpType& v) const {
         assert(i < size());
         lcp_[i] = v;
+    }
+
+    //! fill entire LCP array with v, excluding the first lcp[0] position!
+    void fill_lcp(const LcpType& v) const {
+        for (size_t i = 1; i < size(); ++i)
+            set_lcp(i, v);
     }
 
     //! objectified string and shadow pointer class
@@ -201,7 +216,7 @@ public:
 
     //! return subarray pointer to n strings in original array, might copy from
     //! shadow before returning.
-    StringShadowPtr copy_back() {
+    StringShadowPtr copy_back() const {
         if (!flipped_) {
             return *this;
         }
@@ -217,6 +232,10 @@ public:
     //! set the i-th lcp to v and check its value
     template <typename LcpType>
     void set_lcp(size_t /* i */, const LcpType& /* v */) const { }
+
+    //! fill entire LCP array with v, excluding the first lcp[0] position!
+    template <typename LcpType>
+    void fill_lcp(const LcpType& /* v */) const { }
 };
 
 /******************************************************************************/
@@ -280,7 +299,7 @@ public:
 
     //! return subarray pointer to n strings in original array, might copy from
     //! shadow before returning.
-    StringShadowLcpPtr copy_back() {
+    StringShadowLcpPtr copy_back() const {
         if (!flipped_) {
             return *this;
         }
@@ -293,6 +312,11 @@ public:
     //! if we want to save the LCPs
     static const bool with_lcp = true;
 
+    //! return LCP array pointer
+    LcpType * lcp() const {
+        return lcp_;
+    }
+
     //! return LCP array value
     LcpType get_lcp(size_t i) const {
         assert(i < size());
@@ -303,6 +327,12 @@ public:
     void set_lcp(size_t i, const LcpType& v) const {
         assert(i < size());
         lcp_[i] = v;
+    }
+
+    //! fill entire LCP array with v, excluding the first lcp[0] position!
+    void fill_lcp(const LcpType& v) const {
+        for (size_t i = 1; i < size(); ++i)
+            set_lcp(i, v);
     }
 };
 

@@ -19,6 +19,20 @@ void check(const char* output, Lambda lambda) {
     die_unequal(output, collect.get());
 }
 
+//! printable struct
+struct MyPrintable {
+    int a = 42;
+};
+
+std::ostream& operator << (std::ostream& os, const MyPrintable& p) {
+    return os << p.a;
+}
+
+//! unprintable struct
+struct MyUnprintable {
+    int a = 42;
+};
+
 int main() {
 
     check("42 - abc\n",
@@ -160,6 +174,20 @@ int main() {
               };
               LOG1 << m;
               sLOG1 << m;
+          });
+
+    check("42\n42\n",
+          []() {
+              MyPrintable m;
+              LOG1 << tlx::wrap_unprintable(m);
+              sLOG1 << tlx::wrap_unp(m);
+          });
+
+    check("<unprintable>\n<unprintable>\n",
+          []() {
+              MyUnprintable m;
+              LOG1 << tlx::wrap_unprintable(m);
+              sLOG1 << tlx::wrap_unp(m);
           });
 
     return 0;

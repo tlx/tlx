@@ -78,17 +78,17 @@ class CmdlineParser
 {
 private:
     // forward declaration of Argument classes
-    struct Argument;
-    struct ArgumentBool;
-    struct ArgumentInt;
-    struct ArgumentUnsigned;
-    struct ArgumentSizeT;
-    struct ArgumentFloat;
-    struct ArgumentDouble;
-    struct ArgumentBytes32;
-    struct ArgumentBytes64;
-    struct ArgumentString;
-    struct ArgumentStringlist;
+    class Argument;
+    class ArgumentBool;
+    class ArgumentInt;
+    class ArgumentUnsigned;
+    class ArgumentSizeT;
+    class ArgumentFloat;
+    class ArgumentDouble;
+    class ArgumentBytes32;
+    class ArgumentBytes64;
+    class ArgumentString;
+    class ArgumentStringlist;
 
 private:
     //! option and parameter list type
@@ -507,6 +507,9 @@ private:
                            const Argument* arg, std::ostream& os);
 
 public:
+    //! sort options by key (but not the positional parameters)
+    CmdlineParser& sort();
+
     //! parse command line options as specified by the options and parameters
     //! added.
     //! \return true if command line is okay and all required parameters are

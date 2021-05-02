@@ -138,53 +138,61 @@ sub process_inline_perl {
 
     for(my $i = 0; $i < @data; ++$i)
     {
-        if ($data[$i] =~ /\[\[\[perl/) {
-            # try to find the following ]]] line
-            my $j = $i + 1;
-            while ($j < @data && $data[$j] !~ /\]\]\]/) {
-                $j++;
-            }
+        next unless $data[$i] =~ /\[{2,}perl/;
 
-            # no ]]] found.
-            die("[[[perl is missing closing ]]]") if $j >= @data;
-
-            # extract lines
-            my $prog = join("", @data[$i+1..$j-1]);
-
-            # evaluate the program
-            my ($output, $ret);
-            {
-                # return STDOUT to $output
-                open local(*STDOUT), '>', \$output or die $!;
-                $ret = eval($prog);
-            }
-            if ($@) {
-                print "Perl inline: -------------\n";
-                print "$prog\n";
-                print "--------------------------\n";
-                die("failed with $@");
-            }
-            #print "output: ".$output."\n";
-
-            next if $ret eq "keep";
-
-            # try to find the following [[[end]]] line
-            my $k = $j + 1;
-            while ($k < @data && $data[$k] !~ /\[\[\[end\]\]\]/ && $data[$k] !~ /\[\[\[perl/) {
-                $k++;
-            }
-
-            # not found: insert [[[end]]]
-            if ($data[$k] !~ /\[\[\[end\]\]\]/) {
-                $k = $j + 1;
-                $output .= "\n// [[[end]]]";
-            }
-
-            my @output = split(/\n/, $output);
-            $output[$_] .= "\n" foreach (0..@output-1);
-
-            splice(@data, $j + 1, $k - ($j + 1), @output);
+        # try to find the following ]]] line
+        my $j = $i + 1;
+        while ($j < @data && $data[$j] !~ /(\]){2,}/) {
+            $j++;
         }
+
+        # no ]]] found.
+        die("[[[perl is missing closing ]]]") if $j >= @data;
+
+        # extract lines
+        my @prog = @data[$i+1..$j-1];
+
+        # if all lines start with #, remove it
+        if (grep(!/^#/, @prog) == 0) {
+            s/^#// foreach @prog;
+        }
+
+        # join program
+        my $prog = join("", @prog);
+
+        # evaluate the program
+        my ($output, $ret);
+        {
+            # return STDOUT to $output
+            open local(*STDOUT), '>', \$output or die $!;
+            $ret = eval($prog);
+        }
+        if ($@) {
+            print "Perl inline: -------------\n";
+            print "$prog\n";
+            print "--------------------------\n";
+            die("failed with $@");
+        }
+        #print "output: ".$output."\n";
+
+        next if $ret eq "keep";
+
+        # try to find the following [[[end]]] line
+        my $k = $j + 1;
+        while ($k < @data && $data[$k] !~ /\[{2,}end\]{2,}/ && $data[$k] !~ /\[{2,}perl/) {
+            $k++;
+        }
+
+        # not found: insert [[[end]]]
+        if ($data[$k] !~ /\[{2,}end\]{2,}/) {
+            $k = $j + 1;
+            $output .= "\n// [[[end]]]";
+        }
+
+        my @output = split(/\n/, $output);
+        $output[$_] .= "\n" foreach (0..@output-1);
+
+        splice(@data, $j + 1, $k - ($j + 1), @output);
     }
 
     return @data;
@@ -325,7 +333,7 @@ sub process_cpp {
         }
 
         # check for single underscore + uppercase identifiers
-        if ($data[$i] =~ m@\s_(?!(GNU_SOURCE|WIN32|MSC_VER|UNICODE|DEBUG|ASSERTE|LIBCPP_VERSION|MM_[A-Z]+|S_))[A-Z]@) {
+        if ($data[$i] =~ m@\s_(?!(GNU_SOURCE|WIN32|MSC_VER|UNICODE|DEBUG|ASSERTE|LIBCPP_VERSION|GLIBCXX_USE_NANOSLEEP|GLIBCXX_USE_SCHED_YIELD|MM_[A-Z]+|S_))[A-Z]@) {
             print("underscore + uppercase identifier found in $path:$i\n");
             print("$data[$i]\n");
         }
@@ -432,6 +440,11 @@ sub process_pl_cmake {
     close(F);
 
     my @origdata = @data;
+
+    # first check whether there are [[[perl lines and execute them
+    if ($path !~ /analyze-source\.pl/) {
+        @data = process_inline_perl(@data);
+    }
 
     # check source header
     my $i = 0;

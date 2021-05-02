@@ -189,7 +189,7 @@ struct SimpleTest {
             for (unsigned int b = 0; b < letters.size(); ++b)
             {
                 bt.insert2(std::string(1, letters[a]) + letters[b],
-                           a * letters.size() + b);
+                           static_cast<unsigned int>(a * letters.size() + b));
             }
         }
 
@@ -229,7 +229,7 @@ struct SimpleTest {
 
         for (uint64_t i = 0; i < 100000; ++i)
         {
-            uint64_t key = i % 1000;
+            uint32_t key = i % 1000;
 
             bt.insert(key);
         }
@@ -460,7 +460,7 @@ void test_large_sequence() {
 /******************************************************************************/
 // Upper/Lower Bound Tests
 
-void test_bounds_multimap(const unsigned int insnum, const int modulo) {
+void test_bounds_multimap(const unsigned int insnum, const unsigned int modulo) {
     typedef tlx::btree_multimap<
             unsigned int, unsigned int,
             std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
@@ -517,7 +517,7 @@ void test_bounds_multimap(const unsigned int insnum, const int modulo) {
     }
 
     // *** lower_bound
-    for (int k = 0; k < modulo + 100; k++)
+    for (unsigned int k = 0; k < modulo + 100; k++)
     {
         multiset_type::const_iterator si = set.lower_bound(k);
         btree_type::const_iterator bi = bt.lower_bound(k);
@@ -531,7 +531,7 @@ void test_bounds_multimap(const unsigned int insnum, const int modulo) {
     }
 
     // *** upper_bound
-    for (int k = 0; k < modulo + 100; k++)
+    for (unsigned int k = 0; k < modulo + 100; k++)
     {
         multiset_type::const_iterator si = set.upper_bound(k);
         btree_type::const_iterator bi = bt.upper_bound(k);
@@ -545,7 +545,7 @@ void test_bounds_multimap(const unsigned int insnum, const int modulo) {
     }
 
     // *** equal_range
-    for (int k = 0; k < modulo + 100; k++)
+    for (unsigned int k = 0; k < modulo + 100; k++)
     {
         std::pair<multiset_type::const_iterator, multiset_type::const_iterator> si = set.equal_range(k);
         std::pair<btree_type::const_iterator, btree_type::const_iterator> bi = bt.equal_range(k);
@@ -1405,7 +1405,7 @@ void test_erase_iterator1() {
             die_unless(it->first == i);
             die_unless(it->second == j);
 
-            unsigned int mapsize = map.size();
+            size_t mapsize = map.size();
             map.erase(it);
             die_unless(map.size() == mapsize - 1);
         }

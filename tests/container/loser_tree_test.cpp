@@ -17,6 +17,7 @@
 #include <tlx/cmdline_parser.hpp>
 #include <tlx/container/loser_tree.hpp>
 #include <tlx/die.hpp>
+#include <tlx/logger.hpp>
 
 static long ctor_dtor_counter = 0;
 
@@ -109,6 +110,8 @@ template class LoserTreePointerUnguardedBase<MyIntPair, MyIntPairCompare>;
 template <typename LoserTree>
 static inline
 void test_losertree(bool stable, size_t num_vectors) {
+
+    sLOG1 << "test_losertree:" << stable << num_vectors;
 
     using Vector = std::vector<MyIntPair>;
     std::vector<Vector> vecs;

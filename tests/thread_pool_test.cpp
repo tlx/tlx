@@ -8,6 +8,9 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+// this makes sleep_for() available in older GCC versions
+#define _GLIBCXX_USE_NANOSLEEP
+
 #include <numeric>
 #include <string>
 #include <vector>
@@ -101,12 +104,29 @@ void test_loop_until_terminate(size_t sleep_msec) {
     die_unequal(sum, pool.done());
 }
 
+void test_init_thread() {
+
+    std::atomic<size_t> count { 0 };
+
+    {
+        tlx::ThreadPool pool(
+            /* num_threads */ 8,
+            /* thread initializer */
+            [&](size_t i) { count += i; });
+
+        pool.loop_until_empty();
+    }
+
+    die_unequal(count.load(), (7 * 8) / 2u);
+}
+
 int main() {
     test_loop_until_empty();
 
     for (size_t i = 0; i < 10; ++i)
         test_loop_until_terminate(i);
 
+    test_init_thread();
     return 0;
 }
 

@@ -21,8 +21,8 @@ namespace tlx {
 
 /******************************************************************************/
 
-//! default output logger
-class DefaultLoggerOutput : public LoggerOutputHook
+//! default output logger to cout
+class DefaultLoggerOutputCOut : public LoggerOutputHook
 {
     //! the global mutex of logger and spacing logger
     std::mutex mutex_;
@@ -32,22 +32,45 @@ class DefaultLoggerOutput : public LoggerOutputHook
         // lock the global mutex of logger for serialized output in
         // multi-threaded programs.
         std::unique_lock<std::mutex> lock(mutex_);
-        std::cout << line;
-        std::cout.flush();
+        (std::cout << line).flush();
     }
 };
 
-//! default logger singleton
-static DefaultLoggerOutput s_default_logger;
+//! default output logger to cerr
+class DefaultLoggerOutputCErr : public LoggerOutputHook
+{
+    //! the global mutex of logger and spacing logger
+    std::mutex mutex_;
+
+    //! method the receive log lines
+    void append_log_line(const std::string& line) final {
+        // lock the global mutex of logger for serialized output in
+        // multi-threaded programs.
+        std::unique_lock<std::mutex> lock(mutex_);
+        (std::cerr << line).flush();
+    }
+};
+
+//! default logger singletons
+static DefaultLoggerOutputCOut s_default_logger_cout;
+
+//! default logger singletons
+static DefaultLoggerOutputCErr s_default_logger_cerr;
 
 //! global logger output hook
 static std::atomic<LoggerOutputHook*> s_logger_output_hook {
-    &s_default_logger
+    &s_default_logger_cout
 };
 
 LoggerOutputHook * set_logger_output_hook(LoggerOutputHook* hook) {
     return s_logger_output_hook.exchange(hook);
 }
+
+LoggerOutputHook * set_logger_to_stderr() {
+    return set_logger_output_hook(&s_default_logger_cerr);
+}
+
+/******************************************************************************/
 
 //! global logger prefix hook
 static std::atomic<LoggerPrefixHook*> s_logger_prefix_hook {

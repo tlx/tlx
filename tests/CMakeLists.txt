@@ -59,9 +59,10 @@ endmacro(tlx_build_test)
 ### list of tests in subdirectories
 
 tlx_build_only(algorithm/multiway_merge_benchmark)
+tlx_build_only(cmdline_parser_example)
 tlx_build_only(container/btree_speedtest)
 tlx_build_only(container/d_ary_heap_speedtest)
-tlx_build_only(cmdline_parser_example)
+tlx_build_only(sort_strings_example)
 
 tlx_build_test(algorithm/multiway_merge_test)
 tlx_build_test(algorithm/random_bipartition_shuffle)
@@ -76,6 +77,7 @@ tlx_build_test(container/radix_heap_test)
 tlx_build_test(container/ring_buffer_test)
 tlx_build_test(container/simple_vector_test)
 tlx_build_test(container/splay_tree_test)
+tlx_build_test(container/string_view_test)
 tlx_build_test(counting_ptr_test)
 tlx_build_test(delegate_test)
 tlx_build_test(deprecated_test)
@@ -87,21 +89,23 @@ tlx_build_test(math/polynomial_regression_test)
 tlx_build_test(math_test)
 tlx_build_test(meta/has_member_test)
 tlx_build_test(meta/log2_test)
+tlx_build_test(multi_timer_test)
 tlx_build_test(semaphore_test)
 tlx_build_test(siphash_test)
+tlx_build_test(sort_networks_test)
 tlx_build_test(sort_parallel_mergesort_test)
+tlx_build_test(sort_strings_parallel_test)
 tlx_build_test(sort_strings_test)
 tlx_build_test(stack_allocator_test)
 tlx_build_test(string_test)
+tlx_build_test(thread_barrier_test)
+tlx_build_test(thread_pool_test)
 if(TLX_CXX_HAS_CXX14)
   tlx_build_test(meta/call_for_test)
   tlx_build_test(meta/fold_test)
   tlx_build_test(meta/function_chain_test)
   tlx_build_test(meta/function_stack_test)
   tlx_build_test(meta/vmap_for_test)
-endif()
-if(NOT(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8))
-  tlx_build_test(thread_pool_test)
 endif()
 
 # disable -Wshadow on source with FunctionStack or FunctionChain
@@ -121,11 +125,17 @@ if(MSVC)
 endif()
 if(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
   # failed with a weird exception without -pthreads
-  set_target_properties(tlx_semaphore_test PROPERTIES COMPILE_FLAGS -pthread)
-  set_target_properties(tlx_semaphore_test PROPERTIES LINK_FLAGS -pthread)
-
-  set_target_properties(tlx_algorithm_multiway_merge_test PROPERTIES COMPILE_FLAGS -pthread)
-  set_target_properties(tlx_algorithm_multiway_merge_test PROPERTIES LINK_FLAGS -pthread)
+  foreach(target
+      tlx_algorithm_multiway_merge_test
+      tlx_semaphore_test
+      tlx_sort_parallel_mergesort_test
+      tlx_sort_strings_parallel_test
+      tlx_thread_barrier_test
+      tlx_thread_pool_test
+      )
+    set_target_properties(${target} PROPERTIES COMPILE_FLAGS -pthread)
+    set_target_properties(${target} PROPERTIES LINK_FLAGS -pthread)
+  endforeach()
 endif()
 
 ################################################################################

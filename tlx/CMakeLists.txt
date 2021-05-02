@@ -19,8 +19,11 @@ set(LIBTLX_SOURCES
   digest/sha256.cpp
   digest/sha512.cpp
   logger/core.cpp
+  multi_timer.cpp
   port/setenv.cpp
+  string/appendline.cpp
   string/base64.cpp
+  string/bitdump.cpp
   string/compare_icase.cpp
   string/contains.cpp
   string/contains_word.cpp
@@ -51,6 +54,7 @@ set(LIBTLX_SOURCES
   string/union_words.cpp
   string/word_wrap.cpp
   thread_pool.cpp
+  timestamp.cpp
 
   )
 
@@ -67,8 +71,10 @@ if(TLX_BUILD_SHARED_LIBS)
 
   # build tlx SHARED library and link all programs again it
   add_library(tlx SHARED ${LIBTLX_SOURCES})
-  set_target_properties(tlx PROPERTIES OUTPUT_NAME "${TLX_LIBNAME}")
-  set_target_properties(tlx PROPERTIES VERSION "${TLX_VERSION}")
+  set_target_properties(tlx PROPERTIES
+    OUTPUT_NAME "${TLX_LIBNAME}"
+    VERSION "${TLX_VERSION}"
+    SOVERSION "${TLX_SOVERSION}")
 
   target_compile_definitions(tlx PUBLIC ${TLX_DEFINITIONS})
   target_include_directories(tlx PUBLIC
@@ -79,14 +85,16 @@ if(TLX_BUILD_SHARED_LIBS)
 
   install(TARGETS tlx
     EXPORT tlx-targets
+    COMPONENT Libraries
     ARCHIVE DESTINATION ${TLX_INSTALL_LIB_DIR}
     LIBRARY DESTINATION ${TLX_INSTALL_LIB_DIR})
 
   if(TLX_BUILD_STATIC_LIBS)
     # but also build STATIC library
     add_library(tlx_static STATIC ${LIBTLX_SOURCES})
-    set_target_properties(tlx_static PROPERTIES OUTPUT_NAME "${TLX_LIBNAME}")
-    set_target_properties(tlx_static PROPERTIES VERSION "${TLX_VERSION}")
+    set_target_properties(tlx_static PROPERTIES
+      OUTPUT_NAME "${TLX_LIBNAME}"
+      VERSION "${TLX_VERSION}")
 
     target_compile_definitions(tlx_static PUBLIC ${TLX_DEFINITIONS})
     target_include_directories(tlx_static PUBLIC
@@ -97,6 +105,7 @@ if(TLX_BUILD_SHARED_LIBS)
 
     install(TARGETS tlx_static
       EXPORT tlx-targets
+      COMPONENT Development
       ARCHIVE DESTINATION ${TLX_INSTALL_LIB_DIR}
       LIBRARY DESTINATION ${TLX_INSTALL_LIB_DIR})
 
@@ -108,8 +117,9 @@ else()
 
   # build tlx STATIC library and link all programs again it
   add_library(tlx STATIC ${LIBTLX_SOURCES})
-  set_target_properties(tlx PROPERTIES OUTPUT_NAME "${TLX_LIBNAME}")
-  set_target_properties(tlx PROPERTIES VERSION "${TLX_VERSION}")
+  set_target_properties(tlx PROPERTIES
+    OUTPUT_NAME "${TLX_LIBNAME}"
+    VERSION "${TLX_VERSION}")
 
   target_compile_definitions(tlx PUBLIC ${TLX_DEFINITIONS})
   target_include_directories(tlx PUBLIC
@@ -120,6 +130,7 @@ else()
 
   install(TARGETS tlx
     EXPORT tlx-targets
+    COMPONENT Libraries
     ARCHIVE DESTINATION ${TLX_INSTALL_LIB_DIR}
     LIBRARY DESTINATION ${TLX_INSTALL_LIB_DIR})
 

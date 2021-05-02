@@ -36,11 +36,9 @@ struct Something {
     }
 };
 
-#if defined(_OPENMP)
-
 template <bool Stable>
 void test_size(unsigned int size, tlx::MultiwayMergeSplittingAlgorithm mwmsa) {
-    std::cout << "testing parallel_mergesort with " << size << " items.\n";
+    // std::cout << "testing parallel_mergesort with " << size << " items.\n";
 
     std::vector<Something> v(size);
     std::less<Something> cmp;
@@ -52,22 +50,18 @@ void test_size(unsigned int size, tlx::MultiwayMergeSplittingAlgorithm mwmsa) {
         v[i] = Something(distr(randgen));
 
     if (Stable) {
-        tlx::stable_parallel_mergesort(v.begin(), v.end(), cmp,
-                                       /* num_threads */ 8, mwmsa);
+        tlx::stable_parallel_mergesort(
+            v.begin(), v.end(), cmp, /* num_threads */ 8, mwmsa);
     }
     else {
-        tlx::parallel_mergesort(v.begin(), v.end(), cmp,
-                                /* num_threads */ 8, mwmsa);
+        tlx::parallel_mergesort(
+            v.begin(), v.end(), cmp, /* num_threads */ 8, mwmsa);
     }
 
     die_unless(std::is_sorted(v.cbegin(), v.cend(), cmp));
 }
 
-#endif // defined(_OPENMP)
-
 int main() {
-#if defined(_OPENMP)
-
     // run multiway mergesort tests for 0..256 sequences
     for (unsigned int i = 0; i < 256; ++i)
     {
@@ -87,8 +81,6 @@ int main() {
         test_size<false>(i, tlx::MWMSA_EXACT);
         test_size<true>(i, tlx::MWMSA_EXACT);
     }
-
-#endif // defined(_OPENMP)
 
     return 0;
 }

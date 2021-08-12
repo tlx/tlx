@@ -89,7 +89,20 @@ public:
 
     //! Empties the heap.
     void clear() {
-        std::fill(handles_.begin(), handles_.end(), not_present());
+        if (heap_.size() * 64 / sizeof(key_type) < handles_.size()) {
+            // clear items individually if even assuming that every
+            // item is on a different cache line we still won't access
+            // all handles
+            for (const key_type &k : heap_) {
+                // Support clear after push_without_update()
+                if (k < handles_.size()) {
+                    handles_[k] = not_present();
+                }
+            }
+        } else {
+            std::fill(handles_.begin(), handles_.end(), not_present());
+        }
+
         heap_.clear();
     }
 

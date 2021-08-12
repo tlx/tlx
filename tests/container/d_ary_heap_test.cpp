@@ -187,6 +187,19 @@ void d_ary_addressable_int_heap_test(size_t size, uint32_t r_seed = 42) {
         check_handles(x, s);
     }
 
+
+    // Test inserting and building afterwards
+    fill_heap_and_set(x, s, keys);
+    x.clear();
+    for (auto key : keys) {
+        x.push_without_update(key);
+    }
+    x.update_all();
+    check_heap(x, s);
+    check_handles(x, s);
+    x.clear();
+    s.clear();
+
     // Test build_heap().
     fill_heap_and_set(x, s, keys);
     x.clear();

@@ -12,6 +12,7 @@
 #define TLX_META_IS_STD_ARRAY_HEADER
 
 #include <array>
+#include <cstddef>
 
 namespace tlx {
 

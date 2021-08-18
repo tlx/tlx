@@ -13,6 +13,7 @@
 
 #include <array>
 #include <cassert>
+#include <cstddef>
 #include <limits>
 #include <type_traits>
 #include <utility>

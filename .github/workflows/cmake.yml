@@ -1,0 +1,79 @@
+name: Compile and Test
+
+on:
+  push:
+  pull_request:
+  release:
+
+jobs:
+  build:
+    name: ${{matrix.config.name}}
+    runs-on: ${{matrix.config.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - name: "Ubuntu 18.04 gcc 7.5 Debug"
+          os: ubuntu-18.04
+          build_type: "Debug"
+
+        - name: "Ubuntu 18.04 gcc 7.5 Release 32-bit"
+          os: ubuntu-18.04
+          build_type: "Release"
+          cxx_flags: "-m32"
+
+        - name: "Ubuntu 20.04 gcc 9.3 Release AddressSanitizer"
+          os: ubuntu-20.04
+          build_type: "Release"
+          cxx_flags: "-fsanitize=address"
+
+        - name: "Ubuntu 20.04 gcc 11 Debug"
+          os: ubuntu-20.04
+          build_type: "Debug"
+          gcc_install: "11"
+
+        - name: "Ubuntu 20.04 gcc 11 Release GLIBCXX_DEBUG"
+          os: ubuntu-20.04
+          build_type: "Release"
+          gcc_install: "11"
+          cxx_flags: "-D_GLIBCXX_DEBUG"
+
+        - name: "macOS 10.15 clang 12 Debug"
+          os: macos-10.15
+          build_type: "Debug"
+
+        # - name: "Window Latest"
+        #   os: windows-latest
+        #   build_type: "Debug"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install gcc version
+        if: ${{matrix.config.gcc_install}}
+        run: |
+          echo --- Install gcc version ${{matrix.config.gcc_install}}
+          echo --- gcc version before
+          gcc --version
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install gcc-${{matrix.config.gcc_install}} g++-${{matrix.config.gcc_install}}
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{matrix.config.gcc_install}} 90 --slave /usr/bin/g++ g++ /usr/bin/g++-${{matrix.config.gcc_install}}
+          echo --- gcc version after
+          gcc --version
+
+      - name: Configure CMake
+        run: >
+          cmake -B ${{github.workspace}}/build
+          -DCMAKE_BUILD_TYPE=${{matrix.config.build_type}}
+          -DCMAKE_CXX_FLAGS="${{matrix.config.cxx_flags}}"
+          -DTLX_WARNINGS_ARE_ERRORS=ON
+          -DTLX_BUILD_TESTS=ON
+          -DTLX_TRY_COMPILE_HEADERS=ON
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{matrix.config.build_type}}
+
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -C ${{matrix.config.build_type}}

@@ -317,7 +317,7 @@ private:
     Allocator alloc_;
 
     //! node allocator
-    typedef typename Allocator::template rebind<Node>::other node_alloc_type;
+    typedef typename std::allocator_traits<Allocator>::template rebind_alloc<Node> node_alloc_type;
 
     //! node allocator
     node_alloc_type node_allocator_;

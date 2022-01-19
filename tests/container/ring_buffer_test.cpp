@@ -100,10 +100,10 @@ static void test_non_default_constructible() {
     tlx::RingBuffer<MyStruct> ring(12);
 
     ring.push_back(MyStruct(0, 1));
-    ring.emplace_back(1, 2);
+    ring.emplace_back(MyStruct(1, 2));
 
     ring.push_front(MyStruct(2, 3));
-    ring.emplace_front(3, 4);
+    ring.emplace_front(MyStruct(3, 4));
 
     die_unequal(4u, ring.size());
     die_unequal(3, ring[0].i1);

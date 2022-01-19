@@ -26,10 +26,10 @@ struct MyTracker {
     MyTracker() {
         ++ctor_dtor_counter;
     }
-    MyTracker(const MyTracker&) { // NOLINT
+    MyTracker(const MyTracker&) noexcept { // NOLINT
         ++ctor_dtor_counter;
     }
-    MyTracker& operator = (const MyTracker&) { // NOLINT
+    MyTracker& operator = (const MyTracker&) noexcept { // NOLINT
         // no change
         return *this;
     }
@@ -123,12 +123,12 @@ void test_losertree(bool stable, size_t num_vectors) {
     for (size_t i = 0; i < num_vectors; ++i) {
         std::vector<MyIntPair> vec1;
         for (size_t j = 0; j < 1000; ++j)
-            vec1.emplace_back(rng(), rng());
+            vec1.emplace_back(MyIntPair(rng(), rng()));
 
         std::sort(vec1.begin(), vec1.end(), MyIntPairCompare());
 
         for (const MyIntPair& p : vec1)
-            correct.emplace_back(p);
+            correct.emplace_back(MyIntPair(p));
 
         vecs.emplace_back(std::move(vec1));
     }
@@ -139,12 +139,12 @@ void test_losertree(bool stable, size_t num_vectors) {
         for (size_t i = 0; i < num_vectors / 1; ++i) {
             std::vector<MyIntPair> vec1;
             for (size_t j = 0; j < 1000; ++j)
-                vec1.emplace_back(vecs[i][j].key_, rng());
+                vec1.emplace_back(MyIntPair(vecs[i][j].key_, rng()));
 
             std::sort(vec1.begin(), vec1.end(), MyIntPairCompare());
 
             for (const MyIntPair& p : vec1)
-                correct.emplace_back(p);
+                correct.emplace_back(MyIntPair(p));
 
             vecs.emplace_back(std::move(vec1));
         }
@@ -179,7 +179,7 @@ void test_losertree(bool stable, size_t num_vectors) {
         unsigned top = lt.min_source();
         MyIntPair res = *lt_iter[top];
         // std::cout << res.key_ << std::endl;
-        result.emplace_back(res);
+        result.emplace_back(MyIntPair(res));
 
         ++lt_iter[top];
 
@@ -259,7 +259,7 @@ void benchmark_losertree(
         vec1.reserve(vector_size);
 
         for (size_t j = 0; j < vector_size; ++j)
-            vec1.emplace_back(rng());
+            vec1.emplace_back(MyInt(rng()));
 
         std::sort(vec1.begin(), vec1.end(), MyIntCompare());
         total_size += vec1.size();

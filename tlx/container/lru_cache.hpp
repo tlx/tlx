@@ -47,8 +47,8 @@ protected:
 
     using Map = typename std::unordered_map<
         Key, ListIterator, std::hash<Key>, std::equal_to<Key>,
-        typename Alloc::template rebind<
-            std::pair<const Key, ListIterator> >::other>;
+        typename std::allocator_traits<Alloc>::template rebind_alloc<
+            std::pair<const Key, ListIterator> > >;
 
 public:
     explicit LruCacheSet(const Alloc& alloc = Alloc())
@@ -171,8 +171,8 @@ protected:
 
     using Map = typename std::unordered_map<
         Key, ListIterator, std::hash<Key>, std::equal_to<Key>,
-        typename Alloc::template rebind<
-            std::pair<const Key, ListIterator> >::other>;
+        typename std::allocator_traits<Alloc>::template rebind_alloc<
+            std::pair<const Key, ListIterator> > >;
 
 public:
     explicit LruCacheMap(const Alloc& alloc = Alloc())

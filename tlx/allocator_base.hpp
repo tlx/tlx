@@ -51,6 +51,20 @@ public:
         return size_t(-1) / sizeof(Type);
     }
 
+#if __cplusplus >= 201103L
+    //! Constructs an element object on the location pointed by p.
+    template <typename SubType, typename... Args>
+    void construct(SubType* p, Args&& ... args)
+    noexcept(std::is_nothrow_constructible<SubType, Args...>::value) {
+        ::new (static_cast<void*>(p))SubType(std::forward<Args>(args) ...); // NOLINT
+    }
+
+    //! Destroys in-place the object pointed by p.
+    template <typename SubType>
+    void destroy(SubType* p) const noexcept(std::is_nothrow_destructible<SubType>::value) {
+        p->~SubType();
+    }
+#else
     //! Constructs an element object on the location pointed by p.
     void construct(pointer p, const_reference value) {
         ::new (static_cast<void*>(p))Type(value); // NOLINT
@@ -68,18 +82,7 @@ public:
 #if defined(_MSC_VER)
 #pragma warning(push)
 #endif
-
-    //! Constructs an element object on the location pointed by p.
-    template <typename SubType, typename... Args>
-    void construct(SubType* p, Args&& ... args) {
-        ::new (static_cast<void*>(p))SubType(std::forward<Args>(args) ...); // NOLINT
-    }
-
-    //! Destroys in-place the object pointed by p.
-    template <typename SubType>
-    void destroy(SubType* p) const noexcept {
-        p->~SubType();
-    }
+#endif
 };
 
 } // namespace tlx

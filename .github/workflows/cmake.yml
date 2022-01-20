@@ -17,9 +17,9 @@ jobs:
           os: ubuntu-18.04
           build_type: "Debug"
 
-        - name: "Ubuntu 18.04 gcc 7.5 Release 32-bit"
-          os: ubuntu-18.04
-          build_type: "Release"
+        - name: "Ubuntu 20.04 gcc 9.3 Debug 32-bit"
+          os: ubuntu-20.04
+          build_type: "Debug"
           cxx_flags: "-m32"
 
         - name: "Ubuntu 20.04 gcc 9.3 Release AddressSanitizer"
@@ -61,6 +61,13 @@ jobs:
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{matrix.config.gcc_install}} 90 --slave /usr/bin/g++ g++ /usr/bin/g++-${{matrix.config.gcc_install}}
           echo --- gcc version after
           gcc --version
+
+      - name: Install additional packages
+        if: ${{matrix.config.cxx_flags == '-m32'}}
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install g++-9-multilib
 
       - name: Configure CMake
         run: >

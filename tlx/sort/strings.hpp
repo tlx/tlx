@@ -31,7 +31,7 @@ namespace tlx {
 /******************************************************************************/
 
 /*!
- * Sort a set of strings represented by C-style uint8_t* in place.
+ * Sort a set of strings represented by C-style std::uint8_t* in place.
  *
  * If the memory limit is non zero, possibly slower algorithms will be selected
  * to stay within the memory limit.
@@ -58,7 +58,7 @@ void sort_strings(char** strings, size_t size, size_t memory = 0) {
 }
 
 /*!
- * Sort a set of strings represented by C-style uint8_t* in place.
+ * Sort a set of strings represented by C-style std::uint8_t* in place.
  *
  * If the memory limit is non zero, possibly slower algorithms will be selected
  * to stay within the memory limit.
@@ -100,7 +100,7 @@ void sort_strings(std::vector<char*>& strings, size_t memory = 0) {
 }
 
 /*!
- * Sort a set of strings represented by C-style uint8_t* in place.
+ * Sort a set of strings represented by C-style std::uint8_t* in place.
  *
  * If the memory limit is non zero, possibly slower algorithms will be selected
  * to stay within the memory limit.
@@ -123,7 +123,7 @@ void sort_strings(std::vector<const char*>& strings, size_t memory = 0) {
 }
 
 /*!
- * Sort a set of strings represented by C-style uint8_t* in place.
+ * Sort a set of strings represented by C-style std::uint8_t* in place.
  *
  * If the memory limit is non zero, possibly slower algorithms will be selected
  * to stay within the memory limit.
@@ -168,17 +168,17 @@ void sort_strings(std::vector<std::string>& strings, size_t memory = 0) {
 /******************************************************************************/
 
 /*!
- * Sort a set of strings represented by C-style uint8_t* in place.
+ * Sort a set of strings represented by C-style std::uint8_t* in place.
  *
  * If the memory limit is non zero, possibly slower algorithms will be selected
  * to stay within the memory limit.
  */
 static inline
-void sort_strings_lcp(unsigned char** strings, size_t size, uint32_t* lcp,
+void sort_strings_lcp(unsigned char** strings, size_t size, std::uint32_t* lcp,
                       size_t memory = 0) {
     sort_strings_detail::radixsort_CE3(
         sort_strings_detail::StringLcpPtr<
-            sort_strings_detail::UCharStringSet, uint32_t>(
+            sort_strings_detail::UCharStringSet, std::uint32_t>(
             sort_strings_detail::UCharStringSet(strings, strings + size), lcp),
         /* depth */ 0, memory);
 }
@@ -191,24 +191,24 @@ void sort_strings_lcp(unsigned char** strings, size_t size, uint32_t* lcp,
  * to stay within the memory limit.
  */
 static inline
-void sort_strings_lcp(char** strings, size_t size, uint32_t* lcp,
+void sort_strings_lcp(char** strings, size_t size, std::uint32_t* lcp,
                       size_t memory = 0) {
     return sort_strings_lcp(
         reinterpret_cast<unsigned char**>(strings), size, lcp, memory);
 }
 
 /*!
- * Sort a set of strings represented by C-style uint8_t* in place.
+ * Sort a set of strings represented by C-style std::uint8_t* in place.
  *
  * If the memory limit is non zero, possibly slower algorithms will be selected
  * to stay within the memory limit.
  */
 static inline
-void sort_strings_lcp(const unsigned char** strings, size_t size, uint32_t* lcp,
+void sort_strings_lcp(const unsigned char** strings, size_t size, std::uint32_t* lcp,
                       size_t memory = 0) {
     sort_strings_detail::radixsort_CE3(
         sort_strings_detail::StringLcpPtr<
-            sort_strings_detail::CUCharStringSet, uint32_t>(
+            sort_strings_detail::CUCharStringSet, std::uint32_t>(
             sort_strings_detail::CUCharStringSet(strings, strings + size), lcp),
         /* depth */ 0, memory);
 }
@@ -221,7 +221,7 @@ void sort_strings_lcp(const unsigned char** strings, size_t size, uint32_t* lcp,
  * to stay within the memory limit.
  */
 static inline
-void sort_strings_lcp(const char** strings, size_t size, uint32_t* lcp,
+void sort_strings_lcp(const char** strings, size_t size, std::uint32_t* lcp,
                       size_t memory = 0) {
     return sort_strings_lcp(
         reinterpret_cast<const unsigned char**>(strings), size, lcp, memory);
@@ -237,19 +237,19 @@ void sort_strings_lcp(const char** strings, size_t size, uint32_t* lcp,
  * to stay within the memory limit.
  */
 static inline
-void sort_strings_lcp(std::vector<char*>& strings, uint32_t* lcp,
+void sort_strings_lcp(std::vector<char*>& strings, std::uint32_t* lcp,
                       size_t memory = 0) {
     return sort_strings_lcp(strings.data(), strings.size(), lcp, memory);
 }
 
 /*!
- * Sort a set of strings represented by C-style uint8_t* in place.
+ * Sort a set of strings represented by C-style std::uint8_t* in place.
  *
  * If the memory limit is non zero, possibly slower algorithms will be selected
  * to stay within the memory limit.
  */
 static inline
-void sort_strings_lcp(std::vector<unsigned char*>& strings, uint32_t* lcp,
+void sort_strings_lcp(std::vector<unsigned char*>& strings, std::uint32_t* lcp,
                       size_t memory = 0) {
     return sort_strings_lcp(strings.data(), strings.size(), lcp, memory);
 }
@@ -262,19 +262,19 @@ void sort_strings_lcp(std::vector<unsigned char*>& strings, uint32_t* lcp,
  * to stay within the memory limit.
  */
 static inline
-void sort_strings_lcp(std::vector<const char*>& strings, uint32_t* lcp,
+void sort_strings_lcp(std::vector<const char*>& strings, std::uint32_t* lcp,
                       size_t memory = 0) {
     return sort_strings_lcp(strings.data(), strings.size(), lcp, memory);
 }
 
 /*!
- * Sort a set of strings represented by C-style uint8_t* in place.
+ * Sort a set of strings represented by C-style std::uint8_t* in place.
  *
  * If the memory limit is non zero, possibly slower algorithms will be selected
  * to stay within the memory limit.
  */
 static inline
-void sort_strings_lcp(std::vector<const unsigned char*>& strings, uint32_t* lcp,
+void sort_strings_lcp(std::vector<const unsigned char*>& strings, std::uint32_t* lcp,
                       size_t memory = 0) {
     return sort_strings_lcp(strings.data(), strings.size(), lcp, memory);
 }
@@ -289,11 +289,11 @@ void sort_strings_lcp(std::vector<const unsigned char*>& strings, uint32_t* lcp,
  * to stay within the memory limit.
  */
 static inline
-void sort_strings_lcp(std::string* strings, size_t size, uint32_t* lcp,
+void sort_strings_lcp(std::string* strings, size_t size, std::uint32_t* lcp,
                       size_t memory = 0) {
     sort_strings_detail::radixsort_CE3(
         sort_strings_detail::StringLcpPtr<
-            sort_strings_detail::StdStringSet, uint32_t>(
+            sort_strings_detail::StdStringSet, std::uint32_t>(
             sort_strings_detail::StdStringSet(strings, strings + size), lcp),
         /* depth */ 0, memory);
 }
@@ -306,7 +306,7 @@ void sort_strings_lcp(std::string* strings, size_t size, uint32_t* lcp,
  * to stay within the memory limit.
  */
 static inline
-void sort_strings_lcp(std::vector<std::string>& strings, uint32_t* lcp,
+void sort_strings_lcp(std::vector<std::string>& strings, std::uint32_t* lcp,
                       size_t memory = 0) {
     return sort_strings_lcp(strings.data(), strings.size(), lcp, memory);
 }

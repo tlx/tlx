@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
+#include <cstdint>
 
 namespace tlx {
 namespace sort_strings_detail {
@@ -60,7 +61,7 @@ struct PerfectTreeCalculations {
 
         static const int bitmask = num_nodes;
 
-        int hi = treebits - 32 + clz<uint32_t>(id);
+        int hi = treebits - 32 + clz<std::uint32_t>(id);
         TLX_LOG << "high zero: " << hi;
 
         unsigned int bkt = ((id << (hi + 1)) & bitmask) | (1 << hi);
@@ -75,7 +76,7 @@ struct PerfectTreeCalculations {
 
         static const int bitmask = num_nodes;
 
-        int lo = ctz<uint32_t>(id) + 1;
+        int lo = ctz<std::uint32_t>(id) + 1;
         TLX_LOG << "low zero: " << lo;
 
         unsigned int bkt = ((id >> lo) & bitmask) | (1 << (treebits - lo));
@@ -374,7 +375,7 @@ public:
     //! search in splitter tree for bucket number, unrolled for Rollout keys at
     //! once.
     void find_bkt_unroll(
-        const key_type key[Rollout], uint16_t obkt[Rollout]) const {
+        const key_type key[Rollout], std::uint16_t obkt[Rollout]) const {
         // binary tree traversal without left branch
 
         unsigned int i[Rollout];
@@ -441,7 +442,7 @@ public:
     void classify(
         const StringSet& strset,
         typename StringSet::Iterator begin, typename StringSet::Iterator end,
-        uint16_t* bktout, size_t depth) const {
+        std::uint16_t* bktout, size_t depth) const {
         while (begin != end)
         {
             if (begin + Rollout <= end)
@@ -550,7 +551,7 @@ public:
     void classify(
         const StringSet& strset,
         typename StringSet::Iterator begin, typename StringSet::Iterator end,
-        uint16_t* bktout, size_t depth) const {
+        std::uint16_t* bktout, size_t depth) const {
         while (begin != end)
         {
             key_type key = get_key<key_type>(strset, *begin++, depth);
@@ -619,7 +620,7 @@ public:
     //! search in splitter tree for bucket number, unrolled for Rollout keys at
     //! once.
     void find_bkt_unroll(
-        const key_type key[Rollout], uint16_t obkt[Rollout]) const {
+        const key_type key[Rollout], std::uint16_t obkt[Rollout]) const {
         // binary tree traversal without left branch
 
         unsigned int i[Rollout];
@@ -687,7 +688,7 @@ public:
     void classify(
         const StringSet& strset,
         typename StringSet::Iterator begin, typename StringSet::Iterator end,
-        uint16_t* bktout, size_t depth) const {
+        std::uint16_t* bktout, size_t depth) const {
         while (begin != end)
         {
             if (begin + Rollout <= end)

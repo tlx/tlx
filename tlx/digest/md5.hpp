@@ -31,12 +31,12 @@ public:
     //! construct empty object.
     MD5();
     //! construct context and process data range
-    MD5(const void* data, uint32_t size);
+    MD5(const void* data, std::uint32_t size);
     //! construct context and process string
     explicit MD5(const std::string& str);
 
     //! process more data
-    void process(const void* data, uint32_t size);
+    void process(const void* data, std::uint32_t size);
     //! process more data
     void process(const std::string& str);
 
@@ -54,19 +54,19 @@ public:
     std::string digest_hex_uc();
 
 private:
-    uint64_t length_;
-    uint32_t state_[4];
-    uint32_t curlen_;
-    uint8_t buf_[64];
+    std::uint64_t length_;
+    std::uint32_t state_[4];
+    std::uint32_t curlen_;
+    std::uint8_t buf_[64];
 };
 
 //! process data and return 16 byte (128 bit) digest hex encoded
-std::string md5_hex(const void* data, uint32_t size);
+std::string md5_hex(const void* data, std::uint32_t size);
 //! process data and return 16 byte (128 bit) digest hex encoded
 std::string md5_hex(const std::string& str);
 
 //! process data and return 16 byte (128 bit) digest upper-case hex encoded
-std::string md5_hex_uc(const void* data, uint32_t size);
+std::string md5_hex_uc(const void* data, std::uint32_t size);
 //! process data and return 16 byte (128 bit) digest upper-case hex encoded
 std::string md5_hex_uc(const std::string& str);
 

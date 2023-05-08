@@ -62,16 +62,16 @@ std::string hexdump_type(const Type& t) {
 std::string hexdump(const std::vector<char>& data);
 
 /*!
- * Dump a uint8_t vector as a sequence of uppercase hexadecimal pairs.
+ * Dump a std::uint8_t vector as a sequence of uppercase hexadecimal pairs.
  *
  * \param data  binary data to output in hex
  * \return      string of hexadecimal pairs
  */
-std::string hexdump(const std::vector<uint8_t>& data);
+std::string hexdump(const std::vector<std::uint8_t>& data);
 
 /*!
  * Dump a (binary) string into a C source code snippet. The snippet defines an
- * array of const uint8_t* holding the data of the string.
+ * array of const std::uint8_t* holding the data of the string.
  *
  * \param str       string to output as C source array
  * \param var_name  name of the array variable in the outputted code snippet
@@ -120,12 +120,12 @@ std::string hexdump_lc_type(const Type& t) {
 std::string hexdump_lc(const std::vector<char>& data);
 
 /*!
- * Dump a uint8_t vector as a sequence of lowercase hexadecimal pairs.
+ * Dump a std::uint8_t vector as a sequence of lowercase hexadecimal pairs.
  *
  * \param data  binary data to output in hex
  * \return      string of hexadecimal pairs
  */
-std::string hexdump_lc(const std::vector<uint8_t>& data);
+std::string hexdump_lc(const std::vector<std::uint8_t>& data);
 
 /******************************************************************************/
 // Parser for Hex Digit Sequence

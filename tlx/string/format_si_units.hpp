@@ -12,6 +12,7 @@
 #define TLX_STRING_FORMAT_SI_UNITS_HEADER
 
 #include <string>
+#include <cstdint>
 
 namespace tlx {
 
@@ -20,7 +21,7 @@ namespace tlx {
 
 //! Format a byte size using SI (K, M, G, T) suffixes (powers of ten). Returns
 //! "123 M" or similar.
-std::string format_si_units(uint64_t number, int precision = 3);
+std::string format_si_units(std::uint64_t number, int precision = 3);
 
 //! \}
 

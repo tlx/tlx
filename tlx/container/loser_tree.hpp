@@ -56,7 +56,7 @@ class LoserTreeCopyBase
 {
 public:
     //! size of counters and array indexes
-    using Source = uint32_t;
+    using Source = std::uint32_t;
 
     //! sentinel for invalid or finished Sources
     static constexpr Source invalid_ = Source(-1);
@@ -308,7 +308,7 @@ class LoserTreePointerBase
 {
 public:
     //! size of counters and array indexes
-    using Source = uint32_t;
+    using Source = std::uint32_t;
 
     //! sentinel for invalid or finished Sources
     static constexpr Source invalid_ = Source(-1);
@@ -530,7 +530,7 @@ class LoserTreeCopyUnguardedBase
 {
 public:
     //! size of counters and array indexes
-    using Source = uint32_t;
+    using Source = std::uint32_t;
 
     //! sentinel for invalid or finished Sources
     static constexpr Source invalid_ = Source(-1);
@@ -706,7 +706,7 @@ class LoserTreePointerUnguardedBase
 {
 public:
     //! size of counters and array indexes
-    using Source = uint32_t;
+    using Source = std::uint32_t;
 
     //! sentinel for invalid or finished Sources
     static constexpr Source invalid_ = Source(-1);

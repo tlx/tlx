@@ -12,6 +12,7 @@
 #define TLX_STRING_HASH_SDBM_HEADER
 
 #include <string>
+#include <cstdint>
 
 namespace tlx {
 

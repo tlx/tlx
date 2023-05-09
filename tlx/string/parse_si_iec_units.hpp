@@ -12,6 +12,7 @@
 #define TLX_STRING_PARSE_SI_IEC_UNITS_HEADER
 
 #include <string>
+#include <cstdint>
 
 namespace tlx {
 

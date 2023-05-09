@@ -12,6 +12,7 @@
 #define TLX_STRING_FORMAT_SI_UNITS_HEADER
 
 #include <string>
+#include <cstdint>
 
 namespace tlx {
 

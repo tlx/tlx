@@ -24,6 +24,7 @@
 #include <tlx/math/div_ceil.hpp>
 #include <tlx/math/ffs.hpp>
 #include <tlx/meta/log2.hpp>
+#include <cstdint>
 
 namespace tlx {
 namespace radix_heap_detail {

@@ -36,6 +36,7 @@
 #include <tlx/simple_vector.hpp>
 #include <tlx/thread_pool.hpp>
 #include <tlx/unused.hpp>
+#include <cstdint>
 
 namespace tlx {
 namespace sort_strings_detail {

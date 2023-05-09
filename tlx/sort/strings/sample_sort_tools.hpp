@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
+#include <cstdint>
 
 namespace tlx {
 namespace sort_strings_detail {

@@ -29,6 +29,7 @@
 #include <stack>
 #include <utility>
 #include <vector>
+#include <cstdint>
 
 namespace tlx {
 

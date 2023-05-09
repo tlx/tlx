@@ -12,6 +12,7 @@
 #define TLX_STRING_BASE64_HEADER
 
 #include <string>
+#include <cstdint>
 
 namespace tlx {
 

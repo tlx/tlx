@@ -16,6 +16,7 @@
 
 #include <tlx/define/endian.hpp>
 #include <tlx/math/bswap.hpp>
+#include <cstdint>
 
 namespace tlx {
 

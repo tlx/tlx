@@ -14,6 +14,7 @@
 #include <chrono>
 #include <ostream>
 #include <vector>
+#include <cstdint>
 
 namespace tlx {
 

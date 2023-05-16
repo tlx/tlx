@@ -116,7 +116,7 @@ void test_losertree(bool stable, size_t num_vectors) {
     using Vector = std::vector<MyIntPair>;
     std::vector<Vector> vecs;
 
-    std::default_random_engine rng(std::random_device { } ());
+    std::default_random_engine rng(std::random_device { }());
 
     std::vector<MyIntPair> correct;
 

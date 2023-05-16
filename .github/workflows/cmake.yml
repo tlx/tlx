@@ -13,9 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "Ubuntu 18.04 gcc 7.5 Debug"
-          os: ubuntu-18.04
+        - name: "Ubuntu 20.04 gcc 7.5 Debug"
+          os: ubuntu-20.04
           build_type: "Debug"
+          gcc_install: "7"
 
         - name: "Ubuntu 20.04 gcc 9.3 Debug 32-bit"
           os: ubuntu-20.04
@@ -38,9 +39,19 @@ jobs:
           gcc_install: "11"
           cxx_flags: "-D_GLIBCXX_DEBUG"
 
-        - name: "macOS 10.15 clang 12 Debug"
-          os: macos-10.15
+        - name: "Ubuntu 22.04 gcc 11 Debug"
+          os: ubuntu-22.04
           build_type: "Debug"
+
+        # - name: "Ubuntu 22.04 gcc 13 Release GLIBCXX_DEBUG"
+        #   os: ubuntu-22.04
+        #   build_type: "Release"
+        #   gcc_install: "13"
+        #   cxx_flags: "-D_GLIBCXX_DEBUG"
+
+        # - name: "macOS 12 clang X Debug"
+        #   os: macos-12
+        #   build_type: "Debug"
 
         # - name: "Window Latest"
         #   os: windows-latest

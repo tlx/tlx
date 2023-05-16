@@ -48,7 +48,7 @@ struct DataStruct {
     unsigned int key;
     char payload[32];
 
-    explicit DataStruct(unsigned int k = 0)
+    explicit DataStruct(unsigned int k = 0) noexcept
         : key(k)
     { }
 

@@ -129,13 +129,14 @@ inline bool die_equal_compare(double a, double b) {
 
 //! Check that X == Y or die miserably, but output the values of X and Y for
 //! better debugging.
-#define tlx_die_unequal(X, Y)                                                \
-    do {                                                                     \
-        auto x__ = (X);                                     /* NOLINT */     \
-        auto y__ = (Y);                                     /* NOLINT */     \
-        if (!::tlx::die_equal_compare(x__, y__))                             \
-            tlx_die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "          \
-                                 "\"" << x__ << "\" != \"" << y__ << "\"");  \
+#define tlx_die_unequal(X, Y)                                               \
+    do {                                                                    \
+        auto x__ = (X);                                     /* NOLINT */    \
+        auto y__ = (Y);                                     /* NOLINT */    \
+        if (!::tlx::die_equal_compare(x__, y__)) {                          \
+            tlx_die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "         \
+                                 "\"" << x__ << "\" != \"" << y__ << "\""); \
+        }                                                                   \
     } while (false)
 
 //! Check that X == Y or die miserably, but output the values of X and Y for
@@ -153,10 +154,11 @@ inline bool die_equal_compare(double a, double b) {
     do {                                                                       \
         auto x__ = (X);                                     /* NOLINT */       \
         auto y__ = (Y);                                     /* NOLINT */       \
-        if (!::tlx::die_equal_compare(x__, y__))                               \
+        if (!::tlx::die_equal_compare(x__, y__)) {                             \
             tlx_die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "            \
                                  "\"" << x__ << "\" != \"" << y__ << "\"\n" << \
                                  msg << '\n');                                 \
+        }                                                                      \
     } while (false)
 
 /******************************************************************************/
@@ -181,10 +183,11 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps) {
     do {                                                                 \
         auto x__ = (X);                                     /* NOLINT */ \
         auto y__ = (Y);                                     /* NOLINT */ \
-        if (!::tlx::die_equal_eps_compare(x__, y__, eps))                \
+        if (!::tlx::die_equal_eps_compare(x__, y__, eps)) {              \
             tlx_die("DIE-UNEQUAL-EPS: " #X " != " #Y " : "               \
                     << std::setprecision(18)                             \
                     << "\"" << x__ << "\" != \"" << y__ << "\"");        \
+        }                                                                \
     } while (false)
 
 //! Check that ABS(X - Y) <= eps or die miserably, but output the values of X
@@ -194,11 +197,12 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps) {
     do {                                                                 \
         auto x__ = (X);                                     /* NOLINT */ \
         auto y__ = (Y);                                     /* NOLINT */ \
-        if (!::tlx::die_equal_eps_compare(x__, y__, eps))                \
+        if (!::tlx::die_equal_eps_compare(x__, y__, eps)) {              \
             tlx_die("DIE-UNEQUAL-EPS: " #X " != " #Y " : "               \
                     << std::setprecision(18)                             \
                     << "\"" << x__ << "\" != \"" << y__ << "\"\n" <<     \
                     msg << '\n');                                        \
+        }                                                                \
     } while (false)
 
 //! Check that ABS(X - Y) <= 0.000001 or die miserably, but output the values of
@@ -217,13 +221,14 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps) {
 
 //! Die miserably if X == Y, but first output the values of X and Y for better
 //! debugging.
-#define tlx_die_equal(X, Y)                                                  \
-    do {                                                                     \
-        auto x__ = (X);                                     /* NOLINT */     \
-        auto y__ = (Y);                                     /* NOLINT */     \
-        if (::tlx::die_equal_compare(x__, y__))                              \
-            tlx_die_with_sstream("DIE-EQUAL: " #X " == " #Y " : "            \
-                                 "\"" << x__ << "\" == \"" << y__ << "\"");  \
+#define tlx_die_equal(X, Y)                                                 \
+    do {                                                                    \
+        auto x__ = (X);                                     /* NOLINT */    \
+        auto y__ = (Y);                                     /* NOLINT */    \
+        if (::tlx::die_equal_compare(x__, y__)) {                           \
+            tlx_die_with_sstream("DIE-EQUAL: " #X " == " #Y " : "           \
+                                 "\"" << x__ << "\" == \"" << y__ << "\""); \
+        }                                                                   \
     } while (false)
 
 //! Die miserably if X == Y, but first output the values of X and Y for better
@@ -241,10 +246,11 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps) {
     do {                                                                       \
         auto x__ = (X);                                     /* NOLINT */       \
         auto y__ = (Y);                                     /* NOLINT */       \
-        if (::tlx::die_equal_compare(x__, y__))                                \
+        if (::tlx::die_equal_compare(x__, y__)) {                              \
             tlx_die_with_sstream("DIE-EQUAL: " #X " == " #Y " : "              \
                                  "\"" << x__ << "\" == \"" << y__ << "\"\n" << \
                                  msg << '\n');                                 \
+        }                                                                      \
     } while (false)
 
 /******************************************************************************/

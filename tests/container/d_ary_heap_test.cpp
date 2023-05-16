@@ -48,12 +48,12 @@ struct TestData {
     unsigned int a, b;
 
     // required by the heap
-    TestData()
+    TestData() noexcept
         : a(0), b(0)
     { }
 
     // also used as implicit conversion constructor
-    TestData(unsigned int _a)
+    TestData(unsigned int _a) noexcept
         : a(_a), b(0)
     { }
 

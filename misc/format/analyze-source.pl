@@ -10,8 +10,8 @@
 ################################################################################
 
 # uncrustify executable
-my $uncrustify = "uncrustify-0.68.1";
-my $uncrustify_sign = "Uncrustify-0.68-2-8c80bd84";
+my $uncrustify = "uncrustify";
+my $uncrustify_sign = "Uncrustify-0.76.0_f";
 
 # print multiple email addresses
 my $email_multimap = 0;

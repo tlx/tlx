@@ -21,7 +21,7 @@ namespace tlx {
 #if TLX_NO_DEPRECATED
   #define TLX_DEPRECATED(x) x
 #elif defined(_MSC_VER)
-  #define TLX_DEPRECATED(x) __declspec(deprecated)x
+  #define TLX_DEPRECATED(x) __declspec(deprecated) x
 #elif defined(__clang__) || defined(__GNUG__)
   #define TLX_DEPRECATED(x) x __attribute__ ((deprecated))
 #endif

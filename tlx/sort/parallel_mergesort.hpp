@@ -131,7 +131,7 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
     // length of this thread's chunk, before merging
     DiffType length_local = sd->starts[iam + 1] - sd->starts[iam];
 
-    using SortingPlacesIterator = ValueType *;
+    using SortingPlacesIterator = ValueType*;
 
     // sort in temporary storage, leave space for sentinel
     sd->temporary[iam] = static_cast<ValueType*>(

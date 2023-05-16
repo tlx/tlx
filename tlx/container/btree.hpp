@@ -2256,7 +2256,7 @@ public:
                 "BTree::bulk_load, level " << level <<
                     ": " << num_children << " children in " <<
                     num_parents << " inner nodes with up to " <<
-                ((num_children + num_parents - 1) / num_parents) <<
+                    ((num_children + num_parents - 1) / num_parents) <<
                     " children per inner node.");
 
             size_t inner_index = 0;

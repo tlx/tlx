@@ -115,8 +115,8 @@ class StackAllocator : public AllocatorBase<Type>
 {
 public:
     using value_type = Type;
-    using pointer = Type *;
-    using const_pointer = const Type *;
+    using pointer = Type*;
+    using const_pointer = const Type*;
     using reference = Type&;
     using const_reference = const Type&;
     using size_type = std::size_t;

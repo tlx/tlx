@@ -12,7 +12,8 @@
 #include <tlx/define/deprecated.hpp>
 
 TLX_DEPRECATED(void do_not_use_me_anymore());
-void do_not_use_me_anymore() { }
+void do_not_use_me_anymore() {
+}
 
 TLX_DEPRECATED_FUNC_DEF(int also_do_not_use()) {
     return 0;

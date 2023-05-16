@@ -237,7 +237,7 @@ static void test_power_to_the_real() {
     }
 
     if (D > 0)
-        test_power_to_the_real<(D > 0) ? D - 1 : 0>();
+        test_power_to_the_real < (D > 0) ? D - 1 : 0 > ();
 }
 
 template <unsigned D = 7>
@@ -255,7 +255,7 @@ static void test_power_to_the_int() {
     }
 
     if (D > 0)
-        test_power_to_the_real<(D > 0) ? D - 1 : 0>();
+        test_power_to_the_real < (D > 0) ? D - 1 : 0 > ();
 }
 
 static void test_rol() {

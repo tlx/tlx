@@ -135,7 +135,7 @@ public:
 
 //! Explicitly specify the condition for logging
 #define TLX_LOGC(cond) \
-    !(cond) ? (void)0 : ::tlx::LoggerVoidify() & ::tlx::Logger()
+    !(cond) ? (void)0 : ::tlx::LoggerVoidify()& ::tlx::Logger()
 
 //! Default logging method: output if the local debug variable is true.
 #define TLX_LOG TLX_LOGC(debug)

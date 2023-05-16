@@ -110,7 +110,7 @@ public:
     //! \{
 
     //! construction from an immediate function with no object or pointer.
-    template <R(* const Function)(A...)>
+    template <R(*const Function)(A...)>
     static Delegate make() noexcept {
         return Delegate(function_caller<Function>, nullptr);
     }
@@ -123,7 +123,7 @@ public:
     //! constructor from a plain function pointer with no object.
     explicit Delegate(R(*const function_ptr)(A...)) noexcept
         : Delegate(function_ptr_caller,
-                   *reinterpret_cast<void* const*>(&function_ptr)) { }
+                   * reinterpret_cast<void* const*>(&function_ptr)) { }
 
     static_assert(sizeof(void*) == sizeof(void (*)(void)),
                   "object pointer and function pointer sizes must equal");
@@ -183,14 +183,14 @@ public:
         : store_(
               // allocate memory for T in shared_ptr with appropriate deleter
               typename std::allocator_traits<Allocator>::template rebind_alloc<
-                  typename std::decay<T>::type>{}.allocate(1),
+                  typename std::decay<T>::type>{ }.allocate(1),
               store_deleter<typename std::decay<T>::type>, Allocator()) {
 
         using Functor = typename std::decay<T>::type;
         using Rebind = typename std::allocator_traits<Allocator>::template rebind_alloc<Functor>;
 
         // copy-construct T into shared_ptr memory.
-        Rebind rebind{};
+        Rebind rebind{ };
         std::allocator_traits<Rebind>::construct(
             rebind, static_cast<Functor*>(store_.get()), Functor(std::forward<T>(f)));
 
@@ -334,7 +334,7 @@ private:
     template <typename T>
     static void store_deleter(void* const ptr) {
         using Rebind = typename std::allocator_traits<Allocator>::template rebind_alloc<T>;
-        Rebind rebind{};
+        Rebind rebind{ };
 
         std::allocator_traits<Rebind>::destroy(rebind, static_cast<T*>(ptr));
         std::allocator_traits<Rebind>::deallocate(rebind, static_cast<T*>(ptr), 1);
@@ -344,14 +344,14 @@ private:
     //! \{
 
     //! caller for an immediate function with no object or pointer.
-    template <R(* Function)(A...)>
+    template <R(*Function)(A...)>
     static R function_caller(void* const, A&& ... args) {
         return Function(std::forward<A>(args) ...);
     }
 
     //! caller for a plain function pointer.
     static R function_ptr_caller(void* const object_ptr, A&& ... args) {
-        return (*reinterpret_cast<R(* const*)(A...)>(&object_ptr))(args...);
+        return (*reinterpret_cast<R(*const*)(A...)>(&object_ptr))(args...);
     }
 
     //! function caller for immediate class::method function calls

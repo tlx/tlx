@@ -63,8 +63,8 @@ protected:
 public:
     // *** simple pointer iterators
 
-    using iterator = value_type *;
-    using const_iterator = const value_type *;
+    using iterator = value_type*;
+    using const_iterator = const value_type*;
     using reference = value_type&;
     using const_reference = const value_type&;
 

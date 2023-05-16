@@ -418,15 +418,15 @@ RandomAccessIterator3 multiway_merge_3_variant(
             goto s210;
     }
 
-#define TLX_MERGE3CASE(a, b, c, c0, c1)               \
-    s ## a ## b ## c:                                 \
-    *target = *seq ## a;                              \
-    ++target;                                         \
-    --size;                                           \
-    ++seq ## a;                                       \
-    if (size == 0) goto finish;                       \
-    if (seq ## a c0 seq ## b) goto s ## a ## b ## c;  \
-    if (seq ## a c1 seq ## c) goto s ## b ## a ## c;  \
+#define TLX_MERGE3CASE(a, b, c, c0, c1)              \
+    s ## a ## b ## c:                                \
+    *target = *seq ## a;                             \
+    ++target;                                        \
+    --size;                                          \
+    ++seq ## a;                                      \
+    if (size == 0) goto finish;                      \
+    if (seq ## a c0 seq ## b) goto s ## a ## b ## c; \
+    if (seq ## a c1 seq ## c) goto s ## b ## a ## c; \
     goto s ## b ## c ## a;
 
     TLX_MERGE3CASE(0, 1, 2, <=, <=);
@@ -569,12 +569,12 @@ RandomAccessIterator3 multiway_merge_4_variant(
     seq2(seqs_begin[2].first, seqs_begin[2].second, comp),
     seq3(seqs_begin[3].first, seqs_begin[3].second, comp);
 
-#define TLX_DECISION(a, b, c, d) do {                         \
-        if (seq ## d < seq ## a) goto s ## d ## a ## b ## c;  \
-        if (seq ## d < seq ## b) goto s ## a ## d ## b ## c;  \
-        if (seq ## d < seq ## c) goto s ## a ## b ## d ## c;  \
-        goto s ## a ## b ## c ## d;                           \
-}                                                             \
+#define TLX_DECISION(a, b, c, d) do {                        \
+        if (seq ## d < seq ## a) goto s ## d ## a ## b ## c; \
+        if (seq ## d < seq ## b) goto s ## a ## d ## b ## c; \
+        if (seq ## d < seq ## c) goto s ## a ## b ## d ## c; \
+        goto s ## a ## b ## c ## d;                          \
+}                                                            \
     while (0)
 
     if (seq0 <= seq1)
@@ -599,16 +599,16 @@ RandomAccessIterator3 multiway_merge_4_variant(
             TLX_DECISION(2, 1, 0, 3);
     }
 
-#define TLX_MERGE4CASE(a, b, c, d, c0, c1, c2)             \
-    s ## a ## b ## c ## d:                                 \
-    *target = *seq ## a;                                   \
-    ++target;                                              \
-    --size;                                                \
-    ++seq ## a;                                            \
-    if (size == 0) goto finish;                            \
-    if (seq ## a c0 seq ## b) goto s ## a ## b ## c ## d;  \
-    if (seq ## a c1 seq ## c) goto s ## b ## a ## c ## d;  \
-    if (seq ## a c2 seq ## d) goto s ## b ## c ## a ## d;  \
+#define TLX_MERGE4CASE(a, b, c, d, c0, c1, c2)            \
+    s ## a ## b ## c ## d:                                \
+    *target = *seq ## a;                                  \
+    ++target;                                             \
+    --size;                                               \
+    ++seq ## a;                                           \
+    if (size == 0) goto finish;                           \
+    if (seq ## a c0 seq ## b) goto s ## a ## b ## c ## d; \
+    if (seq ## a c1 seq ## c) goto s ## b ## a ## c ## d; \
+    if (seq ## a c2 seq ## d) goto s ## b ## c ## a ## d; \
     goto s ## b ## c ## d ## a;
 
     TLX_MERGE4CASE(0, 1, 2, 3, <=, <=, <=);

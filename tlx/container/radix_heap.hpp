@@ -104,7 +104,7 @@ class BitArrayRecursive<Size, false>
     using child_type = BitArrayRecursive<1llu << child_width, child_width <= 6>;
 
     static constexpr size_t root_size = div_ceil(Size, child_type::size);
-    using root_type = BitArrayRecursive<root_size <= 32 ? 32 : 64, true>;
+    using root_type = BitArrayRecursive < root_size <= 32 ? 32 : 64, true >;
 
     using child_array_type = std::array<child_type, root_size>;
 
@@ -652,9 +652,9 @@ template <typename DataType, unsigned Radix = 8, typename KeyExtract = void>
 auto make_radix_heap(KeyExtract&& key_extract)->
 RadixHeap<DataType, KeyExtract,
           decltype(key_extract(std::declval<DataType>())), Radix> {
-    return (RadixHeap < DataType,
-            KeyExtract,
-            decltype(key_extract(DataType{ })), Radix > {
+    return (RadixHeap<DataType,
+                      KeyExtract,
+                      decltype(key_extract(DataType{ })), Radix> {
                 key_extract
             });
 }

@@ -23,7 +23,7 @@
 struct Something {
     int a, b;
 
-    explicit Something(int x = 0)
+    explicit Something(int x = 0) noexcept
         : a(x), b(x * x)
     { }
 

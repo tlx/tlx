@@ -20,7 +20,7 @@
 struct Something {
     unsigned int a, b;
 
-    explicit Something(unsigned int x = 0)
+    explicit Something(unsigned int x = 0) noexcept
         : a(x), b(x * x)
     { }
 

@@ -17,12 +17,21 @@
 #include <cstdlib>
 
 #if __linux__
+#include <features.h>
+#if defined(__GNU_LIBRARY__)
+
+#define TLX_HAVE_BACKTRACE_FUNC 1
 
 #include <cxxabi.h>
 #include <execinfo.h>
 #include <signal.h>
 #include <unistd.h>
 
+#else
+
+#define TLX_HAVE_BACKTRACE_FUNC 0
+
+#endif
 #endif
 
 namespace tlx {
@@ -37,7 +46,7 @@ void print_raw_backtrace(FILE* out, unsigned int max_frames,
 
     p += vsnprintf(buffer + p, sizeof(buffer) - p - 1, fmt, args);
 
-#if __linux__
+#if TLX_HAVE_BACKTRACE_FUNC
 
     // storage array for stack trace address data
     void** addrlist = reinterpret_cast<void**>(
@@ -73,7 +82,7 @@ void print_raw_backtrace(FILE* out, unsigned int max_frames) {
 void print_cxx_backtrace(FILE* out, unsigned int max_frames) {
     fprintf(out, "backtrace:\n");
 
-#if __linux__
+#if TLX_HAVE_BACKTRACE_FUNC
 
     // storage array for stack trace address data
     void** addrlist = reinterpret_cast<void**>(
@@ -158,7 +167,7 @@ void print_cxx_backtrace(FILE* out, unsigned int max_frames) {
 #endif
 }
 
-#if __linux__
+#if TLX_HAVE_BACKTRACE_FUNC
 
 static void segv_backtrace_handler(int sig) {
     tlx::unused(sig);
@@ -176,7 +185,7 @@ static void segv_backtrace_handler(int sig) {
 #endif
 
 void enable_segv_backtrace() {
-#if __linux__
+#if TLX_HAVE_BACKTRACE_FUNC
     signal(SIGSEGV, segv_backtrace_handler);
 #else
     printf("enable_segv_backtrace(): not supported on this platform.\n");

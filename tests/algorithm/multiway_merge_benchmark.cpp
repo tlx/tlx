@@ -91,14 +91,14 @@ protected:
     std::string message_;
 
     //! bytes processed
-    uint64_t bytes_;
+    std::uint64_t bytes_;
 
     //! timer
     double ts_;
 
 public:
     //! save message and start timer
-    explicit scoped_print_timer(const std::string& message, const uint64_t bytes = 0)
+    explicit scoped_print_timer(const std::string& message, const std::uint64_t bytes = 0)
         : message_(message),
           bytes_(bytes),
           ts_(tlx::timestamp()) {
@@ -121,7 +121,7 @@ public:
                  << message_
                  << " after " << elapsed << " seconds. "
                  << "Processed " << tlx::format_iec_units(bytes_) << "B"
-                 << " @ " << tlx::format_iec_units(static_cast<uint64_t>(bps)) << "B/s";
+                 << " @ " << tlx::format_iec_units(static_cast<std::uint64_t>(bps)) << "B/s";
         }
     }
 };
@@ -152,7 +152,7 @@ void test_multiway_merge(size_t seq_count, const size_t seq_size) {
 #pragma omp parallel
 #endif
         {
-            std::uniform_int_distribution<uint64_t> distr;
+            std::uniform_int_distribution<std::uint64_t> distr;
 
 #if defined(_OPENMP)
             unsigned int seed = 1234 * omp_get_thread_num() + seq_count + seq_size;
@@ -427,33 +427,33 @@ int main(int argc, char* argv[]) {
     // run individually for debugging
     if (0)
     {
-        test_repeat<uint64_t, PARA_GNU_MWM_EXACT>(2, 2 * 1024 * 1024);
-        test_repeat<uint64_t, PARA_MWM_EXACT_LT>(2, 2 * 1024 * 1024);
-        // test_repeat<uint64_t, PARA_MWM_EXACT_LT>(1024, 2 * 1024 * 1024);
-        // test_repeat<uint64_t, SEQ_MWM_LT>(2, 2 * 1024 * 1024);
-        // test_repeat<uint64_t, SEQ_GNU_MWM>(2, 2 * 1024 * 1024);
+        test_repeat<std::uint64_t, PARA_GNU_MWM_EXACT>(2, 2 * 1024 * 1024);
+        test_repeat<std::uint64_t, PARA_MWM_EXACT_LT>(2, 2 * 1024 * 1024);
+        // test_repeat<std::uint64_t, PARA_MWM_EXACT_LT>(1024, 2 * 1024 * 1024);
+        // test_repeat<std::uint64_t, SEQ_MWM_LT>(2, 2 * 1024 * 1024);
+        // test_repeat<std::uint64_t, SEQ_GNU_MWM>(2, 2 * 1024 * 1024);
         return 0;
     }
 
     if (benchset == "seq" || benchset == "sequential" ||
         benchset == "both" || benchset == "all")
     {
-        test_seqnum_sequential<uint64_t>();
+        test_seqnum_sequential<std::uint64_t>();
         test_seqnum_sequential<DataStruct>();
     }
     if (benchset == "para" || benchset == "parallel" ||
         benchset == "both" || benchset == "all")
     {
-        test_seqnum_parallel<uint64_t>();
+        test_seqnum_parallel<std::uint64_t>();
         test_seqnum_parallel<DataStruct>();
     }
     if (benchset == "seqsize" || benchset == "all")
     {
         // fastest sequential multiway merge
-        test_seqsize<uint64_t, SEQ_MWM_LT_COMBINED>();
+        test_seqsize<std::uint64_t, SEQ_MWM_LT_COMBINED>();
         test_seqsize<DataStruct, SEQ_MWM_LT_COMBINED>();
         // and parallel multiway merge
-        test_seqsize<uint64_t, PARA_MWM_EXACT_LT>();
+        test_seqsize<std::uint64_t, PARA_MWM_EXACT_LT>();
         test_seqsize<DataStruct, PARA_MWM_EXACT_LT>();
     }
 

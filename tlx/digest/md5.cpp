@@ -13,6 +13,7 @@
 
 #include <tlx/digest/md5.hpp>
 
+#include <cstdint>
 #include <tlx/math/rol.hpp>
 #include <tlx/string/hexdump.hpp>
 
@@ -29,83 +30,83 @@ namespace tlx {
 
 namespace digest_detail {
 
-static inline uint32_t min(uint32_t x, uint32_t y) {
+static inline std::uint32_t min(std::uint32_t x, std::uint32_t y) {
     return x < y ? x : y;
 }
 
-static inline uint32_t load32l(const uint8_t* y) {
-    uint32_t res = 0;
+static inline std::uint32_t load32l(const std::uint8_t* y) {
+    std::uint32_t res = 0;
     for (size_t i = 0; i != 4; ++i)
-        res |= uint32_t(y[i]) << (i * 8);
+        res |= std::uint32_t(y[i]) << (i * 8);
     return res;
 }
 
-static inline void store32l(uint32_t x, uint8_t* y) {
+static inline void store32l(std::uint32_t x, std::uint8_t* y) {
     for (size_t i = 0; i != 4; ++i)
         y[i] = (x >> (i * 8)) & 255;
 }
 
-static inline void store64l(uint64_t x, uint8_t* y) {
+static inline void store64l(std::uint64_t x, std::uint8_t* y) {
     for (size_t i = 0; i != 8; ++i)
         y[i] = (x >> (i * 8)) & 255;
 }
 
 static inline
-uint32_t F(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
+std::uint32_t F(const std::uint32_t& x, const std::uint32_t& y, const std::uint32_t& z) {
     return (z ^ (x & (y ^ z)));
 }
 static inline
-uint32_t G(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
+std::uint32_t G(const std::uint32_t& x, const std::uint32_t& y, const std::uint32_t& z) {
     return (y ^ (z & (y ^ x)));
 }
 static inline
-uint32_t H(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
+std::uint32_t H(const std::uint32_t& x, const std::uint32_t& y, const std::uint32_t& z) {
     return (x ^ y ^ z);
 }
 static inline
-uint32_t I(const uint32_t& x, const uint32_t& y, const uint32_t& z) {
+std::uint32_t I(const std::uint32_t& x, const std::uint32_t& y, const std::uint32_t& z) {
     return (y ^ (x | (~z)));
 }
 
-static inline void FF(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d,
-                      uint32_t M, uint32_t s, uint32_t t) {
+static inline void FF(std::uint32_t& a, std::uint32_t& b, std::uint32_t& c, std::uint32_t& d,
+                      std::uint32_t M, std::uint32_t s, std::uint32_t t) {
     a = (a + F(b, c, d) + M + t);
     a = rol32(a, s) + b;
 }
 
-static inline void GG(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d,
-                      uint32_t M, uint32_t s, uint32_t t) {
+static inline void GG(std::uint32_t& a, std::uint32_t& b, std::uint32_t& c, std::uint32_t& d,
+                      std::uint32_t M, std::uint32_t s, std::uint32_t t) {
     a = (a + G(b, c, d) + M + t);
     a = rol32(a, s) + b;
 }
 
-static inline void HH(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d,
-                      uint32_t M, uint32_t s, uint32_t t) {
+static inline void HH(std::uint32_t& a, std::uint32_t& b, std::uint32_t& c, std::uint32_t& d,
+                      std::uint32_t M, std::uint32_t s, std::uint32_t t) {
     a = (a + H(b, c, d) + M + t);
     a = rol32(a, s) + b;
 }
 
-static inline void II(uint32_t& a, uint32_t& b, uint32_t& c, uint32_t& d,
-                      uint32_t M, uint32_t s, uint32_t t) {
+static inline void II(std::uint32_t& a, std::uint32_t& b, std::uint32_t& c, std::uint32_t& d,
+                      std::uint32_t M, std::uint32_t s, std::uint32_t t) {
     a = (a + I(b, c, d) + M + t);
     a = rol32(a, s) + b;
 }
 
-static const uint8_t Worder[64] = {
+static const std::uint8_t Worder[64] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
     1, 6, 11, 0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12,
     5, 8, 11, 14, 1, 4, 7, 10, 13, 0, 3, 6, 9, 12, 15, 2,
     0, 7, 14, 5, 12, 3, 10, 1, 8, 15, 6, 13, 4, 11, 2, 9
 };
 
-static const uint8_t Rorder[64] = {
+static const std::uint8_t Rorder[64] = {
     7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
     5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20,
     4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
     6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21
 };
 
-static const uint32_t Korder[64] = {
+static const std::uint32_t Korder[64] = {
     0xd76aa478UL, 0xe8c7b756UL, 0x242070dbUL, 0xc1bdceeeUL, 0xf57c0fafUL,
     0x4787c62aUL, 0xa8304613UL, 0xfd469501UL, 0x698098d8UL, 0x8b44f7afUL,
     0xffff5bb1UL, 0x895cd7beUL, 0x6b901122UL, 0xfd987193UL, 0xa679438eUL,
@@ -121,8 +122,8 @@ static const uint32_t Korder[64] = {
     0xf7537e82UL, 0xbd3af235UL, 0x2ad7d2bbUL, 0xeb86d391UL
 };
 
-static void md5_compress(uint32_t state[4], const uint8_t* buf) {
-    uint32_t i, W[16], a, b, c, d, t;
+static void md5_compress(std::uint32_t state[4], const std::uint8_t* buf) {
+    std::uint32_t i, W[16], a, b, c, d, t;
 
     // copy the state into 512-bits into W[0..15]
     for (i = 0; i < 16; i++) {
@@ -172,7 +173,7 @@ MD5::MD5() {
     state_[3] = 0x10325476UL;
 }
 
-MD5::MD5(const void* data, uint32_t size) : MD5() {
+MD5::MD5(const void* data, std::uint32_t size) : MD5() {
     process(data, size);
 }
 
@@ -180,9 +181,9 @@ MD5::MD5(const std::string& str) : MD5() {
     process(str);
 }
 
-void MD5::process(const void* data, uint32_t size) {
-    const uint32_t block_size = sizeof(MD5::buf_);
-    auto in = static_cast<const uint8_t*>(data);
+void MD5::process(const void* data, std::uint32_t size) {
+    const std::uint32_t block_size = sizeof(MD5::buf_);
+    auto in = static_cast<const std::uint8_t*>(data);
 
     while (size > 0)
     {
@@ -195,9 +196,9 @@ void MD5::process(const void* data, uint32_t size) {
         }
         else
         {
-            uint32_t n = digest_detail::min(size, (block_size - curlen_));
-            uint8_t* b = buf_ + curlen_;
-            for (const uint8_t* a = in; a != in + n; ++a, ++b) {
+            std::uint32_t n = digest_detail::min(size, (block_size - curlen_));
+            std::uint8_t* b = buf_ + curlen_;
+            for (const std::uint8_t* a = in; a != in + n; ++a, ++b) {
                 *b = *a;
             }
             curlen_ += n;
@@ -223,7 +224,7 @@ void MD5::finalize(void* digest) {
     length_ += curlen_ * 8;
 
     // Append the '1' bit
-    buf_[curlen_++] = static_cast<uint8_t>(0x80);
+    buf_[curlen_++] = static_cast<std::uint8_t>(0x80);
 
     // If the length_ is currently above 56 bytes we append zeros then
     // md5_compress().  Then we can fall back to padding zeros and length
@@ -246,7 +247,7 @@ void MD5::finalize(void* digest) {
     // Copy output
     for (size_t i = 0; i < 4; i++) {
         digest_detail::store32l(
-            state_[i], static_cast<uint8_t*>(digest) + (4 * i));
+            state_[i], static_cast<std::uint8_t*>(digest) + (4 * i));
     }
 }
 
@@ -257,18 +258,18 @@ std::string MD5::digest() {
 }
 
 std::string MD5::digest_hex() {
-    uint8_t digest[kDigestLength];
+    std::uint8_t digest[kDigestLength];
     finalize(digest);
     return hexdump_lc(digest, kDigestLength);
 }
 
 std::string MD5::digest_hex_uc() {
-    uint8_t digest[kDigestLength];
+    std::uint8_t digest[kDigestLength];
     finalize(digest);
     return hexdump(digest, kDigestLength);
 }
 
-std::string md5_hex(const void* data, uint32_t size) {
+std::string md5_hex(const void* data, std::uint32_t size) {
     return MD5(data, size).digest_hex();
 }
 
@@ -276,7 +277,7 @@ std::string md5_hex(const std::string& str) {
     return MD5(str).digest_hex();
 }
 
-std::string md5_hex_uc(const void* data, uint32_t size) {
+std::string md5_hex_uc(const void* data, std::uint32_t size) {
     return MD5(data, size).digest_hex_uc();
 }
 

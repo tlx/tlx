@@ -8,6 +8,7 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <cstdint>
 #include <random>
 #include <stdexcept>
 
@@ -138,14 +139,14 @@ static void test_bitdump() {
                 "00001100 10001100 01001100 11001100");
 
 #if TLX_LITTLE_ENDIAN
-    die_unequal(tlx::bitdump_8_msb_type(uint16_t(0x1234)),
+    die_unequal(tlx::bitdump_8_msb_type(std::uint16_t(0x1234)),
                 "00110100 00010010");
-    die_unequal(tlx::bitdump_8_lsb_type(uint16_t(0x1234)),
+    die_unequal(tlx::bitdump_8_lsb_type(std::uint16_t(0x1234)),
                 "00101100 01001000");
 #else
-    die_unequal(tlx::bitdump_8_msb_type(uint16_t(0x1234)),
+    die_unequal(tlx::bitdump_8_msb_type(std::uint16_t(0x1234)),
                 "00010010 00110100");
-    die_unequal(tlx::bitdump_8_lsb_type(uint16_t(0x1234)),
+    die_unequal(tlx::bitdump_8_lsb_type(std::uint16_t(0x1234)),
                 "01001000 00101100");
 #endif
 
@@ -156,14 +157,14 @@ static void test_bitdump() {
                 "00001100 10001100 01001100 11001100");
 
 #if TLX_LITTLE_ENDIAN
-    die_unequal(tlx::bitdump_le8_type(uint16_t(0x1234)),
+    die_unequal(tlx::bitdump_le8_type(std::uint16_t(0x1234)),
                 "00110100 00010010");
-    die_unequal(tlx::bitdump_be8_type(uint16_t(0x1234)),
+    die_unequal(tlx::bitdump_be8_type(std::uint16_t(0x1234)),
                 "00101100 01001000");
 #else
-    die_unequal(tlx::bitdump_le8_type(uint16_t(0x1234)),
+    die_unequal(tlx::bitdump_le8_type(std::uint16_t(0x1234)),
                 "00010010 00110100");
-    die_unequal(tlx::bitdump_be8_type(uint16_t(0x1234)),
+    die_unequal(tlx::bitdump_be8_type(std::uint16_t(0x1234)),
                 "01001000 00101100");
 #endif
 }
@@ -314,16 +315,17 @@ static void test_hexdump() {
     // hexdump_sourcecode())
     std::string hexsource = tlx::hexdump_sourcecode(hexdata, "abc");
 
-    const unsigned char hexsourcecmp[68] = {
-        0x63, 0x6F, 0x6E, 0x73, 0x74, 0x20, 0x75, 0x69,
-        0x6E, 0x74, 0x38, 0x5F, 0x74, 0x20, 0x61, 0x62,
-        0x63, 0x5B, 0x38, 0x5D, 0x20, 0x3D, 0x20, 0x7B,
-        0x0A, 0x30, 0x78, 0x38, 0x44, 0x2C, 0x30, 0x78,
-        0x45, 0x32, 0x2C, 0x30, 0x78, 0x38, 0x35, 0x2C,
-        0x30, 0x78, 0x44, 0x34, 0x2C, 0x30, 0x78, 0x42,
-        0x46, 0x2C, 0x30, 0x78, 0x39, 0x38, 0x2C, 0x30,
-        0x78, 0x45, 0x36, 0x2C, 0x30, 0x78, 0x30, 0x33,
-        0x0A, 0x7D, 0x3B, 0x0A
+    const unsigned char hexsourcecmp[73] = {
+        0x63, 0x6F, 0x6E, 0x73, 0x74, 0x20, 0x73, 0x74,
+        0x64, 0x3A, 0x3A, 0x75, 0x69, 0x6E, 0x74, 0x38,
+        0x5F, 0x74, 0x20, 0x61, 0x62, 0x63, 0x5B, 0x38,
+        0x5D, 0x20, 0x3D, 0x20, 0x7B, 0x0A, 0x30, 0x78,
+        0x38, 0x44, 0x2C, 0x30, 0x78, 0x45, 0x32, 0x2C,
+        0x30, 0x78, 0x38, 0x35, 0x2C, 0x30, 0x78, 0x44,
+        0x34, 0x2C, 0x30, 0x78, 0x42, 0x46, 0x2C, 0x30,
+        0x78, 0x39, 0x38, 0x2C, 0x30, 0x78, 0x45, 0x36,
+        0x2C, 0x30, 0x78, 0x30, 0x33, 0x0A, 0x7D, 0x3B,
+        0x0A
     };
 
     die_unequal(hexsource, ARRAY_AS_STRING(hexsourcecmp));
@@ -362,7 +364,7 @@ static void test_levenshtein() {
 
 static void test_parse_si_iec_units() {
 
-    uint64_t size;
+    std::uint64_t size;
     die_unless(tlx::parse_si_iec_units(" 33 GiB ", &size));
     die_unequal(33 * 1024 * 1024 * 1024LLU, size);
 

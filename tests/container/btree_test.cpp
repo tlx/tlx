@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <set>
 #include <vector>
@@ -209,11 +210,11 @@ struct SimpleTest {
     }
 
     static void test_set_100000_uint64() {
-        tlx::btree_map<uint64_t, uint8_t> bt;
+        tlx::btree_map<std::uint64_t, std::uint8_t> bt;
 
-        for (uint64_t i = 10; i < 100000; ++i)
+        for (std::uint64_t i = 10; i < 100000; ++i)
         {
-            uint64_t key = i % 1000;
+            std::uint64_t key = i % 1000;
 
             if (bt.find(key) == bt.end())
             {
@@ -225,11 +226,11 @@ struct SimpleTest {
     }
 
     static void test_multiset_100000_uint32() {
-        tlx::btree_multiset<uint32_t> bt;
+        tlx::btree_multiset<std::uint32_t> bt;
 
-        for (uint64_t i = 0; i < 100000; ++i)
+        for (std::uint64_t i = 0; i < 100000; ++i)
         {
-            uint32_t key = i % 1000;
+            std::uint32_t key = i % 1000;
 
             bt.insert(key);
         }

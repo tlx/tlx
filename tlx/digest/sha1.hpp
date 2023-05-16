@@ -31,12 +31,12 @@ public:
     //! construct empty object.
     SHA1();
     //! construct context and process data range
-    SHA1(const void* data, uint32_t size);
+    SHA1(const void* data, std::uint32_t size);
     //! construct context and process string
     explicit SHA1(const std::string& str);
 
     //! process more data
-    void process(const void* data, uint32_t size);
+    void process(const void* data, std::uint32_t size);
     //! process more data
     void process(const std::string& str);
 
@@ -54,19 +54,19 @@ public:
     std::string digest_hex_uc();
 
 private:
-    uint64_t length_;
-    uint32_t state_[5];
-    uint32_t curlen_;
-    uint8_t buf_[64];
+    std::uint64_t length_;
+    std::uint32_t state_[5];
+    std::uint32_t curlen_;
+    std::uint8_t buf_[64];
 };
 
 //! process data and return 20 byte (160 bit) digest hex encoded
-std::string sha1_hex(const void* data, uint32_t size);
+std::string sha1_hex(const void* data, std::uint32_t size);
 //! process data and return 20 byte (160 bit) digest hex encoded
 std::string sha1_hex(const std::string& str);
 
 //! process data and return 20 byte (160 bit) digest upper-case hex encoded
-std::string sha1_hex_uc(const void* data, uint32_t size);
+std::string sha1_hex_uc(const void* data, std::uint32_t size);
 //! process data and return 20 byte (160 bit) digest upper-case hex encoded
 std::string sha1_hex_uc(const std::string& str);
 

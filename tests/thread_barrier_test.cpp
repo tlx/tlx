@@ -13,6 +13,7 @@
 // this makes yield() available in older GCC versions
 #define _GLIBCXX_USE_SCHED_YIELD
 
+#include <cstdint>
 #include <random>
 #include <thread>
 
@@ -28,7 +29,7 @@ static void TestWaitFor(int count, int slowThread = -1) {
 
     ThreadBarrier barrier(count);
 
-    tlx::simple_vector<uint8_t> flags(count);
+    tlx::simple_vector<std::uint8_t> flags(count);
     tlx::simple_vector<std::thread> threads(count);
 
     for (int i = 0; i < count; i++) {

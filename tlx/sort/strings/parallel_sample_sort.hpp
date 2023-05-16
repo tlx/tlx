@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <atomic>
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <random>
@@ -317,7 +318,7 @@ public:
         ctx_.mtimer.add(mtimer_);
     }
 
-    simple_vector<uint8_t> bktcache_;
+    simple_vector<std::uint8_t> bktcache_;
     size_t bktcache_size_ = 0;
 
     void run() {
@@ -333,7 +334,7 @@ public:
 
         if (ctx_.enable_sequential_sample_sort && n >= ctx_.smallsort_threshold)
         {
-            bktcache_.resize(n * sizeof(uint16_t));
+            bktcache_.resize(n * sizeof(std::uint16_t));
             sort_sample_sort(strptr_, depth_);
         }
         else
@@ -368,7 +369,7 @@ public:
         bktsize_type bkt[bktnum + 1];
 
         SeqSampleSortStep(Context& ctx, const StringPtr& strptr, size_t depth,
-                          uint16_t* bktcache)
+                          std::uint16_t* bktcache)
             : strptr_(strptr), idx_(0), depth_(depth) {
             size_t n = strptr_.size();
 
@@ -447,7 +448,7 @@ public:
         assert(ss_front_ == 0);
         assert(ss_stack_.size() == 0);
 
-        uint16_t* bktcache = reinterpret_cast<uint16_t*>(bktcache_.data());
+        std::uint16_t* bktcache = reinterpret_cast<std::uint16_t*>(bktcache_.data());
 
         // sort first level
         ss_stack_.emplace_back(ctx_, strptr, depth, bktcache);
@@ -755,7 +756,7 @@ public:
         size_t idx_;
         unsigned char eq_recurse_;
         // typename StringPtr::StringSet::Char dchar_eq_, dchar_gt_;
-        uint8_t lcp_lt_, lcp_eq_, lcp_gt_;
+        std::uint8_t lcp_lt_, lcp_eq_, lcp_gt_;
 
         MKQSStep(Context& ctx, const StringPtr& strptr,
                  key_type* cache, size_t depth, bool CacheDirty)
@@ -1129,7 +1130,7 @@ public:
     //! individual bucket array of threads, keep bkt[0] for DistributeJob
     simple_vector<simple_vector<size_t> > bkt_;
     //! bucket ids cache, created by classifier and later counted
-    simple_vector<simple_vector<uint16_t> > bktcache_;
+    simple_vector<simple_vector<std::uint16_t> > bktcache_;
 
     /*------------------------------------------------------------------------*/
     // Constructor
@@ -1204,14 +1205,14 @@ public:
         if (strE < strB) strE = strB;
 
         bktcache_[p].resize(strE - strB);
-        uint16_t* bktcache = bktcache_[p].data();
+        std::uint16_t* bktcache = bktcache_[p].data();
         classifier_.classify(strset, strB, strE, bktcache, depth_);
 
         bkt_[p].resize(bktnum_ + (p == 0 ? 1 : 0));
         size_t* bkt = bkt_[p].data();
         memset(bkt, 0, bktnum_ * sizeof(size_t));
 
-        for (uint16_t* bc = bktcache; bc != bktcache + (strE - strB); ++bc)
+        for (std::uint16_t* bc = bktcache; bc != bktcache + (strE - strB); ++bc)
             ++bkt[*bc];
 
         if (--pwork_ == 0)
@@ -1259,7 +1260,7 @@ public:
         const StringSet& sorted = strptr_.shadow();
         typename StringSet::Iterator sbegin = sorted.begin();
 
-        uint16_t* bktcache = bktcache_[p].data();
+        std::uint16_t* bktcache = bktcache_[p].data();
         size_t* bkt = bkt_[p].data();
 
         for (StrIterator str = strB; str != strE; ++str, ++bktcache)
@@ -1400,12 +1401,12 @@ void PS5Context<Parameters>::enqueue(
     }
     else {
         if (strptr.size() < (1LLU << 32)) {
-            auto j = new PS5SmallsortJob<PS5Context, StringPtr, uint32_t>(
+            auto j = new PS5SmallsortJob<PS5Context, StringPtr, std::uint32_t>(
                 *this, pstep, strptr, depth);
             threads_.enqueue([j]() { j->run(); });
         }
         else {
-            auto j = new PS5SmallsortJob<PS5Context, StringPtr, uint64_t>(
+            auto j = new PS5SmallsortJob<PS5Context, StringPtr, std::uint64_t>(
                 *this, pstep, strptr, depth);
             threads_.enqueue([j]() { j->run(); });
         }

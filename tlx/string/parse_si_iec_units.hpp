@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_PARSE_SI_IEC_UNITS_HEADER
 #define TLX_STRING_PARSE_SI_IEC_UNITS_HEADER
 
+#include <cstdint>
 #include <string>
 
 namespace tlx {
@@ -25,7 +26,7 @@ namespace tlx {
  * (powers of ten) or in K/M/G/T/P (power of two).
  */
 bool parse_si_iec_units(
-    const char* str, uint64_t* out_size, char default_unit = 0);
+    const char* str, std::uint64_t* out_size, char default_unit = 0);
 
 /*!
  * Parse a string like "343KB" or "44 GiB" into the corresponding size in
@@ -34,7 +35,7 @@ bool parse_si_iec_units(
  * (powers of ten) or in K/M/G/T/P (power of two).
  */
 bool parse_si_iec_units(
-    const std::string& str, uint64_t* out_size, char default_unit = 0);
+    const std::string& str, std::uint64_t* out_size, char default_unit = 0);
 
 //! \}
 

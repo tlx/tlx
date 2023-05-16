@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_HASH_DJB2_HEADER
 #define TLX_STRING_HASH_DJB2_HEADER
 
+#include <cstdint>
 #include <string>
 
 namespace tlx {
@@ -23,8 +24,8 @@ namespace tlx {
  * http://www.cse.yorku.ca/~oz/hash.html
  */
 static inline
-uint32_t hash_djb2(const unsigned char* str) {
-    uint32_t hash = 5381;
+std::uint32_t hash_djb2(const unsigned char* str) {
+    std::uint32_t hash = 5381;
     unsigned char c;
     while ((c = *str++) != 0) {
         // hash * 33 + c
@@ -38,7 +39,7 @@ uint32_t hash_djb2(const unsigned char* str) {
  * http://www.cse.yorku.ca/~oz/hash.html
  */
 static inline
-uint32_t hash_djb2(const char* str) {
+std::uint32_t hash_djb2(const char* str) {
     return hash_djb2(reinterpret_cast<const unsigned char*>(str));
 }
 
@@ -47,8 +48,8 @@ uint32_t hash_djb2(const char* str) {
  * http://www.cse.yorku.ca/~oz/hash.html
  */
 static inline
-uint32_t hash_djb2(const unsigned char* str, size_t size) {
-    uint32_t hash = 5381;
+std::uint32_t hash_djb2(const unsigned char* str, size_t size) {
+    std::uint32_t hash = 5381;
     while (size-- > 0) {
         // hash * 33 + c
         hash = ((hash << 5) + hash) + static_cast<unsigned char>(*str++);
@@ -61,7 +62,7 @@ uint32_t hash_djb2(const unsigned char* str, size_t size) {
  * http://www.cse.yorku.ca/~oz/hash.html
  */
 static inline
-uint32_t hash_djb2(const char* str, size_t size) {
+std::uint32_t hash_djb2(const char* str, size_t size) {
     return hash_djb2(reinterpret_cast<const unsigned char*>(str), size);
 }
 
@@ -70,7 +71,7 @@ uint32_t hash_djb2(const char* str, size_t size) {
  * http://www.cse.yorku.ca/~oz/hash.html
  */
 static inline
-uint32_t hash_djb2(const std::string& str) {
+std::uint32_t hash_djb2(const std::string& str) {
     return hash_djb2(str.data(), str.size());
 }
 

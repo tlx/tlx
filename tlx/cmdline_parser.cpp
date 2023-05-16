@@ -11,6 +11,7 @@
 #include <tlx/cmdline_parser.hpp>
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <iomanip>
@@ -302,13 +303,13 @@ class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentBytes32 final
     : public Argument
 {
 protected:
-    uint32_t& dest_;
+    std::uint32_t& dest_;
 
 public:
     //! contructor filling most attributes
     ArgumentBytes32(char key, const std::string& longkey,
                     const std::string& keytype, const std::string& desc,
-                    bool required, uint32_t& dest) // NOLINT
+                    bool required, std::uint32_t& dest)     // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "bytes"; }
@@ -317,10 +318,10 @@ public:
     bool process(int& argc, const char* const*& argv) final { // NOLINT
         if (argc == 0)
             return false;
-        uint64_t dest;
+        std::uint64_t dest;
         if (parse_si_iec_units(argv[0], &dest) &&
-            static_cast<uint64_t>(
-                dest_ = static_cast<uint32_t>(dest)) == dest) {
+            static_cast<std::uint64_t>(
+                dest_ = static_cast<std::uint32_t>(dest)) == dest) {
             --argc, ++argv;
             return true;
         }
@@ -337,13 +338,13 @@ public:
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentBytes64 final : public Argument
 {
 protected:
-    uint64_t& dest_;
+    std::uint64_t& dest_;
 
 public:
     //! contructor filling most attributes
     ArgumentBytes64(char key, const std::string& longkey,
                     const std::string& keytype, const std::string& desc,
-                    bool required, uint64_t& dest) // NOLINT
+                    bool required, std::uint64_t& dest)         // NOLINT
         : Argument(key, longkey, keytype, desc, required), dest_(dest) { }
 
     const char * type_name() const final { return "bytes"; }
@@ -574,7 +575,7 @@ void CmdlineParser::add_double(char key, const std::string& longkey,
 }
 
 void CmdlineParser::add_bytes(char key, const std::string& longkey,
-                              const std::string& keytype, uint32_t& dest,
+                              const std::string& keytype, std::uint32_t& dest,
                               const std::string& desc) {
     option_list_.emplace_back(
         new ArgumentBytes32(key, longkey, keytype, desc, false, dest));
@@ -582,7 +583,7 @@ void CmdlineParser::add_bytes(char key, const std::string& longkey,
 }
 
 void CmdlineParser::add_bytes(char key, const std::string& longkey,
-                              const std::string& keytype, uint64_t& dest,
+                              const std::string& keytype, std::uint64_t& dest,
                               const std::string& desc) {
     option_list_.emplace_back(
         new ArgumentBytes64(key, longkey, keytype, desc, false, dest));
@@ -650,12 +651,12 @@ void CmdlineParser::add_double(char key, const std::string& longkey,
 }
 
 void CmdlineParser::add_bytes(char key, const std::string& longkey,
-                              uint32_t& dest, const std::string& desc) {
+                              std::uint32_t& dest, const std::string& desc) {
     return add_bytes(key, longkey, "", dest, desc);
 }
 
 void CmdlineParser::add_bytes(char key, const std::string& longkey,
-                              uint64_t& dest, const std::string& desc) {
+                              std::uint64_t& dest, const std::string& desc) {
     return add_bytes(key, longkey, "", dest, desc);
 }
 
@@ -713,12 +714,12 @@ void CmdlineParser::add_double(const std::string& longkey,
 }
 
 void CmdlineParser::add_bytes(const std::string& longkey,
-                              uint32_t& dest, const std::string& desc) {
+                              std::uint32_t& dest, const std::string& desc) {
     return add_bytes(0, longkey, "", dest, desc);
 }
 
 void CmdlineParser::add_bytes(const std::string& longkey,
-                              uint64_t& dest, const std::string& desc) {
+                              std::uint64_t& dest, const std::string& desc) {
     return add_bytes(0, longkey, "", dest, desc);
 }
 
@@ -772,14 +773,14 @@ void CmdlineParser::add_param_double(
 }
 
 void CmdlineParser::add_param_bytes(
-    const std::string& name, uint32_t& dest, const std::string& desc) {
+    const std::string& name, std::uint32_t& dest, const std::string& desc) {
     param_list_.emplace_back(
         new ArgumentBytes32(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_param_bytes(
-    const std::string& name, uint64_t& dest, const std::string& desc) {
+    const std::string& name, std::uint64_t& dest, const std::string& desc) {
     param_list_.emplace_back(
         new ArgumentBytes64(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
@@ -839,14 +840,14 @@ void CmdlineParser::add_opt_param_double(
 }
 
 void CmdlineParser::add_opt_param_bytes(
-    const std::string& name, uint32_t& dest, const std::string& desc) {
+    const std::string& name, std::uint32_t& dest, const std::string& desc) {
     param_list_.emplace_back(
         new ArgumentBytes32(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
 void CmdlineParser::add_opt_param_bytes(
-    const std::string& name, uint64_t& dest, const std::string& desc) {
+    const std::string& name, std::uint64_t& dest, const std::string& desc) {
     param_list_.emplace_back(
         new ArgumentBytes64(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());

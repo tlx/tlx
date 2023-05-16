@@ -26,7 +26,7 @@ static std::mutex s_timer_add_mutex;
 
 struct MultiTimer::Entry {
     //! hash of name for faster search
-    uint32_t hash;
+    std::uint32_t hash;
     //! reference to original string for comparison
     const char* name;
     //! duration of this timer
@@ -49,7 +49,7 @@ MultiTimer& MultiTimer::operator = (MultiTimer&&) = default;
 MultiTimer::~MultiTimer() = default;
 
 MultiTimer::Entry& MultiTimer::find_or_create(const char* name) {
-    uint32_t hash = hash_djb2(name);
+    std::uint32_t hash = hash_djb2(name);
     for (size_t i = 0; i < timers_.size(); ++i) {
         if (timers_[i].hash == hash && strcmp(timers_[i].name, name) == 0)
             return timers_[i];
@@ -64,7 +64,7 @@ MultiTimer::Entry& MultiTimer::find_or_create(const char* name) {
 
 void MultiTimer::start(const char* timer) {
     tlx_die_unless(timer);
-    uint32_t hash = hash_djb2(timer);
+    std::uint32_t hash = hash_djb2(timer);
     if (running_ && hash == running_hash_ && strcmp(running_, timer) == 0) {
         static bool warning_shown = false;
         if (!warning_shown) {

@@ -15,7 +15,7 @@
 
 #include <tlx/die.hpp>
 
-static const uint64_t test_vectors_data[64] = {
+static const std::uint64_t test_vectors_data[64] = {
     0x726fdb47dd0e0e31ull, 0x74f839c593dc67fdull, 0x0d6c8009d9a94f5aull,
     0x85676696d7fb7e2dull, 0xcf2794e0277187b7ull, 0x18765564cd99a68dull,
     0xcbc9466e58fee3ceull, 0xab0200f58b01d137ull, 0x93f5f5799a932462ull,
@@ -49,10 +49,10 @@ void test_vectors() {
 
     for (size_t i = 0; i < 64; i++) {
         msg[i] = i;
-        uint64_t res1 = tlx::siphash(key, msg, i);
+        std::uint64_t res1 = tlx::siphash(key, msg, i);
         die_unequal(res1, test_vectors_data[i]);
 
-        uint64_t res2 = tlx::siphash_plain(key, msg, i);
+        std::uint64_t res2 = tlx::siphash_plain(key, msg, i);
         die_unequal(res2, test_vectors_data[i]);
     }
 }

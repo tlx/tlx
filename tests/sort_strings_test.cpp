@@ -16,6 +16,7 @@
 #include <tlx/sort/strings/multikey_quicksort.hpp>
 #include <tlx/sort/strings/radix_sort.hpp>
 
+#include <cstdint>
 #include <tlx/sort/strings.hpp>
 
 void TestFrontend(const size_t num_strings, const size_t num_chars,
@@ -27,14 +28,14 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
          << " uint8_t* strings";
 
     // array of string pointers
-    tlx::simple_vector<uint8_t*> cstrings(num_strings);
+    tlx::simple_vector<std::uint8_t*> cstrings(num_strings);
 
     // generate random strings of length num_chars
     for (size_t i = 0; i < num_strings; ++i)
     {
         size_t slen = num_chars + (rng() >> 8) % (num_chars / 4);
 
-        cstrings[i] = new uint8_t[slen + 1];
+        cstrings[i] = new std::uint8_t[slen + 1];
         fill_random(rng, letters, cstrings[i], cstrings[i] + slen);
         cstrings[i][slen] = 0;
     }
@@ -58,7 +59,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
     }
 
     // array of const string pointers
-    tlx::simple_vector<const uint8_t*> ccstrings(num_strings);
+    tlx::simple_vector<const std::uint8_t*> ccstrings(num_strings);
 
     for (size_t i = 0; i < num_strings; ++i)
         ccstrings[i] = cstrings[i];
@@ -91,7 +92,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
     {
         double ts1 = tlx::timestamp();
 
-        tlx::simple_vector<uint32_t> lcp(num_strings);
+        tlx::simple_vector<std::uint32_t> lcp(num_strings);
 
         tlx::sort_strings_lcp(
             ccstrings.data(), num_strings, lcp.data(), /* memory */ 0);

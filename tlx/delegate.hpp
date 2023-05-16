@@ -279,7 +279,7 @@ public:
     //! compare delegate with another
     bool operator < (Delegate const& rhs) const noexcept {
         return (object_ptr_ < rhs.object_ptr_) ||
-               ((object_ptr_ == rhs.object_ptr_) && (caller_ < rhs.caller_));
+               ((object_ptr_ == rhs.object_ptr_) && (reinterpret_cast<const void*>(caller_) < reinterpret_cast<const void*>(rhs.caller_)));
     }
 
     //! compare delegate with another

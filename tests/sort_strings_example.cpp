@@ -16,6 +16,7 @@
 #include <tlx/sort/strings.hpp>
 #include <tlx/sort/strings_parallel.hpp>
 
+#include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -52,8 +53,8 @@ int main(int argc, char* argv[]) {
     size_t size = in.tellg();
 
     // allocate uninitialized memory area and string pointer array
-    tlx::simple_vector<uint8_t> data(size + 8);
-    std::vector<uint8_t*> strings;
+    tlx::simple_vector<std::uint8_t> data(size + 8);
+    std::vector<std::uint8_t*> strings;
 
     // read file and make string pointer array
     double ts1_read = tlx::timestamp();
@@ -69,7 +70,7 @@ int main(int argc, char* argv[]) {
         size_t rem = std::min<size_t>(2 * 1024 * 1024u, size - pos);
         in.read(reinterpret_cast<char*>(data.data() + pos), rem);
 
-        uint8_t* chunk = data.data() + pos;
+        std::uint8_t* chunk = data.data() + pos;
 
         for (size_t i = 0; i < rem; ++i) {
             if (chunk[i] == '\n') {

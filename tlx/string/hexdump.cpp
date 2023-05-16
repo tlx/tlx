@@ -10,6 +10,7 @@
 
 #include <tlx/string/hexdump.hpp>
 
+#include <cstdint>
 #include <sstream>
 #include <stdexcept>
 
@@ -47,7 +48,7 @@ std::string hexdump(const std::vector<char>& data) {
     return hexdump(data.data(), data.size());
 }
 
-std::string hexdump(const std::vector<uint8_t>& data) {
+std::string hexdump(const std::vector<std::uint8_t>& data) {
     return hexdump(data.data(), data.size());
 }
 
@@ -55,7 +56,7 @@ std::string hexdump_sourcecode(
     const std::string& str, const std::string& var_name) {
 
     std::ostringstream header;
-    header << "const uint8_t " << var_name << "[" << str.size() << "] = {\n";
+    header << "const std::uint8_t " << var_name << "[" << str.size() << "] = {\n";
 
     static const int perline = 16;
 
@@ -121,7 +122,7 @@ std::string hexdump_lc(const std::vector<char>& data) {
     return hexdump_lc(data.data(), data.size());
 }
 
-std::string hexdump_lc(const std::vector<uint8_t>& data) {
+std::string hexdump_lc(const std::vector<std::uint8_t>& data) {
     return hexdump_lc(data.data(), data.size());
 }
 

@@ -313,7 +313,7 @@ public:
 
     template <class Archive>
     void save(Archive& ar) const { // NOLINT
-        uint32_t ar_size = size();
+        std::uint32_t ar_size = size();
         ar(max_size_, ar_size);
         for (size_t i = 0; i < ar_size; ++i) ar(operator [] (i));
     }
@@ -334,7 +334,7 @@ public:
         begin_ = end_ = 0;
 
         // load items
-        uint32_t ar_size;
+        std::uint32_t ar_size;
         ar(ar_size);
 
         for (size_t i = 0; i < ar_size; ++i) {

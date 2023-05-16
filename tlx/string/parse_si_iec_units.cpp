@@ -10,12 +10,13 @@
 
 #include <tlx/string/parse_si_iec_units.hpp>
 
+#include <cstdint>
 #include <cstdlib>
 
 namespace tlx {
 
 bool parse_si_iec_units(
-    const char* str, uint64_t* out_size, char default_unit) {
+    const char* str, std::uint64_t* out_size, char default_unit) {
 
     char* endptr;
     *out_size = strtoul(str, &endptr, 10);
@@ -86,7 +87,7 @@ bool parse_si_iec_units(
 }
 
 bool parse_si_iec_units(
-    const std::string& str, uint64_t* out_size, char default_unit) {
+    const std::string& str, std::uint64_t* out_size, char default_unit) {
     return parse_si_iec_units(str.c_str(), out_size, default_unit);
 }
 

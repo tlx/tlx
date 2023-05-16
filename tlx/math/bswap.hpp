@@ -28,28 +28,28 @@ namespace tlx {
 // bswap16() - swap 16-bit integers
 
 //! bswap16 - generic implementation
-static inline uint16_t bswap16_generic(const uint16_t& x) {
+static inline std::uint16_t bswap16_generic(const std::uint16_t& x) {
     return ((x >> 8) & 0x00FFUL) | ((x << 8) & 0xFF00UL);
 }
 
 #if defined(__GNUC__) || defined(__clang__)
 
 //! bswap16 - gcc/clang intrinsic
-static inline uint16_t bswap16(const uint16_t& v) {
+static inline std::uint16_t bswap16(const std::uint16_t& v) {
     return __builtin_bswap16(v);
 }
 
 #elif defined(_MSC_VER)
 
 //! bswap16 - MSVC intrinsic
-static inline uint16_t bswap16(const uint16_t& v) {
+static inline std::uint16_t bswap16(const std::uint16_t& v) {
     return _byteswap_ushort(v);
 }
 
 #else
 
 //! bswap16 - generic
-static inline uint16_t bswap16(const uint16_t& v) {
+static inline std::uint16_t bswap16(const std::uint16_t& v) {
     return bswap16_generic(v);
 }
 
@@ -59,7 +59,7 @@ static inline uint16_t bswap16(const uint16_t& v) {
 // bswap32() - swap 32-bit integers
 
 //! bswap32 - generic implementation
-static inline uint32_t bswap32_generic(const uint32_t& x) {
+static inline std::uint32_t bswap32_generic(const std::uint32_t& x) {
     return ((x >> 24) & 0x000000FFUL) | ((x << 24) & 0xFF000000UL) |
            ((x >> 8) & 0x0000FF00UL) | ((x << 8) & 0x00FF0000UL);
 }
@@ -67,21 +67,21 @@ static inline uint32_t bswap32_generic(const uint32_t& x) {
 #if defined(__GNUC__) || defined(__clang__)
 
 //! bswap32 - gcc/clang intrinsic
-static inline uint32_t bswap32(const uint32_t& v) {
+static inline std::uint32_t bswap32(const std::uint32_t& v) {
     return __builtin_bswap32(v);
 }
 
 #elif defined(_MSC_VER)
 
 //! bswap32 - MSVC intrinsic
-static inline uint32_t bswap32(const uint32_t& v) {
+static inline std::uint32_t bswap32(const std::uint32_t& v) {
     return _byteswap_ulong(v);
 }
 
 #else
 
 //! bswap32 - generic
-static inline uint32_t bswap32(const uint32_t& v) {
+static inline std::uint32_t bswap32(const std::uint32_t& v) {
     return bswap32_generic(v);
 }
 
@@ -91,7 +91,7 @@ static inline uint32_t bswap32(const uint32_t& v) {
 // bswap64() - swap 64-bit integers
 
 //! bswap64 - generic implementation
-static inline uint64_t bswap64_generic(const uint64_t& x) {
+static inline std::uint64_t bswap64_generic(const std::uint64_t& x) {
     return ((x >> 56) & 0x00000000000000FFull) |
            ((x >> 40) & 0x000000000000FF00ull) |
            ((x >> 24) & 0x0000000000FF0000ull) |
@@ -105,21 +105,21 @@ static inline uint64_t bswap64_generic(const uint64_t& x) {
 #if defined(__GNUC__) || defined(__clang__)
 
 //! bswap64 - gcc/clang intrinsic
-static inline uint64_t bswap64(const uint64_t& v) {
+static inline std::uint64_t bswap64(const std::uint64_t& v) {
     return __builtin_bswap64(v);
 }
 
 #elif defined(_MSC_VER)
 
 //! bswap64 - MSVC intrinsic
-static inline uint64_t bswap64(const uint64_t& v) {
+static inline std::uint64_t bswap64(const std::uint64_t& v) {
     return _byteswap_uint64(v);
 }
 
 #else
 
 //! bswap64 - generic
-static inline uint64_t bswap64(const uint64_t& v) {
+static inline std::uint64_t bswap64(const std::uint64_t& v) {
     return bswap64_generic(v);
 }
 

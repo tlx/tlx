@@ -43,15 +43,19 @@ jobs:
           os: ubuntu-22.04
           build_type: "Debug"
 
-        # - name: "Ubuntu 22.04 gcc 13 Release GLIBCXX_DEBUG"
-        #   os: ubuntu-22.04
-        #   build_type: "Release"
-        #   gcc_install: "13"
-        #   cxx_flags: "-D_GLIBCXX_DEBUG"
+        - name: "Ubuntu 22.04 gcc 13 Release GLIBCXX_DEBUG"
+          os: ubuntu-22.04
+          build_type: "Release"
+          gcc_install: "13"
+          cxx_flags: "-D_GLIBCXX_DEBUG"
 
-        # - name: "macOS 12 clang X Debug"
-        #   os: macos-12
-        #   build_type: "Debug"
+        - name: "macOS 12 clang 14 Debug"
+          os: macos-12
+          build_type: "Debug"
+
+        - name: "macOS 13 clang 15 Release"
+          os: macos-13
+          build_type: "Release"
 
         # - name: "Window Latest"
         #   os: windows-latest

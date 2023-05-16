@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -204,13 +205,13 @@ void int_rank_test(std::mt19937& prng) {
 }
 
 void test_main_int_rank(std::mt19937& prng) {
-    int_rank_test<uint16_t>(prng);
-    int_rank_test<uint32_t>(prng);
-    int_rank_test<uint64_t>(prng);
+    int_rank_test<std::uint16_t>(prng);
+    int_rank_test<std::uint32_t>(prng);
+    int_rank_test<std::uint64_t>(prng);
 
-    int_rank_test<int16_t>(prng);
-    int_rank_test<int32_t>(prng);
-    int_rank_test<int64_t>(prng);
+    int_rank_test<std::int16_t>(prng);
+    int_rank_test<std::int32_t>(prng);
+    int_rank_test<std::int64_t>(prng);
 }
 
 /******************************************************************************/
@@ -252,29 +253,29 @@ void test_bucket_bounds() {
 }
 
 void test_main_bucket(std::mt19937&) {
-    test_bucket_bounds<2, uint32_t>();
-    test_bucket_bounds<8, uint32_t>();
-    test_bucket_bounds<64, uint32_t>();
-    test_bucket_bounds<2, uint64_t>();
-    test_bucket_bounds<8, uint64_t>();
-    test_bucket_bounds<64, uint64_t>();
+    test_bucket_bounds<2, std::uint32_t>();
+    test_bucket_bounds<8, std::uint32_t>();
+    test_bucket_bounds<64, std::uint32_t>();
+    test_bucket_bounds<2, std::uint64_t>();
+    test_bucket_bounds<8, std::uint64_t>();
+    test_bucket_bounds<64, std::uint64_t>();
 }
 
 /******************************************************************************/
 
 namespace tlx {
 
-using payload_type = uint64_t;
-using value_type = std::tuple<int64_t, payload_type>;
+using payload_type = std::uint64_t;
+using value_type = std::tuple<std::int64_t, payload_type>;
 
 class KeyExtractor
 {
 public:
-    int64_t operator () (const value_type& p) const { return std::get<0>(p); }
+    std::int64_t operator () (const value_type& p) const { return std::get<0>(p); }
 };
 
 // force instantiations
-template class RadixHeap<value_type, KeyExtractor, int64_t, /* Radix */ 64>;
+template class RadixHeap<value_type, KeyExtractor, std::int64_t, /* Radix */ 64>;
 
 } // namespace tlx
 
@@ -292,7 +293,7 @@ void allin_allout(std::mt19937& prng, KeyType min, KeyType max, size_t n) {
         "max=" << max << ", "
         "n=" << n << ")\n";
 
-    using payload_type = uint64_t;
+    using payload_type = std::uint64_t;
     using value_type = std::tuple<KeyType, payload_type>;
 
     auto heap = tlx::make_radix_heap<value_type, Radix>(
@@ -347,7 +348,7 @@ void allin_allout_pair(std::mt19937& prng, KeyType min, KeyType max, size_t n) {
         "max=" << max << ", "
         "n=" << n << ")\n";
 
-    using payload_type = uint64_t;
+    using payload_type = std::uint64_t;
 
     tlx::RadixHeapPair<KeyType, payload_type, Radix> heap;
     std::vector<std::pair<KeyType, payload_type> > values;
@@ -408,7 +409,7 @@ void random_inout(std::mt19937& prng, const KeyType min, const KeyType max,
         "prefill_n=" << prefill_n << ", "
         "pm=" << static_cast<int>(pm) << ")\n";
 
-    using payload_type = uint32_t;
+    using payload_type = std::uint32_t;
     using value_type = std::tuple<KeyType, payload_type>;
 
     auto heap = tlx::make_radix_heap<value_type, Radix>(
@@ -440,9 +441,9 @@ void random_inout(std::mt19937& prng, const KeyType min, const KeyType max,
 
     std::vector<payload_type> ref_data, heap_data;
 
-    for (int64_t i = 0; i < static_cast<int64_t>(iters) || !pq.empty(); i++) {
-        while (i < static_cast<int64_t>(iters) && rdist(prng) < insert_prob)
-            insert(running_min, max - std::max<int64_t>(0, iters - i));
+    for (std::int64_t i = 0; i < static_cast<std::int64_t>(iters) || !pq.empty(); i++) {
+        while (i < static_cast<std::int64_t>(iters) && rdist(prng) < insert_prob)
+            insert(running_min, max - std::max<std::int64_t>(0, iters - i));
 
         die_unequal(pq.empty(), heap.empty());
 
@@ -515,7 +516,7 @@ void random_inout_pair(std::mt19937& prng,
         "prefill_n=" << prefill_n << ", "
         "pm=" << static_cast<int>(pm) << ")\n";
 
-    using payload_type = uint32_t;
+    using payload_type = std::uint32_t;
     using pq_type = std::pair<KeyType, payload_type>;
     std::priority_queue<pq_type, std::vector<pq_type>, std::greater<pq_type> > pq;
     using heap_type = tlx::RadixHeapPair<KeyType, payload_type, Radix>;
@@ -543,10 +544,10 @@ void random_inout_pair(std::mt19937& prng,
 
     std::vector<payload_type> ref_data, heap_data;
 
-    for (int64_t i = 0; i < static_cast<int64_t>(iters) || !pq.empty(); i++) {
-        while (i < static_cast<int64_t>(iters) && rdist(prng) < insert_prob) {
+    for (std::int64_t i = 0; i < static_cast<std::int64_t>(iters) || !pq.empty(); i++) {
+        while (i < static_cast<std::int64_t>(iters) && rdist(prng) < insert_prob) {
             insert(running_min,
-                   static_cast<KeyType>(max - std::max<int64_t>(0, iters - i)));
+                   static_cast<KeyType>(max - std::max<std::int64_t>(0, iters - i)));
         }
 
         die_unequal(pq.empty(), heap.empty());
@@ -603,7 +604,7 @@ void random_inout_pair(std::mt19937& prng,
 }
 
 void random_inout_all(std::mt19937& prng,
-                      const int64_t min, const int64_t max,
+                      const std::int64_t min, const std::int64_t max,
                       const size_t iters, const double insert_prob,
                       const size_t prefill_n, const PullMode pm) {
 #define RADIXHEAP_TESTSET(T)                                                 \
@@ -619,17 +620,17 @@ void random_inout_all(std::mt19937& prng,
     die_unless(min < max);
 
     if (min >= 0 && max >= 0) {
-        RADIXHEAP_TESTSET(uint32_t)
-        RADIXHEAP_TESTSET(uint64_t)
+        RADIXHEAP_TESTSET(std::uint32_t)
+        RADIXHEAP_TESTSET(std::uint64_t)
     }
 
-    RADIXHEAP_TESTSET(int32_t)
-    RADIXHEAP_TESTSET(int64_t)
+    RADIXHEAP_TESTSET(std::int32_t)
+    RADIXHEAP_TESTSET(std::int64_t)
 
 #undef RADIXHEAP_TESTSET
 }
 
-void allin_allout_all(std::mt19937& prng, int64_t min, int64_t max, size_t n) {
+void allin_allout_all(std::mt19937& prng, std::int64_t min, std::int64_t max, size_t n) {
 #define RADIXHEAP_TESTSET(T)                                                    \
     allin_allout<T, 2>(prng, static_cast<T>(min), static_cast<T>(max), n);      \
     allin_allout<T, 64>(prng, static_cast<T>(min), static_cast<T>(max), n);     \
@@ -637,18 +638,18 @@ void allin_allout_all(std::mt19937& prng, int64_t min, int64_t max, size_t n) {
     allin_allout_pair<T, 64>(prng, static_cast<T>(min), static_cast<T>(max), n);
 
     if (min >= 0) {
-        RADIXHEAP_TESTSET(uint32_t);
-        RADIXHEAP_TESTSET(uint64_t);
+        RADIXHEAP_TESTSET(std::uint32_t);
+        RADIXHEAP_TESTSET(std::uint64_t);
     }
 
-    RADIXHEAP_TESTSET(int32_t);
-    RADIXHEAP_TESTSET(int64_t);
+    RADIXHEAP_TESTSET(std::int32_t);
+    RADIXHEAP_TESTSET(std::int64_t);
 
 #undef RADIXHEAP_TESTSET
 }
 
 void test_main_radix_heap_pair(std::mt19937& prng) {
-    for (int64_t min : { 0, 1000000, -1000000 }) {
+    for (std::int64_t min : { 0, 1000000, -1000000 }) {
         for (size_t x : { 1000, 1000000 }) {
             allin_allout_all(prng, min, min + x, 500);
         }
@@ -656,8 +657,8 @@ void test_main_radix_heap_pair(std::mt19937& prng) {
 
     for (PullMode pm : { PullMode::Single, PullMode::AllOfKey,
                          PullMode::ExtractBucket }) {
-        for (int64_t prefill : { 0, 100 }) {
-            for (int64_t min : { 0, 10000000, -10000000, -250 }) {
+        for (std::int64_t prefill : { 0, 100 }) {
+            for (std::int64_t min : { 0, 10000000, -10000000, -250 }) {
                 for (size_t length : { 500 }) {
                     random_inout_all(prng, min, min + length, 200, 0.9, prefill, pm);
                 }

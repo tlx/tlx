@@ -99,99 +99,99 @@ public:
 
     //! Return up to 1 characters of string s at iterator i packed into a
     //! uint8_t (only works correctly for 8-bit characters)
-    uint8_t get_uint8(
+    std::uint8_t get_uint8(
         const typename Traits::String& s, typename Traits::CharIterator i) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
 
         if (ss.is_end(s, i)) return 0;
-        return uint8_t(*i);
+        return std::uint8_t(*i);
     }
 
     //! Return up to 2 characters of string s at iterator i packed into a
     //! uint16_t (only works correctly for 8-bit characters)
-    uint16_t get_uint16(
+    std::uint16_t get_uint16(
         const typename Traits::String& s, typename Traits::CharIterator i) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
 
-        uint16_t v = 0;
+        std::uint16_t v = 0;
         if (ss.is_end(s, i)) return v;
-        v = (uint16_t(*i) << 8);
+        v = (std::uint16_t(*i) << 8);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint16_t(*i) << 0);
+        v |= (std::uint16_t(*i) << 0);
         return v;
     }
 
     //! Return up to 4 characters of string s at iterator i packed into a
     //! uint32_t (only works correctly for 8-bit characters)
-    uint32_t get_uint32(
+    std::uint32_t get_uint32(
         const typename Traits::String& s, typename Traits::CharIterator i) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
 
-        uint32_t v = 0;
+        std::uint32_t v = 0;
         if (ss.is_end(s, i)) return v;
-        v = (uint32_t(*i) << 24);
+        v = (std::uint32_t(*i) << 24);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint32_t(*i) << 16);
+        v |= (std::uint32_t(*i) << 16);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint32_t(*i) << 8);
+        v |= (std::uint32_t(*i) << 8);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint32_t(*i) << 0);
+        v |= (std::uint32_t(*i) << 0);
         return v;
     }
 
     //! Return up to 8 characters of string s at iterator i packed into a
     //! uint64_t (only works correctly for 8-bit characters)
-    uint64_t get_uint64(
+    std::uint64_t get_uint64(
         const typename Traits::String& s, typename Traits::CharIterator i) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
 
-        uint64_t v = 0;
+        std::uint64_t v = 0;
         if (ss.is_end(s, i)) return v;
-        v = (uint64_t(*i) << 56);
+        v = (std::uint64_t(*i) << 56);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint64_t(*i) << 48);
+        v |= (std::uint64_t(*i) << 48);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint64_t(*i) << 40);
+        v |= (std::uint64_t(*i) << 40);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint64_t(*i) << 32);
+        v |= (std::uint64_t(*i) << 32);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint64_t(*i) << 24);
+        v |= (std::uint64_t(*i) << 24);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint64_t(*i) << 16);
+        v |= (std::uint64_t(*i) << 16);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint64_t(*i) << 8);
+        v |= (std::uint64_t(*i) << 8);
         ++i;
         if (ss.is_end(s, i)) return v;
-        v |= (uint64_t(*i) << 0);
+        v |= (std::uint64_t(*i) << 0);
         return v;
     }
 
-    uint8_t get_uint8(const typename Traits::String& s, size_t depth) const {
+    std::uint8_t get_uint8(const typename Traits::String& s, size_t depth) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
         return get_uint8(s, ss.get_chars(s, depth));
     }
 
-    uint16_t get_uint16(const typename Traits::String& s, size_t depth) const {
+    std::uint16_t get_uint16(const typename Traits::String& s, size_t depth) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
         return get_uint16(s, ss.get_chars(s, depth));
     }
 
-    uint32_t get_uint32(const typename Traits::String& s, size_t depth) const {
+    std::uint32_t get_uint32(const typename Traits::String& s, size_t depth) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
         return get_uint32(s, ss.get_chars(s, depth));
     }
 
-    uint64_t get_uint64(const typename Traits::String& s, size_t depth) const {
+    std::uint64_t get_uint64(const typename Traits::String& s, size_t depth) const {
         const StringSet& ss = *static_cast<const StringSet*>(this);
         return get_uint64(s, ss.get_chars(s, depth));
     }
@@ -244,7 +244,7 @@ public:
 
 template <typename Type, typename StringSet>
 inline
-typename enable_if<sizeof(Type) == 4, uint32_t>::type
+typename enable_if<sizeof(Type) == 4, std::uint32_t>::type
 get_key(const StringSet& strset,
         const typename StringSet::String& s, size_t depth) {
     return strset.get_uint32(s, depth);
@@ -252,7 +252,7 @@ get_key(const StringSet& strset,
 
 template <typename Type, typename StringSet>
 inline
-typename enable_if<sizeof(Type) == 8, uint64_t>::type
+typename enable_if<sizeof(Type) == 8, std::uint64_t>::type
 get_key(const StringSet& strset,
         const typename StringSet::String& s, size_t depth) {
     return strset.get_uint64(s, depth);
@@ -373,7 +373,7 @@ class StdStringSetTraits
 {
 public:
     //! exported alias for character type
-    typedef uint8_t Char;
+    typedef std::uint8_t Char;
 
     //! String reference: std::string, which should be reference counted.
     typedef std::string String;
@@ -456,7 +456,7 @@ class UPtrStdStringSetTraits
 {
 public:
     //! exported alias for character type
-    typedef uint8_t Char;
+    typedef std::uint8_t Char;
 
     //! String reference: std::string, which should be reference counted.
     typedef std::unique_ptr<std::string> String;
@@ -552,7 +552,7 @@ public:
     typedef std::string Text;
 
     //! exported alias for character type
-    typedef uint8_t Char;
+    typedef std::uint8_t Char;
 
     //! String reference: suffix index of the text.
     typedef typename Text::size_type String;

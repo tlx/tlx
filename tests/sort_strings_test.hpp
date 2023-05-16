@@ -20,6 +20,7 @@
 #include <tlx/timestamp.hpp>
 
 #include <chrono>
+#include <cstdint>
 #include <random>
 
 #if TLX_MORE_TESTS
@@ -98,14 +99,14 @@ void TestUCharString(const char* name,
          << " uint8_t* strings" << (with_lcp ? " with lcps" : "");
 
     // array of string pointers
-    tlx::simple_vector<uint8_t*> cstrings(num_strings);
+    tlx::simple_vector<std::uint8_t*> cstrings(num_strings);
 
     // generate random strings of length num_chars
     for (size_t i = 0; i < num_strings; ++i)
     {
         size_t slen = num_chars + (rng() >> 8) % (num_chars / 4);
 
-        cstrings[i] = new uint8_t[slen + 1];
+        cstrings[i] = new std::uint8_t[slen + 1];
         fill_random_lognormal(rng, letters, cstrings[i], cstrings[i] + slen);
         cstrings[i][slen] = 0;
     }
@@ -131,10 +132,10 @@ void TestUCharString(const char* name,
         // run sorting algorithm with lcp output
         double ts1 = tlx::timestamp();
 
-        tlx::simple_vector<uint32_t> lcp(num_strings);
+        tlx::simple_vector<std::uint32_t> lcp(num_strings);
 
         UCharStringSet ss(cstrings.data(), cstrings.data() + num_strings);
-        lcp_sorter(StringLcpPtr<UCharStringSet, uint32_t>(ss, lcp.data()),
+        lcp_sorter(StringLcpPtr<UCharStringSet, std::uint32_t>(ss, lcp.data()),
                    /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
@@ -206,10 +207,10 @@ void TestVectorStdString(const char* name,
         // run sorting algorithm with lcp output
         double ts1 = tlx::timestamp();
 
-        tlx::simple_vector<uint32_t> lcp(num_strings);
+        tlx::simple_vector<std::uint32_t> lcp(num_strings);
 
         StdStringSet ss(strings.data(), strings.data() + strings.size());
-        lcp_sorter(StringLcpPtr<StdStringSet, uint32_t>(ss, lcp.data()),
+        lcp_sorter(StringLcpPtr<StdStringSet, std::uint32_t>(ss, lcp.data()),
                    /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
@@ -274,10 +275,10 @@ void TestUPtrStdString(const char* name,
         // run sorting algorithm with lcp output
         double ts1 = tlx::timestamp();
 
-        tlx::simple_vector<uint32_t> lcp(num_strings);
+        tlx::simple_vector<std::uint32_t> lcp(num_strings);
 
         UPtrStdStringSet ss(strings.data(), strings.data() + strings.size());
-        lcp_sorter(StringLcpPtr<UPtrStdStringSet, uint32_t>(ss, lcp.data()),
+        lcp_sorter(StringLcpPtr<UPtrStdStringSet, std::uint32_t>(ss, lcp.data()),
                    /* depth */ 0, /* memory */ 0);
         if (0) ss.print();
 
@@ -333,21 +334,21 @@ static const char* letters_alnum
       "\xE0\xE1\xE2\xE3\xE4\xE5\xE6\xE7\xE8\xE9\xEA\xEB\xEC\xED\xEE\xEF";
 
 // use macro because one cannot pass template functions as template parameters:
-#define run_tests(func)                                          \
-    TestUCharString<UCharStringSet, func, uint32_t, func>(       \
-        #func, num_strings, 16, letters_alnum, /* lcp */ false); \
-    TestUCharString<UCharStringSet, func, uint32_t, func>(       \
-        #func, num_strings, 17, letters_alnum, /* lcp */ true);  \
-    TestVectorStdString<StdStringSet, func, uint32_t, func>(     \
-        #func, num_strings, 16, letters_alnum, /* lcp */ false); \
-    TestVectorStdString<StdStringSet, func, uint32_t, func>(     \
-        #func, num_strings, 17, letters_alnum, /* lcp */ true);  \
-    TestUPtrStdString<UPtrStdStringSet, func, uint32_t, func>(   \
-        #func, num_strings, 16, letters_alnum, /* lcp */ false); \
-    TestUPtrStdString<UPtrStdStringSet, func, uint32_t, func>(   \
-        #func, num_strings, 18, letters_alnum, /* lcp */ true);  \
-    TestStringSuffixString<StringSuffixSet, func>(               \
-        #func, num_strings, letters_alnum);                      \
+#define run_tests(func)                                             \
+    TestUCharString<UCharStringSet, func, std::uint32_t, func>(     \
+        #func, num_strings, 16, letters_alnum, /* lcp */ false);    \
+    TestUCharString<UCharStringSet, func, std::uint32_t, func>(     \
+        #func, num_strings, 17, letters_alnum, /* lcp */ true);     \
+    TestVectorStdString<StdStringSet, func, std::uint32_t, func>(   \
+        #func, num_strings, 16, letters_alnum, /* lcp */ false);    \
+    TestVectorStdString<StdStringSet, func, std::uint32_t, func>(   \
+        #func, num_strings, 17, letters_alnum, /* lcp */ true);     \
+    TestUPtrStdString<UPtrStdStringSet, func, std::uint32_t, func>( \
+        #func, num_strings, 16, letters_alnum, /* lcp */ false);    \
+    TestUPtrStdString<UPtrStdStringSet, func, std::uint32_t, func>( \
+        #func, num_strings, 18, letters_alnum, /* lcp */ true);     \
+    TestStringSuffixString<StringSuffixSet, func>(                  \
+        #func, num_strings, letters_alnum);                         \
 
 #endif // !TLX_TESTS_SORT_STRINGS_TEST_HEADER
 

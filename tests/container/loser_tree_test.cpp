@@ -329,7 +329,7 @@ int main(int argc, char* argv[]) {
     clp.add_size_t('R', "outer_repeat", outer_repeat,
                    "Number of outer repetitions, default: 1");
 
-    uint32_t vector_size = 1000000;
+    std::uint32_t vector_size = 1000000;
     clp.add_bytes('s', "vector_size", vector_size,
                   "Length of vectors to merge, default: 1000000");
 

@@ -26,7 +26,7 @@ namespace tlx {
 /******************************************************************************/
 // Log2Floor<Value>::value
 
-template <uint64_t Input>
+template <std::uint64_t Input>
 class Log2Floor
 {
 public:
@@ -52,7 +52,7 @@ public:
 /******************************************************************************/
 // Log2<Value>::floor and Log2<Value>::ceil
 
-template <uint64_t Input>
+template <std::uint64_t Input>
 class Log2
 {
 public:

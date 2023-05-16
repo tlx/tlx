@@ -17,6 +17,7 @@
 #include <tlx/string/hexdump.hpp>
 
 #include <algorithm>
+#include <cstdint>
 
 namespace tlx {
 
@@ -29,8 +30,8 @@ namespace tlx {
  * The library is free for all purposes without any express guarantee it works.
  */
 
-typedef uint32_t u32;
-typedef uint64_t u64;
+typedef std::uint32_t u32;
+typedef std::uint64_t u64;
 
 namespace {
 
@@ -54,15 +55,15 @@ static inline u32 min(u32 x, u32 y) {
     return x < y ? x : y;
 }
 
-static inline u32 load32(const uint8_t* y) {
+static inline u32 load32(const std::uint8_t* y) {
     return (u32(y[0]) << 24) | (u32(y[1]) << 16) |
            (u32(y[2]) << 8) | (u32(y[3]) << 0);
 }
-static inline void store64(u64 x, uint8_t* y) {
+static inline void store64(u64 x, std::uint8_t* y) {
     for (int i = 0; i != 8; ++i)
         y[i] = (x >> ((7 - i) * 8)) & 255;
 }
-static inline void store32(u32 x, uint8_t* y) {
+static inline void store32(u32 x, std::uint8_t* y) {
     for (int i = 0; i != 4; ++i)
         y[i] = (x >> ((3 - i) * 8)) & 255;
 }
@@ -89,7 +90,7 @@ static inline u32 Gamma1(u32 x) {
     return ror32(x, 17) ^ ror32(x, 19) ^ Sh(x, 10);
 }
 
-static void sha256_compress(uint32_t state[8], const uint8_t* buf) {
+static void sha256_compress(std::uint32_t state[8], const std::uint8_t* buf) {
     u32 S[8], W[64], t0, t1, t;
 
     // Copy state into S
@@ -141,7 +142,7 @@ SHA256::SHA256() {
     state_[7] = 0x5BE0CD19UL;
 }
 
-SHA256::SHA256(const void* data, uint32_t size)
+SHA256::SHA256(const void* data, std::uint32_t size)
     : SHA256() {
     process(data, size);
 }
@@ -153,7 +154,7 @@ SHA256::SHA256(const std::string& str)
 
 void SHA256::process(const void* data, u32 size) {
     const u32 block_size = sizeof(SHA256::buf_);
-    auto in = static_cast<const uint8_t*>(data);
+    auto in = static_cast<const std::uint8_t*>(data);
 
     while (size > 0)
     {
@@ -191,7 +192,7 @@ void SHA256::finalize(void* digest) {
     length_ += curlen_ * 8;
 
     // Append the '1' bit
-    buf_[curlen_++] = static_cast<uint8_t>(0x80);
+    buf_[curlen_++] = static_cast<std::uint8_t>(0x80);
 
     // If the length_ is currently above 56 bytes we append zeros then
     // sha256_compress().  Then we can fall back to padding zeros and length
@@ -214,7 +215,7 @@ void SHA256::finalize(void* digest) {
 
     // Copy output
     for (size_t i = 0; i < 8; i++)
-        store32(state_[i], static_cast<uint8_t*>(digest) + (4 * i));
+        store32(state_[i], static_cast<std::uint8_t*>(digest) + (4 * i));
 }
 
 std::string SHA256::digest() {
@@ -224,18 +225,18 @@ std::string SHA256::digest() {
 }
 
 std::string SHA256::digest_hex() {
-    uint8_t digest[kDigestLength];
+    std::uint8_t digest[kDigestLength];
     finalize(digest);
     return hexdump_lc(digest, kDigestLength);
 }
 
 std::string SHA256::digest_hex_uc() {
-    uint8_t digest[kDigestLength];
+    std::uint8_t digest[kDigestLength];
     finalize(digest);
     return hexdump(digest, kDigestLength);
 }
 
-std::string sha256_hex(const void* data, uint32_t size) {
+std::string sha256_hex(const void* data, std::uint32_t size) {
     return SHA256(data, size).digest_hex();
 }
 
@@ -243,7 +244,7 @@ std::string sha256_hex(const std::string& str) {
     return SHA256(str).digest_hex();
 }
 
-std::string sha256_hex_uc(const void* data, uint32_t size) {
+std::string sha256_hex_uc(const void* data, std::uint32_t size) {
     return SHA256(data, size).digest_hex_uc();
 }
 

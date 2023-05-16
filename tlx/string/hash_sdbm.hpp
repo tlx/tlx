@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_HASH_SDBM_HEADER
 #define TLX_STRING_HASH_SDBM_HEADER
 
+#include <cstdint>
 #include <string>
 
 namespace tlx {
@@ -23,8 +24,8 @@ namespace tlx {
  * http://www.cse.yorku.ca/~oz/hash.html
  */
 static inline
-uint32_t hash_sdbm(const unsigned char* str) {
-    uint32_t hash = 0;
+std::uint32_t hash_sdbm(const unsigned char* str) {
+    std::uint32_t hash = 0;
     unsigned char c;
     while ((c = *str++) != 0) {
         hash = c + (hash << 6) + (hash << 16) - hash;
@@ -37,7 +38,7 @@ uint32_t hash_sdbm(const unsigned char* str) {
  * http://www.cse.yorku.ca/~oz/hash.html
  */
 static inline
-uint32_t hash_sdbm(const char* str) {
+std::uint32_t hash_sdbm(const char* str) {
     return hash_sdbm(reinterpret_cast<const unsigned char*>(str));
 }
 
@@ -46,8 +47,8 @@ uint32_t hash_sdbm(const char* str) {
  * http://www.cse.yorku.ca/~oz/hash.html
  */
 static inline
-uint32_t hash_sdbm(const unsigned char* str, size_t size) {
-    uint32_t hash = 0;
+std::uint32_t hash_sdbm(const unsigned char* str, size_t size) {
+    std::uint32_t hash = 0;
     while (size-- > 0) {
         hash = static_cast<unsigned char>(*str++)
                + (hash << 6) + (hash << 16) - hash;
@@ -60,7 +61,7 @@ uint32_t hash_sdbm(const unsigned char* str, size_t size) {
  * http://www.cse.yorku.ca/~oz/hash.html
  */
 static inline
-uint32_t hash_sdbm(const char* str, size_t size) {
+std::uint32_t hash_sdbm(const char* str, size_t size) {
     return hash_sdbm(reinterpret_cast<const unsigned char*>(str), size);
 }
 
@@ -69,7 +70,7 @@ uint32_t hash_sdbm(const char* str, size_t size) {
  * http://www.cse.yorku.ca/~oz/hash.html
  */
 static inline
-uint32_t hash_sdbm(const std::string& str) {
+std::uint32_t hash_sdbm(const std::string& str) {
     return hash_sdbm(str.data(), str.size());
 }
 

@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <random>
 #include <vector>
 
@@ -30,16 +31,16 @@ static void test_bswap() {
 
 static void test_clz() {
 
-    die_unequal(tlx::clz_template<uint8_t>(0), 8u);
-    die_unequal(tlx::clz_template<uint16_t>(0), 16u);
-    die_unequal(tlx::clz_template<uint32_t>(0), 32u);
-    die_unequal(tlx::clz_template<uint64_t>(0), 64u);
+    die_unequal(tlx::clz_template<std::uint8_t>(0), 8u);
+    die_unequal(tlx::clz_template<std::uint16_t>(0), 16u);
+    die_unequal(tlx::clz_template<std::uint32_t>(0), 32u);
+    die_unequal(tlx::clz_template<std::uint64_t>(0), 64u);
 
-    die_unequal(tlx::clz<uint32_t>(0), 32u);
-    die_unequal(tlx::clz<uint64_t>(0), 64u);
+    die_unequal(tlx::clz<std::uint32_t>(0), 32u);
+    die_unequal(tlx::clz<std::uint64_t>(0), 64u);
 
     unsigned bitpos = 0;
-    for (uint64_t i = 1llu << 63; i != 0; i >>= 1, ++bitpos)
+    for (std::uint64_t i = 1llu << 63; i != 0; i >>= 1, ++bitpos)
     {
         if (i > 1) {
             die_unequal(tlx::clz(i - 1), bitpos + 1);
@@ -55,35 +56,35 @@ static void test_clz() {
         }
     }
 
-    die_unequal(tlx::clz<uint32_t>(0x0100), 31u - 8u);
-    die_unequal(tlx::clz<uint64_t>(0x0100), 63u - 8u);
+    die_unequal(tlx::clz<std::uint32_t>(0x0100), 31u - 8u);
+    die_unequal(tlx::clz<std::uint64_t>(0x0100), 63u - 8u);
 
-    die_unequal(tlx::clz_template<uint32_t>(0x0100), 31u - 8u);
-    die_unequal(tlx::clz_template<uint64_t>(0x0100), 63u - 8u);
+    die_unequal(tlx::clz_template<std::uint32_t>(0x0100), 31u - 8u);
+    die_unequal(tlx::clz_template<std::uint64_t>(0x0100), 63u - 8u);
 }
 
 static void test_ctz() {
 
-    die_unequal(tlx::ctz_template<uint8_t>(0), 8u);
-    die_unequal(tlx::ctz_template<uint16_t>(0), 16u);
-    die_unequal(tlx::ctz_template<uint32_t>(0), 32u);
-    die_unequal(tlx::ctz_template<uint64_t>(0), 64u);
+    die_unequal(tlx::ctz_template<std::uint8_t>(0), 8u);
+    die_unequal(tlx::ctz_template<std::uint16_t>(0), 16u);
+    die_unequal(tlx::ctz_template<std::uint32_t>(0), 32u);
+    die_unequal(tlx::ctz_template<std::uint64_t>(0), 64u);
 
-    die_unequal(tlx::ctz<uint32_t>(0), 32u);
-    die_unequal(tlx::ctz<uint64_t>(0), 64u);
+    die_unequal(tlx::ctz<std::uint32_t>(0), 32u);
+    die_unequal(tlx::ctz<std::uint64_t>(0), 64u);
 
     unsigned bitpos = 0;
-    for (uint64_t i = (~0llu); i != 0; i <<= 1, ++bitpos)
+    for (std::uint64_t i = (~0llu); i != 0; i <<= 1, ++bitpos)
     {
         die_unequal(tlx::ctz(i), bitpos);
         die_unequal(tlx::ctz_template(i), bitpos);
     }
 
-    die_unequal(tlx::ctz<uint32_t>(0x0100), 8u);
-    die_unequal(tlx::ctz<uint64_t>(0x0100), 8u);
+    die_unequal(tlx::ctz<std::uint32_t>(0x0100), 8u);
+    die_unequal(tlx::ctz<std::uint64_t>(0x0100), 8u);
 
-    die_unequal(tlx::ctz_template<uint32_t>(0x0100), 8u);
-    die_unequal(tlx::ctz_template<uint64_t>(0x0100), 8u);
+    die_unequal(tlx::ctz_template<std::uint32_t>(0x0100), 8u);
+    die_unequal(tlx::ctz_template<std::uint64_t>(0x0100), 8u);
 }
 
 static void test_ffs() {
@@ -92,7 +93,7 @@ static void test_ffs() {
     die_unequal(tlx::ffs_template(0), 0u);
 
     unsigned power = 0;
-    for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
+    for (std::uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
         if (i > 1) {
             die_unequal(tlx::ffs(i - 1), 1u);
@@ -112,7 +113,7 @@ static void test_ffs() {
 static void test_integer_log2() {
 
     unsigned power = 0;
-    for (uint32_t i = 1; i < (1lu << 31); i <<= 1, ++power)
+    for (std::uint32_t i = 1; i < (1lu << 31); i <<= 1, ++power)
     {
         if (i > 1) {
             die_unequal(tlx::integer_log2_floor(i - 1), power - 1);
@@ -136,7 +137,7 @@ static void test_integer_log2() {
     }
 
     power = 0;
-    for (int64_t i = 1; i < (1ll << 62); i <<= 1, ++power)
+    for (std::int64_t i = 1; i < (1ll << 62); i <<= 1, ++power)
     {
         if (i > 1) {
             die_unequal(tlx::integer_log2_floor(i - 1), power - 1);
@@ -160,7 +161,7 @@ static void test_integer_log2() {
     }
 
     power = 0;
-    for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
+    for (std::uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
         if (i > 1) {
             die_unequal(tlx::integer_log2_floor(i - 1), power - 1);
@@ -187,7 +188,7 @@ static void test_integer_log2() {
 static void test_is_power_of_two() {
 
     unsigned power = 0;
-    for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
+    for (std::uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
         die_if(tlx::is_power_of_two(i - 1) && i != 2);
         die_unless(tlx::is_power_of_two(i));
@@ -212,7 +213,7 @@ static void test_popcount() {
     // for (size_t i = 0; i < 0xFFFFFFFFFF; ++i)
     //     die_unequal(tlx::popcount(i), tlx::popcount_generic64(i));
 
-    std::vector<uint8_t> data;
+    std::vector<std::uint8_t> data;
     for (size_t i = 0; i < 20; ++i) {
         die_unequal(tlx::popcount(data.data(), data.size()), 2 * i);
         data.push_back(0x11);
@@ -242,7 +243,7 @@ static void test_power_to_the_real() {
 
 template <unsigned D = 7>
 static void test_power_to_the_int() {
-    using T = int64_t;
+    using T = std::int64_t;
 
     for (auto x = T{ -100 }; x < 100; ++x) {
         const auto tested = tlx::power_to_the<D>(x);
@@ -307,7 +308,7 @@ static void test_ror() {
 static void test_round_to_power_of_two() {
 
     unsigned power = 0;
-    for (uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
+    for (std::uint64_t i = 1; i < (1llu << 63); i <<= 1, ++power)
     {
         if (i > 2)
             die_unequal(tlx::round_up_to_power_of_two(i - 1), i);

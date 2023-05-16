@@ -11,6 +11,7 @@
 #ifndef TLX_CMDLINE_PARSER_HEADER
 #define TLX_CMDLINE_PARSER_HEADER
 
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -198,12 +199,12 @@ public:
     //! add SI/IEC suffixes byte size option -key, --longkey and store to 32-bit
     //! dest
     void add_bytes(char key, const std::string& longkey,
-                   uint32_t& dest, const std::string& desc); // NOLINT
+                   std::uint32_t& dest, const std::string& desc); // NOLINT
 
     //! add SI/IEC suffixes byte size option -key, --longkey and store to 64-bit
     //! dest
     void add_bytes(char key, const std::string& longkey,
-                   uint64_t& dest, const std::string& desc); // NOLINT
+                   std::uint64_t& dest, const std::string& desc); // NOLINT
 
     //! add string option -key, --longkey and store to dest
     void add_string(char key, const std::string& longkey,
@@ -257,11 +258,11 @@ public:
 
     //! add SI/IEC suffixes byte size option --longkey and store to 32-bit dest
     void add_bytes(const std::string& longkey,
-                   uint32_t& dest, const std::string& desc); // NOLINT
+                   std::uint32_t& dest, const std::string& desc); // NOLINT
 
     //! add SI/IEC suffixes byte size option --longkey and store to 64-bit dest
     void add_bytes(const std::string& longkey,
-                   uint64_t& dest, const std::string& desc); // NOLINT
+                   std::uint64_t& dest, const std::string& desc); // NOLINT
 
     //! add string option --longkey and store to dest
     void add_string(const std::string& longkey,
@@ -339,14 +340,14 @@ public:
     //! store to 64-bit dest
     void add_bytes(
         char key, const std::string& longkey,
-        const std::string& keytype, uint32_t& dest, // NOLINT
+        const std::string& keytype, std::uint32_t& dest, // NOLINT
         const std::string& desc);
 
     //! add SI/IEC suffixes byte size option -key, --longkey [keytype] and
     //! store to 64-bit dest
     void add_bytes(
         char key, const std::string& longkey,
-        const std::string& keytype, uint64_t& dest, // NOLINT
+        const std::string& keytype, std::uint64_t& dest, // NOLINT
         const std::string& desc);
 
     //! add string option -key, --longkey [keytype] and store to dest
@@ -401,13 +402,13 @@ public:
     //! add SI/IEC suffixes byte size parameter [name] with description and
     //! store to dest
     void add_param_bytes(
-        const std::string& name, uint32_t& dest, // NOLINT
+        const std::string& name, std::uint32_t& dest, // NOLINT
         const std::string& desc);
 
     //! add SI/IEC suffixes byte size parameter [name] with description and
     //! store to dest
     void add_param_bytes(
-        const std::string& name, uint64_t& dest, // NOLINT
+        const std::string& name, std::uint64_t& dest, // NOLINT
         const std::string& desc);
 
     //! add string parameter [name] with description and store to dest
@@ -464,13 +465,13 @@ public:
     //! add optional SI/IEC suffixes byte size parameter [name] with
     //! description and store to dest
     void add_opt_param_bytes(
-        const std::string& name, uint32_t& dest, // NOLINT
+        const std::string& name, std::uint32_t& dest, // NOLINT
         const std::string& desc);
 
     //! add optional SI/IEC suffixes byte size parameter [name] with
     //! description and store to dest
     void add_opt_param_bytes(
-        const std::string& name, uint64_t& dest, // NOLINT
+        const std::string& name, std::uint64_t& dest, // NOLINT
         const std::string& desc);
 
     //! add optional string parameter [name] with description and store to dest

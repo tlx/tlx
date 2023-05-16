@@ -14,6 +14,7 @@
 #include <array>
 #include <cassert>
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <type_traits>
 #include <utility>
@@ -169,7 +170,7 @@ class BitArrayRecursive<Size, true>
 {
     static_assert(Size <= 64, "Support at most 64 bits");
     using uint_type = typename std::conditional<
-        Size <= 32, uint32_t, uint64_t>::type;
+        Size <= 32, std::uint32_t, std::uint64_t>::type;
 
 public:
     static constexpr size_t size = Size;

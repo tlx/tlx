@@ -168,10 +168,10 @@ void sort_strings_parallel(std::vector<std::string>& strings,
  */
 static inline
 void sort_strings_parallel_lcp(unsigned char** strings, size_t size,
-                               uint32_t* lcp, size_t memory = 0) {
+                               std::uint32_t* lcp, size_t memory = 0) {
     sort_strings_detail::parallel_sample_sort(
         sort_strings_detail::StringLcpPtr<
-            sort_strings_detail::UCharStringSet, uint32_t>(
+            sort_strings_detail::UCharStringSet, std::uint32_t>(
             sort_strings_detail::UCharStringSet(strings, strings + size), lcp),
         /* depth */ 0, memory);
 }
@@ -183,7 +183,7 @@ void sort_strings_parallel_lcp(unsigned char** strings, size_t size,
  * The memory limit is currently not used.
  */
 static inline
-void sort_strings_parallel_lcp(char** strings, size_t size, uint32_t* lcp,
+void sort_strings_parallel_lcp(char** strings, size_t size, std::uint32_t* lcp,
                                size_t memory = 0) {
     return sort_strings_parallel_lcp(
         reinterpret_cast<unsigned char**>(strings), size, lcp, memory);
@@ -196,10 +196,10 @@ void sort_strings_parallel_lcp(char** strings, size_t size, uint32_t* lcp,
  */
 static inline
 void sort_strings_parallel_lcp(const unsigned char** strings, size_t size,
-                               uint32_t* lcp, size_t memory = 0) {
+                               std::uint32_t* lcp, size_t memory = 0) {
     sort_strings_detail::parallel_sample_sort(
         sort_strings_detail::StringLcpPtr<
-            sort_strings_detail::CUCharStringSet, uint32_t>(
+            sort_strings_detail::CUCharStringSet, std::uint32_t>(
             sort_strings_detail::CUCharStringSet(strings, strings + size), lcp),
         /* depth */ 0, memory);
 }
@@ -212,7 +212,7 @@ void sort_strings_parallel_lcp(const unsigned char** strings, size_t size,
  */
 static inline
 void sort_strings_parallel_lcp(const char** strings, size_t size,
-                               uint32_t* lcp, size_t memory = 0) {
+                               std::uint32_t* lcp, size_t memory = 0) {
     return sort_strings_parallel_lcp(
         reinterpret_cast<const unsigned char**>(strings), size, lcp, memory);
 }
@@ -226,7 +226,7 @@ void sort_strings_parallel_lcp(const char** strings, size_t size,
  * The memory limit is currently not used.
  */
 static inline
-void sort_strings_parallel_lcp(std::vector<char*>& strings, uint32_t* lcp,
+void sort_strings_parallel_lcp(std::vector<char*>& strings, std::uint32_t* lcp,
                                size_t memory = 0) {
     return sort_strings_parallel_lcp(
         strings.data(), strings.size(), lcp, memory);
@@ -239,7 +239,7 @@ void sort_strings_parallel_lcp(std::vector<char*>& strings, uint32_t* lcp,
  */
 static inline
 void sort_strings_parallel_lcp(std::vector<unsigned char*>& strings,
-                               uint32_t* lcp, size_t memory = 0) {
+                               std::uint32_t* lcp, size_t memory = 0) {
     return sort_strings_parallel_lcp(
         strings.data(), strings.size(), lcp, memory);
 }
@@ -251,7 +251,7 @@ void sort_strings_parallel_lcp(std::vector<unsigned char*>& strings,
  * The memory limit is currently not used.
  */
 static inline
-void sort_strings_parallel_lcp(std::vector<const char*>& strings, uint32_t* lcp,
+void sort_strings_parallel_lcp(std::vector<const char*>& strings, std::uint32_t* lcp,
                                size_t memory = 0) {
     return sort_strings_parallel_lcp(
         strings.data(), strings.size(), lcp, memory);
@@ -264,7 +264,7 @@ void sort_strings_parallel_lcp(std::vector<const char*>& strings, uint32_t* lcp,
  */
 static inline
 void sort_strings_parallel_lcp(std::vector<const unsigned char*>& strings,
-                               uint32_t* lcp, size_t memory = 0) {
+                               std::uint32_t* lcp, size_t memory = 0) {
     return sort_strings_parallel_lcp(
         strings.data(), strings.size(), lcp, memory);
 }
@@ -279,10 +279,10 @@ void sort_strings_parallel_lcp(std::vector<const unsigned char*>& strings,
  */
 static inline
 void sort_strings_parallel_lcp(std::string* strings, size_t size,
-                               uint32_t* lcp, size_t memory = 0) {
+                               std::uint32_t* lcp, size_t memory = 0) {
     sort_strings_detail::parallel_sample_sort(
         sort_strings_detail::StringLcpPtr<
-            sort_strings_detail::StdStringSet, uint32_t>(
+            sort_strings_detail::StdStringSet, std::uint32_t>(
             sort_strings_detail::StdStringSet(strings, strings + size), lcp),
         /* depth */ 0, memory);
 }
@@ -295,7 +295,7 @@ void sort_strings_parallel_lcp(std::string* strings, size_t size,
  */
 static inline
 void sort_strings_parallel_lcp(std::vector<std::string>& strings,
-                               uint32_t* lcp, size_t memory = 0) {
+                               std::uint32_t* lcp, size_t memory = 0) {
     return sort_strings_parallel_lcp(
         strings.data(), strings.size(), lcp, memory);
 }

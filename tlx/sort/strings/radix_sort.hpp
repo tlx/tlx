@@ -26,6 +26,7 @@
 #include <tlx/sort/strings/multikey_quicksort.hpp>
 #include <tlx/sort/strings/string_ptr.hpp>
 
+#include <cstdint>
 #include <stack>
 #include <utility>
 #include <vector>
@@ -199,18 +200,18 @@ struct RadixStep_CE2 {
     typedef typename StringSet::Iterator Iterator;
 
     RadixStep_CE2(const StringShadowPtr& in_strptr, size_t depth,
-                  uint8_t* charcache) : strptr(in_strptr) {
+                  std::uint8_t* charcache) : strptr(in_strptr) {
 
         const StringSet& ss = strptr.active();
         const size_t n = ss.size();
 
         // read characters and count character occurrences
         std::fill(bkt_size, bkt_size + 256, 0);
-        uint8_t* cc = charcache;
+        std::uint8_t* cc = charcache;
         for (Iterator i = ss.begin(); i != ss.end(); ++i, ++cc)
             *cc = ss.get_uint8(ss[i], depth);
         for (cc = charcache; cc != charcache + n; ++cc)
-            ++bkt_size[static_cast<uint8_t>(*cc)];
+            ++bkt_size[static_cast<std::uint8_t>(*cc)];
 
         // prefix sum
         Iterator bkt_index[256];
@@ -221,7 +222,7 @@ struct RadixStep_CE2 {
         // distribute
         cc = charcache;
         for (Iterator i = ss.begin(); i != ss.end(); ++i, ++cc)
-            *(bkt_index[static_cast<uint8_t>(*cc)]++) = std::move(ss[i]);
+            *(bkt_index[static_cast<std::uint8_t>(*cc)]++) = std::move(ss[i]);
 
         idx = 0; // will increment to 1 on first process
         pos = bkt_size[0];
@@ -256,7 +257,7 @@ struct RadixStep_CE2 {
 
 template <typename StringPtr>
 static inline void
-radixsort_CI3(const StringPtr& strptr, uint16_t* charcache,
+radixsort_CI3(const StringPtr& strptr, std::uint16_t* charcache,
               size_t depth, size_t memory);
 
 /*
@@ -265,7 +266,7 @@ radixsort_CI3(const StringPtr& strptr, uint16_t* charcache,
 template <typename StringShadowPtr>
 static inline void
 radixsort_CE2_loop(const StringShadowPtr& strptr,
-                   uint8_t* charcache, size_t depth, size_t memory) {
+                   std::uint8_t* charcache, size_t depth, size_t memory) {
 
     typedef RadixStep_CE2<StringShadowPtr> RadixStep;
 
@@ -328,7 +329,7 @@ radixsort_CE2(const StringPtr& strptr, size_t depth, size_t memory) {
     // try to estimate the amount of memory used
     size_t memory_use =
         2 * sizeof(size_t) + sizeof(StringSet)
-        + ss.size() * sizeof(uint8_t)
+        + ss.size() * sizeof(std::uint8_t)
         + ss.size() * sizeof(typename StringSet::String);
     size_t memory_slack = 3 * sizeof(RadixStep);
 
@@ -336,7 +337,7 @@ radixsort_CE2(const StringPtr& strptr, size_t depth, size_t memory) {
         return radixsort_CI3(strptr, depth, memory);
 
     typename StringSet::Container shadow = ss.allocate(ss.size());
-    uint8_t* charcache = new uint8_t[ss.size()];
+    std::uint8_t* charcache = new std::uint8_t[ss.size()];
 
     radixsort_CE2_loop(strptr.add_shadow(StringSet(shadow)),
                        charcache, depth, memory - memory_use);
@@ -359,18 +360,18 @@ struct RadixStep_CE3 {
     typedef typename StringSet::Iterator Iterator;
 
     RadixStep_CE3(const StringShadowPtr& in_strptr, size_t depth,
-                  uint16_t* charcache) : strptr(in_strptr) {
+                  std::uint16_t* charcache) : strptr(in_strptr) {
 
         const StringSet& ss = strptr.active();
         const size_t n = ss.size();
 
         // read characters and count character occurrences
         std::fill(bkt_size, bkt_size + RADIX, 0);
-        uint16_t* cc = charcache;
+        std::uint16_t* cc = charcache;
         for (Iterator i = ss.begin(); i != ss.end(); ++i, ++cc)
             *cc = ss.get_uint16(ss[i], depth);
         for (cc = charcache; cc != charcache + n; ++cc)
-            ++bkt_size[static_cast<uint16_t>(*cc)];
+            ++bkt_size[static_cast<std::uint16_t>(*cc)];
 
         // prefix sum
         simple_vector<Iterator> bkt_index(RADIX);
@@ -402,7 +403,7 @@ struct RadixStep_CE3 {
         // distribute
         cc = charcache;
         for (Iterator i = ss.begin(); i != ss.end(); ++i, ++cc)
-            *(bkt_index[static_cast<uint16_t>(*cc)]++) = std::move(ss[i]);
+            *(bkt_index[static_cast<std::uint16_t>(*cc)]++) = std::move(ss[i]);
 
         // will increment to 1 on first process
         idx = 0;
@@ -428,7 +429,7 @@ struct RadixStep_CE3 {
 template <typename StringShadowPtr>
 static inline void
 radixsort_CE3_loop(const StringShadowPtr& strptr,
-                   uint16_t* charcache, size_t depth, size_t memory) {
+                   std::uint16_t* charcache, size_t depth, size_t memory) {
 
     enum { RADIX = 0x10000 };
 
@@ -468,7 +469,7 @@ radixsort_CE3_loop(const StringShadowPtr& strptr,
             {
                 radixsort_CE2_loop(
                     rs.strptr.flip(rs.pos, bkt_size),
-                    reinterpret_cast<uint8_t*>(charcache),
+                    reinterpret_cast<std::uint8_t*>(charcache),
                     depth + 2 * radixstack.size(),
                     memory - sizeof(RadixStep) * radixstack.size());
                 rs.pos += bkt_size;
@@ -515,7 +516,7 @@ radixsort_CE3(const StringPtr& strptr, size_t depth, size_t memory) {
     // try to estimate the amount of memory used
     size_t memory_use =
         2 * sizeof(size_t) + sizeof(StringSet)
-        + ss.size() * sizeof(uint16_t)
+        + ss.size() * sizeof(std::uint16_t)
         + ss.size() * sizeof(typename StringSet::String);
     size_t memory_slack = 3 * sizeof(RadixStep);
 
@@ -523,7 +524,7 @@ radixsort_CE3(const StringPtr& strptr, size_t depth, size_t memory) {
         return radixsort_CE2(strptr, depth, memory);
 
     typename StringSet::Container shadow = ss.allocate(ss.size());
-    uint16_t* charcache = new uint16_t[ss.size()];
+    std::uint16_t* charcache = new std::uint16_t[ss.size()];
 
     radixsort_CE3_loop(strptr.add_shadow(StringSet(shadow)),
                        charcache, depth, memory - memory_use);
@@ -545,18 +546,18 @@ struct RadixStep_CI2 {
     size_t bkt_size[256];
 
     RadixStep_CI2(const StringPtr& strptr,
-                  size_t base, size_t depth, uint8_t* charcache) {
+                  size_t base, size_t depth, std::uint8_t* charcache) {
 
         const StringSet& ss = strptr.active();
         size_t size = ss.size();
 
         // read characters and count character occurrences
         std::fill(bkt_size, bkt_size + 256, 0);
-        uint8_t* cc = charcache;
+        std::uint8_t* cc = charcache;
         for (Iterator i = ss.begin(); i != ss.end(); ++i, ++cc)
             *cc = ss.get_uint8(ss[i], depth);
         for (cc = charcache; cc != charcache + size; ++cc)
-            ++bkt_size[static_cast<uint8_t>(*cc)];
+            ++bkt_size[static_cast<std::uint8_t>(*cc)];
 
         // inclusive prefix sum
         size_t bkt[256];
@@ -571,7 +572,7 @@ struct RadixStep_CI2 {
         for (size_t i = 0, j; i < size - last_bkt_size; )
         {
             String perm = std::move(ss[ss.begin() + i]);
-            uint8_t permch = charcache[i];
+            std::uint8_t permch = charcache[i];
             while ((j = --bkt[permch]) > i)
             {
                 std::swap(perm, ss[ss.begin() + j]);
@@ -613,7 +614,7 @@ struct RadixStep_CI2 {
  */
 template <typename StringPtr>
 static inline void
-radixsort_CI2(const StringPtr& strptr, uint8_t* charcache,
+radixsort_CI2(const StringPtr& strptr, std::uint8_t* charcache,
               size_t depth, size_t memory) {
 
     typedef RadixStep_CI2<StringPtr> RadixStep;
@@ -681,13 +682,13 @@ radixsort_CI2(const StringPtr& strptr, size_t depth, size_t memory) {
     // try to estimate the amount of memory used
     size_t memory_use =
         2 * sizeof(size_t) + sizeof(StringSet)
-        + strptr.size() * sizeof(uint8_t);
+        + strptr.size() * sizeof(std::uint8_t);
     size_t memory_slack = 3 * sizeof(RadixStep);
 
     if (memory != 0 && memory < memory_use + memory_slack + 1)
         return multikey_quicksort(strptr, depth, memory);
 
-    uint8_t* charcache = new uint8_t[strptr.size()];
+    std::uint8_t* charcache = new         std::uint8_t[strptr.size()];
 
     radixsort_CI2(strptr, charcache, depth, memory - memory_use);
 
@@ -709,17 +710,17 @@ struct RadixStep_CI3 {
     size_t bkt_size[RADIX];
 
     RadixStep_CI3(const StringPtr& strptr, size_t base, size_t depth,
-                  uint16_t* charcache) {
+                  std::uint16_t* charcache) {
 
         const StringSet& ss = strptr.active();
         const size_t n = ss.size();
         // read characters and count character occurrences
         std::fill(bkt_size, bkt_size + RADIX, 0);
-        uint16_t* cc = charcache;
+        std::uint16_t* cc = charcache;
         for (Iterator i = ss.begin(); i != ss.end(); ++i, ++cc)
             *cc = ss.get_uint16(ss[i], depth);
         for (cc = charcache; cc != charcache + n; ++cc)
-            ++bkt_size[static_cast<uint16_t>(*cc)];
+            ++bkt_size[static_cast<std::uint16_t>(*cc)];
 
         // inclusive prefix sum
         simple_vector<size_t> bkt_index(RADIX);
@@ -755,7 +756,7 @@ struct RadixStep_CI3 {
         for (size_t i = 0, j; i < n - last_bkt_size; )
         {
             String perm = std::move(ss[ss.begin() + i]);
-            uint16_t permch = charcache[i];
+            std::uint16_t permch = charcache[i];
             while ((j = --bkt_index[permch]) > i)
             {
                 std::swap(perm, ss[ss.begin() + j]);
@@ -785,7 +786,7 @@ struct RadixStep_CI3 {
  */
 template <typename StringPtr>
 static inline void
-radixsort_CI3(const StringPtr& strptr, uint16_t* charcache,
+radixsort_CI3(const StringPtr& strptr, std::uint16_t* charcache,
               size_t depth, size_t memory) {
     enum { RADIX = 0x10000 };
 
@@ -826,7 +827,7 @@ radixsort_CI3(const StringPtr& strptr, uint16_t* charcache,
             {
                 radixsort_CI2(
                     strptr.sub(rs.pos, bkt_size),
-                    reinterpret_cast<uint8_t*>(charcache),
+                    reinterpret_cast<std::uint8_t*>(charcache),
                     depth + 2 * radixstack.size(),
                     memory - sizeof(RadixStep) * radixstack.size());
                 rs.pos += bkt_size;
@@ -873,13 +874,13 @@ radixsort_CI3(const StringPtr& strptr, size_t depth, size_t memory) {
     // try to estimate the amount of memory used
     size_t memory_use =
         2 * sizeof(size_t) + sizeof(StringSet)
-        + strptr.size() * sizeof(uint16_t);
+        + strptr.size() * sizeof(std::uint16_t);
     size_t memory_slack = 3 * sizeof(RadixStep);
 
     if (memory != 0 && memory < memory_use + memory_slack + 1)
         return radixsort_CI2(strptr, depth, memory);
 
-    uint16_t* charcache = new uint16_t[strptr.size()];
+    std::uint16_t* charcache = new std::uint16_t[strptr.size()];
     radixsort_CI3(strptr, charcache, depth, memory - memory_use);
     delete[] charcache;
 }

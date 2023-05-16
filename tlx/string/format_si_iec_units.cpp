@@ -10,14 +10,15 @@
 
 #include <tlx/string/format_si_iec_units.hpp>
 
+#include <cstdint>
 #include <iomanip>
 #include <sstream>
 
 namespace tlx {
 
 //! Format number as something like 1 TB
-std::string format_si_units(uint64_t number, int precision) {
-    // may not overflow, std::numeric_limits<uint64_t>::max() == 16 EiB
+std::string format_si_units(std::uint64_t number, int precision) {
+    // may not overflow, std::numeric_limits<std::uint64_t>::max() == 16 EiB
     double multiplier = 1000.0;
     static const char* SI_endings[] = {
         "", "k", "M", "G", "T", "P", "E"
@@ -35,8 +36,8 @@ std::string format_si_units(uint64_t number, int precision) {
 }
 
 //! Format number as something like 1 TiB
-std::string format_iec_units(uint64_t number, int precision) {
-    // may not overflow, std::numeric_limits<uint64_t>::max() == 16 EiB
+std::string format_iec_units(std::uint64_t number, int precision) {
+    // may not overflow, std::numeric_limits<std::uint64_t>::max() == 16 EiB
     double multiplier = 1024.0;
     static const char* IEC_endings[] = {
         "", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei"

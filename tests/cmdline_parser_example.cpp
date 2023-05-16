@@ -11,6 +11,7 @@
 // [example]
 #include <tlx/cmdline_parser.hpp>
 
+#include <cstdint>
 #include <iostream>
 #include <string>
 
@@ -29,7 +30,7 @@ int main(int argc, char* argv[]) {
                     "Run N rounds of the experiment.");
 
     // add a byte size argument which the user can enter like '1gi'
-    uint64_t a_size = 0;
+    std::uint64_t a_size = 0;
     cp.add_bytes('s', "size", a_size,
                  "Number of bytes to process.");
 

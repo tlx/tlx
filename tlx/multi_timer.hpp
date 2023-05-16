@@ -12,6 +12,7 @@
 #define TLX_MULTI_TIMER_HEADER
 
 #include <chrono>
+#include <cstdint>
 #include <ostream>
 #include <vector>
 
@@ -94,7 +95,7 @@ private:
     //! currently running timer name
     const char* running_;
     //! hash of running_
-    uint32_t running_hash_;
+    std::uint32_t running_hash_;
     //! start of currently running timer name
     std::chrono::time_point<std::chrono::high_resolution_clock> time_point_;
 

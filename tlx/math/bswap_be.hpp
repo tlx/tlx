@@ -14,6 +14,7 @@
 #ifndef TLX_MATH_BSWAP_BE_HEADER
 #define TLX_MATH_BSWAP_BE_HEADER
 
+#include <cstdint>
 #include <tlx/define/endian.hpp>
 #include <tlx/math/bswap.hpp>
 
@@ -26,11 +27,11 @@ namespace tlx {
 // bswap16_be() - swap 16-bit integers to big-endian
 
 #if TLX_LITTLE_ENDIAN
-static inline uint16_t bswap16_be(const uint16_t& v) {
+static inline std::uint16_t bswap16_be(const std::uint16_t& v) {
     return bswap16(v);
 }
 #elif TLX_BIG_ENDIAN
-static inline uint16_t bswap16_be(const uint16_t& v) {
+static inline std::uint16_t bswap16_be(const std::uint16_t& v) {
     return v;
 }
 #endif
@@ -39,11 +40,11 @@ static inline uint16_t bswap16_be(const uint16_t& v) {
 // bswap32_be() - swap 32-bit integers to big-endian
 
 #if TLX_LITTLE_ENDIAN
-static inline uint32_t bswap32_be(const uint32_t& v) {
+static inline std::uint32_t bswap32_be(const std::uint32_t& v) {
     return bswap32(v);
 }
 #elif TLX_BIG_ENDIAN
-static inline uint32_t bswap32_be(const uint32_t& v) {
+static inline std::uint32_t bswap32_be(const std::uint32_t& v) {
     return v;
 }
 #endif
@@ -52,11 +53,11 @@ static inline uint32_t bswap32_be(const uint32_t& v) {
 // bswap64_be() - swap 64-bit integers to big-endian
 
 #if TLX_LITTLE_ENDIAN
-static inline uint64_t bswap64_be(const uint64_t& v) {
+static inline std::uint64_t bswap64_be(const std::uint64_t& v) {
     return bswap64(v);
 }
 #elif TLX_BIG_ENDIAN
-static inline uint64_t bswap64_be(const uint64_t& v) {
+static inline std::uint64_t bswap64_be(const std::uint64_t& v) {
     return v;
 }
 #endif

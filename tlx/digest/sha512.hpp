@@ -31,12 +31,12 @@ public:
     //! construct empty object.
     SHA512();
     //! construct context and process data range
-    SHA512(const void* data, uint32_t size);
+    SHA512(const void* data, std::uint32_t size);
     //! construct context and process string
     explicit SHA512(const std::string& str);
 
     //! process more data
-    void process(const void* data, uint32_t size);
+    void process(const void* data, std::uint32_t size);
     //! process more data
     void process(const std::string& str);
 
@@ -54,19 +54,19 @@ public:
     std::string digest_hex_uc();
 
 private:
-    uint64_t length_;
-    uint64_t state_[8];
-    uint32_t curlen_;
-    uint8_t buf_[128];
+    std::uint64_t length_;
+    std::uint64_t state_[8];
+    std::uint32_t curlen_;
+    std::uint8_t buf_[128];
 };
 
 //! process data and return 64 byte (512 bit) digest hex encoded
-std::string sha512_hex(const void* data, uint32_t size);
+std::string sha512_hex(const void* data, std::uint32_t size);
 //! process data and return 64 byte (512 bit) digest hex encoded
 std::string sha512_hex(const std::string& str);
 
 //! process data and return 64 byte (512 bit) digest upper-case hex encoded
-std::string sha512_hex_uc(const void* data, uint32_t size);
+std::string sha512_hex_uc(const void* data, std::uint32_t size);
 //! process data and return 64 byte (512 bit) digest upper-case hex encoded
 std::string sha512_hex_uc(const std::string& str);
 

@@ -19,18 +19,21 @@ namespace tlx {
 //! zero.
 #define TLX_MAJOR_VERSION     0
 
-//! TLX_MINOR_VERSION is the minor version number: currently zero.
-#define TLX_MINOR_VERSION     5
+//! TLX_MINOR_VERSION is the minor version number.
+#define TLX_MINOR_VERSION     6
+
+//! TLX_PATCH_VERSION is the patch version number.
+#define TLX_PATCH_VERSION     0
 
 /*[[[perl
   return "keep" if $ENV{USER} ne "tb";
   use POSIX qw(strftime);
   my $date = strftime("%Y%m%d", localtime);
-  print "//! TLX_PATCH_VERSION is the date of the last commit.\n";
-  print "#define TLX_PATCH_VERSION     $date\n";
+  print "//! TLX_DATE_VERSION is the date of the last commit.\n";
+  print "#define TLX_DATE_VERSION     $date\n";
 ]]]*/
-//! TLX_PATCH_VERSION is the date of the last commit.
-#define TLX_PATCH_VERSION     20230516
+//! TLX_DATE_VERSION is the date of the last commit.
+#define TLX_DATE_VERSION     20230517
 // [[[end]]]
 
 //! TLX_VERSION is a combination of TLX_MAJOR_VERSION, TLX_MINOR_VERSION, and

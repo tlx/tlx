@@ -30,17 +30,18 @@ endif()
 #[[perl
 #  return "keep" if $ENV{USER} ne "tb";
 #  use POSIX qw(strftime);
-#  my $date = strftime("%Y%m%d", localtime);
 #  open(F, "tlx/version.hpp") or die;
-#  my @lines = grep(m/^#define TLX_MINOR_VERSION /, <F>);
+#  my $lines = join("", <F>);
 #  close(F);
-#  die unless @lines == 1;
-#  $lines[0] =~ m/TLX_MINOR_VERSION\s+([0-9]+)/;
-#  print("set(TLX_VERSION \"0.$1.$date\")\n");
+#  $lines =~ m/TLX_MINOR_VERSION\s+([0-9]+)/;
+#  my $minor_ver = $1;
+#  $lines =~ m/TLX_PATCH_VERSION\s+([0-9]+)/;
+#  my $patch_ver = $1;
+#  print("set(TLX_VERSION \"0.$minor_ver.$patch_ver\")\n");
 #]]
-set(TLX_VERSION "0.5.20230516")
+set(TLX_VERSION "0.6.0")
 #[[end]]
-set(TLX_SOVERSION "0")
+set(TLX_SOVERSION "${TLX_SOVERSION}")
 
 ################################################################################
 ### Options and Switches

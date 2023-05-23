@@ -38,10 +38,11 @@ endif()
 #  $lines =~ m/TLX_PATCH_VERSION\s+([0-9]+)/;
 #  my $patch_ver = $1;
 #  print("set(TLX_VERSION \"0.$minor_ver.$patch_ver\")\n");
+#  print("set(TLX_SOVERSION \"0.$minor_ver\")\n");
 #]]
-set(TLX_VERSION "0.6.0")
+set(TLX_VERSION "0.6.1")
+set(TLX_SOVERSION "0.6")
 #[[end]]
-set(TLX_SOVERSION "${TLX_SOVERSION}")
 
 ################################################################################
 ### Options and Switches

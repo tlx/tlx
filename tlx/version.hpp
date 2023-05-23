@@ -23,7 +23,7 @@ namespace tlx {
 #define TLX_MINOR_VERSION     6
 
 //! TLX_PATCH_VERSION is the patch version number.
-#define TLX_PATCH_VERSION     0
+#define TLX_PATCH_VERSION     1
 
 /*[[[perl
   return "keep" if $ENV{USER} ne "tb";
@@ -33,7 +33,7 @@ namespace tlx {
   print "#define TLX_DATE_VERSION     $date\n";
 ]]]*/
 //! TLX_DATE_VERSION is the date of the last commit.
-#define TLX_DATE_VERSION     20230517
+#define TLX_DATE_VERSION     20230523
 // [[[end]]]
 
 //! TLX_VERSION is a combination of TLX_MAJOR_VERSION, TLX_MINOR_VERSION, and

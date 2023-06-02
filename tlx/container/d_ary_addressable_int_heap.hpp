@@ -89,7 +89,20 @@ public:
 
     //! Empties the heap.
     void clear() {
-        std::fill(handles_.begin(), handles_.end(), not_present());
+        if (heap_.size() * 64 / sizeof(key_type) < handles_.size()) {
+            // clear items individually if even assuming that every
+            // item is on a different cache line we still won't access
+            // all handles
+            for (const key_type &k : heap_) {
+                // Support clear after push_without_update()
+                if (k < handles_.size()) {
+                    handles_[k] = not_present();
+                }
+            }
+        } else {
+            std::fill(handles_.begin(), handles_.end(), not_present());
+        }
+
         heap_.clear();
     }
 
@@ -104,18 +117,7 @@ public:
 
     //! Inserts a new item.
     void push(const key_type& new_key) {
-        // Avoid to add the key that we use to mark non present keys.
-        assert(new_key != not_present());
-        if (new_key >= handles_.size()) {
-            handles_.resize(new_key + 1, not_present());
-        }
-        else {
-            assert(handles_[new_key] == not_present());
-        }
-
-        // Insert the new item at the end of the heap.
-        handles_[new_key] = static_cast<key_type>(heap_.size());
-        heap_.push_back(new_key);
+        push_without_update(new_key);
         sift_up(heap_.size() - 1);
     }
 
@@ -134,6 +136,27 @@ public:
         handles_[new_key] = static_cast<key_type>(heap_.size());
         heap_.push_back(std::move(new_key));
         sift_up(heap_.size() - 1);
+    }
+
+    /*!
+     * Inserts a new item without updating the heap
+     *
+     * The heap is in an undefined state until \c update_all() or \c
+     * clear() is called.
+     */
+    void push_without_update(const key_type &new_key) {
+        // Avoid to add the key that we use to mark non present keys.
+        assert(new_key != not_present());
+        if (new_key >= handles_.size()) {
+            handles_.resize(new_key + 1, not_present());
+        }
+        else {
+            assert(handles_[new_key] == not_present());
+        }
+
+        // Insert the new item at the end of the heap.
+        handles_[new_key] = static_cast<key_type>(heap_.size());
+        heap_.push_back(std::move(new_key));
     }
 
     //! Removes the item with key \c key.

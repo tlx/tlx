@@ -8,15 +8,14 @@
 # All rights reserved. Published under the Boost Software License, Version 1.0
 ################################################################################
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.9)
 
-if(NOT TARGET tlx)
+if(TARGET tlx)
+  return()
+endif()
 
 # custom cmake scripts
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/misc/cmake)
-
-# project
-project(tlx)
 
 # default to Debug building for single-config generators
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -43,6 +42,11 @@ endif()
 set(TLX_VERSION "0.6.1")
 set(TLX_SOVERSION "0.6")
 #[[end]]
+
+# project
+project(tlx
+  DESCRIPTION "A Collection of Sophisticated C++ Data Structures, Algorithms, and Miscellaneous Helpers"
+  VERSION ${TLX_VERSION})
 
 ################################################################################
 ### Options and Switches
@@ -464,9 +468,5 @@ if(TLX_INSTALL_PKGCONFIG_DIR)
   install(FILES ${PROJECT_BINARY_DIR}/${TLX_LIBNAME}.pc
     DESTINATION ${TLX_INSTALL_PKGCONFIG_DIR})
 endif()
-
-################################################################################
-
-endif(NOT TARGET tlx)
 
 ################################################################################

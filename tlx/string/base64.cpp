@@ -119,22 +119,22 @@ std::string base64_decode(const void* data, size_t size, bool strict) {
     static constexpr std::uint8_t ws = 254;
     // value lookup table: -1 -> exception, -2 -> skip whitespace
     static const std::uint8_t decoding64[256] = {
-        ex, ex, ex, ex, ex, ex, ex, ex, ex, ws, ws, ex, ex, ws, ex, ex,
-        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex,
-        ws, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, 62, ex, ex, ex, 63,
-        52, 53, 54, 55, 56, 57, 58, 59, 60, 61, ex, ex, ex, ws, ex, ex,
-        ex, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, ex, ex, ex, ex, ex,
-        ex, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, ex, ex, ex, ex, ex,
-        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex,
-        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex,
-        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex,
-        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex,
-        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex,
-        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex,
-        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex,
-        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex
+        ex, ex, ex, ex, ex, ex, ex, ex, ex, ws, ws, ex, ex, ws, ex, ex, // 0
+        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, // 1
+        ws, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, 62, ex, ex, ex, 63, // 2
+        52, 53, 54, 55, 56, 57, 58, 59, 60, 61, ex, ex, ex, ws, ex, ex, // 3
+        ex, 0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, // 4
+        15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, ex, ex, ex, ex, ex, // 5
+        ex, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, // 6
+        41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, ex, ex, ex, ex, ex, // 7
+        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, // 8
+        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, // 9
+        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, // A
+        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, // B
+        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, // C
+        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, // D
+        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, // E
+        ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex, ex  // F
     };
 
     std::uint8_t outchar, fragment;

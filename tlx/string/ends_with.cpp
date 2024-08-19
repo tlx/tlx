@@ -12,6 +12,7 @@
 #include <tlx/string/to_lower.hpp>
 #include <algorithm>
 #include <cstring>
+#include <string>
 
 namespace tlx {
 

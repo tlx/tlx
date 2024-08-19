@@ -62,6 +62,9 @@ option(TLX_MORE_TESTS
 option(TLX_WARNINGS_ARE_ERRORS
   "Compile with flags such that warnings are error." OFF)
 
+option(TLX_USE_CLANG_TIDY
+  "Compile with clang-tidy." OFF)
+
 ### building shared and/or static libraries
 
 # by default we currently only build a static library
@@ -272,6 +275,21 @@ endif()
 message(STATUS "TLX CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 ###############################################################################
+# enable clang-tidy analysis
+
+if(TLX_USE_CLANG_TIDY)
+
+  set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
+
+  # Generate a compile_commands.json to be used by external tools.
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+  set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
+    ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+
+endif()
+
+###############################################################################
 # enable gcov coverage analysis with gcc
 
 if(TLX_USE_GCOV)
@@ -393,7 +411,7 @@ if(TLX_TRY_COMPILE_HEADERS)
     set(source_name "${PROJECT_BINARY_DIR}/try_compile/${target_name}.cpp")
 
     file(WRITE ${source_name}
-      "#include <${header_file}>
+      "#include <${header_file}> // NOLINT(misc-include-cleaner)
        int main() { return 0; }")
 
     add_executable(${target_name} ${source_name})

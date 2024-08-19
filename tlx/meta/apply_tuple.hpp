@@ -12,7 +12,9 @@
 #define TLX_META_APPLY_TUPLE_HEADER
 
 #include <tlx/meta/index_sequence.hpp>
+#include <cstddef>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 
 namespace tlx {

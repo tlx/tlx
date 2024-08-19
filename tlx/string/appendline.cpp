@@ -10,6 +10,10 @@
 
 #include <tlx/string/appendline.hpp>
 #include <algorithm>
+#include <cstddef>
+#include <ios>
+#include <istream>
+#include <string>
 
 namespace tlx {
 

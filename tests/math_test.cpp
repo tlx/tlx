@@ -9,7 +9,19 @@
  ******************************************************************************/
 
 #include <tlx/die.hpp>
-#include <tlx/math.hpp>
+#include <tlx/math/bswap.hpp>
+#include <tlx/math/clz.hpp>
+#include <tlx/math/ctz.hpp>
+#include <tlx/math/ffs.hpp>
+#include <tlx/math/integer_log2.hpp>
+#include <tlx/math/is_power_of_two.hpp>
+#include <tlx/math/popcount.hpp>
+#include <tlx/math/power_to_the.hpp>
+#include <tlx/math/rol.hpp>
+#include <tlx/math/ror.hpp>
+#include <tlx/math/round_to_power_of_two.hpp>
+#include <tlx/math/round_up.hpp>
+#include <tlx/math/sgn.hpp>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>

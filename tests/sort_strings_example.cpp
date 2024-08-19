@@ -9,15 +9,18 @@
  ******************************************************************************/
 
 #include <tlx/cmdline_parser.hpp>
-#include <tlx/simple_vector.hpp>
+#include <tlx/container/simple_vector.hpp>
 #include <tlx/sort/strings.hpp>
 #include <tlx/sort/strings_parallel.hpp>
 #include <tlx/string/format_iec_units.hpp>
 #include <tlx/timestamp.hpp>
+#include <algorithm>
+#include <cerrno>
 #include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 int main(int argc, char* argv[])
 {

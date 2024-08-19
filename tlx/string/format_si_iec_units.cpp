@@ -8,10 +8,13 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/string/format_si_iec_units.hpp>
+#include <tlx/string/format_iec_units.hpp>
+#include <tlx/string/format_si_units.hpp>
 #include <cstdint>
 #include <iomanip>
+#include <ios>
 #include <sstream>
+#include <string>
 
 namespace tlx {
 

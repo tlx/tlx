@@ -21,6 +21,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>
+#include <type_traits>
 
 namespace tlx {
 

@@ -18,6 +18,7 @@
 #define TLX_SEMAPHORE_HEADER
 
 #include <condition_variable>
+#include <cstddef>
 #include <mutex>
 
 namespace tlx {

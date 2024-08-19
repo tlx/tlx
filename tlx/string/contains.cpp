@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include <tlx/string/contains.hpp>
+#include <string>
 
 namespace tlx {
 

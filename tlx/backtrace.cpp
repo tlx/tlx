@@ -20,6 +20,7 @@
 
 #define TLX_HAVE_BACKTRACE_FUNC 1
 
+#include <alloca.h>
 #include <cxxabi.h>
 #include <execinfo.h>
 #include <signal.h>

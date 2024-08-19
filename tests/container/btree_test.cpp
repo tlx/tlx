@@ -8,16 +8,21 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/btree.hpp>
 #include <tlx/container/btree_map.hpp>
 #include <tlx/container/btree_multimap.hpp>
 #include <tlx/container/btree_multiset.hpp>
 #include <tlx/container/btree_set.hpp>
 #include <tlx/die.hpp>
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
-#include <iostream>
+#include <cstdlib>
+#include <functional>
 #include <set>
+#include <string>
+#include <utility>
 #include <vector>
 
 #if TLX_MORE_TESTS

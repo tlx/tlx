@@ -14,6 +14,9 @@
 #define TLX_SORT_STRINGS_PARALLEL_HEADER
 
 #include <tlx/sort/strings/parallel_sample_sort.hpp>
+#include <tlx/sort/strings/string_ptr.hpp>
+#include <tlx/sort/strings/string_set.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>

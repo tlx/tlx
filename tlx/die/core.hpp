@@ -12,8 +12,8 @@
 #define TLX_DIE_CORE_HEADER
 
 #include <cstring>
-#include <iomanip>
-#include <sstream>
+#include <iomanip> // NOLINT(misc-include-cleaner)
+#include <sstream> // NOLINT(misc-include-cleaner)
 #include <stdexcept>
 #include <string>
 

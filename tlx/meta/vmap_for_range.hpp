@@ -12,6 +12,7 @@
 #define TLX_META_VMAP_FOR_RANGE_HEADER
 
 #include <tlx/meta/static_index.hpp>
+#include <cstddef>
 #include <tuple>
 #include <utility>
 

@@ -13,6 +13,8 @@
 
 #include <tlx/die.hpp>
 #include <tlx/siphash.hpp>
+#include <cstddef>
+#include <cstdint>
 
 static const std::uint64_t test_vectors_data[64] = {
     0x726fdb47dd0e0e31ull, 0x74f839c593dc67fdull, 0x0d6c8009d9a94f5aull,

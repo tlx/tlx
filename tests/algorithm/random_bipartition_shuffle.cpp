@@ -10,11 +10,8 @@
 
 #include <tlx/algorithm/random_bipartition_shuffle.hpp>
 #include <tlx/die.hpp>
-#include <algorithm>
-#include <array>
-#include <iostream>
-#include <iterator>
-#include <utility>
+#include <cstddef>
+#include <random>
 #include <vector>
 
 // This unit test performs a large number (10000) of random_shuffles, each time

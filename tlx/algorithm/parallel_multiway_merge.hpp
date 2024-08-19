@@ -19,7 +19,9 @@
 #define TLX_ALGORITHM_PARALLEL_MULTIWAY_MERGE_HEADER
 
 #include <algorithm>
+#include <cstddef>
 #include <functional>
+#include <iterator>
 #include <thread>
 #include <vector>
 
@@ -29,7 +31,7 @@
 
 #include <tlx/algorithm/multiway_merge.hpp>
 #include <tlx/algorithm/multiway_merge_splitting.hpp>
-#include <tlx/simple_vector.hpp>
+#include <tlx/container/simple_vector.hpp>
 
 namespace tlx {
 

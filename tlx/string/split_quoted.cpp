@@ -10,6 +10,9 @@
 
 #include <tlx/string/split_quoted.hpp>
 #include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace tlx {
 

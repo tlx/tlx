@@ -11,6 +11,7 @@
 #ifndef TLX_META_IS_STD_VECTOR_HEADER
 #define TLX_META_IS_STD_VECTOR_HEADER
 
+#include <type_traits>
 #include <vector>
 
 namespace tlx {

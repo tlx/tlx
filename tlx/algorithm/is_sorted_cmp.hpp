@@ -11,8 +11,6 @@
 #ifndef TLX_ALGORITHM_IS_SORTED_CMP_HEADER
 #define TLX_ALGORITHM_IS_SORTED_CMP_HEADER
 
-#include <functional>
-
 namespace tlx {
 
 //! \addtogroup tlx_algorithm

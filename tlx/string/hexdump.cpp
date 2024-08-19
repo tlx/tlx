@@ -9,9 +9,12 @@
  ******************************************************************************/
 
 #include <tlx/string/hexdump.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <sstream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace tlx {
 

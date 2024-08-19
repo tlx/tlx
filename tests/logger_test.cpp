@@ -10,7 +10,19 @@
 
 #include <tlx/die.hpp>
 #include <tlx/logger.hpp>
-#include <tlx/logger/all.hpp>
+#include <tlx/logger/all.hpp> // NOLINT(misc-include-cleaner)
+#include <tlx/logger/core.hpp>
+#include <tlx/logger/wrap_unprintable.hpp>
+#include <array>
+#include <deque>
+#include <map>
+#include <ostream>
+#include <set>
+#include <tuple>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 template <typename Lambda>
 void check(const char* output, Lambda lambda)

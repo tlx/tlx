@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 #include <tlx/string/erase_all.hpp>
+#include <string>
 
 namespace tlx {
 

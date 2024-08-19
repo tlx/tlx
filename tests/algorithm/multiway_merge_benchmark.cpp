@@ -10,20 +10,21 @@
  ******************************************************************************/
 
 #include <tlx/algorithm/multiway_merge.hpp>
+#include <tlx/algorithm/multiway_merge_splitting.hpp>
 #include <tlx/algorithm/parallel_multiway_merge.hpp>
 #include <tlx/cmdline_parser.hpp>
 #include <tlx/die.hpp>
 #include <tlx/logger.hpp>
-#include <tlx/string/format_si_iec_units.hpp>
+#include <tlx/string/format_iec_units.hpp>
 #include <tlx/timestamp.hpp>
 #include <algorithm>
-#include <chrono>
+#include <cstdint>
 #include <cstdlib>
 #include <functional>
 #include <iostream>
-#include <limits>
 #include <random>
 #include <string>
+#include <thread>
 #include <utility>
 #include <vector>
 

@@ -10,6 +10,7 @@
 
 #include <tlx/string/escape_html.hpp>
 #include <cstring>
+#include <string>
 
 namespace tlx {
 

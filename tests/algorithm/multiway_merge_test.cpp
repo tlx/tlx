@@ -9,11 +9,18 @@
  ******************************************************************************/
 
 #include <tlx/algorithm/multiway_merge.hpp>
+#include <tlx/algorithm/multiway_merge_splitting.hpp>
 #include <tlx/algorithm/parallel_multiway_merge.hpp>
 #include <tlx/die.hpp>
 #include <tlx/logger.hpp>
+#include <cstddef>
+#include <functional>
 #include <iostream>
+#include <iterator>
+#include <limits>
 #include <random>
+#include <utility>
+#include <vector>
 
 struct Something
 {

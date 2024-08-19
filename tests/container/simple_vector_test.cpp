@@ -11,6 +11,8 @@
 #include <tlx/container/simple_vector.hpp>
 #include <tlx/die.hpp>
 #include <algorithm>
+#include <cstddef>
+#include <utility>
 
 struct MyInteger
 {

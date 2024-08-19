@@ -14,8 +14,11 @@
 #include <tlx/logger.hpp>
 #include <algorithm>
 #include <chrono>
+#include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <random>
+#include <utility>
 #include <vector>
 
 static long ctor_dtor_counter = 0;

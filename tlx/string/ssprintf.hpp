@@ -12,6 +12,7 @@
 #define TLX_STRING_SSPRINTF_HEADER
 
 #include <tlx/define/attribute_format_printf.hpp>
+#include <cstddef>
 #include <string>
 
 namespace tlx {

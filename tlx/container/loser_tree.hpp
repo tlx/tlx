@@ -25,8 +25,10 @@
 #include <tlx/unused.hpp>
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <type_traits>
 #include <utility>
 
 namespace tlx {

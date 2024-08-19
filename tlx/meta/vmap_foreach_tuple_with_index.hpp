@@ -13,7 +13,9 @@
 
 #include <tlx/meta/index_sequence.hpp>
 #include <tlx/meta/vmap_foreach_with_index.hpp>
+#include <cstddef>
 #include <tuple>
+#include <type_traits>
 
 namespace tlx {
 

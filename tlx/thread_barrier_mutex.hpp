@@ -13,6 +13,7 @@
 
 #include <tlx/meta/no_operation.hpp>
 #include <condition_variable>
+#include <cstddef>
 #include <mutex>
 
 namespace tlx {

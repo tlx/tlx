@@ -11,6 +11,7 @@
 #include <tlx/string/parse_si_iec_units.hpp>
 #include <cstdint>
 #include <cstdlib>
+#include <string>
 
 namespace tlx {
 

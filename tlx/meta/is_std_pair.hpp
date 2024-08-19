@@ -11,6 +11,7 @@
 #ifndef TLX_META_IS_STD_PAIR_HEADER
 #define TLX_META_IS_STD_PAIR_HEADER
 
+#include <type_traits>
 #include <utility>
 
 namespace tlx {

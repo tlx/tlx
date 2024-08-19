@@ -16,6 +16,7 @@
  ******************************************************************************/
 
 #include <tlx/algorithm/parallel_multiway_merge.hpp>
+#include <cstddef>
 
 namespace tlx {
 

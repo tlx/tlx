@@ -11,7 +11,7 @@
 #ifndef TLX_STRING_BITDUMP_HEADER
 #define TLX_STRING_BITDUMP_HEADER
 
-#include <cstdint>
+#include <cstddef>
 #include <string>
 
 namespace tlx {

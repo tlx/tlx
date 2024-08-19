@@ -15,7 +15,6 @@
 #include <tlx/meta/fold_right_tuple.hpp>
 #include <tlx/unused.hpp>
 #include <cmath>
-#include <cstddef>
 #include <iostream>
 #include <sstream>
 

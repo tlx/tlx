@@ -10,7 +10,7 @@
 
 #include <tlx/die.hpp>
 #include <tlx/math/aggregate.hpp>
-#include <iomanip>
+#include <cstddef>
 
 void test_integer()
 {

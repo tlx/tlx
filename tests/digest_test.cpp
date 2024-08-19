@@ -14,6 +14,8 @@
 #include <tlx/digest/sha256.hpp>
 #include <tlx/digest/sha512.hpp>
 #include <tlx/string/hexdump.hpp>
+#include <utility>
+#include <vector>
 
 using namespace tlx;
 

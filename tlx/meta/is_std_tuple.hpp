@@ -12,6 +12,7 @@
 #define TLX_META_IS_STD_TUPLE_HEADER
 
 #include <tuple>
+#include <type_traits>
 
 namespace tlx {
 

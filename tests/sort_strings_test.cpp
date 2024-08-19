@@ -11,11 +11,19 @@
  ******************************************************************************/
 
 #include "sort_strings_test.hpp"
+#include <tlx/container/simple_vector.hpp>
+#include <tlx/logger.hpp>
 #include <tlx/sort/strings.hpp>
 #include <tlx/sort/strings/insertion_sort.hpp>
 #include <tlx/sort/strings/multikey_quicksort.hpp>
 #include <tlx/sort/strings/radix_sort.hpp>
+#include <tlx/timestamp.hpp>
+#include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <cstdlib>
+#include <random>
+#include <string>
 
 void TestFrontend(const size_t num_strings, const size_t num_chars,
                   const std::string& letters)
@@ -51,7 +59,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
                  .check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
     }
 
@@ -76,7 +84,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
                  .check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
     }
 
@@ -102,12 +110,12 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
         if (!ss.check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
         if (!check_lcp(ss, lcp.data()))
         {
             LOG1 << "LCP result is not correct!";
-            abort();
+            std::abort();
         }
     }
 

@@ -9,6 +9,8 @@
  ******************************************************************************/
 
 #include <tlx/string/bitdump.hpp>
+#include <cstddef>
+#include <string>
 
 namespace tlx {
 

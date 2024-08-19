@@ -11,8 +11,7 @@
 #ifndef TLX_META_FOLD_LEFT_HEADER
 #define TLX_META_FOLD_LEFT_HEADER
 
-#include <tlx/meta/index_sequence.hpp>
-#include <tuple>
+#include <utility>
 
 namespace tlx {
 

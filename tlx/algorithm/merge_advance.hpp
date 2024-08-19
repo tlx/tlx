@@ -19,6 +19,7 @@
 #define TLX_ALGORITHM_MERGE_ADVANCE_HEADER
 
 #include <algorithm>
+#include <iterator>
 
 namespace tlx {
 

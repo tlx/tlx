@@ -10,7 +10,7 @@
 
 #include <tlx/string/compare_icase.hpp>
 #include <tlx/string/to_lower.hpp>
-#include <algorithm>
+#include <string>
 
 namespace tlx {
 

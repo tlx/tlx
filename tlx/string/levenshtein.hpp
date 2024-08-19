@@ -11,7 +11,7 @@
 #ifndef TLX_STRING_LEVENSHTEIN_HEADER
 #define TLX_STRING_LEVENSHTEIN_HEADER
 
-#include <tlx/simple_vector.hpp>
+#include <tlx/container/simple_vector.hpp>
 #include <tlx/string/to_lower.hpp>
 #include <algorithm>
 #include <cstring>

@@ -13,13 +13,18 @@
 #ifndef TLX_TESTS_SORT_STRINGS_TEST_HEADER
 #define TLX_TESTS_SORT_STRINGS_TEST_HEADER
 
+#include <tlx/container/simple_vector.hpp>
 #include <tlx/logger.hpp>
-#include <tlx/simple_vector.hpp>
 #include <tlx/sort/strings/string_ptr.hpp>
+#include <tlx/sort/strings/string_set.hpp>
 #include <tlx/timestamp.hpp>
-#include <chrono>
+#include <cstddef>
 #include <cstdint>
+#include <cstdlib>
+#include <memory>
 #include <random>
+#include <string>
+#include <vector>
 
 #if TLX_MORE_TESTS
 static const bool tlx_more_tests = true;
@@ -132,7 +137,7 @@ void TestUCharString(const char* name, const size_t num_strings,
         if (!ss.check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
     }
     else
@@ -155,12 +160,12 @@ void TestUCharString(const char* name, const size_t num_strings,
         if (!ss.check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
         if (!check_lcp(ss, lcp.data()))
         {
             LOG1 << "LCP result is not correct!";
-            abort();
+            std::abort();
         }
     }
 
@@ -214,7 +219,7 @@ void TestVectorStdString(const char* name, const size_t num_strings,
         if (!ss.check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
     }
     else
@@ -237,12 +242,12 @@ void TestVectorStdString(const char* name, const size_t num_strings,
         if (!ss.check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
         if (!check_lcp(ss, lcp.data()))
         {
             LOG1 << "LCP result is not correct!";
-            abort();
+            std::abort();
         }
     }
 }
@@ -289,7 +294,7 @@ void TestUPtrStdString(const char* name, const size_t num_strings,
         if (!ss.check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
     }
     else
@@ -313,12 +318,12 @@ void TestUPtrStdString(const char* name, const size_t num_strings,
         if (!ss.check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
         if (!check_lcp(ss, lcp.data()))
         {
             LOG1 << "LCP result is not correct!";
-            abort();
+            std::abort();
         }
     }
 }
@@ -353,7 +358,7 @@ void TestStringSuffixString(const char* name, const size_t num_chars,
     if (!ss.check_order())
     {
         LOG1 << "Result is not sorted!";
-        abort();
+        std::abort();
     }
 }
 

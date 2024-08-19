@@ -13,7 +13,9 @@
 
 #include <tlx/meta/fold_left.hpp>
 #include <tlx/meta/index_sequence.hpp>
+#include <cstddef>
 #include <tuple>
+#include <type_traits>
 
 namespace tlx {
 

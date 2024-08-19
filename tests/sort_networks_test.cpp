@@ -9,10 +9,10 @@
  ******************************************************************************/
 
 #include <tlx/die.hpp>
-#include <tlx/logger.hpp>
 #include <tlx/sort/networks/best.hpp>
 #include <tlx/sort/networks/bose_nelson.hpp>
 #include <tlx/sort/networks/bose_nelson_parameter.hpp>
+#include <algorithm>
 #include <functional>
 #include <iostream>
 #include <random>

@@ -13,8 +13,11 @@
 
 #include <tlx/die.hpp>
 #include <tlx/thread_pool.hpp>
+#include <atomic>
+#include <chrono>
+#include <cstddef>
 #include <numeric>
-#include <string>
+#include <thread>
 #include <vector>
 
 void test_loop_until_empty()

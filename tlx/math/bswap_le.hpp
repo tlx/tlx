@@ -15,7 +15,7 @@
 #define TLX_MATH_BSWAP_LE_HEADER
 
 #include <tlx/define/endian.hpp>
-#include <tlx/math/bswap.hpp>
+#include <tlx/math/bswap.hpp> // NOLINT(misc-include-cleaner)
 #include <cstdint>
 
 namespace tlx {

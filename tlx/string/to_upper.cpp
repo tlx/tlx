@@ -10,6 +10,7 @@
 
 #include <tlx/string/to_upper.hpp>
 #include <algorithm>
+#include <string>
 
 namespace tlx {
 

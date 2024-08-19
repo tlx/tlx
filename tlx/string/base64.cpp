@@ -9,8 +9,10 @@
  ******************************************************************************/
 
 #include <tlx/string/base64.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <stdexcept>
+#include <string>
 
 namespace tlx {
 

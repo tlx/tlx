@@ -13,6 +13,7 @@
 
 #include <tlx/die.hpp>
 #include <tlx/multi_timer.hpp>
+#include <chrono>
 #include <thread>
 
 int main()

@@ -12,6 +12,7 @@
 #define TLX_META_VMAP_FOREACH_WITH_INDEX_HEADER
 
 #include <tlx/meta/static_index.hpp>
+#include <cstddef>
 #include <tuple>
 #include <utility>
 

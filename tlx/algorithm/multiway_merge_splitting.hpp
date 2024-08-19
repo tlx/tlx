@@ -19,8 +19,10 @@
 #define TLX_ALGORITHM_MULTIWAY_MERGE_SPLITTING_HEADER
 
 #include <tlx/algorithm/multisequence_partition.hpp>
-#include <tlx/simple_vector.hpp>
+#include <tlx/container/simple_vector.hpp>
 #include <algorithm>
+#include <cstddef>
+#include <iterator>
 #include <vector>
 
 namespace tlx {

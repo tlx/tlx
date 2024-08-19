@@ -1,0 +1,8 @@
+---
+Checks:
+  - "-*"
+  - "misc-include-cleaner"
+
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
+FormatStyle: file

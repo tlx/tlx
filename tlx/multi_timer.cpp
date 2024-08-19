@@ -12,6 +12,10 @@
 #include <tlx/logger/core.hpp>
 #include <tlx/multi_timer.hpp>
 #include <tlx/string/hash_djb2.hpp>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <mutex>
 
@@ -54,7 +58,7 @@ MultiTimer::Entry& MultiTimer::find_or_create(const char* name)
     std::uint32_t hash = hash_djb2(name);
     for (size_t i = 0; i < timers_.size(); ++i)
     {
-        if (timers_[i].hash == hash && strcmp(timers_[i].name, name) == 0)
+        if (timers_[i].hash == hash && std::strcmp(timers_[i].name, name) == 0)
             return timers_[i];
     }
     Entry new_entry;

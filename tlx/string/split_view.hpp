@@ -14,6 +14,7 @@
 #define TLX_STRING_SPLIT_VIEW_HEADER
 
 #include <tlx/container/string_view.hpp>
+#include <string>
 
 namespace tlx {
 

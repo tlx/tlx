@@ -13,6 +13,8 @@
 
 #include <tlx/logger/core.hpp>
 #include <array>
+#include <cstddef>
+#include <ostream>
 
 namespace tlx {
 

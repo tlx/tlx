@@ -12,6 +12,7 @@
 #define TLX_LOGGER_SET_HEADER
 
 #include <tlx/logger/core.hpp>
+#include <ostream>
 #include <set>
 
 namespace tlx {

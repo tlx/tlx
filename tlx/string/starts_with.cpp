@@ -11,6 +11,7 @@
 #include <tlx/string/starts_with.hpp>
 #include <tlx/string/to_lower.hpp>
 #include <algorithm>
+#include <string>
 
 namespace tlx {
 

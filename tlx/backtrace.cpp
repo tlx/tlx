@@ -9,9 +9,7 @@
  ******************************************************************************/
 
 #include <tlx/backtrace.hpp>
-
 #include <tlx/unused.hpp>
-
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -36,8 +34,9 @@
 
 namespace tlx {
 
-void print_raw_backtrace(FILE* out, unsigned int max_frames,
-                         const char* fmt, ...) {
+void print_raw_backtrace(FILE* out, unsigned int max_frames, const char* fmt,
+                         ...)
+{
     char buffer[1024];
     size_t p = 0;
 
@@ -49,13 +48,14 @@ void print_raw_backtrace(FILE* out, unsigned int max_frames,
 #if TLX_HAVE_BACKTRACE_FUNC
 
     // storage array for stack trace address data
-    void** addrlist = reinterpret_cast<void**>(
-        alloca(sizeof(void*) * max_frames));
+    void** addrlist =
+        reinterpret_cast<void**>(alloca(sizeof(void*) * max_frames));
 
     // retrieve current stack addresses
     int addrlen = backtrace(addrlist, max_frames);
 
-    for (int i = 1; i < addrlen; ++i) {
+    for (int i = 1; i < addrlen; ++i)
+    {
         if (addrlist[i] == nullptr)
             break;
 
@@ -75,23 +75,26 @@ void print_raw_backtrace(FILE* out, unsigned int max_frames,
     va_end(args);
 }
 
-void print_raw_backtrace(FILE* out, unsigned int max_frames) {
+void print_raw_backtrace(FILE* out, unsigned int max_frames)
+{
     return print_raw_backtrace(out, max_frames, "backtrace:");
 }
 
-void print_cxx_backtrace(FILE* out, unsigned int max_frames) {
+void print_cxx_backtrace(FILE* out, unsigned int max_frames)
+{
     fprintf(out, "backtrace:\n");
 
 #if TLX_HAVE_BACKTRACE_FUNC
 
     // storage array for stack trace address data
-    void** addrlist = reinterpret_cast<void**>(
-        alloca(sizeof(void*) * max_frames));
+    void** addrlist =
+        reinterpret_cast<void**>(alloca(sizeof(void*) * max_frames));
 
     // retrieve current stack addresses
     int addrlen = backtrace(addrlist, max_frames);
 
-    if (addrlen == 0) {
+    if (addrlen == 0)
+    {
         fprintf(out, "  <empty, possibly corrupt>\n");
         return;
     }
@@ -108,7 +111,7 @@ void print_cxx_backtrace(FILE* out, unsigned int max_frames) {
     // address of this function.
     for (int i = 1; i < addrlen; i++)
     {
-        char* begin_name = 0, * begin_offset = 0, * end_offset = 0;
+        char *begin_name = 0, *begin_offset = 0, *end_offset = 0;
 
         // find parentheses and +address offset surrounding the mangled name:
         // ./module(function+0x15c) [0x8048a6d]
@@ -118,14 +121,15 @@ void print_cxx_backtrace(FILE* out, unsigned int max_frames) {
                 begin_name = p;
             else if (*p == '+')
                 begin_offset = p;
-            else if (*p == ')' && begin_offset) {
+            else if (*p == ')' && begin_offset)
+            {
                 end_offset = p;
                 break;
             }
         }
 
-        if (begin_name && begin_offset && end_offset
-            && begin_name < begin_offset)
+        if (begin_name && begin_offset && end_offset &&
+            begin_name < begin_offset)
         {
             *begin_name++ = '\0';
             *begin_offset++ = '\0';
@@ -136,18 +140,20 @@ void print_cxx_backtrace(FILE* out, unsigned int max_frames) {
             // __cxa_demangle():
 
             int status;
-            char* ret = abi::__cxa_demangle(begin_name,
-                                            funcname, &funcnamesize, &status);
-            if (status == 0) {
+            char* ret = abi::__cxa_demangle(begin_name, funcname, &funcnamesize,
+                                            &status);
+            if (status == 0)
+            {
                 funcname = ret; // use possibly realloc()-ed string
-                fprintf(out, "  %s : %s+%s\n",
-                        symbollist[i], funcname, begin_offset);
+                fprintf(out, "  %s : %s+%s\n", symbollist[i], funcname,
+                        begin_offset);
             }
-            else {
+            else
+            {
                 // demangling failed. Output function name as a C function with
                 // no arguments.
-                fprintf(out, "  %s : %s()+%s\n",
-                        symbollist[i], begin_name, begin_offset);
+                fprintf(out, "  %s : %s()+%s\n", symbollist[i], begin_name,
+                        begin_offset);
             }
         }
         else
@@ -169,7 +175,8 @@ void print_cxx_backtrace(FILE* out, unsigned int max_frames) {
 
 #if TLX_HAVE_BACKTRACE_FUNC
 
-static void segv_backtrace_handler(int sig) {
+static void segv_backtrace_handler(int sig)
+{
     tlx::unused(sig);
 
     void* addr[16];
@@ -184,7 +191,8 @@ static void segv_backtrace_handler(int sig) {
 
 #endif
 
-void enable_segv_backtrace() {
+void enable_segv_backtrace()
+{
 #if TLX_HAVE_BACKTRACE_FUNC
     signal(SIGSEGV, segv_backtrace_handler);
 #else

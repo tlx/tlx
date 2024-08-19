@@ -25,8 +25,8 @@ namespace tlx {
  * parsed correctly. If no units indicator is given, use def_unit in k/m/g/t/p
  * (powers of ten) or in K/M/G/T/P (power of two).
  */
-bool parse_si_iec_units(
-    const char* str, std::uint64_t* out_size, char default_unit = 0);
+bool parse_si_iec_units(const char* str, std::uint64_t* out_size,
+                        char default_unit = 0);
 
 /*!
  * Parse a string like "343KB" or "44 GiB" into the corresponding size in
@@ -34,8 +34,8 @@ bool parse_si_iec_units(
  * parsed correctly. If no units indicator is given, use def_unit in k/m/g/t/p
  * (powers of ten) or in K/M/G/T/P (power of two).
  */
-bool parse_si_iec_units(
-    const std::string& str, std::uint64_t* out_size, char default_unit = 0);
+bool parse_si_iec_units(const std::string& str, std::uint64_t* out_size,
+                        char default_unit = 0);
 
 //! \}
 

@@ -20,7 +20,7 @@ namespace tlx {
 // __attribute__ ((visibility ("hidden")))
 
 #if defined(__GNUC__) || defined(__clang__)
-#define TLX_VISIBILITY_HIDDEN __attribute__ ((visibility("hidden")))
+#define TLX_VISIBILITY_HIDDEN __attribute__((visibility("hidden")))
 #else
 #define TLX_VISIBILITY_HIDDEN
 #endif

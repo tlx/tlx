@@ -81,9 +81,9 @@ std::vector<std::string> split(
  * \param limit       maximum number of parts returned
  * \return            vector containing each split substring
  */
-std::vector<std::string> split(
-    char sep, const std::string& str,
-    std::string::size_type min_fields, std::string::size_type limit);
+std::vector<std::string> split(char sep, const std::string& str,
+                               std::string::size_type min_fields,
+                               std::string::size_type limit);
 
 /*!
  * Split the given string at each separator string into distinct substrings.
@@ -97,9 +97,9 @@ std::vector<std::string> split(
  * \param limit       maximum number of parts returned
  * \return            vector containing each split substring
  */
-std::vector<std::string> split(
-    const char* sep, const std::string& str,
-    std::string::size_type min_fields, std::string::size_type limit);
+std::vector<std::string> split(const char* sep, const std::string& str,
+                               std::string::size_type min_fields,
+                               std::string::size_type limit);
 
 /*!
  * Split the given string at each separator string into distinct substrings.
@@ -113,9 +113,9 @@ std::vector<std::string> split(
  * \param limit       maximum number of parts returned
  * \return            vector containing each split substring
  */
-std::vector<std::string> split(
-    const std::string& sep, const std::string& str,
-    std::string::size_type min_fields, std::string::size_type limit);
+std::vector<std::string> split(const std::string& sep, const std::string& str,
+                               std::string::size_type min_fields,
+                               std::string::size_type limit);
 
 /******************************************************************************/
 // split() into std::vector<std::string>
@@ -132,8 +132,7 @@ std::vector<std::string> split(
  * \return       vector containing each split substring
  */
 std::vector<std::string>& split(
-    std::vector<std::string>* into,
-    char sep, const std::string& str,
+    std::vector<std::string>* into, char sep, const std::string& str,
     std::string::size_type limit = std::string::npos);
 
 /*!
@@ -148,8 +147,7 @@ std::vector<std::string>& split(
  * \return       vector containing each split substring
  */
 std::vector<std::string>& split(
-    std::vector<std::string>* into,
-    const char* sep, const std::string& str,
+    std::vector<std::string>* into, const char* sep, const std::string& str,
     std::string::size_type limit = std::string::npos);
 
 /*!
@@ -164,9 +162,8 @@ std::vector<std::string>& split(
  * \return       vector containing each split substring
  */
 std::vector<std::string>& split(
-    std::vector<std::string>* into,
-    const std::string& sep, const std::string& str,
-    std::string::size_type limit = std::string::npos);
+    std::vector<std::string>* into, const std::string& sep,
+    const std::string& str, std::string::size_type limit = std::string::npos);
 
 /******************************************************************************/
 // split() into std::vector<std::string> with minimum fields
@@ -184,10 +181,10 @@ std::vector<std::string>& split(
  * \param limit       maximum number of parts returned
  * \return            vector containing each split substring
  */
-std::vector<std::string>& split(
-    std::vector<std::string>* into,
-    char sep, const std::string& str,
-    std::string::size_type min_fields, std::string::size_type limit);
+std::vector<std::string>& split(std::vector<std::string>* into, char sep,
+                                const std::string& str,
+                                std::string::size_type min_fields,
+                                std::string::size_type limit);
 
 /*!
  * Split the given string at each separator string into distinct substrings.
@@ -202,10 +199,10 @@ std::vector<std::string>& split(
  * \param limit       maximum number of parts returned
  * \return            vector containing each split substring
  */
-std::vector<std::string>& split(
-    std::vector<std::string>* into,
-    const char* sep, const std::string& str,
-    std::string::size_type min_fields, std::string::size_type limit);
+std::vector<std::string>& split(std::vector<std::string>* into, const char* sep,
+                                const std::string& str,
+                                std::string::size_type min_fields,
+                                std::string::size_type limit);
 
 /*!
  * Split the given string at each separator string into distinct substrings.
@@ -220,10 +217,10 @@ std::vector<std::string>& split(
  * \param limit       maximum number of parts returned
  * \return            vector containing each split substring
  */
-std::vector<std::string>& split(
-    std::vector<std::string>* into,
-    const std::string& sep, const std::string& str,
-    std::string::size_type min_fields, std::string::size_type limit);
+std::vector<std::string>& split(std::vector<std::string>* into,
+                                const std::string& sep, const std::string& str,
+                                std::string::size_type min_fields,
+                                std::string::size_type limit);
 
 //! \}
 //! \}

@@ -12,7 +12,8 @@
 
 namespace tlx {
 
-std::string pad(const std::string& s, size_t len, char pad_char) {
+std::string pad(const std::string& s, size_t len, char pad_char)
+{
     std::string str = s;
     str.resize(len, pad_char);
     return str;

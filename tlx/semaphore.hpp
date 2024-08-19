@@ -27,47 +27,63 @@ class Semaphore
 {
 public:
     //! construct semaphore
-    explicit Semaphore(size_t initial_value = 0)
-        : value_(initial_value) { }
+    explicit Semaphore(size_t initial_value = 0) : value_(initial_value)
+    {
+    }
 
     //! non-copyable: delete copy-constructor
     Semaphore(const Semaphore&) = delete;
     //! non-copyable: delete assignment operator
-    Semaphore& operator = (const Semaphore&) = delete;
+    Semaphore& operator=(const Semaphore&) = delete;
+
     //! move-constructor: just move the value
-    Semaphore(Semaphore&& s) : value_(s.value_) { }
+    Semaphore(Semaphore&& s) : value_(s.value_)
+    {
+    }
+
     //! move-assignment: just move the value
-    Semaphore& operator = (Semaphore&& s) { value_ = s.value_; return *this; }
+    Semaphore& operator=(Semaphore&& s)
+    {
+        value_ = s.value_;
+        return *this;
+    }
 
     //! function increments the semaphore and signals any threads that are
     //! blocked waiting a change in the semaphore
-    size_t signal() {
+    size_t signal()
+    {
         std::unique_lock<std::mutex> lock(mutex_);
         size_t res = ++value_;
         cv_.notify_one();
         return res;
     }
+
     //! function increments the semaphore and signals any threads that are
     //! blocked waiting a change in the semaphore
-    size_t signal(size_t delta) {
+    size_t signal(size_t delta)
+    {
         std::unique_lock<std::mutex> lock(mutex_);
         size_t res = (value_ += delta);
         cv_.notify_all();
         return res;
     }
+
     //! function decrements the semaphore by delta and blocks if the semaphore
     //! is < (delta + slack) until another thread signals a change
-    size_t wait(size_t delta = 1, size_t slack = 0) {
+    size_t wait(size_t delta = 1, size_t slack = 0)
+    {
         std::unique_lock<std::mutex> lock(mutex_);
         while (value_ < delta + slack)
             cv_.wait(lock);
         value_ -= delta;
         return value_;
     }
+
     //! function decrements the semaphore by delta if (delta + slack) tokens are
     //! available as a batch. the function will not block and returns true if
     //! delta was acquired otherwise false.
-    bool try_acquire(size_t delta = 1, size_t slack = 0) {
+    bool try_acquire(size_t delta = 1, size_t slack = 0)
+    {
         std::unique_lock<std::mutex> lock(mutex_);
         if (value_ < delta + slack)
             return false;
@@ -76,7 +92,10 @@ public:
     }
 
     //! return the current value -- should only be used for debugging.
-    size_t value() const { return value_; }
+    size_t value() const
+    {
+        return value_;
+    }
 
 private:
     //! value of the semaphore

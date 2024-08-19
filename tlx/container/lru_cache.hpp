@@ -52,20 +52,24 @@ protected:
 
 public:
     explicit LruCacheSet(const Alloc& alloc = Alloc())
-        : list_(alloc),
-          map_(0, std::hash<Key>(), std::equal_to<Key>(), alloc) { }
+        : list_(alloc), map_(0, std::hash<Key>(), std::equal_to<Key>(), alloc)
+    {
+    }
 
     //! clear LRU
-    void clear() {
+    void clear()
+    {
         list_.clear();
         map_.clear();
     }
 
     //! put or replace/touch item in LRU cache
-    void put(const Key& key) {
+    void put(const Key& key)
+    {
         // first try to find an existing key
         typename Map::iterator it = map_.find(key);
-        if (it != map_.end()) {
+        if (it != map_.end())
+        {
             list_.erase(it->second);
             map_.erase(it);
         }
@@ -77,21 +81,21 @@ public:
     }
 
     //! touch value from LRU cache for key.
-    void touch(const Key& key) {
+    void touch(const Key& key)
+    {
         typename Map::iterator it = map_.find(key);
-        if (it == map_.end()) {
+        if (it == map_.end())
             throw std::range_error("There is no such key in cache");
-        }
-        else {
 
-            list_.splice(list_.begin(), list_, it->second);
-        }
+        list_.splice(list_.begin(), list_, it->second);
     }
 
     //! touch value from LRU cache for key.
-    bool touch_if_exists(const Key& key) noexcept {
+    bool touch_if_exists(const Key& key) noexcept
+    {
         typename Map::iterator it = map_.find(key);
-        if (it != map_.end()) {
+        if (it != map_.end())
+        {
             list_.splice(list_.begin(), list_, it->second);
             return true;
         }
@@ -99,21 +103,22 @@ public:
     }
 
     //! remove key from LRU cache
-    void erase(const Key& key) {
+    void erase(const Key& key)
+    {
         typename Map::iterator it = map_.find(key);
-        if (it == map_.end()) {
+        if (it == map_.end())
             throw std::range_error("There is no such key in cache");
-        }
-        else {
-            list_.erase(it->second);
-            map_.erase(it);
-        }
+
+        list_.erase(it->second);
+        map_.erase(it);
     }
 
     //! remove key from LRU cache
-    bool erase_if_exists(const Key& key) noexcept {
+    bool erase_if_exists(const Key& key) noexcept
+    {
         typename Map::iterator it = map_.find(key);
-        if (it != map_.end()) {
+        if (it != map_.end())
+        {
             list_.erase(it->second);
             map_.erase(it);
             return true;
@@ -122,17 +127,20 @@ public:
     }
 
     //! test if key exists in LRU cache
-    bool exists(const Key& key) const {
+    bool exists(const Key& key) const
+    {
         return map_.find(key) != map_.end();
     }
 
     //! return number of items in LRU cache
-    size_t size() const noexcept {
+    size_t size() const noexcept
+    {
         return map_.size();
     }
 
     //! return the least recently used key value pair
-    Key pop() {
+    Key pop()
+    {
         assert(size());
         typename List::iterator last = list_.end();
         --last;
@@ -176,20 +184,24 @@ protected:
 
 public:
     explicit LruCacheMap(const Alloc& alloc = Alloc())
-        : list_(alloc),
-          map_(0, std::hash<Key>(), std::equal_to<Key>(), alloc) { }
+        : list_(alloc), map_(0, std::hash<Key>(), std::equal_to<Key>(), alloc)
+    {
+    }
 
     //! clear LRU
-    void clear() {
+    void clear()
+    {
         list_.clear();
         map_.clear();
     }
 
     //! put or replace/touch item in LRU cache
-    void put(const Key& key, const Value& value) {
+    void put(const Key& key, const Value& value)
+    {
         // first try to find an existing key
         typename Map::iterator it = map_.find(key);
-        if (it != map_.end()) {
+        if (it != map_.end())
+        {
             list_.erase(it->second);
             map_.erase(it);
         }
@@ -201,20 +213,21 @@ public:
     }
 
     //! touch pair in LRU cache for key. Throws if it is not in the map.
-    void touch(const Key& key) {
+    void touch(const Key& key)
+    {
         typename Map::iterator it = map_.find(key);
-        if (it == map_.end()) {
+        if (it == map_.end())
             throw std::range_error("There is no such key in cache");
-        }
-        else {
-            list_.splice(list_.begin(), list_, it->second);
-        }
+
+        list_.splice(list_.begin(), list_, it->second);
     }
 
     //! touch pair in LRU cache for key. Returns true if it exists.
-    bool touch_if_exists(const Key& key) noexcept {
+    bool touch_if_exists(const Key& key) noexcept
+    {
         typename Map::iterator it = map_.find(key);
-        if (it != map_.end()) {
+        if (it != map_.end())
+        {
             list_.splice(list_.begin(), list_, it->second);
             return true;
         }
@@ -222,21 +235,22 @@ public:
     }
 
     //! remove key from LRU cache
-    void erase(const Key& key) {
+    void erase(const Key& key)
+    {
         typename Map::iterator it = map_.find(key);
-        if (it == map_.end()) {
+        if (it == map_.end())
             throw std::range_error("There is no such key in cache");
-        }
-        else {
-            list_.erase(it->second);
-            map_.erase(it);
-        }
+
+        list_.erase(it->second);
+        map_.erase(it);
     }
 
     //! remove key from LRU cache
-    bool erase_if_exists(const Key& key) noexcept {
+    bool erase_if_exists(const Key& key) noexcept
+    {
         typename Map::iterator it = map_.find(key);
-        if (it != map_.end()) {
+        if (it != map_.end())
+        {
             list_.erase(it->second);
             map_.erase(it);
             return true;
@@ -245,40 +259,41 @@ public:
     }
 
     //! get and touch value from LRU cache for key.
-    const Value& get(const Key& key) {
+    const Value& get(const Key& key)
+    {
         typename Map::iterator it = map_.find(key);
-        if (it == map_.end()) {
+        if (it == map_.end())
             throw std::range_error("There is no such key in cache");
-        }
-        else {
-            return it->second->second;
-        }
+
+        return it->second->second;
     }
 
     //! get and touch value from LRU cache for key.
-    const Value& get_touch(const Key& key) {
+    const Value& get_touch(const Key& key)
+    {
         typename Map::iterator it = map_.find(key);
-        if (it == map_.end()) {
+        if (it == map_.end())
             throw std::range_error("There is no such key in cache");
-        }
-        else {
-            list_.splice(list_.begin(), list_, it->second);
-            return it->second->second;
-        }
+
+        list_.splice(list_.begin(), list_, it->second);
+        return it->second->second;
     }
 
     //! test if key exists in LRU cache
-    bool exists(const Key& key) const {
+    bool exists(const Key& key) const
+    {
         return map_.find(key) != map_.end();
     }
 
     //! return number of items in LRU cache
-    size_t size() const noexcept {
+    size_t size() const noexcept
+    {
         return map_.size();
     }
 
     //! return the least recently used key value pair
-    KeyValuePair pop() {
+    KeyValuePair pop()
+    {
         assert(size());
         typename List::iterator last = list_.end();
         --last;

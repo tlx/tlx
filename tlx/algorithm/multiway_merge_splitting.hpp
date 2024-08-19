@@ -18,11 +18,10 @@
 #ifndef TLX_ALGORITHM_MULTIWAY_MERGE_SPLITTING_HEADER
 #define TLX_ALGORITHM_MULTIWAY_MERGE_SPLITTING_HEADER
 
-#include <algorithm>
-#include <vector>
-
 #include <tlx/algorithm/multisequence_partition.hpp>
 #include <tlx/simple_vector.hpp>
+#include <algorithm>
+#include <vector>
 
 namespace tlx {
 
@@ -31,8 +30,9 @@ namespace tlx {
 
 /*!
  * Different splitting strategies for sorting/merging: by sampling, exact
-*/
-enum MultiwayMergeSplittingAlgorithm {
+ */
+enum MultiwayMergeSplittingAlgorithm
+{
     MWMSA_SAMPLING,
     MWMSA_EXACT,
     MWMSA_LAST,
@@ -54,14 +54,15 @@ namespace multiway_merge_detail {
  * \returns End of splitter sequence, i. e. \c s+p+1
  */
 template <typename DiffType, typename DiffTypeOutputIterator>
-DiffTypeOutputIterator equally_split(
-    DiffType n, size_t p, DiffTypeOutputIterator s) {
-
+DiffTypeOutputIterator equally_split(DiffType n, size_t p,
+                                     DiffTypeOutputIterator s)
+{
     DiffType chunk_length = n / p, split = n % p, start = 0;
     for (size_t i = 0; i < p; i++)
     {
         *s++ = start;
-        start += (static_cast<DiffType>(i) < split) ? (chunk_length + 1) : chunk_length;
+        start += (static_cast<DiffType>(i) < split) ? (chunk_length + 1) :
+                                                      chunk_length;
         if (start >= n)
             start = n - 1;
     }
@@ -87,34 +88,28 @@ DiffTypeOutputIterator equally_split(
  * \tparam Stable Stable merging incurs a performance penalty.
  * \return End iterator of output sequence.
  */
-template <
-    bool Stable,
-    typename RandomAccessIteratorIterator,
-    typename Comparator>
+template <bool Stable, typename RandomAccessIteratorIterator,
+          typename Comparator>
 void multiway_merge_sampling_splitting(
     const RandomAccessIteratorIterator& seqs_begin,
     const RandomAccessIteratorIterator& seqs_end,
-    typename std::iterator_traits<
-        typename std::iterator_traits<
-            RandomAccessIteratorIterator>::value_type::first_type>::
-    difference_type size,
-    typename std::iterator_traits<
-        typename std::iterator_traits<
-            RandomAccessIteratorIterator>::value_type::first_type>::
-    difference_type total_size,
+    typename std::iterator_traits<typename std::iterator_traits<
+        RandomAccessIteratorIterator>::value_type::first_type>::difference_type
+        size,
+    typename std::iterator_traits<typename std::iterator_traits<
+        RandomAccessIteratorIterator>::value_type::first_type>::difference_type
+        total_size,
     Comparator comp,
     std::vector<typename std::iterator_traits<
-                    RandomAccessIteratorIterator>::value_type>* chunks,
-    const size_t num_threads,
-    const size_t merge_oversampling) {
-
-    using RandomAccessIterator =
-        typename std::iterator_traits<RandomAccessIteratorIterator>
-        ::value_type::first_type;
-    using value_type = typename std::iterator_traits<RandomAccessIterator>
-                       ::value_type;
-    using DiffType = typename std::iterator_traits<RandomAccessIterator>
-                     ::difference_type;
+        RandomAccessIteratorIterator>::value_type>* chunks,
+    const size_t num_threads, const size_t merge_oversampling)
+{
+    using RandomAccessIterator = typename std::iterator_traits<
+        RandomAccessIteratorIterator>::value_type::first_type;
+    using value_type =
+        typename std::iterator_traits<RandomAccessIterator>::value_type;
+    using DiffType =
+        typename std::iterator_traits<RandomAccessIterator>::difference_type;
 
     const DiffType num_seqs = seqs_end - seqs_begin;
     const DiffType num_samples =
@@ -128,9 +123,9 @@ void multiway_merge_sampling_splitting(
         for (DiffType i = 0; i < num_samples; ++i)
         {
             DiffType sample_index = static_cast<DiffType>(
-                double(seqs_begin[s].second - seqs_begin[s].first)
-                * (double(i + 1) / double(num_samples + 1))
-                * (double(size) / double(total_size)));
+                double(seqs_begin[s].second - seqs_begin[s].first) *
+                (double(i + 1) / double(num_samples + 1)) *
+                (double(size) / double(total_size)));
             samples[s * num_samples + i] = seqs_begin[s].first[sample_index];
         }
     }
@@ -146,25 +141,27 @@ void multiway_merge_sampling_splitting(
         // for each sequence
         for (DiffType seq = 0; seq < num_seqs; ++seq)
         {
-            if (slab > 0) {
+            if (slab > 0)
+            {
+                chunks[slab][static_cast<size_t>(seq)].first = std::upper_bound(
+                    seqs_begin[seq].first, seqs_begin[seq].second,
+                    samples[num_samples * num_seqs * slab / num_threads], comp);
+            }
+            else // absolute beginning
                 chunks[slab][static_cast<size_t>(seq)].first =
-                    std::upper_bound(
-                        seqs_begin[seq].first, seqs_begin[seq].second,
-                        samples[num_samples * num_seqs * slab / num_threads],
-                        comp);
-            }
-            else        // absolute beginning
-                chunks[slab][static_cast<size_t>(seq)].first = seqs_begin[seq].first;
+                    seqs_begin[seq].first;
 
-            if ((slab + 1) < num_threads) {
-                chunks[slab][static_cast<size_t>(seq)].second =
-                    std::upper_bound(
-                        seqs_begin[seq].first, seqs_begin[seq].second,
-                        samples[num_samples * num_seqs * (slab + 1) / num_threads],
-                        comp);
+            if ((slab + 1) < num_threads)
+            {
+                chunks[slab][static_cast<size_t>(seq)]
+                    .second = std::upper_bound(
+                    seqs_begin[seq].first, seqs_begin[seq].second,
+                    samples[num_samples * num_seqs * (slab + 1) / num_threads],
+                    comp);
             }
-            else        // absolute ending
-                chunks[slab][static_cast<size_t>(seq)].second = seqs_begin[seq].second;
+            else // absolute ending
+                chunks[slab][static_cast<size_t>(seq)].second =
+                    seqs_begin[seq].second;
         }
     }
 }
@@ -183,33 +180,27 @@ void multiway_merge_sampling_splitting(
  * \tparam Stable Stable merging incurs a performance penalty.
  * \return End iterator of output sequence.
  */
-template <
-    bool Stable,
-    typename RandomAccessIteratorIterator,
-    typename Comparator>
+template <bool Stable, typename RandomAccessIteratorIterator,
+          typename Comparator>
 void multiway_merge_exact_splitting(
     const RandomAccessIteratorIterator& seqs_begin,
     const RandomAccessIteratorIterator& seqs_end,
-    typename std::iterator_traits<
-        typename std::iterator_traits<
-            RandomAccessIteratorIterator>::value_type::first_type>::
-    difference_type size,
-    typename std::iterator_traits<
-        typename std::iterator_traits<
-            RandomAccessIteratorIterator>::value_type::first_type>::
-    difference_type total_size,
+    typename std::iterator_traits<typename std::iterator_traits<
+        RandomAccessIteratorIterator>::value_type::first_type>::difference_type
+        size,
+    typename std::iterator_traits<typename std::iterator_traits<
+        RandomAccessIteratorIterator>::value_type::first_type>::difference_type
+        total_size,
     Comparator comp,
     std::vector<typename std::iterator_traits<
-                    RandomAccessIteratorIterator>::value_type>* chunks,
-    const size_t num_threads) {
-
+        RandomAccessIteratorIterator>::value_type>* chunks,
+    const size_t num_threads)
+{
     using RandomAccessIteratorPair =
-        typename std::iterator_traits<RandomAccessIteratorIterator>
-        ::value_type;
-    using RandomAccessIterator = typename RandomAccessIteratorPair
-                                 ::first_type;
-    using DiffType = typename std::iterator_traits<RandomAccessIterator>
-                     ::difference_type;
+        typename std::iterator_traits<RandomAccessIteratorIterator>::value_type;
+    using RandomAccessIterator = typename RandomAccessIteratorPair ::first_type;
+    using DiffType =
+        typename std::iterator_traits<RandomAccessIterator>::difference_type;
 
     const size_t num_seqs = static_cast<size_t>(seqs_end - seqs_begin);
     const bool tight = (total_size == size);
@@ -222,16 +213,15 @@ void multiway_merge_exact_splitting(
     for (size_t s = 0; s < (num_threads - 1); ++s)
     {
         offsets[s].resize(num_seqs);
-        multisequence_partition(
-            seqs_begin, seqs_end,
-            ranks[static_cast<size_t>(s + 1)], offsets[s].begin(), comp);
+        multisequence_partition(seqs_begin, seqs_end,
+                                ranks[static_cast<size_t>(s + 1)],
+                                offsets[s].begin(), comp);
 
         if (!tight) // last one also needed and available
         {
             offsets[num_threads - 1].resize(num_seqs);
-            multisequence_partition(
-                seqs_begin, seqs_end,
-                size, offsets[num_threads - 1].begin(), comp);
+            multisequence_partition(seqs_begin, seqs_end, size,
+                                    offsets[num_threads - 1].begin(), comp);
         }
     }
 
@@ -242,14 +232,16 @@ void multiway_merge_exact_splitting(
         for (size_t s = 0; s < num_seqs; ++s)
         {
             if (slab == 0) // absolute beginning
-                chunks[slab][s].first = seqs_begin[static_cast<DiffType>(s)].first;
+                chunks[slab][s].first =
+                    seqs_begin[static_cast<DiffType>(s)].first;
             else
                 chunks[slab][s].first = offsets[slab - 1][s];
 
             if (!tight || slab < (num_threads - 1))
                 chunks[slab][s].second = offsets[slab][s];
-            else        // slab == num_threads - 1
-                chunks[slab][s].second = seqs_begin[static_cast<DiffType>(s)].second;
+            else // slab == num_threads - 1
+                chunks[slab][s].second =
+                    seqs_begin[static_cast<DiffType>(s)].second;
         }
     }
 }

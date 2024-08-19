@@ -41,13 +41,14 @@ namespace tlx {
  * \return Output end iterator.
  */
 template <typename RandomAccessIterator1, typename RandomAccessIterator2,
-          typename OutputIterator,
-          typename DiffType, typename Comparator>
-OutputIterator
-merge_advance_usual(RandomAccessIterator1& begin1, RandomAccessIterator1 end1,
-                    RandomAccessIterator2& begin2, RandomAccessIterator2 end2,
-                    OutputIterator target, DiffType max_size,
-                    Comparator comp) {
+          typename OutputIterator, typename DiffType, typename Comparator>
+OutputIterator merge_advance_usual(RandomAccessIterator1& begin1,
+                                   RandomAccessIterator1 end1,
+                                   RandomAccessIterator2& begin2,
+                                   RandomAccessIterator2 end2,
+                                   OutputIterator target, DiffType max_size,
+                                   Comparator comp)
+{
     while (begin1 != end1 && begin2 != end2 && max_size > 0)
     {
         // array1[i1] < array0[i0]
@@ -88,15 +89,18 @@ merge_advance_usual(RandomAccessIterator1& begin1, RandomAccessIterator1 end1,
  * \return Output end iterator.
  */
 template <typename RandomAccessIterator1, typename RandomAccessIterator2,
-          typename OutputIterator,
-          typename DiffType, typename Comparator>
-OutputIterator
-merge_advance_movc(RandomAccessIterator1& begin1, RandomAccessIterator1 end1,
-                   RandomAccessIterator2& begin2, RandomAccessIterator2 end2,
-                   OutputIterator target,
-                   DiffType max_size, Comparator comp) {
-    using ValueType1 = typename std::iterator_traits<RandomAccessIterator1>::value_type;
-    using ValueType2 = typename std::iterator_traits<RandomAccessIterator2>::value_type;
+          typename OutputIterator, typename DiffType, typename Comparator>
+OutputIterator merge_advance_movc(RandomAccessIterator1& begin1,
+                                  RandomAccessIterator1 end1,
+                                  RandomAccessIterator2& begin2,
+                                  RandomAccessIterator2 end2,
+                                  OutputIterator target, DiffType max_size,
+                                  Comparator comp)
+{
+    using ValueType1 =
+        typename std::iterator_traits<RandomAccessIterator1>::value_type;
+    using ValueType2 =
+        typename std::iterator_traits<RandomAccessIterator2>::value_type;
 
     while (begin1 != end1 && begin2 != end2 && max_size > 0)
     {
@@ -152,15 +156,15 @@ merge_advance_movc(RandomAccessIterator1& begin1, RandomAccessIterator1 end1,
  * \return Output end iterator.
  */
 template <typename RandomAccessIterator1, typename RandomAccessIterator2,
-          typename OutputIterator,
-          typename DiffType, typename Comparator>
-OutputIterator
-merge_advance(RandomAccessIterator1& begin1, RandomAccessIterator1 end1,
-              RandomAccessIterator2& begin2, RandomAccessIterator2 end2,
-              OutputIterator target,
-              DiffType max_size, Comparator comp) {
-    return merge_advance_movc(
-        begin1, end1, begin2, end2, target, max_size, comp);
+          typename OutputIterator, typename DiffType, typename Comparator>
+OutputIterator merge_advance(RandomAccessIterator1& begin1,
+                             RandomAccessIterator1 end1,
+                             RandomAccessIterator2& begin2,
+                             RandomAccessIterator2 end2, OutputIterator target,
+                             DiffType max_size, Comparator comp)
+{
+    return merge_advance_movc(begin1, end1, begin2, end2, target, max_size,
+                              comp);
 }
 
 //! \}

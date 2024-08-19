@@ -17,9 +17,9 @@ namespace tlx {
 //! \{
 
 #if __cplusplus >= 201402L
-    #define TLX_ADVANCED_CONSTEXPR constexpr
+#define TLX_ADVANCED_CONSTEXPR constexpr
 #else
-    #define TLX_ADVANCED_CONSTEXPR inline
+#define TLX_ADVANCED_CONSTEXPR inline
 #endif
 
 //! \}

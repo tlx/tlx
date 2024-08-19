@@ -9,7 +9,6 @@
  ******************************************************************************/
 
 #include <tlx/string/replace.hpp>
-
 #include <algorithm>
 #include <cstring>
 
@@ -18,9 +17,9 @@ namespace tlx {
 /******************************************************************************/
 // replace_first() in-place
 
-std::string& replace_first(
-    std::string* str, const std::string& needle, const std::string& instead) {
-
+std::string& replace_first(std::string* str, const std::string& needle,
+                           const std::string& instead)
+{
     std::string::size_type firstpos = str->find(needle);
 
     if (firstpos != std::string::npos)
@@ -29,9 +28,9 @@ std::string& replace_first(
     return *str;
 }
 
-std::string& replace_first(
-    std::string* str, const std::string& needle, const char* instead) {
-
+std::string& replace_first(std::string* str, const std::string& needle,
+                           const char* instead)
+{
     std::string::size_type firstpos = str->find(needle);
 
     if (firstpos != std::string::npos)
@@ -40,9 +39,9 @@ std::string& replace_first(
     return *str;
 }
 
-std::string& replace_first(
-    std::string* str, const char* needle, const std::string& instead) {
-
+std::string& replace_first(std::string* str, const char* needle,
+                           const std::string& instead)
+{
     std::string::size_type firstpos = str->find(needle);
 
     if (firstpos != std::string::npos)
@@ -51,9 +50,9 @@ std::string& replace_first(
     return *str;
 }
 
-std::string& replace_first(
-    std::string* str, const char* needle, const char* instead) {
-
+std::string& replace_first(std::string* str, const char* needle,
+                           const char* instead)
+{
     std::string::size_type firstpos = str->find(needle);
 
     if (firstpos != std::string::npos)
@@ -62,8 +61,8 @@ std::string& replace_first(
     return *str;
 }
 
-std::string& replace_first(std::string* str, char needle, char instead) {
-
+std::string& replace_first(std::string* str, char needle, char instead)
+{
     std::string::size_type firstpos = str->find(needle);
 
     if (firstpos != std::string::npos)
@@ -75,10 +74,9 @@ std::string& replace_first(std::string* str, char needle, char instead) {
 /******************************************************************************/
 // replace_first() copy
 
-std::string replace_first(
-    const std::string& str,
-    const std::string& needle, const std::string& instead) {
-
+std::string replace_first(const std::string& str, const std::string& needle,
+                          const std::string& instead)
+{
     std::string newstr = str;
     std::string::size_type firstpos = newstr.find(needle);
 
@@ -88,9 +86,9 @@ std::string replace_first(
     return newstr;
 }
 
-std::string replace_first(
-    const std::string& str, const std::string& needle, const char* instead) {
-
+std::string replace_first(const std::string& str, const std::string& needle,
+                          const char* instead)
+{
     std::string newstr = str;
     std::string::size_type firstpos = newstr.find(needle);
 
@@ -100,9 +98,9 @@ std::string replace_first(
     return newstr;
 }
 
-std::string replace_first(
-    const std::string& str, const char* needle, const std::string& instead) {
-
+std::string replace_first(const std::string& str, const char* needle,
+                          const std::string& instead)
+{
     std::string newstr = str;
     std::string::size_type firstpos = newstr.find(needle);
 
@@ -112,9 +110,9 @@ std::string replace_first(
     return newstr;
 }
 
-std::string replace_first(
-    const std::string& str, const char* needle, const char* instead) {
-
+std::string replace_first(const std::string& str, const char* needle,
+                          const char* instead)
+{
     std::string newstr = str;
     std::string::size_type firstpos = newstr.find(needle);
 
@@ -124,8 +122,8 @@ std::string replace_first(
     return newstr;
 }
 
-std::string replace_first(const std::string& str, char needle, char instead) {
-
+std::string replace_first(const std::string& str, char needle, char instead)
+{
     std::string newstr = str;
     std::string::size_type firstpos = newstr.find(needle);
 
@@ -138,9 +136,9 @@ std::string replace_first(const std::string& str, char needle, char instead) {
 /******************************************************************************/
 // replace_all() in-place
 
-std::string& replace_all(
-    std::string* str, const std::string& needle, const std::string& instead) {
-
+std::string& replace_all(std::string* str, const std::string& needle,
+                         const std::string& instead)
+{
     std::string::size_type lastpos = 0, thispos;
 
     while ((thispos = str->find(needle, lastpos)) != std::string::npos)
@@ -151,9 +149,9 @@ std::string& replace_all(
     return *str;
 }
 
-std::string& replace_all(
-    std::string* str, const std::string& needle, const char* instead) {
-
+std::string& replace_all(std::string* str, const std::string& needle,
+                         const char* instead)
+{
     std::string::size_type lastpos = 0, thispos;
     size_t instead_size = strlen(instead);
 
@@ -165,9 +163,9 @@ std::string& replace_all(
     return *str;
 }
 
-std::string& replace_all(
-    std::string* str, const char* needle, const std::string& instead) {
-
+std::string& replace_all(std::string* str, const char* needle,
+                         const std::string& instead)
+{
     std::string::size_type lastpos = 0, thispos;
     size_t needle_size = strlen(needle);
 
@@ -179,9 +177,9 @@ std::string& replace_all(
     return *str;
 }
 
-std::string& replace_all(
-    std::string* str, const char* needle, const char* instead) {
-
+std::string& replace_all(std::string* str, const char* needle,
+                         const char* instead)
+{
     std::string::size_type lastpos = 0, thispos;
     size_t needle_size = strlen(needle);
     size_t instead_size = strlen(instead);
@@ -194,8 +192,8 @@ std::string& replace_all(
     return *str;
 }
 
-std::string& replace_all(std::string* str, char needle, char instead) {
-
+std::string& replace_all(std::string* str, char needle, char instead)
+{
     std::string::size_type lastpos = 0, thispos;
 
     while ((thispos = str->find(needle, lastpos)) != std::string::npos)
@@ -209,10 +207,9 @@ std::string& replace_all(std::string* str, char needle, char instead) {
 /******************************************************************************/
 // replace_all() copy
 
-std::string replace_all(
-    const std::string& str,
-    const std::string& needle, const std::string& instead) {
-
+std::string replace_all(const std::string& str, const std::string& needle,
+                        const std::string& instead)
+{
     std::string newstr = str;
     std::string::size_type lastpos = 0, thispos;
 
@@ -224,9 +221,9 @@ std::string replace_all(
     return newstr;
 }
 
-std::string replace_all(
-    const std::string& str, const std::string& needle, const char* instead) {
-
+std::string replace_all(const std::string& str, const std::string& needle,
+                        const char* instead)
+{
     std::string newstr = str;
     std::string::size_type lastpos = 0, thispos;
     size_t instead_size = strlen(instead);
@@ -239,9 +236,9 @@ std::string replace_all(
     return newstr;
 }
 
-std::string replace_all(
-    const std::string& str, const char* needle, const std::string& instead) {
-
+std::string replace_all(const std::string& str, const char* needle,
+                        const std::string& instead)
+{
     std::string newstr = str;
     std::string::size_type lastpos = 0, thispos;
     size_t needle_size = strlen(needle);
@@ -254,9 +251,9 @@ std::string replace_all(
     return newstr;
 }
 
-std::string replace_all(
-    const std::string& str, const char* needle, const char* instead) {
-
+std::string replace_all(const std::string& str, const char* needle,
+                        const char* instead)
+{
     std::string newstr = str;
     std::string::size_type lastpos = 0, thispos;
     size_t needle_size = strlen(needle);
@@ -270,8 +267,8 @@ std::string replace_all(
     return newstr;
 }
 
-std::string replace_all(const std::string& str, char needle, char instead) {
-
+std::string replace_all(const std::string& str, char needle, char instead)
+{
     std::string newstr = str;
     std::string::size_type lastpos = 0, thispos;
 

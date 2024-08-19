@@ -25,41 +25,45 @@ template class tlx::LruCacheMap<size_t, size_t>;
 /******************************************************************************/
 // LruCacheSet
 
-static void test_set_simple_put() {
+static void test_set_simple_put()
+{
     tlx::LruCacheSet<size_t> cache;
     cache.put(7);
     die_unless(cache.exists(7));
     die_unequal(1u, cache.size());
 }
 
-static void test_set_missing_value() {
+static void test_set_missing_value()
+{
     tlx::LruCacheSet<size_t> cache;
     die_unless_throws(cache.touch(7), std::range_error);
 }
 
-static void test_set_keep_all_values_within_capacity() {
+static void test_set_keep_all_values_within_capacity()
+{
     tlx::LruCacheSet<size_t> cache;
 
     static constexpr size_t test_size = 100;
     static constexpr size_t capacity = 50;
 
     // put more items into cache than capacity
-    for (size_t i = 0; i < test_size; ++i) {
+    for (size_t i = 0; i < test_size; ++i)
+    {
         cache.put(i);
 
-        while (cache.size() > capacity) {
+        while (cache.size() > capacity)
+        {
             auto x = cache.pop();
             die_unequal(x, i - capacity);
         }
     }
 
     // check state of cache
-    for (size_t i = 0; i < test_size - capacity; ++i) {
+    for (size_t i = 0; i < test_size - capacity; ++i)
         die_if(cache.exists(i));
-    }
-    for (size_t i = test_size - capacity; i < test_size; ++i) {
+
+    for (size_t i = test_size - capacity; i < test_size; ++i)
         die_unless(cache.exists(i));
-    }
 
     die_unequal(capacity, cache.size());
 
@@ -80,24 +84,25 @@ static void test_set_keep_all_values_within_capacity() {
 
     die_unequal(capacity - 2, cache.size());
 
-    for (size_t i = 0; i < test_size - capacity; ++i) {
+    for (size_t i = 0; i < test_size - capacity; ++i)
         die_if(cache.exists(i));
-    }
-    for (size_t i = test_size - capacity; i < test_size; ++i) {
-        if (i == 90 || i == 95) {
+
+    for (size_t i = test_size - capacity; i < test_size; ++i)
+    {
+        if (i == 90 || i == 95)
             die_if(cache.exists(i));
-        }
-        else {
+        else
             die_unless(cache.exists(i));
-        }
     }
 
     // check order in which items are evicted, 70 and 80 must be at the end
 
     die_unequal(capacity - 2, cache.size());
 
-    for (size_t i = 50; i < 100; ++i) {
-        if (i == 70 || i == 75 || i == 80 || i == 90 || i == 95) ++i;
+    for (size_t i = 50; i < 100; ++i)
+    {
+        if (i == 70 || i == 75 || i == 80 || i == 90 || i == 95)
+            ++i;
         die_unequal(cache.pop(), i);
     }
 
@@ -110,7 +115,8 @@ static void test_set_keep_all_values_within_capacity() {
 /******************************************************************************/
 // LruCacheMap
 
-static void test_map_simple_put() {
+static void test_map_simple_put()
+{
     tlx::LruCacheMap<size_t, size_t> cache;
     cache.put(7, 777);
     die_unless(cache.exists(7));
@@ -118,33 +124,38 @@ static void test_map_simple_put() {
     die_unequal(1u, cache.size());
 }
 
-static void test_map_missing_value() {
+static void test_map_missing_value()
+{
     tlx::LruCacheMap<size_t, size_t> cache;
     die_unless_throws(cache.get(7), std::range_error);
     die_unless_throws(cache.touch(7), std::range_error);
 }
 
-static void test_map_keep_all_values_within_capacity() {
+static void test_map_keep_all_values_within_capacity()
+{
     tlx::LruCacheMap<size_t, size_t> cache;
 
     static constexpr size_t test_size = 100;
     static constexpr size_t capacity = 50;
 
     // put more items into cache than capacity
-    for (size_t i = 0; i < test_size; ++i) {
+    for (size_t i = 0; i < test_size; ++i)
+    {
         cache.put(i, i);
 
-        while (cache.size() > capacity) {
+        while (cache.size() > capacity)
+        {
             auto x = cache.pop();
             die_unequal(x.first, i - capacity);
         }
     }
 
     // check state of cache
-    for (size_t i = 0; i < test_size - capacity; ++i) {
+    for (size_t i = 0; i < test_size - capacity; ++i)
         die_if(cache.exists(i));
-    }
-    for (size_t i = test_size - capacity; i < test_size; ++i) {
+
+    for (size_t i = test_size - capacity; i < test_size; ++i)
+    {
         die_unless(cache.exists(i));
         die_unequal(i, cache.get(i));
     }
@@ -168,14 +179,17 @@ static void test_map_keep_all_values_within_capacity() {
 
     die_unequal(capacity - 2, cache.size());
 
-    for (size_t i = 0; i < test_size - capacity; ++i) {
+    for (size_t i = 0; i < test_size - capacity; ++i)
         die_if(cache.exists(i));
-    }
-    for (size_t i = test_size - capacity; i < test_size; ++i) {
-        if (i == 90 || i == 95) {
+
+    for (size_t i = test_size - capacity; i < test_size; ++i)
+    {
+        if (i == 90 || i == 95)
+        {
             die_if(cache.exists(i));
         }
-        else {
+        else
+        {
             die_unless(cache.exists(i));
             die_unequal(i, cache.get(i));
         }
@@ -185,8 +199,10 @@ static void test_map_keep_all_values_within_capacity() {
 
     die_unequal(capacity - 2, cache.size());
 
-    for (size_t i = 50; i < 100; ++i) {
-        if (i == 70 || i == 75 || i == 80 || i == 90 || i == 95) ++i;
+    for (size_t i = 50; i < 100; ++i)
+    {
+        if (i == 70 || i == 75 || i == 80 || i == 90 || i == 95)
+            ++i;
         die_unequal(cache.pop().first, i);
     }
 
@@ -196,8 +212,8 @@ static void test_map_keep_all_values_within_capacity() {
     die_unequal(0u, cache.size());
 }
 
-int main() {
-
+int main()
+{
     test_set_simple_put();
     test_set_missing_value();
     test_set_keep_all_values_within_capacity();

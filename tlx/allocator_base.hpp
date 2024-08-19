@@ -37,46 +37,54 @@ public:
     using propagate_on_container_move_assignment = std::true_type;
 
     //! Returns the address of x.
-    pointer address(reference x) const noexcept {
+    pointer address(reference x) const noexcept
+    {
         return std::addressof(x);
     }
 
     //! Returns the address of x.
-    const_pointer address(const_reference x) const noexcept {
+    const_pointer address(const_reference x) const noexcept
+    {
         return std::addressof(x);
     }
 
     //! Maximum size possible to allocate
-    size_type max_size() const noexcept {
+    size_type max_size() const noexcept
+    {
         return size_t(-1) / sizeof(Type);
     }
 
 #if __cplusplus >= 201103L
     //! Constructs an element object on the location pointed by p.
     template <typename SubType, typename... Args>
-    void construct(SubType* p, Args&& ... args)
-    noexcept(std::is_nothrow_constructible<SubType, Args...>::value) {
-        ::new (static_cast<void*>(p))SubType(std::forward<Args>(args) ...); // NOLINT
+    void construct(SubType* p, Args&&... args)
+        noexcept(std::is_nothrow_constructible<SubType, Args...>::value)
+    {
+        ::new (static_cast<void*>(p)) SubType(std::forward<Args>(args)...);
     }
 
     //! Destroys in-place the object pointed by p.
     template <typename SubType>
-    void destroy(SubType* p) const noexcept(std::is_nothrow_destructible<SubType>::value) {
+    void destroy(SubType* p) const
+        noexcept(std::is_nothrow_destructible<SubType>::value)
+    {
         p->~SubType();
     }
 #else
     //! Constructs an element object on the location pointed by p.
-    void construct(pointer p, const_reference value) {
-        ::new (static_cast<void*>(p))Type(value); // NOLINT
+    void construct(pointer p, const_reference value)
+    {
+        ::new (static_cast<void*>(p)) Type(value);
     }
 
 #if defined(_MSC_VER)
 // disable false-positive warning C4100: 'p': unreferenced formal parameter
 #pragma warning(push)
-#pragma warning(disable:4100)
+#pragma warning(disable : 4100)
 #endif
     //! Destroys in-place the object pointed by p.
-    void destroy(pointer p) const noexcept {
+    void destroy(pointer p) const noexcept
+    {
         p->~Type();
     }
 #if defined(_MSC_VER)

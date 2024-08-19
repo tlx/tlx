@@ -18,14 +18,13 @@
 #ifndef TLX_ALGORITHM_MULTISEQUENCE_SELECTION_HEADER
 #define TLX_ALGORITHM_MULTISEQUENCE_SELECTION_HEADER
 
+#include <tlx/container/simple_vector.hpp>
+#include <tlx/math/round_to_power_of_two.hpp>
 #include <algorithm>
 #include <cassert>
 #include <queue>
 #include <utility>
 #include <vector>
-
-#include <tlx/container/simple_vector.hpp>
-#include <tlx/math/round_to_power_of_two.hpp>
 
 namespace tlx {
 
@@ -42,10 +41,13 @@ protected:
     Comparator& comp_;
 
 public:
-    explicit lexicographic(Comparator& comp) : comp_(comp) { }
+    explicit lexicographic(Comparator& comp) : comp_(comp)
+    {
+    }
 
-    inline bool operator () (const std::pair<T1, T2>& p1,
-                             const std::pair<T1, T2>& p2) {
+    inline bool operator()(const std::pair<T1, T2>& p1,
+                           const std::pair<T1, T2>& p2)
+    {
         if (comp_(p1.first, p2.first))
             return true;
 
@@ -65,10 +67,13 @@ protected:
     Comparator& comp_;
 
 public:
-    explicit lexicographic_rev(Comparator& comp) : comp_(comp) { }
+    explicit lexicographic_rev(Comparator& comp) : comp_(comp)
+    {
+    }
 
-    inline bool operator () (const std::pair<T1, T2>& p1,
-                             const std::pair<T1, T2>& p2) {
+    inline bool operator()(const std::pair<T1, T2>& p1,
+                           const std::pair<T1, T2>& p2)
+    {
         if (comp_(p2.first, p1.first))
             return true;
 
@@ -97,16 +102,14 @@ public:
  * \param comp The ordering functor, defaults to std::less. */
 template <typename ValueType, typename RanSeqs, typename RankType,
           typename Comparator = std::less<ValueType> >
-ValueType multisequence_selection(
-    const RanSeqs& begin_seqs, const RanSeqs& end_seqs,
-    const RankType& rank,
-    RankType& offset,
-    Comparator comp = Comparator()) {
-
-    using iterator = typename std::iterator_traits<RanSeqs>
-                     ::value_type::first_type;
-    using diff_type = typename std::iterator_traits<iterator>
-                      ::difference_type;
+ValueType multisequence_selection(const RanSeqs& begin_seqs,
+                                  const RanSeqs& end_seqs, const RankType& rank,
+                                  RankType& offset,
+                                  Comparator comp = Comparator())
+{
+    using iterator =
+        typename std::iterator_traits<RanSeqs>::value_type::first_type;
+    using diff_type = typename std::iterator_traits<iterator>::difference_type;
 
     using SamplePair = std::pair<ValueType, diff_type>;
 
@@ -157,14 +160,16 @@ ValueType multisequence_selection(
 
     std::vector<SamplePair> sample;
 
-    for (diff_type i = 0; i < m; ++i) {
+    for (diff_type i = 0; i < m; ++i)
+    {
         if (n < seqlen[i])
             sample.push_back(SamplePair(begin_seqs[i].first[n], i));
     }
 
     std::sort(sample.begin(), sample.end(), lcomp);
 
-    for (diff_type i = 0; i < m; ++i) {
+    for (diff_type i = 0; i < m; ++i)
+    {
         // conceptual infinity
         if (n >= seqlen[i])
             sample.push_back(
@@ -176,7 +181,7 @@ ValueType multisequence_selection(
     size_t j;
     for (j = 0; j < localrank && ((n + 1) <= seqlen[sample[j].second]); ++j)
         a[sample[j].second] += n + 1;
-    for ( ; j < static_cast<size_t>(m); ++j)
+    for (; j < static_cast<size_t>(m); ++j)
         b[sample[j].second] -= n + 1;
 
     // further refinement
@@ -225,14 +230,15 @@ ValueType multisequence_selection(
             std::priority_queue<
                 SamplePair, std::vector<SamplePair>,
                 lexicographic_rev<ValueType, diff_type, Comparator> >
-            pq(lrcomp);
+                pq(lrcomp);
 
-            for (diff_type i = 0; i < m; ++i) {
+            for (diff_type i = 0; i < m; ++i)
+            {
                 if (b[i] < seqlen[i])
                     pq.push(SamplePair(begin_seqs[i].first[b[i]], i));
             }
 
-            for ( ; skew != 0 && !pq.empty(); --skew)
+            for (; skew != 0 && !pq.empty(); --skew)
             {
                 diff_type src = pq.top().second;
                 pq.pop();
@@ -250,14 +256,15 @@ ValueType multisequence_selection(
             std::priority_queue<
                 SamplePair, std::vector<SamplePair>,
                 lexicographic<ValueType, diff_type, Comparator> >
-            pq(lcomp);
+                pq(lcomp);
 
-            for (diff_type i = 0; i < m; ++i) {
+            for (diff_type i = 0; i < m; ++i)
+            {
                 if (a[i] > 0)
                     pq.push(SamplePair(begin_seqs[i].first[a[i] - 1], i));
             }
 
-            for ( ; skew != 0; ++skew)
+            for (; skew != 0; ++skew)
             {
                 diff_type src = pq.top().second;
                 pq.pop();
@@ -278,7 +285,7 @@ ValueType multisequence_selection(
     // edges of the border
 
     // maximum of left edge, minimum of right edge
-    ValueType* maxleft = nullptr, * minright = nullptr;
+    ValueType *maxleft = nullptr, *minright = nullptr;
     for (diff_type i = 0; i < m; ++i)
     {
         if (a[i] > 0)
@@ -323,9 +330,10 @@ ValueType multisequence_selection(
 
         for (diff_type i = 0; i < m; ++i)
         {
-            diff_type lb = std::lower_bound(
-                begin_seqs[i].first, begin_seqs[i].first + seqlen[i],
-                *minright, comp) - begin_seqs[i].first;
+            diff_type lb = std::lower_bound(begin_seqs[i].first,
+                                            begin_seqs[i].first + seqlen[i],
+                                            *minright, comp) -
+                           begin_seqs[i].first;
             offset += a[i] - lb;
         }
     }

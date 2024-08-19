@@ -25,17 +25,20 @@ namespace tlx {
  * beginning at result. The term "exclusive" means that the i-th input element
  * is not included in the i-th sum.
  */
-template <typename InputIterator, typename OutputIterator,
-          typename T, typename BinaryOperation = std::plus<T> >
+template <typename InputIterator, typename OutputIterator, typename T,
+          typename BinaryOperation = std::plus<T> >
 OutputIterator exclusive_scan(InputIterator first, InputIterator last,
                               OutputIterator result, T init,
-                              BinaryOperation binary_op = BinaryOperation()) {
+                              BinaryOperation binary_op = BinaryOperation())
+{
     *result++ = init;
-    if (first != last) {
+    if (first != last)
+    {
         typename std::iterator_traits<InputIterator>::value_type value =
             binary_op(init, *first);
         *result = value;
-        while (++first != last) {
+        while (++first != last)
+        {
             value = binary_op(value, *first);
             *++result = value;
         }

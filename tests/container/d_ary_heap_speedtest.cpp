@@ -8,19 +8,17 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/d_ary_addressable_int_heap.hpp>
+#include <tlx/container/d_ary_heap.hpp>
+#include <tlx/die.hpp>
+#include <tlx/timestamp.hpp>
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
-#include <string>
-
 #include <queue>
-#include <tlx/container/d_ary_addressable_int_heap.hpp>
-#include <tlx/container/d_ary_heap.hpp>
-
-#include <tlx/die.hpp>
-#include <tlx/timestamp.hpp>
+#include <string>
 
 // *** Settings
 
@@ -37,11 +35,17 @@ template <typename HeapType>
 class Test_Heap_Fill
 {
 public:
-    Test_Heap_Fill(size_t) { }
+    Test_Heap_Fill(size_t)
+    {
+    }
 
-    static const char * op() { return "heap_fill"; }
+    static const char* op()
+    {
+        return "heap_fill";
+    }
 
-    void run(size_t items) {
+    void run(size_t items)
+    {
         HeapType heap;
 
         for (size_t i = 0; i < items; i++)
@@ -56,11 +60,17 @@ template <typename HeapType>
 class Test_Heap_FillPopAll
 {
 public:
-    Test_Heap_FillPopAll(size_t) { }
+    Test_Heap_FillPopAll(size_t)
+    {
+    }
 
-    static const char * op() { return "heap_fill_popall"; }
+    static const char* op()
+    {
+        return "heap_fill_popall";
+    }
 
-    void run(size_t items) {
+    void run(size_t items)
+    {
         HeapType heap;
 
         for (size_t i = 0; i < items; i++)
@@ -82,7 +92,8 @@ class Test_Heap_FillCycle
 public:
     HeapType heap_;
 
-    Test_Heap_FillCycle(size_t items) {
+    Test_Heap_FillCycle(size_t items)
+    {
         // fill up heap
         for (size_t i = 0; i < items; i++)
             heap_.push(items - i);
@@ -90,13 +101,18 @@ public:
         die_unless(heap_.size() == items);
     }
 
-    static const char * op() { return "heap_fill_cycle"; }
+    static const char* op()
+    {
+        return "heap_fill_cycle";
+    }
 
-    void run(size_t items) {
+    void run(size_t items)
+    {
         HeapType heap = heap_;
 
         // cycle heap once
-        for (size_t i = 0; i < items; i++) {
+        for (size_t i = 0; i < items; i++)
+        {
             heap.pop();
             heap.push(2 * items - i);
         }
@@ -109,11 +125,12 @@ public:
 
 //! Construct different heap types for a generic test class
 template <template <typename HeapType> class TestClass>
-struct TestFactory_Heap {
+struct TestFactory_Heap
+{
     //! Test the binary heap from STL
-    using StdQueue = TestClass<
-        std::priority_queue<std::uint32_t, std::vector<std::uint32_t>,
-                            std::greater<std::uint32_t> > >;
+    using StdQueue =
+        TestClass<std::priority_queue<std::uint32_t, std::vector<std::uint32_t>,
+                                      std::greater<std::uint32_t> > >;
 
     //! Test the d-ary heap with a specific arity
     template <int Arity>
@@ -134,8 +151,8 @@ size_t repeat_until;
 
 //! Repeat (short) tests until enough time elapsed and divide by the repeat.
 template <typename TestClass>
-void testrunner_loop(size_t items, const std::string& container_name) {
-
+void testrunner_loop(size_t items, const std::string& container_name)
+{
     size_t repeat = 0;
     double ts1, ts2;
 
@@ -164,24 +181,25 @@ void testrunner_loop(size_t items, const std::string& container_name) {
                   << " time " << (ts2 - ts1) << "\n";
 
         // discard and repeat if test took less than one second.
-        if ((ts2 - ts1) < 1.0) repeat_until *= 2;
-    }
-    while ((ts2 - ts1) < 1.0);
+        if ((ts2 - ts1) < 1.0)
+            repeat_until *= 2;
+    } while ((ts2 - ts1) < 1.0);
 
-    std::cout << "RESULT"
-              << " container=" << container_name
-              << " op=" << TestClass::op()
-              << " items=" << items
-              << " repeat=" << repeat
-              << " time_total=" << (ts2 - ts1)
-              << " time="
-              << std::fixed << std::setprecision(10) << ((ts2 - ts1) / repeat)
+    std::cout << "RESULT"                                        //
+              << " container=" << container_name                 //
+              << " op=" << TestClass::op()                       //
+              << " items=" << items                              //
+              << " repeat=" << repeat                            //
+              << " time_total=" << (ts2 - ts1)                   //
+              << " time="                                        //
+              << std::fixed                                      //
+              << std::setprecision(10) << ((ts2 - ts1) / repeat) //
               << std::endl;
 }
 
 template <template <typename Type> class TestClass>
-void TestFactory_Heap<TestClass>::call_testrunner(size_t items) {
-
+void TestFactory_Heap<TestClass>::call_testrunner(size_t items)
+{
     testrunner_loop<StdQueue>(items, "std::priority_queue");
 
     testrunner_loop<DAryHeap<2> >(items, "tlx::DAryHeap<2> slots=2");
@@ -202,12 +220,14 @@ void TestFactory_Heap<TestClass>::call_testrunner(size_t items) {
 }
 
 //! Speed test them!
-int main() {
+int main()
+{
     // Heap - speed test fill
     {
         repeat_until = min_items;
 
-        for (size_t items = min_items; items <= max_items; items *= 2) {
+        for (size_t items = min_items; items <= max_items; items *= 2)
+        {
             std::cout << "heap: fill " << items << "\n";
             TestFactory_Heap<Test_Heap_Fill>().call_testrunner(items);
         }
@@ -217,7 +237,8 @@ int main() {
     {
         repeat_until = min_items;
 
-        for (size_t items = min_items; items <= max_items; items *= 2) {
+        for (size_t items = min_items; items <= max_items; items *= 2)
+        {
             std::cout << "heap: fill, pop all " << items << "\n";
             TestFactory_Heap<Test_Heap_FillPopAll>().call_testrunner(items);
         }
@@ -227,7 +248,8 @@ int main() {
     {
         repeat_until = min_items;
 
-        for (size_t items = min_items; items <= max_items; items *= 2) {
+        for (size_t items = min_items; items <= max_items; items *= 2)
+        {
             std::cout << "heap: cycle " << items << "\n";
             TestFactory_Heap<Test_Heap_FillCycle>().call_testrunner(items);
         }

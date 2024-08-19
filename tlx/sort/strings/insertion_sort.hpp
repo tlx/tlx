@@ -30,9 +30,9 @@ namespace sort_strings_detail {
 //! Generic insertion sort for abstract string sets. This method only requires
 //! O(1) additional memory for sorting n strings, but runs in time O(nD).
 template <typename StringPtr>
-static inline
-typename enable_if<!StringPtr::with_lcp, void>::type
-insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */) {
+static inline typename enable_if<!StringPtr::with_lcp, void>::type
+insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */)
+{
     typedef typename StringPtr::StringSet StringSet;
     typedef typename StringSet::Iterator Iterator;
     typedef typename StringSet::String String;
@@ -41,7 +41,8 @@ insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */) {
     // this stores the begin iterator and size n, making the loops faster
     const typename StringPtr::StringSet& ss = strptr.active();
     size_t n = ss.size();
-    if (n <= 1) return;
+    if (n <= 1)
+        return;
 
     const Iterator begin = ss.begin();
     Iterator j;
@@ -59,9 +60,8 @@ insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */) {
             while (TLX_LIKELY(ss.is_equal(ss[j - 1], s, tmp, t)))
                 ++s, ++t;
 
-            if (TLX_UNLIKELY(ss.is_leq(ss[j - 1], s, tmp, t))) {
+            if (TLX_UNLIKELY(ss.is_leq(ss[j - 1], s, tmp, t)))
                 break;
-            }
 
             ss[j] = std::move(ss[j - 1]);
             --j;
@@ -77,9 +77,9 @@ insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */) {
 //! StringPtr::with_lcp is true. This method only requires O(1) additional
 //! memory for sorting n strings, and runs in time O(n^2 + D).
 template <typename StringPtr>
-static inline
-typename enable_if<StringPtr::with_lcp, void>::type
-insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */) {
+static inline typename enable_if<StringPtr::with_lcp, void>::type
+insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */)
+{
     typedef typename StringPtr::StringSet StringSet;
     typedef typename StringPtr::LcpType LcpType;
     typedef typename StringSet::Iterator Iterator;
@@ -89,7 +89,8 @@ insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */) {
     // this stores the begin iterator and size n, making the loops faster
     const StringSet& ss = strptr.active();
     size_t n = ss.size();
-    if (n <= 1) return;
+    if (n <= 1)
+        return;
 
     const Iterator begin = ss.begin();
 
@@ -209,7 +210,8 @@ insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */) {
         }
 
         ss[begin + i] = std::move(new_str);
-        if (i + 1 < n) { // check out-of-bounds save
+        if (i + 1 < n)
+        { // check out-of-bounds save
             strptr.set_lcp(i + 1, new_lcp);
         }
     }

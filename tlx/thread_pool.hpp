@@ -11,15 +11,14 @@
 #ifndef TLX_THREAD_POOL_HEADER
 #define TLX_THREAD_POOL_HEADER
 
+#include <tlx/container/simple_vector.hpp>
+#include <tlx/delegate.hpp>
 #include <atomic>
 #include <cassert>
 #include <condition_variable>
 #include <deque>
 #include <mutex>
 #include <thread>
-
-#include <tlx/container/simple_vector.hpp>
-#include <tlx/delegate.hpp>
 
 namespace tlx {
 
@@ -64,8 +63,8 @@ pool.loop_until_empty();
 class ThreadPool
 {
 public:
-    using Job = Delegate<void ()>;
-    using InitThread = Delegate<void (size_t)>;
+    using Job = Delegate<void()>;
+    using InitThread = Delegate<void(size_t)>;
 
 private:
     //! Deque of scheduled jobs.
@@ -84,28 +83,27 @@ private:
     std::condition_variable cv_finished_;
 
     //! Counter for number of threads busy.
-    std::atomic<size_t> busy_ = { 0 };
+    std::atomic<size_t> busy_ = {0};
     //! Counter for number of idle threads waiting for a job.
-    std::atomic<size_t> idle_ = { 0 };
+    std::atomic<size_t> idle_ = {0};
     //! Counter for total number of jobs executed
-    std::atomic<size_t> done_ = { 0 };
+    std::atomic<size_t> done_ = {0};
 
     //! Flag whether to terminate
-    std::atomic<bool> terminate_ = { false };
+    std::atomic<bool> terminate_ = {false};
 
     //! Run once per worker thread
     InitThread init_thread_;
 
 public:
     //! Construct running thread pool of num_threads
-    ThreadPool(
-        size_t num_threads = std::thread::hardware_concurrency(),
-        InitThread&& init_thread = InitThread());
+    ThreadPool(size_t num_threads = std::thread::hardware_concurrency(),
+               InitThread&& init_thread = InitThread());
 
     //! non-copyable: delete copy-constructor
     ThreadPool(const ThreadPool&) = delete;
     //! non-copyable: delete assignment operator
-    ThreadPool& operator = (const ThreadPool&) = delete;
+    ThreadPool& operator=(const ThreadPool&) = delete;
 
     //! Stop processing jobs, terminate threads.
     ~ThreadPool();

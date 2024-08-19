@@ -23,7 +23,8 @@ namespace tlx {
 
 //! return the signum (-1, 0, +1) of a value.
 template <typename T>
-int sgn(const T& val) {
+int sgn(const T& val)
+{
     // from https://stackoverflow.com/questions/1903954
     return (T(0) < val) - (val < T(0));
 }

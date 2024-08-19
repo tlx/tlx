@@ -9,20 +9,20 @@
  ******************************************************************************/
 
 #include <tlx/thread_pool.hpp>
-
 #include <iostream>
 
 namespace tlx {
 
 ThreadPool::ThreadPool(size_t num_threads, InitThread&& init_thread)
-    : threads_(num_threads),
-      init_thread_(std::move(init_thread)) {
+    : threads_(num_threads), init_thread_(std::move(init_thread))
+{
     // immediately construct worker threads
     for (size_t i = 0; i < num_threads; ++i)
         threads_[i] = std::thread(&ThreadPool::worker, this, i);
 }
 
-ThreadPool::~ThreadPool() {
+ThreadPool::~ThreadPool()
+{
     std::unique_lock<std::mutex> lock(mutex_);
     // set stop-condition
     terminate_ = true;
@@ -34,25 +34,29 @@ ThreadPool::~ThreadPool() {
         threads_[i].join();
 }
 
-void ThreadPool::enqueue(Job&& job) {
+void ThreadPool::enqueue(Job&& job)
+{
     std::unique_lock<std::mutex> lock(mutex_);
     jobs_.emplace_back(std::move(job));
     cv_jobs_.notify_one();
 }
 
-void ThreadPool::loop_until_empty() {
+void ThreadPool::loop_until_empty()
+{
     std::unique_lock<std::mutex> lock(mutex_);
     cv_finished_.wait(lock, [this]() { return jobs_.empty() && (busy_ == 0); });
     std::atomic_thread_fence(std::memory_order_seq_cst);
 }
 
-void ThreadPool::loop_until_terminate() {
+void ThreadPool::loop_until_terminate()
+{
     std::unique_lock<std::mutex> lock(mutex_);
     cv_finished_.wait(lock, [this]() { return terminate_ && (busy_ == 0); });
     std::atomic_thread_fence(std::memory_order_seq_cst);
 }
 
-void ThreadPool::terminate() {
+void ThreadPool::terminate()
+{
     std::unique_lock<std::mutex> lock(mutex_);
     // flag termination
     terminate_ = true;
@@ -62,47 +66,56 @@ void ThreadPool::terminate() {
     cv_finished_.notify_one();
 }
 
-size_t ThreadPool::done() const {
+size_t ThreadPool::done() const
+{
     return done_;
 }
 
-size_t ThreadPool::size() const {
+size_t ThreadPool::size() const
+{
     return threads_.size();
 }
 
-size_t ThreadPool::idle() const {
+size_t ThreadPool::idle() const
+{
     return idle_;
 }
 
-bool ThreadPool::has_idle() const {
+bool ThreadPool::has_idle() const
+{
     return (idle_.load(std::memory_order_relaxed) != 0);
 }
 
-std::thread& ThreadPool::thread(size_t i) {
+std::thread& ThreadPool::thread(size_t i)
+{
     assert(i < threads_.size());
     return threads_[i];
 }
 
-void ThreadPool::worker(size_t p) {
+void ThreadPool::worker(size_t p)
+{
     if (init_thread_)
         init_thread_(p);
 
     // lock mutex, it is released during condition waits
     std::unique_lock<std::mutex> lock(mutex_);
 
-    while (true) {
+    while (true)
+    {
         // wait on condition variable until job arrives, frees lock
-        if (!terminate_ && jobs_.empty()) {
+        if (!terminate_ && jobs_.empty())
+        {
             ++idle_;
-            cv_jobs_.wait(
-                lock, [this]() { return terminate_ || !jobs_.empty(); });
+            cv_jobs_.wait(lock,
+                          [this]() { return terminate_ || !jobs_.empty(); });
             --idle_;
         }
 
         if (terminate_)
             break;
 
-        if (!jobs_.empty()) {
+        if (!jobs_.empty())
+        {
             // got work. set busy.
             ++busy_;
 
@@ -115,10 +128,12 @@ void ThreadPool::worker(size_t p) {
                 lock.unlock();
 
                 // execute job.
-                try {
+                try
+                {
                     job();
                 }
-                catch (std::exception& e) {
+                catch (std::exception& e)
+                {
                     std::cerr << "EXCEPTION: " << e.what() << std::endl;
                 }
                 // destroy job by closing scope

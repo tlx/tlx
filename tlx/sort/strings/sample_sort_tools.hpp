@@ -16,31 +16,30 @@
 #ifndef TLX_SORT_STRINGS_SAMPLE_SORT_TOOLS_HEADER
 #define TLX_SORT_STRINGS_SAMPLE_SORT_TOOLS_HEADER
 
-#include <tlx/sort/strings/string_set.hpp>
-
 #include <tlx/define/attribute_fallthrough.hpp>
 #include <tlx/die/core.hpp>
 #include <tlx/logger/core.hpp>
 #include <tlx/math/clz.hpp>
 #include <tlx/math/ctz.hpp>
+#include <tlx/sort/strings/string_set.hpp>
 #include <tlx/string/hexdump.hpp>
-
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
 
-namespace tlx {
-namespace sort_strings_detail {
+namespace tlx { namespace sort_strings_detail {
 
 /******************************************************************************/
 
 //! represent binary digits of large integer datatypes
 template <typename Type>
-static inline
-std::string to_binary(Type v, const size_t width = (8 * sizeof(Type))) {
+static inline std::string to_binary(Type v,
+                                    const size_t width = (8 * sizeof(Type)))
+{
     std::string str(width, ' ');
-    for (size_t i = 0; i < width; i++) {
+    for (size_t i = 0; i < width; i++)
+    {
         str[width - i - 1] = (v & 1) ? '1' : '0';
         v /= 2;
     }
@@ -49,13 +48,15 @@ std::string to_binary(Type v, const size_t width = (8 * sizeof(Type))) {
 
 //! Class to transform in-order to level-order indexes in a perfect binary tree
 template <size_t TreeBits>
-struct PerfectTreeCalculations {
+struct PerfectTreeCalculations
+{
     static const bool debug = false;
 
     static const size_t treebits = TreeBits;
     static const size_t num_nodes = (1 << treebits) - 1;
 
-    static inline unsigned int level_to_preorder(unsigned int id) {
+    static inline unsigned int level_to_preorder(unsigned int id)
+    {
         assert(id > 0);
         TLX_LOG << "index: " << id << " = " << to_binary(id);
 
@@ -70,7 +71,8 @@ struct PerfectTreeCalculations {
         return bkt;
     }
 
-    static inline unsigned int pre_to_levelorder(unsigned int id) {
+    static inline unsigned int pre_to_levelorder(unsigned int id)
+    {
         assert(id > 0);
         TLX_LOG << "index: " << id << " = " << to_binary(id);
 
@@ -85,8 +87,10 @@ struct PerfectTreeCalculations {
         return bkt;
     }
 
-    static inline void self_verify() {
-        for (size_t i = 1; i <= num_nodes; ++i) {
+    static inline void self_verify()
+    {
+        for (size_t i = 1; i <= num_nodes; ++i)
+        {
             TLX_LOG << to_binary(i, treebits) << " -> ";
 
             size_t id = level_to_preorder(i);
@@ -101,7 +105,8 @@ struct PerfectTreeCalculations {
     }
 };
 
-static inline void perfect_tree_calculations_self_verify() {
+static inline void perfect_tree_calculations_self_verify()
+{
     PerfectTreeCalculations<4>::self_verify();
     PerfectTreeCalculations<5>::self_verify();
     PerfectTreeCalculations<6>::self_verify();
@@ -131,8 +136,11 @@ public:
                                   key_type tree[num_splitters + 1],
                                   unsigned char splitter_lcp[num_splitters + 1],
                                   const key_type* samples, size_t samplesize)
-        : splitter_(splitter), tree_(tree),
-          lcp_iter_(splitter_lcp), samples_(samples) {
+        : splitter_(splitter),
+          tree_(tree),
+          lcp_iter_(splitter_lcp),
+          samples_(samples)
+    {
         key_type sentinel = 0;
         recurse(samples, samples + samplesize, 1, sentinel);
 
@@ -144,35 +152,38 @@ public:
         splitter_lcp[num_splitters] = 0;
     }
 
-    ptrdiff_t snum(const key_type* s) const {
+    ptrdiff_t snum(const key_type* s) const
+    {
         return static_cast<ptrdiff_t>(s - samples_);
     }
 
     key_type recurse(const key_type* lo, const key_type* hi,
-                     unsigned int treeidx, key_type& rec_prevkey) {
-        TLX_LOGC(debug_splitter)
-            << "rec_buildtree(" << snum(lo) << "," << snum(hi)
-            << ", treeidx=" << treeidx << ")";
+                     unsigned int treeidx, key_type& rec_prevkey)
+    {
+        TLX_LOGC(debug_splitter) << "rec_buildtree(" << snum(lo) << ","
+                                 << snum(hi) << ", treeidx=" << treeidx << ")";
 
         // pick middle element as splitter
         const key_type* mid = lo + static_cast<ptrdiff_t>(hi - lo) / 2;
 
-        TLX_LOGC(debug_splitter)
-            << "tree[" << treeidx << "] = samples[" << snum(mid) << "] = "
-            << hexdump_type(*mid);
+        TLX_LOGC(debug_splitter) << "tree[" << treeidx << "] = samples["
+                                 << snum(mid) << "] = " << hexdump_type(*mid);
 
         key_type mykey = tree_[treeidx] = *mid;
 #if 1
         const key_type* midlo = mid;
-        while (lo < midlo && *(midlo - 1) == mykey) midlo--;
+        while (lo < midlo && *(midlo - 1) == mykey)
+            midlo--;
 
         const key_type* midhi = mid;
-        while (midhi + 1 < hi && *midhi == mykey) midhi++;
+        while (midhi + 1 < hi && *midhi == mykey)
+            midhi++;
 
         if (midhi - midlo > 1)
-            TLX_LOG0 << "key range = [" << snum(midlo) << "," << snum(midhi) << ")";
+            TLX_LOG0 << "key range = [" << snum(midlo) << "," << snum(midhi)
+                     << ")";
 #else
-        const key_type* midlo = mid, * midhi = mid + 1;
+        const key_type *midlo = mid, *midhi = mid + 1;
 #endif
         if (2 * treeidx < num_splitters)
         {
@@ -180,20 +191,19 @@ public:
 
             key_type xorSplit = prevkey ^ mykey;
 
-            TLX_LOGC(debug_splitter)
-                << "    lcp: " << hexdump_type(prevkey)
-                << " XOR " << hexdump_type(mykey)
-                << " = " << hexdump_type(xorSplit)
-                << " - " << clz(xorSplit)
-                << " bits = " << clz(xorSplit) / 8
+            TLX_LOGC(debug_splitter)                    //
+                << "    lcp: " << hexdump_type(prevkey) //
+                << " XOR " << hexdump_type(mykey)       //
+                << " = " << hexdump_type(xorSplit)      //
+                << " - " << clz(xorSplit)               //
+                << " bits = " << clz(xorSplit) / 8      //
                 << " chars lcp";
 
             *splitter_++ = mykey;
 
-            *lcp_iter_++ =
-                (clz(xorSplit) / 8) |
-                // marker for done splitters
-                ((mykey & 0xFF) ? 0 : 0x80);
+            *lcp_iter_++ = (clz(xorSplit) / 8) |
+                           // marker for done splitters
+                           ((mykey & 0xFF) ? 0 : 0x80);
 
             return recurse(midhi, hi, 2 * treeidx + 1, mykey);
         }
@@ -201,20 +211,19 @@ public:
         {
             key_type xorSplit = rec_prevkey ^ mykey;
 
-            TLX_LOGC(debug_splitter)
-                << "    lcp: " << hexdump_type(rec_prevkey)
-                << " XOR " << hexdump_type(mykey)
-                << " = " << hexdump_type(xorSplit)
-                << " - " << clz(xorSplit)
-                << " bits = " << clz(xorSplit) / 8
+            TLX_LOGC(debug_splitter)                        //
+                << "    lcp: " << hexdump_type(rec_prevkey) //
+                << " XOR " << hexdump_type(mykey)           //
+                << " = " << hexdump_type(xorSplit)          //
+                << " - " << clz(xorSplit)                   //
+                << " bits = " << clz(xorSplit) / 8          //
                 << " chars lcp";
 
             *splitter_++ = mykey;
 
-            *lcp_iter_++ =
-                (clz(xorSplit) / 8) |
-                // marker for done splitters
-                ((mykey & 0xFF) ? 0 : 0x80);
+            *lcp_iter_++ = (clz(xorSplit) / 8) |
+                           // marker for done splitters
+                           ((mykey & 0xFF) ? 0 : 0x80);
 
             return mykey;
         }
@@ -239,9 +248,8 @@ public:
     SSTreeBuilderLevelOrder(key_type tree[num_splitters],
                             unsigned char splitter_lcp[num_splitters + 1],
                             const key_type* samples, size_t samplesize)
-        : tree_(tree),
-          lcp_iter_(splitter_lcp),
-          samples_(samples) {
+        : tree_(tree), lcp_iter_(splitter_lcp), samples_(samples)
+    {
         key_type sentinel = 0;
         recurse(samples, samples + samplesize, 1, sentinel);
 
@@ -252,35 +260,38 @@ public:
         splitter_lcp[num_splitters] = 0;
     }
 
-    ptrdiff_t snum(const key_type* s) const {
+    ptrdiff_t snum(const key_type* s) const
+    {
         return static_cast<ptrdiff_t>(s - samples_);
     }
 
     key_type recurse(const key_type* lo, const key_type* hi,
-                     unsigned int treeidx, key_type& rec_prevkey) {
-        TLX_LOGC(debug_splitter)
-            << "rec_buildtree(" << snum(lo) << "," << snum(hi)
-            << ", treeidx=" << treeidx << ")";
+                     unsigned int treeidx, key_type& rec_prevkey)
+    {
+        TLX_LOGC(debug_splitter) << "rec_buildtree(" << snum(lo) << ","
+                                 << snum(hi) << ", treeidx=" << treeidx << ")";
 
         // pick middle element as splitter
         const key_type* mid = lo + static_cast<ptrdiff_t>(hi - lo) / 2;
 
-        TLX_LOGC(debug_splitter)
-            << "tree[" << treeidx << "] = samples[" << snum(mid) << "] = "
-            << hexdump_type(*mid);
+        TLX_LOGC(debug_splitter) << "tree[" << treeidx << "] = samples["
+                                 << snum(mid) << "] = " << hexdump_type(*mid);
 
         key_type mykey = tree_[treeidx] = *mid;
 #if 1
         const key_type* midlo = mid;
-        while (lo < midlo && *(midlo - 1) == mykey) midlo--;
+        while (lo < midlo && *(midlo - 1) == mykey)
+            midlo--;
 
         const key_type* midhi = mid;
-        while (midhi + 1 < hi && *midhi == mykey) midhi++;
+        while (midhi + 1 < hi && *midhi == mykey)
+            midhi++;
 
         if (midhi - midlo > 1)
-            TLX_LOG0 << "key range = [" << snum(midlo) << "," << snum(midhi) << ")";
+            TLX_LOG0 << "key range = [" << snum(midlo) << "," << snum(midhi)
+                     << ")";
 #else
-        const key_type* midlo = mid, * midhi = mid + 1;
+        const key_type *midlo = mid, *midhi = mid + 1;
 #endif
         if (2 * treeidx < num_splitters)
         {
@@ -288,18 +299,17 @@ public:
 
             key_type xorSplit = prevkey ^ mykey;
 
-            TLX_LOGC(debug_splitter)
-                << "    lcp: " << hexdump_type(prevkey)
-                << " XOR " << hexdump_type(mykey)
-                << " = " << hexdump_type(xorSplit)
-                << " - " << clz(xorSplit)
-                << " bits = " << clz(xorSplit) / 8
+            TLX_LOGC(debug_splitter)                    //
+                << "    lcp: " << hexdump_type(prevkey) //
+                << " XOR " << hexdump_type(mykey)       //
+                << " = " << hexdump_type(xorSplit)      //
+                << " - " << clz(xorSplit)               //
+                << " bits = " << clz(xorSplit) / 8      //
                 << " chars lcp";
 
-            *lcp_iter_++ =
-                (clz(xorSplit) / 8) |
-                // marker for done splitters
-                ((mykey & 0xFF) ? 0 : 0x80);
+            *lcp_iter_++ = (clz(xorSplit) / 8) |
+                           // marker for done splitters
+                           ((mykey & 0xFF) ? 0 : 0x80);
 
             return recurse(midhi, hi, 2 * treeidx + 1, mykey);
         }
@@ -307,18 +317,17 @@ public:
         {
             key_type xorSplit = rec_prevkey ^ mykey;
 
-            TLX_LOGC(debug_splitter)
-                << "    lcp: " << hexdump_type(rec_prevkey)
-                << " XOR " << hexdump_type(mykey)
-                << " = " << hexdump_type(xorSplit)
-                << " - " << clz(xorSplit)
-                << " bits = " << clz(xorSplit) / 8
+            TLX_LOGC(debug_splitter)                        //
+                << "    lcp: " << hexdump_type(rec_prevkey) //
+                << " XOR " << hexdump_type(mykey)           //
+                << " = " << hexdump_type(xorSplit)          //
+                << " - " << clz(xorSplit)                   //
+                << " bits = " << clz(xorSplit) / 8          //
                 << " chars lcp";
 
-            *lcp_iter_++ =
-                (clz(xorSplit) / 8) |
-                // marker for done splitters
-                ((mykey & 0xFF) ? 0 : 0x80);
+            *lcp_iter_++ = (clz(xorSplit) / 8) |
+                           // marker for done splitters
+                           ((mykey & 0xFF) ? 0 : 0x80);
 
             return mykey;
         }
@@ -342,40 +351,45 @@ public:
 
     //! build tree and splitter array from sample
     void build(key_type* samples, size_t samplesize,
-               unsigned char* splitter_lcp) {
+               unsigned char* splitter_lcp)
+    {
         SSTreeBuilderPreAndLevelOrder<key_type, num_splitters>(
-            splitter_, splitter_tree_, splitter_lcp,
-            samples, samplesize);
+            splitter_, splitter_tree_, splitter_lcp, samples, samplesize);
     }
 
     //! binary search on splitter array for bucket number
-    unsigned int find_bkt(const key_type& key) const {
+    unsigned int find_bkt(const key_type& key) const
+    {
         // binary tree traversal without left branch
 
         unsigned int i = 1;
-        while (i <= num_splitters) {
+        while (i <= num_splitters)
+        {
             // in gcc-4.6.3 this produces a SETA, LEA sequence
             i = 2 * i + (key <= splitter_tree_[i] ? 0 : 1);
         }
         i -= num_splitters + 1;
 
-        size_t b = i * 2;                                      // < bucket
-        if (i < num_splitters && splitter_[i] == key) b += 1;  // equal bucket
+        size_t b = i * 2; // < bucket
+        if (i < num_splitters && splitter_[i] == key)
+            b += 1; // equal bucket
 
         return b;
     }
 
     // in gcc-4.6.3 this produces a SETA, LEA sequence
-#define TLX_CLASSIFY_TREE_STEP                                      \
-    for (size_t u = 0; u < Rollout; ++u) {                          \
-        i[u] = 2 * i[u] + (key[u] <= splitter_tree_[i[u]] ? 0 : 1); \
-    }                                                               \
+#define TLX_CLASSIFY_TREE_STEP                                                 \
+    for (size_t u = 0; u < Rollout; ++u)                                       \
+    {                                                                          \
+        i[u] = 2 * i[u] + (key[u] <= splitter_tree_[i[u]] ? 0 : 1);            \
+    }                                                                          \
     TLX_ATTRIBUTE_FALLTHROUGH;
 
     //! search in splitter tree for bucket number, unrolled for Rollout keys at
     //! once.
-    void find_bkt_unroll(
-        const key_type key[Rollout], std::uint16_t obkt[Rollout]) const {
+    void find_bkt_unroll(const key_type key[Rollout],
+                         std::uint16_t obkt[Rollout]) const
+    {
         // binary tree traversal without left branch
 
         unsigned int i[Rollout];
@@ -422,12 +436,14 @@ public:
         for (size_t u = 0; u < Rollout; ++u)
             i[u] -= num_splitters + 1;
 
-        for (size_t u = 0; u < Rollout; ++u) {
+        for (size_t u = 0; u < Rollout; ++u)
+        {
             // < bucket
             obkt[u] = i[u] * 2;
         }
 
-        for (size_t u = 0; u < Rollout; ++u) {
+        for (size_t u = 0; u < Rollout; ++u)
+        {
             // equal bucket
             if (i[u] < num_splitters && splitter_[i[u]] == key[u])
                 obkt[u] += 1;
@@ -439,10 +455,10 @@ public:
     //! classify all strings in area by walking tree and saving bucket id
     template <typename StringSet>
     // __attribute__ ((optimize("unroll-all-loops")))
-    void classify(
-        const StringSet& strset,
-        typename StringSet::Iterator begin, typename StringSet::Iterator end,
-        std::uint16_t* bktout, size_t depth) const {
+    void classify(const StringSet& strset, typename StringSet::Iterator begin,
+                  typename StringSet::Iterator end, std::uint16_t* bktout,
+                  size_t depth) const
+    {
         while (begin != end)
         {
             if (begin + Rollout <= end)
@@ -465,7 +481,9 @@ public:
 
     //! return a splitter
     key_type get_splitter(unsigned int i) const
-    { return splitter_[i]; }
+    {
+        return splitter_[i];
+    }
 
 private:
     key_type splitter_[num_splitters];
@@ -483,21 +501,25 @@ public:
     static const size_t num_splitters = (1 << treebits) - 1;
 
     //! build tree and splitter array from sample
-    void build(key_type* samples, size_t samplesize, unsigned char* splitter_lcp) {
+    void build(key_type* samples, size_t samplesize,
+               unsigned char* splitter_lcp)
+    {
         SSTreeBuilderLevelOrder<key_type, num_splitters>(
             splitter_tree_, splitter_lcp, samples, samplesize);
     }
 
-#define TLX_CLASSIFY_TREE_STEP                                               \
-    if (TLX_UNLIKELY(key == splitter_tree_[i])) {                            \
-        return                                                               \
-            2 * PerfectTreeCalculations<treebits>::level_to_preorder(i) - 1; \
-    }                                                                        \
-    i = 2 * i + (key < splitter_tree_[i] ? 0 : 1);                           \
+#define TLX_CLASSIFY_TREE_STEP                                                 \
+    if (TLX_UNLIKELY(key == splitter_tree_[i]))                                \
+    {                                                                          \
+        return 2 * PerfectTreeCalculations<treebits>::level_to_preorder(i) -   \
+               1;                                                              \
+    }                                                                          \
+    i = 2 * i + (key < splitter_tree_[i] ? 0 : 1);                             \
     TLX_ATTRIBUTE_FALLTHROUGH;
 
     //! binary search on splitter array for bucket number
-    unsigned int find_bkt(const key_type& key) const {
+    unsigned int find_bkt(const key_type& key) const
+    {
         // binary tree traversal without left branch
 
         unsigned int i = 1;
@@ -548,10 +570,10 @@ public:
 
     //! classify all strings in area by walking tree and saving bucket id
     template <typename StringSet>
-    void classify(
-        const StringSet& strset,
-        typename StringSet::Iterator begin, typename StringSet::Iterator end,
-        std::uint16_t* bktout, size_t depth) const {
+    void classify(const StringSet& strset, typename StringSet::Iterator begin,
+                  typename StringSet::Iterator end, std::uint16_t* bktout,
+                  size_t depth) const
+    {
         while (begin != end)
         {
             key_type key = get_key<key_type>(strset, *begin++, depth);
@@ -560,9 +582,10 @@ public:
     }
 
     //! return a splitter
-    key_type get_splitter(unsigned int i) const {
-        return splitter_tree_[
-            PerfectTreeCalculations<treebits>::pre_to_levelorder(i)];
+    key_type get_splitter(unsigned int i) const
+    {
+        return splitter_tree_
+            [PerfectTreeCalculations<treebits>::pre_to_levelorder(i)];
     }
 
 private:
@@ -582,18 +605,21 @@ public:
 
     //! build tree and splitter array from sample
     void build(key_type* samples, size_t samplesize,
-               unsigned char* splitter_lcp) {
+               unsigned char* splitter_lcp)
+    {
         SSTreeBuilderLevelOrder<key_type, num_splitters>(
             splitter_tree_, splitter_lcp, samples, samplesize);
     }
 
     //! binary search on splitter array for bucket number
-    unsigned int find_bkt(const key_type& key) const {
+    unsigned int find_bkt(const key_type& key) const
+    {
         // binary tree traversal without left branch
 
         unsigned int i = 1;
 
-        while (i <= num_splitters) {
+        while (i <= num_splitters)
+        {
             // in gcc-4.6.3 this produces a SETA, LEA sequence
             i = 2 * i + (key <= splitter_tree_[i] ? 0 : 1);
         }
@@ -602,7 +628,8 @@ public:
 
         // < bucket
         size_t b = i * 2;
-        if (i < num_splitters && get_splitter(i) == key) {
+        if (i < num_splitters && get_splitter(i) == key)
+        {
             // equal bucket
             b += 1;
         }
@@ -611,16 +638,18 @@ public:
     }
 
     // in gcc-4.6.3 this produces a SETA, LEA sequence
-#define TLX_CLASSIFY_TREE_STEP                                      \
-    for (size_t u = 0; u < Rollout; ++u) {                          \
-        i[u] = 2 * i[u] + (key[u] <= splitter_tree_[i[u]] ? 0 : 1); \
-    }                                                               \
+#define TLX_CLASSIFY_TREE_STEP                                                 \
+    for (size_t u = 0; u < Rollout; ++u)                                       \
+    {                                                                          \
+        i[u] = 2 * i[u] + (key[u] <= splitter_tree_[i[u]] ? 0 : 1);            \
+    }                                                                          \
     TLX_ATTRIBUTE_FALLTHROUGH;
 
     //! search in splitter tree for bucket number, unrolled for Rollout keys at
     //! once.
-    void find_bkt_unroll(
-        const key_type key[Rollout], std::uint16_t obkt[Rollout]) const {
+    void find_bkt_unroll(const key_type key[Rollout],
+                         std::uint16_t obkt[Rollout]) const
+    {
         // binary tree traversal without left branch
 
         unsigned int i[Rollout];
@@ -668,12 +697,14 @@ public:
         for (unsigned u = 0; u < Rollout; ++u)
             i[u] -= num_splitters + 1;
 
-        for (unsigned u = 0; u < Rollout; ++u) {
+        for (unsigned u = 0; u < Rollout; ++u)
+        {
             // < bucket
             obkt[u] = i[u] * 2;
         }
 
-        for (unsigned u = 0; u < Rollout; ++u) {
+        for (unsigned u = 0; u < Rollout; ++u)
+        {
             // equal bucket
             if (i[u] < num_splitters && get_splitter(i[u]) == key[u])
                 obkt[u] += 1;
@@ -685,10 +716,10 @@ public:
     //! classify all strings in area by walking tree and saving bucket id
     template <typename StringSet>
     // __attribute__ ((optimize("unroll-all-loops")))
-    void classify(
-        const StringSet& strset,
-        typename StringSet::Iterator begin, typename StringSet::Iterator end,
-        std::uint16_t* bktout, size_t depth) const {
+    void classify(const StringSet& strset, typename StringSet::Iterator begin,
+                  typename StringSet::Iterator end, std::uint16_t* bktout,
+                  size_t depth) const
+    {
         while (begin != end)
         {
             if (begin + Rollout <= end)
@@ -710,9 +741,10 @@ public:
     }
 
     //! return a splitter
-    key_type get_splitter(unsigned int i) const {
-        return splitter_tree_[
-            PerfectTreeCalculations<treebits>::pre_to_levelorder(i + 1)];
+    key_type get_splitter(unsigned int i) const
+    {
+        return splitter_tree_
+            [PerfectTreeCalculations<treebits>::pre_to_levelorder(i + 1)];
     }
 
 private:
@@ -721,8 +753,7 @@ private:
 
 /******************************************************************************/
 
-} // namespace sort_strings_detail
-} // namespace tlx
+}} // namespace tlx::sort_strings_detail
 
 #endif // !TLX_SORT_STRINGS_SAMPLE_SORT_TOOLS_HEADER
 

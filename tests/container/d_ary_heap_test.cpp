@@ -8,15 +8,14 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/d_ary_addressable_int_heap.hpp>
+#include <tlx/container/d_ary_heap.hpp>
+#include <tlx/die.hpp>
 #include <algorithm>
 #include <cstdint>
 #include <random>
 #include <set>
 #include <vector>
-
-#include <tlx/container/d_ary_addressable_int_heap.hpp>
-#include <tlx/container/d_ary_heap.hpp>
-#include <tlx/die.hpp>
 
 // Force instantiation.
 namespace tlx {
@@ -36,55 +35,67 @@ template class DAryAddressableIntHeap<std::uint64_t>;
 /******************************************************************************/
 
 template <class T>
-struct Comparator {
+struct Comparator
+{
 public:
-    Comparator(const std::vector<double>& vec) : prio(vec) { }
-    bool operator () (const T& x, const T& y) const { return prio[x] < prio[y]; }
+    Comparator(const std::vector<double>& vec) : prio(vec)
+    {
+    }
+
+    bool operator()(const T& x, const T& y) const
+    {
+        return prio[x] < prio[y];
+    }
 
 private:
     const std::vector<double>& prio;
 };
 
-struct TestData {
+struct TestData
+{
     unsigned int a, b;
 
     // required by the heap
-    TestData() noexcept
-        : a(0), b(0)
-    { }
+    TestData() noexcept : a(0), b(0)
+    {
+    }
 
     // also used as implicit conversion constructor
-    TestData(unsigned int _a) noexcept
-        : a(_a), b(0)
-    { }
+    TestData(unsigned int _a) noexcept : a(_a), b(0)
+    {
+    }
 
-    friend std::ostream& operator << (std::ostream& os, const TestData& d) {
+    friend std::ostream& operator<<(std::ostream& os, const TestData& d)
+    {
         return os << d.a;
     }
 
-    bool operator == (const TestData& o) const {
+    bool operator==(const TestData& o) const
+    {
         return a == o.a && b == o.b;
     }
 };
 
-struct TestCompare {
+struct TestCompare
+{
     unsigned int somevalue;
 
-    TestCompare(unsigned int sv = 0)
-        : somevalue(sv)
-    { }
+    TestCompare(unsigned int sv = 0) : somevalue(sv)
+    {
+    }
 
-    bool operator () (const struct TestData& a, const struct TestData& b) const {
+    bool operator()(const struct TestData& a, const struct TestData& b) const
+    {
         return a.a > b.a;
     }
 };
 
 template <typename KeyType>
-std::vector<KeyType> get_shuffled_vector(size_t size, std::uint32_t r_seed) {
+std::vector<KeyType> get_shuffled_vector(size_t size, std::uint32_t r_seed)
+{
     std::vector<KeyType> keys(size);
-    for (size_t key = 0; key < size; ++key) {
+    for (size_t key = 0; key < size; ++key)
         keys[key] = KeyType(key);
-    }
 
     std::mt19937 gen(r_seed);
     std::shuffle(keys.begin(), keys.end(), gen);
@@ -93,23 +104,26 @@ std::vector<KeyType> get_shuffled_vector(size_t size, std::uint32_t r_seed) {
 
 //! Verifies the heap property, the size of the heap, and the top item.
 template <typename DAryHeap, typename Set>
-void check_heap(DAryHeap& heap, Set& set) {
+void check_heap(DAryHeap& heap, Set& set)
+{
     die_unless(heap.sanity_check());
     die_unequal(heap.size(), set.size());
-    if (!heap.empty()) {
+    if (!heap.empty())
         die_unequal(heap.top(), *(set.begin()));
-    }
 }
 
 template <typename DAryAddressableIntHeap, typename Set>
-void check_handles(DAryAddressableIntHeap& heap, Set& set) {
+void check_handles(DAryAddressableIntHeap& heap, Set& set)
+{
     for (auto elem = set.begin(); elem != set.end(); ++elem)
         die_unless(heap.contains(*elem));
 }
 
 template <typename DAryHeap, typename Set, typename KeysVector>
-void fill_heap_and_set(DAryHeap& heap, Set& set, KeysVector& keys) {
-    for (const typename KeysVector::value_type& key : keys) {
+void fill_heap_and_set(DAryHeap& heap, Set& set, KeysVector& keys)
+{
+    for (const typename KeysVector::value_type& key : keys)
+    {
         heap.push(key);
         set.insert(key);
         check_heap(heap, set);
@@ -119,7 +133,8 @@ void fill_heap_and_set(DAryHeap& heap, Set& set, KeysVector& keys) {
 //! Basic APIs: push(), top(), and pop().
 template <typename KeyType, unsigned Arity = 2,
           class Compare = std::less<KeyType> >
-void d_ary_heap_test(size_t size, std::uint32_t r_seed = 42) {
+void d_ary_heap_test(size_t size, std::uint32_t r_seed = 42)
+{
     tlx::DAryHeap<KeyType, Arity, Compare> x;
     die_unequal(x.size(), 0u);
     die_if(!x.empty());
@@ -131,7 +146,8 @@ void d_ary_heap_test(size_t size, std::uint32_t r_seed = 42) {
     fill_heap_and_set(x, s, keys);
 
     // Test pop().
-    while (!x.empty()) {
+    while (!x.empty())
+    {
         x.pop();
         s.erase(s.begin());
         check_heap(x, s);
@@ -157,7 +173,8 @@ void d_ary_heap_test(size_t size, std::uint32_t r_seed = 42) {
 //! Basic APIs: push(), top(), pop(), and remove().
 template <typename KeyType, unsigned Arity = 2,
           class Compare = std::less<KeyType> >
-void d_ary_addressable_int_heap_test(size_t size, std::uint32_t r_seed = 42) {
+void d_ary_addressable_int_heap_test(size_t size, std::uint32_t r_seed = 42)
+{
     tlx::DAryAddressableIntHeap<KeyType, Arity, Compare> x;
     die_unequal(x.size(), 0u);
     die_if(!x.empty());
@@ -169,7 +186,8 @@ void d_ary_addressable_int_heap_test(size_t size, std::uint32_t r_seed = 42) {
     fill_heap_and_set(x, s, keys);
 
     // Test pop().
-    while (!x.empty()) {
+    while (!x.empty())
+    {
         x.pop();
         s.erase(s.begin());
         check_heap(x, s);
@@ -181,7 +199,8 @@ void d_ary_addressable_int_heap_test(size_t size, std::uint32_t r_seed = 42) {
     fill_heap_and_set(x, s, keys);
 
     // Test remove().
-    for (auto key : keys) {
+    for (auto key : keys)
+    {
         x.remove(key);
         s.erase(s.find(key));
         check_heap(x, s);
@@ -208,13 +227,14 @@ void d_ary_addressable_int_heap_test(size_t size, std::uint32_t r_seed = 42) {
 //! Tests update().
 template <typename KeyType, unsigned Arity = 2>
 void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
-                            std::uint32_t r_seed = 42) {
+                            std::uint32_t r_seed = 42)
+{
     tlx::DAryAddressableIntHeap<KeyType, Arity, Comparator<KeyType> > x{
-        Comparator<KeyType>(prio) };
+        Comparator<KeyType>(prio)};
     die_unequal(x.size(), 0u);
     die_if(!x.empty());
 
-    std::set<KeyType, Comparator<KeyType> > s{ Comparator<KeyType>(prio) };
+    std::set<KeyType, Comparator<KeyType> > s{Comparator<KeyType>(prio)};
 
     // Keep a backup of the priorities because we are going to modify them.
     std::vector<double> backup(prio);
@@ -222,7 +242,8 @@ void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
     auto keys = get_shuffled_vector<KeyType>(size, r_seed);
 
     // Test update() as a way to insert new items.
-    for (auto key : keys) {
+    for (auto key : keys)
+    {
         x.update(key);
         s.insert(key);
         check_heap(x, s);
@@ -232,7 +253,8 @@ void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
     std::mt19937 gen(r_seed);
     std::shuffle(keys.begin(), keys.end(), gen);
     std::uniform_real_distribution<> dis(0.0, 1.0);
-    for (auto key : keys) {
+    for (auto key : keys)
+    {
         prio[key] = dis(gen);
         x.update(key);
         die_unless(x.sanity_check());
@@ -240,9 +262,9 @@ void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
 
     // Update the set.
     s.clear();
-    for (auto key : keys) {
+    for (auto key : keys)
         s.insert(key);
-    }
+
     check_heap(x, s);
 
     //! Test update_all().
@@ -250,16 +272,17 @@ void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
     x.update_all();
 
     s.clear();
-    for (auto key : keys) {
+    for (auto key : keys)
         s.insert(key);
-    }
+
     check_heap(x, s);
 
     // Restore initial priorities.
     prio = backup;
 }
 
-int main() {
+int main()
+{
     // Size of the tested heaps and random seed.
     size_t size = 100;
     std::uint32_t r_seed = 42;
@@ -284,9 +307,12 @@ int main() {
     d_ary_heap_test<std::uint64_t, 3>(size, r_seed);
 
     d_ary_heap_test<std::uint8_t, 2, std::greater<std::uint8_t> >(size, r_seed);
-    d_ary_heap_test<std::uint16_t, 2, std::greater<std::uint16_t> >(size, r_seed);
-    d_ary_heap_test<std::uint32_t, 2, std::greater<std::uint32_t> >(size, r_seed);
-    d_ary_heap_test<std::uint64_t, 2, std::greater<std::uint64_t> >(size, r_seed);
+    d_ary_heap_test<std::uint16_t, 2, std::greater<std::uint16_t> >(size,
+                                                                    r_seed);
+    d_ary_heap_test<std::uint32_t, 2, std::greater<std::uint32_t> >(size,
+                                                                    r_seed);
+    d_ary_heap_test<std::uint64_t, 2, std::greater<std::uint64_t> >(size,
+                                                                    r_seed);
 
     // Basic heap API with custom struct.
     d_ary_heap_test<TestData, 2, TestCompare>(size, r_seed);
@@ -311,18 +337,21 @@ int main() {
     d_ary_addressable_int_heap_test<std::uint64_t, 2>(size, r_seed);
     d_ary_addressable_int_heap_test<std::uint64_t, 3>(size, r_seed);
 
-    d_ary_addressable_int_heap_test<std::uint8_t, 2, std::greater<std::uint8_t> >(size, r_seed);
-    d_ary_addressable_int_heap_test<std::uint16_t, 2, std::greater<std::uint16_t> >(size, r_seed);
-    d_ary_addressable_int_heap_test<std::uint32_t, 2, std::greater<std::uint32_t> >(size, r_seed);
-    d_ary_addressable_int_heap_test<std::uint64_t, 2, std::greater<std::uint64_t> >(size, r_seed);
+    d_ary_addressable_int_heap_test<std::uint8_t, 2,
+                                    std::greater<std::uint8_t> >(size, r_seed);
+    d_ary_addressable_int_heap_test<std::uint16_t, 2,
+                                    std::greater<std::uint16_t> >(size, r_seed);
+    d_ary_addressable_int_heap_test<std::uint32_t, 2,
+                                    std::greater<std::uint32_t> >(size, r_seed);
+    d_ary_addressable_int_heap_test<std::uint64_t, 2,
+                                    std::greater<std::uint64_t> >(size, r_seed);
 
     // Custom compare function.
     std::vector<double> prio(size);
     std::mt19937 gen(r_seed);
     std::uniform_real_distribution<> dis(0.0, 1.0);
-    for (size_t i = 0; i < size; ++i) {
+    for (size_t i = 0; i < size; ++i)
         prio[i] = dis(gen);
-    }
 
     // Test heaps with custom priorities.
     d_ary_heap_test_update<std::uint8_t, 1>(size, prio, r_seed);

@@ -27,8 +27,8 @@ namespace tlx {
  * substrings. Quoted fields extend to the next quote. Quoted fields may
  * containg escaped quote, and \\n \\r \\t \\\\ sequences.
  */
-std::vector<std::string> split_quoted(
-    const std::string& str, char sep, char quote, char escape);
+std::vector<std::string> split_quoted(const std::string& str, char sep,
+                                      char quote, char escape);
 
 /*!
  * Split the given string at each space into distinct substrings. Multiple

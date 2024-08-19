@@ -26,13 +26,13 @@ namespace tlx {
 
 //! returns x raised to the power of D using log(D) explicit multiplications.
 template <unsigned D, typename T>
-static inline constexpr
-T power_to_the(T x) {
+static inline constexpr T power_to_the(T x)
+{
     // Compiler optimize two calls to the same recursion into one
     // Tested with GCC 4+, Clang 3+, MSVC 15+
-    return D < 1 ? 1
-           : D == 1 ? x
-           : power_to_the<D / 2>(x) * power_to_the<div_ceil(D, 2)>(x);
+    return D < 1  ? 1 :
+           D == 1 ? x :
+                    power_to_the<D / 2>(x) * power_to_the<div_ceil(D, 2)>(x);
 }
 
 //! \}

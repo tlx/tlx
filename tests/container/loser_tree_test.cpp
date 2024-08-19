@@ -8,58 +8,72 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/cmdline_parser.hpp>
+#include <tlx/container/loser_tree.hpp>
+#include <tlx/die.hpp>
+#include <tlx/logger.hpp>
 #include <algorithm>
 #include <chrono>
 #include <iostream>
 #include <random>
 #include <vector>
 
-#include <tlx/cmdline_parser.hpp>
-#include <tlx/container/loser_tree.hpp>
-#include <tlx/die.hpp>
-#include <tlx/logger.hpp>
-
 static long ctor_dtor_counter = 0;
 
 //! object to track construction and destruction
-struct MyTracker {
-    MyTracker() {
+struct MyTracker
+{
+    MyTracker()
+    {
         ++ctor_dtor_counter;
     }
-    MyTracker(const MyTracker&) noexcept { // NOLINT
+
+    MyTracker(const MyTracker&) noexcept
+    {
         ++ctor_dtor_counter;
     }
-    MyTracker& operator = (const MyTracker&) noexcept { // NOLINT
+
+    MyTracker& operator=(const MyTracker&) noexcept
+    {
         // no change
         return *this;
     }
-    ~MyTracker() {
+
+    ~MyTracker()
+    {
         --ctor_dtor_counter;
     }
 };
 
 //! struct with one integer
-struct MyInt {
+struct MyInt
+{
     size_t value_ = 1;
 
     //! LoserTreeCopy needs default constructor
     MyInt() = default;
 
-    explicit MyInt(size_t value) : value_(value) { }
+    explicit MyInt(size_t value) : value_(value)
+    {
+    }
 
-    bool operator == (const MyInt& b) const {
+    bool operator==(const MyInt& b) const
+    {
         return value_ == b.value_;
     }
 };
 
-struct MyIntCompare {
-    bool operator () (const MyInt& a, const MyInt& b) const {
+struct MyIntCompare
+{
+    bool operator()(const MyInt& a, const MyInt& b) const
+    {
         return a.value_ < b.value_;
     }
 };
 
 //! struct with two integers
-struct MyIntPair {
+struct MyIntPair
+{
     size_t key_ = 1;
     size_t value_ = 42;
 
@@ -69,16 +83,20 @@ struct MyIntPair {
     //! LoserTreeCopy needs default constructor
     MyIntPair() = default;
 
-    MyIntPair(size_t value, size_t dummy)
-        : key_(value), value_(dummy) { }
+    MyIntPair(size_t value, size_t dummy) : key_(value), value_(dummy)
+    {
+    }
 
-    bool operator == (const MyIntPair& b) const {
+    bool operator==(const MyIntPair& b) const
+    {
         return key_ == b.key_ && value_ == b.value_;
     }
 };
 
-struct MyIntPairCompare {
-    bool operator () (const MyIntPair& a, const MyIntPair& b) const {
+struct MyIntPairCompare
+{
+    bool operator()(const MyIntPair& a, const MyIntPair& b) const
+    {
         return a.key_ < b.key_;
     }
 };
@@ -108,19 +126,19 @@ template class LoserTreePointerUnguardedBase<MyIntPair, MyIntPairCompare>;
 // test_losertree
 
 template <typename LoserTree>
-static inline
-void test_losertree(bool stable, size_t num_vectors) {
-
+static inline void test_losertree(bool stable, size_t num_vectors)
+{
     sLOG1 << "test_losertree:" << stable << num_vectors;
 
     using Vector = std::vector<MyIntPair>;
     std::vector<Vector> vecs;
 
-    std::default_random_engine rng(std::random_device { }());
+    std::default_random_engine rng(std::random_device{}());
 
     std::vector<MyIntPair> correct;
 
-    for (size_t i = 0; i < num_vectors; ++i) {
+    for (size_t i = 0; i < num_vectors; ++i)
+    {
         std::vector<MyIntPair> vec1;
         for (size_t j = 0; j < 1000; ++j)
             vec1.emplace_back(MyIntPair(rng(), rng()));
@@ -136,7 +154,8 @@ void test_losertree(bool stable, size_t num_vectors) {
     if (stable)
     {
         // take first lists and replicate them with other second component
-        for (size_t i = 0; i < num_vectors / 1; ++i) {
+        for (size_t i = 0; i < num_vectors / 1; ++i)
+        {
             std::vector<MyIntPair> vec1;
             for (size_t j = 0; j < 1000; ++j)
                 vec1.emplace_back(MyIntPair(vecs[i][j].key_, rng()));
@@ -157,13 +176,16 @@ void test_losertree(bool stable, size_t num_vectors) {
     std::vector<Vector::const_iterator> lt_iter(vecs.size());
     size_t remaining_inputs = 0;
 
-    for (size_t i = 0; i < vecs.size(); ++i) {
+    for (size_t i = 0; i < vecs.size(); ++i)
+    {
         lt_iter[i] = vecs[i].begin();
 
-        if (lt_iter[i] == vecs[i].end()) {
+        if (lt_iter[i] == vecs[i].end())
+        {
             lt.insert_start(nullptr, i, true);
         }
-        else {
+        else
+        {
             lt.insert_start(&*lt_iter[i], i, false);
             ++remaining_inputs;
         }
@@ -183,10 +205,12 @@ void test_losertree(bool stable, size_t num_vectors) {
 
         ++lt_iter[top];
 
-        if (lt_iter[top] != vecs[top].end()) {
+        if (lt_iter[top] != vecs[top].end())
+        {
             lt.delete_min_insert(&*lt_iter[top], false);
         }
-        else {
+        else
+        {
             lt.delete_min_insert(nullptr, true);
             --remaining_inputs;
         }
@@ -196,8 +220,8 @@ void test_losertree(bool stable, size_t num_vectors) {
 }
 
 template <typename LoserTree>
-static inline void test_losertree(bool stable) {
-
+static inline void test_losertree(bool stable)
+{
     test_losertree<LoserTree>(stable, 0);
     test_losertree<LoserTree>(stable, 1);
     test_losertree<LoserTree>(stable, 2);
@@ -213,19 +237,16 @@ static inline void test_losertree(bool stable) {
     test_losertree<LoserTree>(stable, 12);
 }
 
-static void test_losertree() {
-    test_losertree<
-        tlx::LoserTreeCopy<false, MyIntPair, MyIntPairCompare> >(
+static void test_losertree()
+{
+    test_losertree<tlx::LoserTreeCopy<false, MyIntPair, MyIntPairCompare> >(
         /* stable */ false);
-    test_losertree<
-        tlx::LoserTreeCopy<true, MyIntPair, MyIntPairCompare> >(
+    test_losertree<tlx::LoserTreeCopy<true, MyIntPair, MyIntPairCompare> >(
         /* stable */ true);
 
-    test_losertree<
-        tlx::LoserTreePointer<false, MyIntPair, MyIntPairCompare> >(
+    test_losertree<tlx::LoserTreePointer<false, MyIntPair, MyIntPairCompare> >(
         /* stable */ false);
-    test_losertree<
-        tlx::LoserTreePointer<true, MyIntPair, MyIntPairCompare> >(
+    test_losertree<tlx::LoserTreePointer<true, MyIntPair, MyIntPairCompare> >(
         /* stable */ true);
 
     die_unequal(ctor_dtor_counter, 0);
@@ -235,15 +256,17 @@ static void test_losertree() {
 // benchmark_losertree
 
 double time_delta(const std::chrono::steady_clock::time_point& a,
-                  const std::chrono::steady_clock::time_point& b) {
-    return std::chrono::duration_cast<
-        std::chrono::microseconds>(b - a).count() / 1e6;
+                  const std::chrono::steady_clock::time_point& b)
+{
+    return std::chrono::duration_cast<std::chrono::microseconds>(b - a)
+               .count() /
+           1e6;
 }
 
 template <typename LoserTree>
-void benchmark_losertree(
-    const char* benchmark, size_t num_vectors, size_t vector_size) {
-
+void benchmark_losertree(const char* benchmark, size_t num_vectors,
+                         size_t vector_size)
+{
     using Vector = std::vector<MyInt>;
     using steady_clock = std::chrono::steady_clock;
 
@@ -254,7 +277,8 @@ void benchmark_losertree(
 
     steady_clock::time_point tp1 = steady_clock::now();
 
-    for (size_t i = 0; i < num_vectors; ++i) {
+    for (size_t i = 0; i < num_vectors; ++i)
+    {
         std::vector<MyInt> vec1;
         vec1.reserve(vector_size);
 
@@ -273,13 +297,16 @@ void benchmark_losertree(
     std::vector<Vector::const_iterator> lt_iter(vecs.size());
     size_t remaining_inputs = 0;
 
-    for (size_t i = 0; i < vecs.size(); ++i) {
+    for (size_t i = 0; i < vecs.size(); ++i)
+    {
         lt_iter[i] = vecs[i].begin();
 
-        if (lt_iter[i] == vecs[i].end()) {
+        if (lt_iter[i] == vecs[i].end())
+        {
             lt.insert_start(nullptr, i, true);
         }
-        else {
+        else
+        {
             lt.insert_start(&*lt_iter[i], i, false);
             ++remaining_inputs;
         }
@@ -296,10 +323,12 @@ void benchmark_losertree(
         unsigned top = lt.min_source();
         result.emplace_back(*lt_iter[top]++);
 
-        if (lt_iter[top] != vecs[top].end()) {
+        if (lt_iter[top] != vecs[top].end())
+        {
             lt.delete_min_insert(&*lt_iter[top], false);
         }
-        else {
+        else
+        {
             lt.delete_min_insert(nullptr, true);
             --remaining_inputs;
         }
@@ -310,15 +339,14 @@ void benchmark_losertree(
     die_unequal(result.size(), total_size);
 
     std::cout << "RESULT"
-              << " benchmark=" << benchmark
-              << " num_vectors=" << num_vectors
+              << " benchmark=" << benchmark << " num_vectors=" << num_vectors
               << " vector_size=" << vector_size
               << " init_time=" << time_delta(tp1, tp2)
-              << " merge_time=" << time_delta(tp2, tp3)
-              << std::endl;
+              << " merge_time=" << time_delta(tp2, tp3) << std::endl;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     tlx::CmdlineParser clp;
 
     size_t num_vectors = 10;
@@ -334,49 +362,55 @@ int main(int argc, char* argv[]) {
                   "Length of vectors to merge, default: 1000000");
 
     std::string benchmark;
-    clp.add_opt_param_string(
-        "benchmark", benchmark,
-        "losertree type to benchmark: "
-        "c = LoserTreeCopy, "
-        "p = LoserTreePointer, "
-        "d = LoserTreeCopyStable, "
-        "q = LoserTreePointerStable, "
-        "if empty = run tests");
+    clp.add_opt_param_string("benchmark", benchmark,
+                             "losertree type to benchmark: "
+                             "c = LoserTreeCopy, "
+                             "p = LoserTreePointer, "
+                             "d = LoserTreeCopyStable, "
+                             "q = LoserTreePointerStable, "
+                             "if empty = run tests");
 
     if (!clp.process(argc, argv))
         return -1;
 
-    if (benchmark.empty()) {
+    if (benchmark.empty())
+    {
         test_losertree();
         return 0;
     }
 
     // iterate over letters in benchmark
-    for (const char& bench : benchmark) {
-        switch (bench) {
+    for (const char& bench : benchmark)
+    {
+        switch (bench)
+        {
         case 'c':
-            for (size_t r = 0; r < outer_repeat; ++r) {
+            for (size_t r = 0; r < outer_repeat; ++r)
+            {
                 benchmark_losertree<
                     tlx::LoserTreeCopy<false, MyInt, MyIntCompare> >(
                     "LoserTreeCopy", num_vectors, vector_size);
             }
             break;
         case 'd':
-            for (size_t r = 0; r < outer_repeat; ++r) {
+            for (size_t r = 0; r < outer_repeat; ++r)
+            {
                 benchmark_losertree<
                     tlx::LoserTreeCopy<true, MyInt, MyIntCompare> >(
                     "LoserTreeCopy", num_vectors, vector_size);
             }
             break;
         case 'p':
-            for (size_t r = 0; r < outer_repeat; ++r) {
+            for (size_t r = 0; r < outer_repeat; ++r)
+            {
                 benchmark_losertree<
                     tlx::LoserTreePointer<false, MyInt, MyIntCompare> >(
                     "LoserTreePointer", num_vectors, vector_size);
             }
             break;
         case 'q':
-            for (size_t r = 0; r < outer_repeat; ++r) {
+            for (size_t r = 0; r < outer_repeat; ++r)
+            {
                 benchmark_losertree<
                     tlx::LoserTreePointer<true, MyInt, MyIntCompare> >(
                     "LoserTreePointer", num_vectors, vector_size);

@@ -21,10 +21,9 @@
 #define TLX_SORT_STRINGS_STRING_PTR_HEADER
 
 #include <tlx/sort/strings/string_set.hpp>
-
+#include <stdint.h>
 #include <algorithm>
 #include <cassert>
-#include <stdint.h>
 
 namespace tlx {
 
@@ -56,17 +55,25 @@ protected:
 
 public:
     //! constructor specifying all attributes
-    StringPtr(const StringSet& ss)
-        : active_(ss) { }
+    StringPtr(const StringSet& ss) : active_(ss)
+    {
+    }
 
     //! return currently active array
-    const StringSet& active() const { return active_; }
+    const StringSet& active() const
+    {
+        return active_;
+    }
 
     //! return valid length
-    size_t size() const { return active_.size(); }
+    size_t size() const
+    {
+        return active_.size();
+    }
 
     //! Advance (both) pointers by given offset, return sub-array
-    StringPtr sub(size_t offset, size_t sub_size) const {
+    StringPtr sub(size_t offset, size_t sub_size) const
+    {
         assert(offset + sub_size <= size());
         return StringPtr(active_.subi(offset, offset + sub_size));
     }
@@ -76,11 +83,15 @@ public:
 
     //! set the i-th lcp to v and check its value
     template <typename LcpType>
-    void set_lcp(size_t /* i */, const LcpType& /* v */) const { }
+    void set_lcp(size_t /* i */, const LcpType& /* v */) const
+    {
+    }
 
     //! fill entire LCP array with v, excluding the first lcp[0] position!
     template <typename LcpType>
-    void fill_lcp(const LcpType& /* v */) const { }
+    void fill_lcp(const LcpType& /* v */) const
+    {
+    }
 
     //! objectified string and shadow pointer class
     typedef StringShadowPtr<StringSet_> WithShadow;
@@ -110,17 +121,25 @@ protected:
 
 public:
     //! constructor specifying all attributes
-    StringLcpPtr(const StringSet& ss, LcpType* lcp)
-        : active_(ss), lcp_(lcp) { }
+    StringLcpPtr(const StringSet& ss, LcpType* lcp) : active_(ss), lcp_(lcp)
+    {
+    }
 
     //! return currently active array
-    const StringSet& active() const { return active_; }
+    const StringSet& active() const
+    {
+        return active_;
+    }
 
     //! return valid length
-    size_t size() const { return active_.size(); }
+    size_t size() const
+    {
+        return active_.size();
+    }
 
     //! Advance (both) pointers by given offset, return sub-array
-    StringLcpPtr sub(size_t offset, size_t sub_size) const {
+    StringLcpPtr sub(size_t offset, size_t sub_size) const
+    {
         assert(offset + sub_size <= size());
         return StringLcpPtr(active_.subi(offset, offset + sub_size),
                             lcp_ + offset);
@@ -130,24 +149,28 @@ public:
     static const bool with_lcp = true;
 
     //! return LCP array pointer
-    LcpType * lcp() const {
+    LcpType* lcp() const
+    {
         return lcp_;
     }
 
     //! return LCP array value
-    LcpType get_lcp(size_t i) const {
+    LcpType get_lcp(size_t i) const
+    {
         assert(i < size());
         return lcp_[i];
     }
 
     //! set the i-th lcp to v and check its value
-    void set_lcp(size_t i, const LcpType& v) const {
+    void set_lcp(size_t i, const LcpType& v) const
+    {
         assert(i < size());
         lcp_[i] = v;
     }
 
     //! fill entire LCP array with v, excluding the first lcp[0] position!
-    void fill_lcp(const LcpType& v) const {
+    void fill_lcp(const LcpType& v) const
+    {
         for (size_t i = 1; i < size(); ++i)
             set_lcp(i, v);
     }
@@ -183,22 +206,37 @@ public:
     //! constructor specifying all attributes
     StringShadowPtr(const StringSet& original, const StringSet& shadow,
                     bool flipped = false)
-        : active_(original), shadow_(shadow), flipped_(flipped) { }
+        : active_(original), shadow_(shadow), flipped_(flipped)
+    {
+    }
 
     //! return currently active array
-    const StringSet& active() const { return active_; }
+    const StringSet& active() const
+    {
+        return active_;
+    }
 
     //! return current shadow array
-    const StringSet& shadow() const { return shadow_; }
+    const StringSet& shadow() const
+    {
+        return shadow_;
+    }
 
     //! true if flipped to back array
-    bool flipped() const { return flipped_; }
+    bool flipped() const
+    {
+        return flipped_;
+    }
 
     //! return valid length
-    size_t size() const { return active_.size(); }
+    size_t size() const
+    {
+        return active_.size();
+    }
 
     //! Advance (both) pointers by given offset, return sub-array without flip
-    StringShadowPtr sub(size_t offset, size_t sub_size) const {
+    StringShadowPtr sub(size_t offset, size_t sub_size) const
+    {
         assert(offset + sub_size <= size());
         return StringShadowPtr(active_.subi(offset, offset + sub_size),
                                shadow_.subi(offset, offset + sub_size),
@@ -207,7 +245,8 @@ public:
 
     //! construct a StringShadowPtr object specifying a sub-array with flipping
     //! to other array.
-    StringShadowPtr flip(size_t offset, size_t sub_size) const {
+    StringShadowPtr flip(size_t offset, size_t sub_size) const
+    {
         assert(offset + sub_size <= size());
         return StringShadowPtr(shadow_.subi(offset, offset + sub_size),
                                active_.subi(offset, offset + sub_size),
@@ -216,11 +255,14 @@ public:
 
     //! return subarray pointer to n strings in original array, might copy from
     //! shadow before returning.
-    StringShadowPtr copy_back() const {
-        if (!flipped_) {
+    StringShadowPtr copy_back() const
+    {
+        if (!flipped_)
+        {
             return *this;
         }
-        else {
+        else
+        {
             std::move(active_.begin(), active_.end(), shadow_.begin());
             return StringShadowPtr(shadow_, active_, !flipped_);
         }
@@ -231,11 +273,15 @@ public:
 
     //! set the i-th lcp to v and check its value
     template <typename LcpType>
-    void set_lcp(size_t /* i */, const LcpType& /* v */) const { }
+    void set_lcp(size_t /* i */, const LcpType& /* v */) const
+    {
+    }
 
     //! fill entire LCP array with v, excluding the first lcp[0] position!
     template <typename LcpType>
-    void fill_lcp(const LcpType& /* v */) const { }
+    void fill_lcp(const LcpType& /* v */) const
+    {
+    }
 };
 
 /******************************************************************************/
@@ -266,22 +312,37 @@ public:
     //! constructor specifying all attributes
     StringShadowLcpPtr(const StringSet& original, const StringSet& shadow,
                        LcpType* lcp, bool flipped = false)
-        : active_(original), shadow_(shadow), lcp_(lcp), flipped_(flipped) { }
+        : active_(original), shadow_(shadow), lcp_(lcp), flipped_(flipped)
+    {
+    }
 
     //! return currently active array
-    const StringSet& active() const { return active_; }
+    const StringSet& active() const
+    {
+        return active_;
+    }
 
     //! return current shadow array
-    const StringSet& shadow() const { return shadow_; }
+    const StringSet& shadow() const
+    {
+        return shadow_;
+    }
 
     //! true if flipped to back array
-    bool flipped() const { return flipped_; }
+    bool flipped() const
+    {
+        return flipped_;
+    }
 
     //! return valid length
-    size_t size() const { return active_.size(); }
+    size_t size() const
+    {
+        return active_.size();
+    }
 
     //! Advance (both) pointers by given offset, return sub-array without flip
-    StringShadowLcpPtr sub(size_t offset, size_t sub_size) const {
+    StringShadowLcpPtr sub(size_t offset, size_t sub_size) const
+    {
         assert(offset + sub_size <= size());
         return StringShadowLcpPtr(active_.subi(offset, offset + sub_size),
                                   shadow_.subi(offset, offset + sub_size),
@@ -290,7 +351,8 @@ public:
 
     //! construct a StringShadowLcpPtr object specifying a sub-array with
     //! flipping to other array.
-    StringShadowLcpPtr flip(size_t offset, size_t sub_size) const {
+    StringShadowLcpPtr flip(size_t offset, size_t sub_size) const
+    {
         assert(offset + sub_size <= size());
         return StringShadowLcpPtr(shadow_.subi(offset, offset + sub_size),
                                   active_.subi(offset, offset + sub_size),
@@ -299,11 +361,14 @@ public:
 
     //! return subarray pointer to n strings in original array, might copy from
     //! shadow before returning.
-    StringShadowLcpPtr copy_back() const {
-        if (!flipped_) {
+    StringShadowLcpPtr copy_back() const
+    {
+        if (!flipped_)
+        {
             return *this;
         }
-        else {
+        else
+        {
             std::move(active_.begin(), active_.end(), shadow_.begin());
             return StringShadowLcpPtr(shadow_, active_, lcp_, !flipped_);
         }
@@ -313,24 +378,28 @@ public:
     static const bool with_lcp = true;
 
     //! return LCP array pointer
-    LcpType * lcp() const {
+    LcpType* lcp() const
+    {
         return lcp_;
     }
 
     //! return LCP array value
-    LcpType get_lcp(size_t i) const {
+    LcpType get_lcp(size_t i) const
+    {
         assert(i < size());
         return lcp_[i];
     }
 
     //! set the i-th lcp to v and check its value
-    void set_lcp(size_t i, const LcpType& v) const {
+    void set_lcp(size_t i, const LcpType& v) const
+    {
         assert(i < size());
         lcp_[i] = v;
     }
 
     //! fill entire LCP array with v, excluding the first lcp[0] position!
-    void fill_lcp(const LcpType& v) const {
+    void fill_lcp(const LcpType& v) const
+    {
         for (size_t i = 1; i < size(); ++i)
             set_lcp(i, v);
     }
@@ -339,14 +408,16 @@ public:
 /******************************************************************************/
 
 template <typename StringSet_>
-StringShadowPtr<StringSet_>
-StringPtr<StringSet_>::add_shadow(const StringSet_& shadow) const {
+StringShadowPtr<StringSet_> StringPtr<StringSet_>::add_shadow(
+    const StringSet_& shadow) const
+{
     return StringShadowPtr<StringSet_>(active_, shadow);
 }
 
 template <typename StringSet_, typename LcpType_>
 StringShadowLcpPtr<StringSet_, LcpType_>
-StringLcpPtr<StringSet_, LcpType_>::add_shadow(const StringSet_& shadow) const {
+StringLcpPtr<StringSet_, LcpType_>::add_shadow(const StringSet_& shadow) const
+{
     return StringShadowLcpPtr<StringSet_, LcpType_>(active_, shadow, lcp_);
 }
 

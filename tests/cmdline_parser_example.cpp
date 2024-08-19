@@ -10,12 +10,12 @@
 
 // [example]
 #include <tlx/cmdline_parser.hpp>
-
 #include <cstdint>
 #include <iostream>
 #include <string>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     tlx::CmdlineParser cp;
 
     // add description and author
@@ -31,13 +31,11 @@ int main(int argc, char* argv[]) {
 
     // add a byte size argument which the user can enter like '1gi'
     std::uint64_t a_size = 0;
-    cp.add_bytes('s', "size", a_size,
-                 "Number of bytes to process.");
+    cp.add_bytes('s', "size", a_size, "Number of bytes to process.");
 
     // add a required parameter
     std::string a_filename;
-    cp.add_param_string("filename", a_filename,
-                        "A filename to process");
+    cp.add_param_string("filename", a_filename, "A filename to process");
 
     // process command line
     if (!cp.process(argc, argv))
@@ -52,6 +50,7 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
+
 // [example]
 
 /******************************************************************************/

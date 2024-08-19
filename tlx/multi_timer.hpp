@@ -43,11 +43,11 @@ public:
     //! default copy-constructor
     MultiTimer(const MultiTimer&);
     //! default assignment operator
-    MultiTimer& operator = (const MultiTimer&);
+    MultiTimer& operator=(const MultiTimer&);
     //! move-constructor: default
     MultiTimer(MultiTimer&&);
     //! move-assignment operator: default
-    MultiTimer& operator = (MultiTimer&&);
+    MultiTimer& operator=(MultiTimer&&);
 
     //! destructor
     ~MultiTimer();
@@ -62,7 +62,7 @@ public:
     void reset();
 
     //! return name of currently running timer.
-    const char * running() const;
+    const char* running() const;
 
     //! return timer duration in seconds of timer.
     double get(const char* timer);
@@ -80,7 +80,7 @@ public:
 
     //! add all timers from another, internally holds a global mutex lock,
     //! because this is used to add thread values
-    MultiTimer& operator += (const MultiTimer& b);
+    MultiTimer& operator+=(const MultiTimer& b);
 
 private:
     //! timer entry

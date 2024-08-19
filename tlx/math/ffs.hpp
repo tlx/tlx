@@ -24,8 +24,10 @@ namespace tlx {
 
 //! ffs (find first set bit) - generic implementation
 template <typename Integral>
-static inline unsigned ffs_template(Integral x) {
-    if (x == 0) return 0u;
+static inline unsigned ffs_template(Integral x)
+{
+    if (x == 0)
+        return 0u;
     unsigned r = 1;
     while ((x & 1) == 0)
         x >>= 1, ++r;
@@ -37,76 +39,76 @@ static inline unsigned ffs_template(Integral x) {
 #if defined(__GNUC__) || defined(__clang__)
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(int i) {
+static inline unsigned ffs(int i)
+{
     return static_cast<unsigned>(__builtin_ffs(i));
 }
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(unsigned i) {
+static inline unsigned ffs(unsigned i)
+{
     return ffs(static_cast<int>(i));
 }
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(long i) {
+static inline unsigned ffs(long i)
+{
     return static_cast<unsigned>(__builtin_ffsl(i));
 }
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(unsigned long i) {
+static inline unsigned ffs(unsigned long i)
+{
     return ffs(static_cast<long>(i));
 }
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(long long i) {
+static inline unsigned ffs(long long i)
+{
     return static_cast<unsigned>(__builtin_ffsll(i));
 }
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(unsigned long long i) {
+static inline unsigned ffs(unsigned long long i)
+{
     return ffs(static_cast<long long>(i));
 }
 
 #else
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(int i) {
+static inline unsigned ffs(int i)
+{
     return ffs_template(i);
 }
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(unsigned int i) {
+static inline unsigned ffs(unsigned int i)
+{
     return ffs_template(i);
 }
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(long i) {
+static inline unsigned ffs(long i)
+{
     return ffs_template(i);
 }
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(unsigned long i) {
+static inline unsigned ffs(unsigned long i)
+{
     return ffs_template(i);
 }
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(long long i) {
+static inline unsigned ffs(long long i)
+{
     return ffs_template(i);
 }
 
 //! find first set bit in integer, or zero if none are set.
-static inline
-unsigned ffs(unsigned long long i) {
+static inline unsigned ffs(unsigned long long i)
+{
     return ffs_template(i);
 }
 

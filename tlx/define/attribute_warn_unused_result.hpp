@@ -20,7 +20,7 @@ namespace tlx {
 // __attribute__ ((warn_unused_result))
 
 #if defined(__GNUC__) || defined(__clang__)
-#define TLX_ATTRIBUTE_WARN_UNUSED_RESULT __attribute__ ((warn_unused_result))
+#define TLX_ATTRIBUTE_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
 #else
 #define TLX_ATTRIBUTE_WARN_UNUSED_RESULT
 #endif

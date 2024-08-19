@@ -16,6 +16,17 @@
 #ifndef TLX_SORT_STRINGS_PARALLEL_SAMPLE_SORT_HEADER
 #define TLX_SORT_STRINGS_PARALLEL_SAMPLE_SORT_HEADER
 
+#include <tlx/logger/core.hpp>
+#include <tlx/math/clz.hpp>
+#include <tlx/math/ctz.hpp>
+#include <tlx/meta/enable_if.hpp>
+#include <tlx/multi_timer.hpp>
+#include <tlx/simple_vector.hpp>
+#include <tlx/sort/strings/insertion_sort.hpp>
+#include <tlx/sort/strings/sample_sort_tools.hpp>
+#include <tlx/sort/strings/string_ptr.hpp>
+#include <tlx/thread_pool.hpp>
+#include <tlx/unused.hpp>
 #include <algorithm>
 #include <atomic>
 #include <cmath>
@@ -25,21 +36,7 @@
 #include <random>
 #include <vector>
 
-#include <tlx/sort/strings/insertion_sort.hpp>
-#include <tlx/sort/strings/sample_sort_tools.hpp>
-#include <tlx/sort/strings/string_ptr.hpp>
-
-#include <tlx/logger/core.hpp>
-#include <tlx/math/clz.hpp>
-#include <tlx/math/ctz.hpp>
-#include <tlx/meta/enable_if.hpp>
-#include <tlx/multi_timer.hpp>
-#include <tlx/simple_vector.hpp>
-#include <tlx/thread_pool.hpp>
-#include <tlx/unused.hpp>
-
-namespace tlx {
-namespace sort_strings_detail {
+namespace tlx { namespace sort_strings_detail {
 
 class PS5SortStep;
 
@@ -115,28 +112,31 @@ public:
 
     //! context constructor
     PS5Context(size_t _thread_num)
-        : para_ss_steps(0), sequ_ss_steps(0), base_sort_steps(0),
+        : para_ss_steps(0),
+          sequ_ss_steps(0),
+          base_sort_steps(0),
           num_threads(_thread_num),
           threads_(_thread_num)
-    { }
+    {
+    }
 
     //! enqueue a new job in the thread pool
     template <typename StringPtr>
     void enqueue(PS5SortStep* sstep, const StringPtr& strptr, size_t depth);
 
     //! return sequential sorting threshold
-    size_t sequential_threshold() {
+    size_t sequential_threshold()
+    {
         size_t threshold = this->smallsort_threshold;
-        if (this->enable_rest_size) {
+        if (this->enable_rest_size)
             return std::max(threshold, rest_size / num_threads);
-        }
-        else {
+        else
             return std::max(threshold, total_size / num_threads);
-        }
     }
 
     //! decrement number of unordered strings
-    void donesize(size_t n) {
+    void donesize(size_t n)
+    {
         if (this->enable_rest_size)
             rest_size -= n;
     }
@@ -146,23 +146,23 @@ public:
 //! LCP calculation of Splitter Strings
 
 template <typename KeyType>
-static inline unsigned char
-lcpKeyType(const KeyType& a, const KeyType& b) {
+static inline unsigned char lcpKeyType(const KeyType& a, const KeyType& b)
+{
     // XOR both values and count the number of zero bytes
     return clz(a ^ b) / 8;
 }
 
 template <typename KeyType>
-static inline unsigned char
-lcpKeyDepth(const KeyType& a) {
+static inline unsigned char lcpKeyDepth(const KeyType& a)
+{
     // count number of non-zero bytes
     return sizeof(KeyType) - (ctz(a) / 8);
 }
 
 //! return the d-th character in the (swapped) key
 template <typename KeyType>
-static inline unsigned char
-getCharAtDepth(const KeyType& a, unsigned char d) {
+static inline unsigned char getCharAtDepth(const KeyType& a, unsigned char d)
+{
     return static_cast<unsigned char>(a >> (8 * (sizeof(KeyType) - 1 - d)));
 }
 
@@ -179,20 +179,25 @@ private:
     virtual void substep_all_done() = 0;
 
 protected:
-    PS5SortStep() : substep_working_(0) { }
+    PS5SortStep() : substep_working_(0)
+    {
+    }
 
-    virtual ~PS5SortStep() {
+    virtual ~PS5SortStep()
+    {
         assert(substep_working_ == 0);
     }
 
     //! Register new substep
-    void substep_add() {
+    void substep_add()
+    {
         ++substep_working_;
     }
 
 public:
     //! Notify superstep that the currently substep is done.
-    void substep_notify_done() {
+    void substep_notify_done()
+    {
         assert(substep_working_ > 0);
         if (--substep_working_ == 0)
             substep_all_done();
@@ -206,7 +211,8 @@ template <size_t bktnum, typename Context, typename Classify,
           typename StringPtr, typename BktSizeType>
 void ps5_sample_sort_lcp(const Context& ctx, const Classify& classifier,
                          const StringPtr& strptr, size_t depth,
-                         const BktSizeType* bkt) {
+                         const BktSizeType* bkt)
+{
     assert(!strptr.flipped());
 
     const typename StringPtr::StringSet& strset = strptr.active();
@@ -224,15 +230,18 @@ void ps5_sample_sort_lcp(const Context& ctx, const Classify& classifier,
     while (b < bktnum)
     {
         // odd bucket: = bkt
-        if (bkt[b] != bkt[b + 1]) {
+        if (bkt[b] != bkt[b + 1])
+        {
             prevkey = classifier.get_splitter(b / 2);
-            assert(prevkey == get_key_at<key_type>(strset, bkt[b + 1] - 1, depth));
+            assert(prevkey ==
+                   get_key_at<key_type>(strset, bkt[b + 1] - 1, depth));
             break;
         }
         ++b;
-even_first:
+    even_first:
         // even bucket: <, << or > bkt
-        if (bkt[b] != bkt[b + 1]) {
+        if (bkt[b] != bkt[b + 1])
+        {
             prevkey = get_key_at<key_type>(strset, bkt[b + 1] - 1, depth);
             break;
         }
@@ -242,13 +251,15 @@ even_first:
 
     // goto depends on whether the first non-empty bucket was odd or
     // even. the while loop below encodes this in the program counter.
-    if (b < bktnum && b % 2 == 0) goto even_bucket;
+    if (b < bktnum && b % 2 == 0)
+        goto even_bucket;
 
     // find next non-empty bucket
     while (b < bktnum)
     {
         // odd bucket: = bkt
-        if (bkt[b] != bkt[b + 1]) {
+        if (bkt[b] != bkt[b + 1])
+        {
             key_type thiskey = classifier.get_splitter(b / 2);
             assert(thiskey == get_key_at<key_type>(strset, bkt[b], depth));
 
@@ -256,28 +267,28 @@ even_first:
             strptr.set_lcp(bkt[b], depth + rlcp);
             // strptr.set_cache(bkt[b], getCharAtDepth(thiskey, rlcp));
 
-            TLX_LOGC(ctx.debug_lcp)
-                << "LCP at odd-bucket " << b
-                << " [" << bkt[b] << "," << bkt[b + 1] << ")"
-                << " is " << depth + rlcp;
+            TLX_LOGC(ctx.debug_lcp) << "LCP at odd-bucket " << b << " ["
+                                    << bkt[b] << "," << bkt[b + 1] << ")"
+                                    << " is " << depth + rlcp;
 
             prevkey = thiskey;
-            assert(prevkey == get_key_at<key_type>(strset, bkt[b + 1] - 1, depth));
+            assert(prevkey ==
+                   get_key_at<key_type>(strset, bkt[b + 1] - 1, depth));
         }
         ++b;
-even_bucket:
+    even_bucket:
         // even bucket: <, << or > bkt
-        if (bkt[b] != bkt[b + 1]) {
+        if (bkt[b] != bkt[b + 1])
+        {
             key_type thiskey = get_key_at<key_type>(strset, bkt[b], depth);
 
             int rlcp = lcpKeyType(prevkey, thiskey);
             strptr.set_lcp(bkt[b], depth + rlcp);
             // strptr.set_cache(bkt[b], getCharAtDepth(thiskey, rlcp));
 
-            TLX_LOGC(ctx.debug_lcp)
-                << "LCP at even-bucket " << b
-                << " [" << bkt[b] << "," << bkt[b + 1] << ")"
-                << " is " << depth + rlcp;
+            TLX_LOGC(ctx.debug_lcp) << "LCP at even-bucket " << b << " ["
+                                    << bkt[b] << "," << bkt[b + 1] << ")"
+                                    << " is " << depth + rlcp;
 
             prevkey = get_key_at<key_type>(strset, bkt[b + 1] - 1, depth);
         }
@@ -305,15 +316,17 @@ public:
     typedef typename StringPtr::StringSet StringSet;
     typedef BktSizeType bktsize_type;
 
-    PS5SmallsortJob(Context& ctx, PS5SortStep* pstep,
-                    const StringPtr& strptr, size_t depth)
-        : ctx_(ctx), pstep_(pstep), strptr_(strptr), depth_(depth) {
+    PS5SmallsortJob(Context& ctx, PS5SortStep* pstep, const StringPtr& strptr,
+                    size_t depth)
+        : ctx_(ctx), pstep_(pstep), strptr_(strptr), depth_(depth)
+    {
         TLX_LOGC(ctx_.debug_steps)
-            << "enqueue depth=" << depth_
-            << " size=" << strptr_.size() << " flip=" << strptr_.flipped();
+            << "enqueue depth=" << depth_ << " size=" << strptr_.size()
+            << " flip=" << strptr_.flipped();
     }
 
-    ~PS5SmallsortJob() {
+    ~PS5SmallsortJob()
+    {
         mtimer_.stop();
         ctx_.mtimer.add(mtimer_);
     }
@@ -321,7 +334,8 @@ public:
     simple_vector<std::uint8_t> bktcache_;
     size_t bktcache_size_ = 0;
 
-    void run() {
+    void run()
+    {
         mtimer_.start("sequ_ss");
 
         size_t n = strptr_.size();
@@ -370,7 +384,8 @@ public:
 
         SeqSampleSortStep(Context& ctx, const StringPtr& strptr, size_t depth,
                           std::uint16_t* bktcache)
-            : strptr_(strptr), idx_(0), depth_(depth) {
+            : strptr_(strptr), idx_(0), depth_(depth)
+        {
             size_t n = strptr_.size();
 
             // step 1: select splitters with oversampling
@@ -393,8 +408,8 @@ public:
 
             // step 2: classify all strings
 
-            classifier.classify(
-                strset, strset.begin(), strset.end(), bktcache, depth_);
+            classifier.classify(strset, strset.begin(), strset.end(), bktcache,
+                                depth_);
 
             // step 2.5: count bucket sizes
 
@@ -407,7 +422,8 @@ public:
             // step 3: inclusive prefix sum
 
             bkt[0] = bktsize[0];
-            for (unsigned int i = 1; i < bktnum; ++i) {
+            for (unsigned int i = 1; i < bktnum; ++i)
+            {
                 bkt[i] = bkt[i - 1] + bktsize[i];
             }
             assert(bkt[bktnum - 1] == n);
@@ -431,10 +447,13 @@ public:
             ++ctx.sequ_ss_steps;
         }
 
-        void calculate_lcp(Context& ctx) {
+        void calculate_lcp(Context& ctx)
+        {
             TLX_LOGC(ctx.debug_lcp) << "Calculate LCP after sample sort step";
-            if (strptr_.with_lcp) {
-                ps5_sample_sort_lcp<bktnum>(ctx, classifier, strptr_, depth_, bkt);
+            if (strptr_.with_lcp)
+            {
+                ps5_sample_sort_lcp<bktnum>(ctx, classifier, strptr_, depth_,
+                                            bkt);
             }
         }
     };
@@ -442,13 +461,15 @@ public:
     size_t ss_front_ = 0;
     std::vector<SeqSampleSortStep> ss_stack_;
 
-    void sort_sample_sort(const StringPtr& strptr, size_t depth) {
+    void sort_sample_sort(const StringPtr& strptr, size_t depth)
+    {
         typedef SeqSampleSortStep Step;
 
         assert(ss_front_ == 0);
         assert(ss_stack_.size() == 0);
 
-        std::uint16_t* bktcache = reinterpret_cast<std::uint16_t*>(bktcache_.data());
+        std::uint16_t* bktcache =
+            reinterpret_cast<std::uint16_t*>(bktcache_.data());
 
         // sort first level
         ss_stack_.emplace_back(ctx_, strptr, depth, bktcache);
@@ -469,7 +490,8 @@ public:
                 // i is even -> bkt[i] is less-than bucket
                 if (i % 2 == 0)
                 {
-                    if (bktsize == 0) {
+                    if (bktsize == 0)
+                    {
                         // empty bucket
                     }
                     else if (bktsize < ctx_.smallsort_threshold)
@@ -477,58 +499,63 @@ public:
                         assert(i / 2 <= Step::num_splitters);
                         if (i == Step::bktnum - 1)
                             TLX_LOGC(ctx_.debug_recursion)
-                                << "Recurse[" << s.depth_ << "]: > bkt "
-                                << i << " size " << bktsize << " no lcp";
+                                << "Recurse[" << s.depth_ << "]: > bkt " << i
+                                << " size " << bktsize << " no lcp";
                         else
                             TLX_LOGC(ctx_.debug_recursion)
-                                << "Recurse[" << s.depth_ << "]: < bkt "
-                                << i << " size " << bktsize << " lcp "
+                                << "Recurse[" << s.depth_ << "]: < bkt " << i
+                                << " size " << bktsize << " lcp "
                                 << int(s.splitter_lcp[i / 2] & 0x7F);
 
                         ScopedMultiTimerSwitch sts_inssort(mtimer_, "mkqs");
-                        sort_mkqs_cache(
-                            sp, s.depth_ + (s.splitter_lcp[i / 2] & 0x7F));
+                        sort_mkqs_cache(sp, s.depth_ +
+                                                (s.splitter_lcp[i / 2] & 0x7F));
                     }
                     else
                     {
                         if (i == Step::bktnum - 1)
                             TLX_LOGC(ctx_.debug_recursion)
-                                << "Recurse[" << s.depth_ << "]: > bkt "
-                                << i << " size " << bktsize << " no lcp";
+                                << "Recurse[" << s.depth_ << "]: > bkt " << i
+                                << " size " << bktsize << " no lcp";
                         else
                             TLX_LOGC(ctx_.debug_recursion)
-                                << "Recurse[" << s.depth_ << "]: < bkt "
-                                << i << " size " << bktsize << " lcp "
+                                << "Recurse[" << s.depth_ << "]: < bkt " << i
+                                << " size " << bktsize << " lcp "
                                 << int(s.splitter_lcp[i / 2] & 0x7F);
 
                         ss_stack_.emplace_back(
-                            ctx_, sp, s.depth_ + (s.splitter_lcp[i / 2] & 0x7F), bktcache);
+                            ctx_, sp, s.depth_ + (s.splitter_lcp[i / 2] & 0x7F),
+                            bktcache);
                     }
                 }
                 // i is odd -> bkt[i] is equal bucket
                 else
                 {
-                    if (bktsize == 0) {
+                    if (bktsize == 0)
+                    {
                         // empty bucket
                     }
-                    else if (s.splitter_lcp[i / 2] & 0x80) {
+                    else if (s.splitter_lcp[i / 2] & 0x80)
+                    {
                         // equal-bucket has nullptr-terminated key, done.
                         TLX_LOGC(ctx_.debug_recursion)
-                            << "Recurse[" << s.depth_ << "]: = bkt "
-                            << i << " size " << bktsize << " is done!";
+                            << "Recurse[" << s.depth_ << "]: = bkt " << i
+                            << " size " << bktsize << " is done!";
                         StringPtr spb = sp.copy_back();
 
-                        if (sp.with_lcp) {
+                        if (sp.with_lcp)
+                        {
                             spb.fill_lcp(
-                                s.depth_ + lcpKeyDepth(s.classifier.get_splitter(i / 2)));
+                                s.depth_ +
+                                lcpKeyDepth(s.classifier.get_splitter(i / 2)));
                         }
                         ctx_.donesize(bktsize);
                     }
                     else if (bktsize < ctx_.smallsort_threshold)
                     {
                         TLX_LOGC(ctx_.debug_recursion)
-                            << "Recurse[" << s.depth_ << "]: = bkt "
-                            << i << " size " << bktsize << " lcp keydepth!";
+                            << "Recurse[" << s.depth_ << "]: = bkt " << i
+                            << " size " << bktsize << " lcp keydepth!";
 
                         ScopedMultiTimerSwitch sts_inssort(mtimer_, "mkqs");
                         sort_mkqs_cache(sp, s.depth_ + sizeof(key_type));
@@ -536,8 +563,8 @@ public:
                     else
                     {
                         TLX_LOGC(ctx_.debug_recursion)
-                            << "Recurse[" << s.depth_ << "]: = bkt "
-                            << i << " size " << bktsize << " lcp keydepth!";
+                            << "Recurse[" << s.depth_ << "]: = bkt " << i
+                            << " size " << bktsize << " lcp keydepth!";
 
                         ss_stack_.emplace_back(
                             ctx_, sp, s.depth_ + sizeof(key_type), bktcache);
@@ -555,16 +582,19 @@ public:
                 ss_stack_.pop_back();
             }
 
-            if (ctx_.enable_work_sharing && ctx_.threads_.has_idle()) {
+            if (ctx_.enable_work_sharing && ctx_.threads_.has_idle())
+            {
                 sample_sort_free_work();
             }
         }
     }
 
-    void sample_sort_free_work() {
+    void sample_sort_free_work()
+    {
         assert(ss_stack_.size() >= ss_front_);
 
-        if (ss_stack_.size() == ss_front_) {
+        if (ss_stack_.size() == ss_front_)
+        {
             // ss_stack_ is empty, check other stack
             return mkqs_free_work();
         }
@@ -587,19 +617,20 @@ public:
             // i is even -> bkt[i] is less-than bucket
             if (i % 2 == 0)
             {
-                if (bktsize == 0) {
+                if (bktsize == 0)
+                {
                     // empty bucket
                 }
                 else
                 {
                     if (i == Step::bktnum - 1)
                         TLX_LOGC(ctx_.debug_recursion)
-                            << "Recurse[" << s.depth_ << "]: > bkt "
-                            << i << " size " << bktsize << " no lcp";
+                            << "Recurse[" << s.depth_ << "]: > bkt " << i
+                            << " size " << bktsize << " no lcp";
                     else
                         TLX_LOGC(ctx_.debug_recursion)
-                            << "Recurse[" << s.depth_ << "]: < bkt "
-                            << i << " size " << bktsize << " lcp "
+                            << "Recurse[" << s.depth_ << "]: < bkt " << i
+                            << " size " << bktsize << " lcp "
                             << int(s.splitter_lcp[i / 2] & 0x7F);
 
                     this->substep_add();
@@ -610,27 +641,31 @@ public:
             // i is odd -> bkt[i] is equal bucket
             else
             {
-                if (bktsize == 0) {
+                if (bktsize == 0)
+                {
                     // empty bucket
                 }
-                else if (s.splitter_lcp[i / 2] & 0x80) {
+                else if (s.splitter_lcp[i / 2] & 0x80)
+                {
                     // equal-bucket has nullptr-terminated key, done.
                     TLX_LOGC(ctx_.debug_recursion)
-                        << "Recurse[" << s.depth_ << "]: = bkt "
-                        << i << " size " << bktsize << " is done!";
+                        << "Recurse[" << s.depth_ << "]: = bkt " << i
+                        << " size " << bktsize << " is done!";
                     StringPtr spb = sp.copy_back();
 
-                    if (sp.with_lcp) {
-                        spb.fill_lcp(s.depth_ + lcpKeyDepth(
-                                         s.classifier.get_splitter(i / 2)));
+                    if (sp.with_lcp)
+                    {
+                        spb.fill_lcp(
+                            s.depth_ +
+                            lcpKeyDepth(s.classifier.get_splitter(i / 2)));
                     }
                     ctx_.donesize(bktsize);
                 }
                 else
                 {
                     TLX_LOGC(ctx_.debug_recursion)
-                        << "Recurse[" << s.depth_ << "]: = bkt "
-                        << i << " size " << bktsize << " lcp keydepth!";
+                        << "Recurse[" << s.depth_ << "]: = bkt " << i
+                        << " size " << bktsize << " lcp keydepth!";
 
                     this->substep_add();
                     ctx_.enqueue(this, sp, s.depth_ + sizeof(key_type));
@@ -645,37 +680,49 @@ public:
     /*------------------------------------------------------------------------*/
     //! Stack of Recursive MKQS Steps
 
-    static inline int cmp(const key_type& a, const key_type& b) {
+    static inline int cmp(const key_type& a, const key_type& b)
+    {
         return (a > b) ? 1 : (a < b) ? -1 : 0;
     }
 
     template <typename Type>
-    static inline size_t
-    med3(Type* A, size_t i, size_t j, size_t k) {
-        if (A[i] == A[j]) return i;
-        if (A[k] == A[i] || A[k] == A[j]) return k;
-        if (A[i] < A[j]) {
-            if (A[j] < A[k]) return j;
-            if (A[i] < A[k]) return k;
+    static inline size_t med3(Type* A, size_t i, size_t j, size_t k)
+    {
+        if (A[i] == A[j])
+            return i;
+        if (A[k] == A[i] || A[k] == A[j])
+            return k;
+        if (A[i] < A[j])
+        {
+            if (A[j] < A[k])
+                return j;
+            if (A[i] < A[k])
+                return k;
             return i;
         }
-        else {
-            if (A[j] > A[k]) return j;
-            if (A[i] < A[k]) return i;
+        else
+        {
+            if (A[j] > A[k])
+                return j;
+            if (A[i] < A[k])
+                return i;
             return k;
         }
     }
 
     //! Insertion sort the strings only based on the cached characters.
-    static inline void
-    insertion_sort_cache_block(const StringPtr& strptr, key_type* cache) {
+    static inline void insertion_sort_cache_block(const StringPtr& strptr,
+                                                  key_type* cache)
+    {
         const StringSet& strings = strptr.active();
         size_t n = strptr.size();
         size_t pi, pj;
-        for (pi = 1; --n > 0; ++pi) {
+        for (pi = 1; --n > 0; ++pi)
+        {
             typename StringSet::String tmps = std::move(strings.at(pi));
             key_type tmpc = cache[pi];
-            for (pj = pi; pj > 0; --pj) {
+            for (pj = pi; pj > 0; --pj)
+            {
                 if (cache[pj - 1] <= tmpc)
                     break;
                 strings.at(pj) = std::move(strings.at(pj - 1));
@@ -688,61 +735,75 @@ public:
 
     //! Insertion sort, but use cached characters if possible.
     template <bool CacheDirty>
-    static inline void
-    insertion_sort_cache(const StringPtr& _strptr, key_type* cache, size_t depth) {
+    static inline void insertion_sort_cache(const StringPtr& _strptr,
+                                            key_type* cache, size_t depth)
+    {
         StringPtr strptr = _strptr.copy_back();
 
-        if (strptr.size() <= 1) return;
+        if (strptr.size() <= 1)
+            return;
         if (CacheDirty)
             return insertion_sort(strptr, depth, /* memory */ 0);
 
         insertion_sort_cache_block(strptr, cache);
 
         size_t start = 0, bktsize = 1;
-        for (size_t i = 0; i < strptr.size() - 1; ++i) {
+        for (size_t i = 0; i < strptr.size() - 1; ++i)
+        {
             // group areas with equal cache values
-            if (cache[i] == cache[i + 1]) {
+            if (cache[i] == cache[i + 1])
+            {
                 ++bktsize;
                 continue;
             }
             // calculate LCP between group areas
-            if (start != 0 && strptr.with_lcp) {
+            if (start != 0 && strptr.with_lcp)
+            {
                 int rlcp = lcpKeyType(cache[start - 1], cache[start]);
                 strptr.set_lcp(start, depth + rlcp);
                 // strptr.set_cache(start, getCharAtDepth(cache[start], rlcp));
             }
             // sort group areas deeper if needed
-            if (bktsize > 1) {
-                if (cache[start] & 0xFF) {
+            if (bktsize > 1)
+            {
+                if (cache[start] & 0xFF)
+                {
                     // need deeper sort
-                    insertion_sort(
-                        strptr.sub(start, bktsize), depth + sizeof(key_type),
-                        /* memory */ 0);
+                    insertion_sort(strptr.sub(start, bktsize),
+                                   depth + sizeof(key_type),
+                                   /* memory */ 0);
                 }
-                else {
+                else
+                {
                     // cache contains nullptr-termination
-                    strptr.sub(start, bktsize).fill_lcp(depth + lcpKeyDepth(cache[start]));
+                    strptr.sub(start, bktsize)
+                        .fill_lcp(depth + lcpKeyDepth(cache[start]));
                 }
             }
             bktsize = 1;
             start = i + 1;
         }
         // tail of loop for last item
-        if (start != 0 && strptr.with_lcp) {
+        if (start != 0 && strptr.with_lcp)
+        {
             int rlcp = lcpKeyType(cache[start - 1], cache[start]);
             strptr.set_lcp(start, depth + rlcp);
             // strptr.set_cache(start, getCharAtDepth(cache[start], rlcp));
         }
-        if (bktsize > 1) {
-            if (cache[start] & 0xFF) {
+        if (bktsize > 1)
+        {
+            if (cache[start] & 0xFF)
+            {
                 // need deeper sort
-                insertion_sort(
-                    strptr.sub(start, bktsize), depth + sizeof(key_type),
-                    /* memory */ 0);
+                insertion_sort(strptr.sub(start, bktsize),
+                               depth + sizeof(key_type),
+                               /* memory */ 0);
             }
-            else {
+            else
+            {
                 // cache contains nullptr-termination
-                strptr.sub(start, bktsize).fill_lcp(depth + lcpKeyDepth(cache[start]));
+                strptr.sub(start, bktsize)
+                    .fill_lcp(depth + lcpKeyDepth(cache[start]));
             }
         }
     }
@@ -758,25 +819,26 @@ public:
         // typename StringPtr::StringSet::Char dchar_eq_, dchar_gt_;
         std::uint8_t lcp_lt_, lcp_eq_, lcp_gt_;
 
-        MKQSStep(Context& ctx, const StringPtr& strptr,
-                 key_type* cache, size_t depth, bool CacheDirty)
-            : strptr_(strptr), cache_(cache), depth_(depth), idx_(0) {
+        MKQSStep(Context& ctx, const StringPtr& strptr, key_type* cache,
+                 size_t depth, bool CacheDirty)
+            : strptr_(strptr), cache_(cache), depth_(depth), idx_(0)
+        {
             size_t n = strptr_.size();
 
             const StringSet& strset = strptr_.active();
 
-            if (CacheDirty) {
+            if (CacheDirty)
+            {
                 typename StringSet::Iterator it = strset.begin();
-                for (size_t i = 0; i < n; ++i, ++it) {
+                for (size_t i = 0; i < n; ++i, ++it)
+                {
                     cache_[i] = get_key<key_type>(strset, *it, depth);
                 }
             }
             // select median of 9
-            size_t p = med3(
-                cache_,
-                med3(cache_, 0, n / 8, n / 4),
-                med3(cache_, n / 2 - n / 8, n / 2, n / 2 + n / 8),
-                med3(cache_, n - 1 - n / 4, n - 1 - n / 8, n - 3));
+            size_t p = med3(cache_, med3(cache_, 0, n / 8, n / 4),
+                            med3(cache_, n / 2 - n / 8, n / 2, n / 2 + n / 8),
+                            med3(cache_, n - 1 - n / 4, n - 1 - n / 8, n - 3));
             // swap pivot to first position
             std::swap(strset.at(0), strset.at(p));
             std::swap(cache_[0], cache_[p]);
@@ -793,16 +855,19 @@ public:
                 while (llt <= rgt)
                 {
                     int r = cmp(cache[llt], pivot);
-                    if (r > 0) {
+                    if (r > 0)
+                    {
                         min_gt = std::min(min_gt, cache[llt]);
                         break;
                     }
-                    else if (r == 0) {
+                    else if (r == 0)
+                    {
                         std::swap(strset.at(leq), strset.at(llt));
                         std::swap(cache[leq], cache[llt]);
                         leq++;
                     }
-                    else {
+                    else
+                    {
                         max_lt = std::max(max_lt, cache[llt]);
                     }
                     ++llt;
@@ -810,16 +875,19 @@ public:
                 while (llt <= rgt)
                 {
                     int r = cmp(cache[rgt], pivot);
-                    if (r < 0) {
+                    if (r < 0)
+                    {
                         max_lt = std::max(max_lt, cache[rgt]);
                         break;
                     }
-                    else if (r == 0) {
+                    else if (r == 0)
+                    {
                         std::swap(strset.at(req), strset.at(rgt));
                         std::swap(cache[req], cache[rgt]);
                         req--;
                     }
-                    else {
+                    else
+                    {
                         min_gt = std::min(min_gt, cache[rgt]);
                     }
                     --rgt;
@@ -856,37 +924,44 @@ public:
             eq_recurse_ = (pivot & 0xFF);
 
             // save LCP values for writing into LCP array after sorting further
-            if (strptr_.with_lcp && num_lt_ > 0) {
-                assert(max_lt == *std::max_element(
-                           cache_ + 0, cache + num_lt_));
+            if (strptr_.with_lcp && num_lt_ > 0)
+            {
+                assert(max_lt ==
+                       *std::max_element(cache_ + 0, cache + num_lt_));
 
                 lcp_lt_ = lcpKeyType(max_lt, pivot);
                 // dchar_eq_ = getCharAtDepth(pivot, lcp_lt_);
-                TLX_LOGC(ctx.debug_lcp) << "LCP lt with pivot: " << depth_ + lcp_lt_;
+                TLX_LOGC(ctx.debug_lcp)
+                    << "LCP lt with pivot: " << depth_ + lcp_lt_;
             }
 
             // calculate equal area lcp: +1 for the equal zero termination byte
             lcp_eq_ = lcpKeyDepth(pivot);
 
-            if (strptr_.with_lcp && num_gt_ > 0) {
-                assert(min_gt == *std::min_element(
-                           cache_ + num_lt_ + num_eq_, cache_ + n));
+            if (strptr_.with_lcp && num_gt_ > 0)
+            {
+                assert(min_gt == *std::min_element(cache_ + num_lt_ + num_eq_,
+                                                   cache_ + n));
 
                 lcp_gt_ = lcpKeyType(pivot, min_gt);
                 // dchar_gt_ = getCharAtDepth(min_gt, lcp_gt_);
-                TLX_LOGC(ctx.debug_lcp) << "LCP pivot with gt: " << depth_ + lcp_gt_;
+                TLX_LOGC(ctx.debug_lcp)
+                    << "LCP pivot with gt: " << depth_ + lcp_gt_;
             }
 
             ++ctx.base_sort_steps;
         }
 
-        void calculate_lcp() {
-            if (strptr_.with_lcp && num_lt_ > 0) {
+        void calculate_lcp()
+        {
+            if (strptr_.with_lcp && num_lt_ > 0)
+            {
                 strptr_.set_lcp(num_lt_, depth_ + lcp_lt_);
                 // strptr_.set_cache(num_lt_, dchar_eq_);
             }
 
-            if (strptr_.with_lcp && num_gt_ > 0) {
+            if (strptr_.with_lcp && num_gt_ > 0)
+            {
                 strptr_.set_lcp(num_lt_ + num_eq_, depth_ + lcp_gt_);
                 // strptr_.set_cache(num_lt_ + num_eq_, dchar_gt_);
             }
@@ -896,14 +971,15 @@ public:
     size_t ms_front_ = 0;
     std::vector<MKQSStep> ms_stack_;
 
-    void sort_mkqs_cache(const StringPtr& strptr, size_t depth) {
+    void sort_mkqs_cache(const StringPtr& strptr, size_t depth)
+    {
         assert(strcmp(mtimer_.running(), "mkqs") == 0);
 
         if (!ctx_.enable_sequential_mkqs ||
-            strptr.size() < ctx_.inssort_threshold) {
-            TLX_LOGC(ctx_.debug_jobs)
-                << "insertion_sort() size "
-                << strptr.size() << " depth " << depth;
+            strptr.size() < ctx_.inssort_threshold)
+        {
+            TLX_LOGC(ctx_.debug_jobs) << "insertion_sort() size "
+                                      << strptr.size() << " depth " << depth;
 
             ScopedMultiTimerSwitch sts_inssort(mtimer_, "inssort");
             insertion_sort(strptr.copy_back(), depth, /* memory */ 0);
@@ -914,7 +990,8 @@ public:
         TLX_LOGC(ctx_.debug_jobs)
             << "sort_mkqs_cache() size " << strptr.size() << " depth " << depth;
 
-        if (bktcache_.size() < strptr.size() * sizeof(key_type)) {
+        if (bktcache_.size() < strptr.size() * sizeof(key_type))
+        {
             bktcache_.destroy();
             bktcache_.resize(strptr.size() * sizeof(key_type));
         }
@@ -935,70 +1012,78 @@ public:
             ++ms.idx_; // increment here, because stack may change
 
             // process the lt-subsequence
-            if (ms.idx_ == 1) {
-                if (ms.num_lt_ == 0) {
+            if (ms.idx_ == 1)
+            {
+                if (ms.num_lt_ == 0)
+                {
                     // empty subsequence
                 }
-                else if (ms.num_lt_ < ctx_.inssort_threshold) {
+                else if (ms.num_lt_ < ctx_.inssort_threshold)
+                {
                     ScopedMultiTimerSwitch sts_inssort(mtimer_, "inssort");
                     insertion_sort_cache<false>(ms.strptr_.sub(0, ms.num_lt_),
                                                 ms.cache_, ms.depth_);
                     ctx_.donesize(ms.num_lt_);
                 }
-                else {
-                    ms_stack_.emplace_back(
-                        ctx_,
-                        ms.strptr_.sub(0, ms.num_lt_),
-                        ms.cache_, ms.depth_, false);
+                else
+                {
+                    ms_stack_.emplace_back(ctx_, ms.strptr_.sub(0, ms.num_lt_),
+                                           ms.cache_, ms.depth_, false);
                 }
             }
             // process the eq-subsequence
-            else if (ms.idx_ == 2) {
+            else if (ms.idx_ == 2)
+            {
                 StringPtr sp = ms.strptr_.sub(ms.num_lt_, ms.num_eq_);
 
                 assert(ms.num_eq_ > 0);
 
-                if (!ms.eq_recurse_) {
+                if (!ms.eq_recurse_)
+                {
                     StringPtr spb = sp.copy_back();
                     spb.fill_lcp(ms.depth_ + ms.lcp_eq_);
                     ctx_.donesize(spb.size());
                 }
-                else if (ms.num_eq_ < ctx_.inssort_threshold) {
+                else if (ms.num_eq_ < ctx_.inssort_threshold)
+                {
                     ScopedMultiTimerSwitch sts_inssort(mtimer_, "inssort");
                     insertion_sort_cache<true>(sp, ms.cache_ + ms.num_lt_,
                                                ms.depth_ + sizeof(key_type));
                     ctx_.donesize(ms.num_eq_);
                 }
-                else {
-                    ms_stack_.emplace_back(
-                        ctx_, sp,
-                        ms.cache_ + ms.num_lt_,
-                        ms.depth_ + sizeof(key_type), true);
+                else
+                {
+                    ms_stack_.emplace_back(ctx_, sp, ms.cache_ + ms.num_lt_,
+                                           ms.depth_ + sizeof(key_type), true);
                 }
             }
             // process the gt-subsequence
-            else if (ms.idx_ == 3) {
-                StringPtr sp = ms.strptr_.sub(
-                    ms.num_lt_ + ms.num_eq_, ms.num_gt_);
+            else if (ms.idx_ == 3)
+            {
+                StringPtr sp =
+                    ms.strptr_.sub(ms.num_lt_ + ms.num_eq_, ms.num_gt_);
 
-                if (ms.num_gt_ == 0) {
+                if (ms.num_gt_ == 0)
+                {
                     // empty subsequence
                 }
-                else if (ms.num_gt_ < ctx_.inssort_threshold) {
+                else if (ms.num_gt_ < ctx_.inssort_threshold)
+                {
                     ScopedMultiTimerSwitch sts_inssort(mtimer_, "inssort");
                     insertion_sort_cache<false>(
                         sp, ms.cache_ + ms.num_lt_ + ms.num_eq_, ms.depth_);
                     ctx_.donesize(ms.num_gt_);
                 }
-                else {
-                    ms_stack_.emplace_back(
-                        ctx_, sp,
-                        ms.cache_ + ms.num_lt_ + ms.num_eq_,
-                        ms.depth_, false);
+                else
+                {
+                    ms_stack_.emplace_back(ctx_, sp,
+                                           ms.cache_ + ms.num_lt_ + ms.num_eq_,
+                                           ms.depth_, false);
                 }
             }
             // calculate lcps
-            else {
+            else
+            {
                 // finished sort
                 assert(ms_stack_.size() > ms_front_);
 
@@ -1008,18 +1093,21 @@ public:
                 ms_stack_.pop_back();
             }
 
-            if (ctx_.enable_work_sharing && ctx_.threads_.has_idle()) {
+            if (ctx_.enable_work_sharing && ctx_.threads_.has_idle())
+            {
                 sample_sort_free_work();
             }
         }
     }
 
-    void mkqs_free_work() {
+    void mkqs_free_work()
+    {
         assert(ms_stack_.size() >= ms_front_);
 
         for (unsigned int fl = 0; fl < 8; ++fl)
         {
-            if (ms_stack_.size() == ms_front_) {
+            if (ms_stack_.size() == ms_front_)
+            {
                 return;
             }
 
@@ -1042,11 +1130,13 @@ public:
 
                 StringPtr sp = ms.strptr_.sub(ms.num_lt_, ms.num_eq_);
 
-                if (ms.eq_recurse_) {
+                if (ms.eq_recurse_)
+                {
                     this->substep_add();
                     ctx_.enqueue(this, sp, ms.depth_ + sizeof(key_type));
                 }
-                else {
+                else
+                {
                     StringPtr spb = sp.copy_back();
                     spb.fill_lcp(ms.depth_ + ms.lcp_eq_);
                     ctx_.donesize(ms.num_eq_);
@@ -1068,24 +1158,28 @@ public:
     /*------------------------------------------------------------------------*/
     // Called When PS5SmallsortJob is Finished
 
-    void substep_all_done() final {
+    void substep_all_done() final
+    {
         TLX_LOGC(ctx_.debug_recursion)
             << "SmallSort[" << depth_ << "] "
             << "all substeps done -> LCP calculation";
 
-        while (ms_front_ > 0) {
+        while (ms_front_ > 0)
+        {
             TLX_LOGC(ctx_.debug_lcp)
                 << "SmallSort[" << depth_ << "] ms_front_: " << ms_front_;
             ms_stack_[--ms_front_].calculate_lcp();
         }
 
-        while (ss_front_ > 0) {
+        while (ss_front_ > 0)
+        {
             TLX_LOGC(ctx_.debug_lcp)
                 << "SmallSort[" << depth_ << "] ss_front_: " << ss_front_;
             ss_stack_[--ss_front_].calculate_lcp(ctx_);
         }
 
-        if (pstep_) pstep_->substep_notify_done();
+        if (pstep_)
+            pstep_->substep_notify_done();
         delete this;
     }
 };
@@ -1135,12 +1229,14 @@ public:
     /*------------------------------------------------------------------------*/
     // Constructor
 
-    PS5BigSortStep(Context& ctx, PS5SortStep* pstep,
-                   const StringPtr& strptr, size_t depth)
-        : ctx_(ctx), pstep_(pstep), strptr_(strptr), depth_(depth) {
+    PS5BigSortStep(Context& ctx, PS5SortStep* pstep, const StringPtr& strptr,
+                   size_t depth)
+        : ctx_(ctx), pstep_(pstep), strptr_(strptr), depth_(depth)
+    {
         // calculate number of parts
         parts_ = strptr_.size() / ctx.sequential_threshold() * 2;
-        if (parts_ == 0) parts_ = 1;
+        if (parts_ == 0)
+            parts_ = 1;
 
         bkt_.resize(parts_);
         bktcache_.resize(parts_);
@@ -1148,22 +1244,23 @@ public:
         psize_ = (strptr.size() + parts_ - 1) / parts_;
 
         TLX_LOGC(ctx_.debug_steps)
-            << "enqueue depth=" << depth_
-            << " size=" << strptr_.size()
-            << " parts=" << parts_
-            << " psize=" << psize_
+            << "enqueue depth=" << depth_ << " size=" << strptr_.size()
+            << " parts=" << parts_ << " psize=" << psize_
             << " flip=" << strptr_.flipped();
 
         ctx.threads_.enqueue([this]() { sample(); });
         ++ctx.para_ss_steps;
     }
 
-    virtual ~PS5BigSortStep() { }
+    virtual ~PS5BigSortStep()
+    {
+    }
 
     /*------------------------------------------------------------------------*/
     // Sample Step
 
-    void sample() {
+    void sample()
+    {
         ScopedMultiTimer smt(ctx_.mtimer, "para_ss");
         TLX_LOGC(ctx_.debug_jobs) << "Process SampleJob @ " << this;
 
@@ -1186,7 +1283,8 @@ public:
 
         // create new jobs
         pwork_ = parts_;
-        for (unsigned int p = 0; p < parts_; ++p) {
+        for (unsigned int p = 0; p < parts_; ++p)
+        {
             ctx_.threads_.enqueue([this, p]() { count(p); });
         }
     }
@@ -1194,15 +1292,18 @@ public:
     /*------------------------------------------------------------------------*/
     // Counting Step
 
-    void count(unsigned int p) {
+    void count(unsigned int p)
+    {
         ScopedMultiTimer smt(ctx_.mtimer, "para_ss");
         TLX_LOGC(ctx_.debug_jobs) << "Process CountJob " << p << " @ " << this;
 
         const StringSet& strset = strptr_.active();
 
         StrIterator strB = strset.begin() + p * psize_;
-        StrIterator strE = strset.begin() + std::min((p + 1) * psize_, strptr_.size());
-        if (strE < strB) strE = strB;
+        StrIterator strE =
+            strset.begin() + std::min((p + 1) * psize_, strptr_.size());
+        if (strE < strB)
+            strE = strB;
 
         bktcache_[p].resize(strE - strB);
         std::uint16_t* bktcache = bktcache_[p].data();
@@ -1219,9 +1320,11 @@ public:
             count_finished();
     }
 
-    void count_finished() {
+    void count_finished()
+    {
         ScopedMultiTimer smt(ctx_.mtimer, "para_ss");
-        TLX_LOGC(ctx_.debug_jobs) << "Finishing CountJob " << this << " with prefixsum";
+        TLX_LOGC(ctx_.debug_jobs)
+            << "Finishing CountJob " << this << " with prefixsum";
 
         // abort sorting if we're measuring only the top level
         if (ctx_.use_only_first_sortstep)
@@ -1229,8 +1332,10 @@ public:
 
         // inclusive prefix sum over bkt
         size_t sum = 0;
-        for (unsigned int i = 0; i < bktnum_; ++i) {
-            for (unsigned int p = 0; p < parts_; ++p) {
+        for (unsigned int i = 0; i < bktnum_; ++i)
+        {
+            for (unsigned int p = 0; p < parts_; ++p)
+            {
                 bkt_[p][i] = (sum += bkt_[p][i]);
             }
         }
@@ -1238,7 +1343,8 @@ public:
 
         // create new jobs
         pwork_ = parts_;
-        for (unsigned int p = 0; p < parts_; ++p) {
+        for (unsigned int p = 0; p < parts_; ++p)
+        {
             ctx_.threads_.enqueue([this, p]() { distribute(p); });
         }
     }
@@ -1246,15 +1352,19 @@ public:
     /*------------------------------------------------------------------------*/
     // Distribute Step
 
-    void distribute(unsigned int p) {
+    void distribute(unsigned int p)
+    {
         ScopedMultiTimer smt(ctx_.mtimer, "para_ss");
-        TLX_LOGC(ctx_.debug_jobs) << "Process DistributeJob " << p << " @ " << this;
+        TLX_LOGC(ctx_.debug_jobs)
+            << "Process DistributeJob " << p << " @ " << this;
 
         const StringSet& strset = strptr_.active();
 
         StrIterator strB = strset.begin() + p * psize_;
-        StrIterator strE = strset.begin() + std::min((p + 1) * psize_, strptr_.size());
-        if (strE < strB) strE = strB;
+        StrIterator strE =
+            strset.begin() + std::min((p + 1) * psize_, strptr_.size());
+        if (strE < strB)
+            strE = strB;
 
         // get alternative shadow pointer array
         const StringSet& sorted = strptr_.shadow();
@@ -1275,14 +1385,16 @@ public:
             distribute_finished();
     }
 
-    void distribute_finished() {
+    void distribute_finished()
+    {
         TLX_LOGC(ctx_.debug_jobs)
             << "Finishing DistributeJob " << this << " with enqueuing subjobs";
 
         size_t* bkt = bkt_[0].data();
         assert(bkt);
 
-        // first processor's bkt pointers are boundaries between bkts, just add sentinel:
+        // first processor's bkt pointers are boundaries between bkts, just add
+        // sentinel:
         assert(bkt[0] == 0);
         bkt[bktnum_] = strptr_.size();
 
@@ -1294,19 +1406,20 @@ public:
         {
             // i is even -> bkt[i] is less-than bucket
             size_t bktsize = bkt[i + 1] - bkt[i];
-            if (bktsize == 0) {
+            if (bktsize == 0)
+            {
                 // empty bucket
             }
-            else if (bktsize == 1) { // just one string pointer, copyback
+            else if (bktsize == 1)
+            { // just one string pointer, copyback
                 strptr_.flip(bkt[i], 1).copy_back();
                 ctx_.donesize(1);
             }
             else
             {
                 TLX_LOGC(ctx_.debug_recursion)
-                    << "Recurse[" << depth_ << "]: < bkt " << bkt[i]
-                    << " size " << bktsize << " lcp "
-                    << int(splitter_lcp_[i / 2] & 0x7F);
+                    << "Recurse[" << depth_ << "]: < bkt " << bkt[i] << " size "
+                    << bktsize << " lcp " << int(splitter_lcp_[i / 2] & 0x7F);
                 this->substep_add();
                 ctx_.enqueue(this, strptr_.flip(bkt[i], bktsize),
                              depth_ + (splitter_lcp_[i / 2] & 0x7F));
@@ -1314,26 +1427,30 @@ public:
             ++i;
             // i is odd -> bkt[i] is equal bucket
             bktsize = bkt[i + 1] - bkt[i];
-            if (bktsize == 0) {
+            if (bktsize == 0)
+            {
                 // empty bucket
             }
-            else if (bktsize == 1) { // just one string pointer, copyback
+            else if (bktsize == 1)
+            { // just one string pointer, copyback
                 strptr_.flip(bkt[i], 1).copy_back();
                 ctx_.donesize(1);
             }
             else
             {
-                if (splitter_lcp_[i / 2] & 0x80) {
+                if (splitter_lcp_[i / 2] & 0x80)
+                {
                     // equal-bucket has nullptr-terminated key, done.
                     TLX_LOGC(ctx_.debug_recursion)
                         << "Recurse[" << depth_ << "]: = bkt " << bkt[i]
                         << " size " << bktsize << " is done!";
                     StringPtr sp = strptr_.flip(bkt[i], bktsize).copy_back();
-                    sp.fill_lcp(
-                        depth_ + lcpKeyDepth(classifier_.get_splitter(i / 2)));
+                    sp.fill_lcp(depth_ +
+                                lcpKeyDepth(classifier_.get_splitter(i / 2)));
                     ctx_.donesize(bktsize);
                 }
-                else {
+                else
+                {
                     TLX_LOGC(ctx_.debug_recursion)
                         << "Recurse[" << depth_ << "]: = bkt " << bkt[i]
                         << " size " << bktsize << " lcp keydepth!";
@@ -1347,17 +1464,20 @@ public:
 
         size_t bktsize = bkt[i + 1] - bkt[i];
 
-        if (bktsize == 0) {
+        if (bktsize == 0)
+        {
             // empty bucket
         }
-        else if (bktsize == 1) { // just one string pointer, copyback
+        else if (bktsize == 1)
+        { // just one string pointer, copyback
             strptr_.flip(bkt[i], 1).copy_back();
             ctx_.donesize(1);
         }
-        else {
+        else
+        {
             TLX_LOGC(ctx_.debug_recursion)
-                << "Recurse[" << depth_ << "]: > bkt " << bkt[i]
-                << " size " << bktsize << " no lcp";
+                << "Recurse[" << depth_ << "]: > bkt " << bkt[i] << " size "
+                << bktsize << " no lcp";
             this->substep_add();
             ctx_.enqueue(this, strptr_.flip(bkt[i], bktsize), depth_);
         }
@@ -1371,18 +1491,21 @@ public:
     /*------------------------------------------------------------------------*/
     // After Recursive Sorting
 
-    void substep_all_done() final {
+    void substep_all_done() final
+    {
         ScopedMultiTimer smt(ctx_.mtimer, "para_ss");
-        if (strptr_.with_lcp) {
+        if (strptr_.with_lcp)
+        {
             TLX_LOGC(ctx_.debug_steps)
                 << "pSampleSortStep[" << depth_ << "]: all substeps done.";
 
-            ps5_sample_sort_lcp<bktnum_>(
-                ctx_, classifier_, strptr_, depth_, bkt_[0].data());
+            ps5_sample_sort_lcp<bktnum_>(ctx_, classifier_, strptr_, depth_,
+                                         bkt_[0].data());
             bkt_[0].destroy();
         }
 
-        if (pstep_) pstep_->substep_notify_done();
+        if (pstep_)
+            pstep_->substep_notify_done();
         delete this;
     }
 };
@@ -1392,20 +1515,25 @@ public:
 
 template <typename Parameters>
 template <typename StringPtr>
-void PS5Context<Parameters>::enqueue(
-    PS5SortStep* pstep, const StringPtr& strptr, size_t depth) {
+void PS5Context<Parameters>::enqueue(PS5SortStep* pstep,
+                                     const StringPtr& strptr, size_t depth)
+{
     if (this->enable_parallel_sample_sort &&
         (strptr.size() > sequential_threshold() ||
-         this->use_only_first_sortstep)) {
+         this->use_only_first_sortstep))
+    {
         new PS5BigSortStep<PS5Context, StringPtr>(*this, pstep, strptr, depth);
     }
-    else {
-        if (strptr.size() < (1LLU << 32)) {
+    else
+    {
+        if (strptr.size() < (1LLU << 32))
+        {
             auto j = new PS5SmallsortJob<PS5Context, StringPtr, std::uint32_t>(
                 *this, pstep, strptr, depth);
             threads_.enqueue([j]() { j->run(); });
         }
-        else {
+        else
+        {
             auto j = new PS5SmallsortJob<PS5Context, StringPtr, std::uint64_t>(
                 *this, pstep, strptr, depth);
             threads_.enqueue([j]() { j->run(); });
@@ -1418,8 +1546,8 @@ void PS5Context<Parameters>::enqueue(
 
 //! Main Parallel Sample Sort Function. See below for more convenient wrappers.
 template <typename PS5Parameters, typename StringPtr>
-void parallel_sample_sort_base(const StringPtr& strptr, size_t depth) {
-
+void parallel_sample_sort_base(const StringPtr& strptr, size_t depth)
+{
     using Context = PS5Context<PS5Parameters>;
     Context ctx(std::thread::hardware_concurrency());
     ctx.total_size = strptr.size();
@@ -1451,8 +1579,7 @@ void parallel_sample_sort_base(const StringPtr& strptr, size_t depth) {
         << " tm_mkqs=" << ctx.mtimer.get("mkqs")
         << " tm_inssort=" << ctx.mtimer.get("inssort")
         << " tm_total=" << ctx.mtimer.total()
-        << " tm_idle="
-        << (ctx.num_threads * timer.total()) - ctx.mtimer.total()
+        << " tm_idle=" << (ctx.num_threads * timer.total()) - ctx.mtimer.total()
         << " steps_para_sample_sort=" << ctx.para_ss_steps
         << " steps_seq_sample_sort=" << ctx.sequ_ss_steps
         << " steps_base_sort=" << ctx.base_sort_steps;
@@ -1462,8 +1589,9 @@ void parallel_sample_sort_base(const StringPtr& strptr, size_t depth) {
 //! shadow array for flipping.
 template <typename PS5Parameters, typename StringPtr>
 typename enable_if<!StringPtr::with_lcp, void>::type
-parallel_sample_sort_params(
-    const StringPtr& strptr, size_t depth, size_t memory = 0) {
+parallel_sample_sort_params(const StringPtr& strptr, size_t depth,
+                            size_t memory = 0)
+{
     tlx::unused(memory);
 
     typedef typename StringPtr::StringSet StringSet;
@@ -1484,9 +1612,9 @@ parallel_sample_sort_params(
 //! Parallel Sample Sort Function for a generic StringSet with LCPs, this
 //! allocates the shadow array for flipping.
 template <typename PS5Parameters, typename StringPtr>
-typename enable_if<StringPtr::with_lcp, void>::type
-parallel_sample_sort_params(
-    const StringPtr& strptr, size_t depth, size_t memory = 0) {
+typename enable_if<StringPtr::with_lcp, void>::type parallel_sample_sort_params(
+    const StringPtr& strptr, size_t depth, size_t memory = 0)
+{
     tlx::unused(memory);
 
     typedef typename StringPtr::StringSet StringSet;
@@ -1508,14 +1636,13 @@ parallel_sample_sort_params(
 //! Parallel Sample Sort Function with default parameter size for a generic
 //! StringSet.
 template <typename StringPtr>
-void parallel_sample_sort(
-    const StringPtr& strptr, size_t depth, size_t memory) {
-    return parallel_sample_sort_params<PS5ParametersDefault>(
-        strptr, depth, memory);
+void parallel_sample_sort(const StringPtr& strptr, size_t depth, size_t memory)
+{
+    return parallel_sample_sort_params<PS5ParametersDefault>(strptr, depth,
+                                                             memory);
 }
 
-} // namespace sort_strings_detail
-} // namespace tlx
+}} // namespace tlx::sort_strings_detail
 
 #endif // !TLX_SORT_STRINGS_PARALLEL_SAMPLE_SORT_HEADER
 

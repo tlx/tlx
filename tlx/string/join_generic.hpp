@@ -31,10 +31,11 @@ namespace tlx {
  * \return string  constructed from the range with the glue between two strings.
  */
 template <typename Glue, typename Iterator>
-static inline
-std::string join(Glue glue, Iterator first, Iterator last) {
+static inline std::string join(Glue glue, Iterator first, Iterator last)
+{
     std::ostringstream out;
-    if (first == last) return out.str();
+    if (first == last)
+        return out.str();
 
     out << *first;
     ++first;
@@ -58,8 +59,8 @@ std::string join(Glue glue, Iterator first, Iterator last) {
  * \return string  constructed from the vector with the glue between two strings
  */
 template <typename Container>
-static inline
-std::string join(char glue, const Container& parts) {
+static inline std::string join(char glue, const Container& parts)
+{
     return join(glue, std::begin(parts), std::end(parts));
 }
 
@@ -72,8 +73,8 @@ std::string join(char glue, const Container& parts) {
  * \return string  constructed from the vector with the glue between two strings
  */
 template <typename Container>
-static inline
-std::string join(const char* glue, const Container& parts) {
+static inline std::string join(const char* glue, const Container& parts)
+{
     return join(glue, std::begin(parts), std::end(parts));
 }
 
@@ -86,8 +87,8 @@ std::string join(const char* glue, const Container& parts) {
  * \return string  constructed from the vector with the glue between two strings
  */
 template <typename Container>
-static inline
-std::string join(const std::string& glue, const Container& parts) {
+static inline std::string join(const std::string& glue, const Container& parts)
+{
     return join(glue, std::begin(parts), std::end(parts));
 }
 

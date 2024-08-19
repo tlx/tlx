@@ -12,7 +12,6 @@
 #define TLX_LOGGER_UNORDERED_MAP_HEADER
 
 #include <tlx/logger/core.hpp>
-
 #include <unordered_map>
 
 namespace tlx {
@@ -22,12 +21,15 @@ class LoggerFormatter<std::unordered_map<K, V, H, E, A> >
 {
 public:
     static void print(std::ostream& os,
-                      const std::unordered_map<K, V, H, E, A>& data) {
+                      const std::unordered_map<K, V, H, E, A>& data)
+    {
         os << '{';
-        for (typename std::unordered_map<K, V, H, E, A>::const_iterator
-             it = data.begin(); it != data.end(); ++it)
+        for (typename std::unordered_map<K, V, H, E, A>::const_iterator it =
+                 data.begin();
+             it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin())
+                os << ',';
             LoggerFormatter<K>::print(os, it->first);
             os << '=';
             LoggerFormatter<V>::print(os, it->second);
@@ -41,12 +43,15 @@ class LoggerFormatter<std::unordered_multimap<K, V, H, E, A> >
 {
 public:
     static void print(std::ostream& os,
-                      const std::unordered_multimap<K, V, H, E, A>& data) {
+                      const std::unordered_multimap<K, V, H, E, A>& data)
+    {
         os << '{';
         for (typename std::unordered_multimap<K, V, H, E, A>::const_iterator
-             it = data.begin(); it != data.end(); ++it)
+                 it = data.begin();
+             it != data.end(); ++it)
         {
-            if (it != data.begin()) os << ',';
+            if (it != data.begin())
+                os << ',';
             LoggerFormatter<K>::print(os, it->first);
             os << '=';
             LoggerFormatter<V>::print(os, it->second);

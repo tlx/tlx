@@ -19,16 +19,15 @@
 #ifndef TLX_CONTAINER_LOSER_TREE_HEADER
 #define TLX_CONTAINER_LOSER_TREE_HEADER
 
+#include <tlx/container/simple_vector.hpp>
+#include <tlx/define/likely.hpp>
+#include <tlx/math/round_to_power_of_two.hpp>
+#include <tlx/unused.hpp>
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <functional>
 #include <utility>
-
-#include <tlx/container/simple_vector.hpp>
-#include <tlx/define/likely.hpp>
-#include <tlx/math/round_to_power_of_two.hpp>
-#include <tlx/unused.hpp>
 
 namespace tlx {
 
@@ -63,7 +62,8 @@ public:
 
 protected:
     //! Internal representation of a loser tree player/node
-    struct Loser {
+    struct Loser
+    {
         //! flag, true iff is a virtual maximum sentinel
         bool sup;
         //! index of source
@@ -87,17 +87,24 @@ protected:
 public:
     explicit LoserTreeCopyBase(const Source& k,
                                const Comparator& cmp = Comparator())
-        : ik_(k), k_(round_up_to_power_of_two(ik_)),
-          losers_(2 * k_), cmp_(cmp), first_insert_(true) {
-
-        for (Source i = ik_ - 1; i < k_; ++i) {
+        : ik_(k),
+          k_(round_up_to_power_of_two(ik_)),
+          losers_(2 * k_),
+          cmp_(cmp),
+          first_insert_(true)
+    {
+        for (Source i = ik_ - 1; i < k_; ++i)
+        {
             losers_[i + k_].sup = true;
             losers_[i + k_].source = invalid_;
         }
     }
 
     //! return the index of the player with the smallest element.
-    Source min_source() { return losers_[0].source; }
+    Source min_source()
+    {
+        return losers_[0].source;
+    }
 
     /*!
      * Initializes the player source with the element key.
@@ -107,7 +114,8 @@ public:
      * \param sup flag that determines whether the value to insert is an
      *   explicit supremum sentinel.
      */
-    void insert_start(const ValueType* keyp, const Source& source, bool sup) {
+    void insert_start(const ValueType* keyp, const Source& source, bool sup)
+    {
         Source pos = k_ + source;
 
         assert(pos < losers_.size());
@@ -116,9 +124,11 @@ public:
         losers_[pos].sup = sup;
         losers_[pos].source = source;
 
-        if (TLX_UNLIKELY(first_insert_)) {
+        if (TLX_UNLIKELY(first_insert_))
+        {
             // copy construct all keys from this first key
-            for (Source i = 0; i < 2 * k_; ++i) {
+            for (Source i = 0; i < 2 * k_; ++i)
+            {
                 if (keyp)
                     losers_[i].key = *keyp;
                 else
@@ -126,7 +136,8 @@ public:
             }
             first_insert_ = false;
         }
-        else {
+        else
+        {
             losers_[pos].key = keyp ? *keyp : ValueType();
         }
     }
@@ -137,7 +148,8 @@ public:
      *
      * \param root index of the game to start.
      */
-    Source init_winner(const Source& root) {
+    Source init_winner(const Source& root)
+    {
         if (root >= k_)
             return root;
 
@@ -145,19 +157,22 @@ public:
         Source right = init_winner(2 * root + 1);
         if (losers_[right].sup ||
             (!losers_[left].sup &&
-             !cmp_(losers_[right].key, losers_[left].key))) {
+             !cmp_(losers_[right].key, losers_[left].key)))
+        {
             // left one is less or equal
             losers_[root] = losers_[right];
             return left;
         }
-        else {
+        else
+        {
             // right one is less
             losers_[root] = losers_[left];
             return right;
         }
     }
 
-    void init() {
+    void init()
+    {
         if (TLX_UNLIKELY(k_ == 0))
             return;
         losers_[0] = losers_[init_winner(1)];
@@ -186,17 +201,20 @@ public:
     using Source = typename Super::Source;
 
 protected:
+    using Super::cmp_;
     using Super::k_;
     using Super::losers_;
-    using Super::cmp_;
 
 public:
     explicit LoserTreeCopy(const Source& k,
                            const Comparator& cmp = Comparator())
-        : Super(k, cmp) { }
+        : Super(k, cmp)
+    {
+    }
 
     // do not pass const reference since key will be used as local variable
-    void delete_min_insert(const ValueType* keyp, bool sup) {
+    void delete_min_insert(const ValueType* keyp, bool sup)
+    {
         using std::swap;
         assert(sup == (keyp == nullptr));
 
@@ -204,22 +222,27 @@ public:
         ValueType key = keyp ? *keyp : ValueType();
         Source pos = (k_ + source) / 2;
 
-        while (pos > 0) {
-            if (TLX_UNLIKELY(sup)) {
+        while (pos > 0)
+        {
+            if (TLX_UNLIKELY(sup))
+            {
                 // the other candidate is smaller
                 swap(losers_[pos].sup, sup);
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].key, key);
             }
-            else if (TLX_UNLIKELY(losers_[pos].sup)) {
+            else if (TLX_UNLIKELY(losers_[pos].sup))
+            {
                 // this candidate is smaller
             }
-            else if (cmp_(losers_[pos].key, key)) {
+            else if (cmp_(losers_[pos].key, key))
+            {
                 // the other one is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].key, key);
             }
-            else {
+            else
+            {
                 // this candidate is smaller
             }
             pos /= 2;
@@ -253,17 +276,20 @@ public:
     using Source = typename Super::Source;
 
 protected:
+    using Super::cmp_;
     using Super::k_;
     using Super::losers_;
-    using Super::cmp_;
 
 public:
     explicit LoserTreeCopy(const Source& k,
                            const Comparator& cmp = Comparator())
-        : Super(k, cmp) { }
+        : Super(k, cmp)
+    {
+    }
 
     // do not pass const reference since key will be used as local variable
-    void delete_min_insert(const ValueType* keyp, bool sup) {
+    void delete_min_insert(const ValueType* keyp, bool sup)
+    {
         using std::swap;
         assert(sup == (keyp == nullptr));
 
@@ -271,14 +297,15 @@ public:
         ValueType key = keyp ? *keyp : ValueType();
         Source pos = (k_ + source) / 2;
 
-        while (pos > 0) {
-            if ((TLX_UNLIKELY(sup) && (
-                     !TLX_UNLIKELY(losers_[pos].sup) ||
-                     losers_[pos].source < source)) ||
+        while (pos > 0)
+        {
+            if ((TLX_UNLIKELY(sup) && (!TLX_UNLIKELY(losers_[pos].sup) ||
+                                       losers_[pos].source < source)) ||
                 (!TLX_UNLIKELY(sup) && !TLX_UNLIKELY(losers_[pos].sup) &&
                  ((cmp_(losers_[pos].key, key)) ||
                   (!cmp_(key, losers_[pos].key) &&
-                   losers_[pos].source < source)))) {
+                   losers_[pos].source < source))))
+            {
                 // the other one is smaller
                 swap(losers_[pos].sup, sup);
                 swap(losers_[pos].source, source);
@@ -315,7 +342,8 @@ public:
 
 protected:
     //! Internal representation of a loser tree player/node
-    struct Loser {
+    struct Loser
+    {
         //! index of source
         Source source;
         //! pointer to key value of the element in this node
@@ -332,23 +360,25 @@ protected:
     Comparator cmp_;
 
 public:
-    explicit LoserTreePointerBase(
-        Source k, const Comparator& cmp = Comparator())
-        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(k_ * 2),
-          cmp_(cmp) {
-        for (Source i = ik_ - 1; i < k_; i++) {
+    explicit LoserTreePointerBase(Source k,
+                                  const Comparator& cmp = Comparator())
+        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(k_ * 2), cmp_(cmp)
+    {
+        for (Source i = ik_ - 1; i < k_; i++)
+        {
             losers_[i + k_].keyp = nullptr;
             losers_[i + k_].source = invalid_;
         }
     }
 
     LoserTreePointerBase(const LoserTreePointerBase&) = delete;
-    LoserTreePointerBase& operator = (const LoserTreePointerBase&) = delete;
+    LoserTreePointerBase& operator=(const LoserTreePointerBase&) = delete;
     LoserTreePointerBase(LoserTreePointerBase&&) = default;
-    LoserTreePointerBase& operator = (LoserTreePointerBase&&) = default;
+    LoserTreePointerBase& operator=(LoserTreePointerBase&&) = default;
 
     //! return the index of the player with the smallest element.
-    Source min_source() {
+    Source min_source()
+    {
         return losers_[0].keyp ? losers_[0].source : invalid_;
     }
 
@@ -360,7 +390,8 @@ public:
      * \param sup flag that determines whether the value to insert is an
      *   explicit supremum sentinel.
      */
-    void insert_start(const ValueType* keyp, const Source& source, bool sup) {
+    void insert_start(const ValueType* keyp, const Source& source, bool sup)
+    {
         Source pos = k_ + source;
 
         assert(pos < losers_.size());
@@ -377,7 +408,8 @@ public:
      *
      * \param root index of the game to start.
      */
-    Source init_winner(const Source& root) {
+    Source init_winner(const Source& root)
+    {
         if (root >= k_)
             return root;
 
@@ -385,19 +417,22 @@ public:
         Source right = init_winner(2 * root + 1);
         if (!losers_[right].keyp ||
             (losers_[left].keyp &&
-             !cmp_(*losers_[right].keyp, *losers_[left].keyp))) {
+             !cmp_(*losers_[right].keyp, *losers_[left].keyp)))
+        {
             // left one is less or equal
             losers_[root] = losers_[right];
             return left;
         }
-        else {
+        else
+        {
             // right one is less
             losers_[root] = losers_[left];
             return right;
         }
     }
 
-    void init() {
+    void init()
+    {
         if (TLX_UNLIKELY(k_ == 0))
             return;
         losers_[0] = losers_[init_winner(1)];
@@ -423,15 +458,18 @@ public:
     using Source = typename Super::Source;
 
 protected:
+    using Super::cmp_;
     using Super::k_;
     using Super::losers_;
-    using Super::cmp_;
 
 public:
     explicit LoserTreePointer(Source k, const Comparator& cmp = Comparator())
-        : Super(k, cmp) { }
+        : Super(k, cmp)
+    {
+    }
 
-    void delete_min_insert(const ValueType* keyp, bool sup) {
+    void delete_min_insert(const ValueType* keyp, bool sup)
+    {
         using std::swap;
         assert(sup == (keyp == nullptr));
         unused(sup);
@@ -439,21 +477,26 @@ public:
         Source source = losers_[0].source;
         Source pos = (k_ + source) / 2;
 
-        while (pos > 0) {
-            if (TLX_UNLIKELY(!keyp)) {
+        while (pos > 0)
+        {
+            if (TLX_UNLIKELY(!keyp))
+            {
                 // the other candidate is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].keyp, keyp);
             }
-            else if (TLX_UNLIKELY(!losers_[pos].keyp)) {
+            else if (TLX_UNLIKELY(!losers_[pos].keyp))
+            {
                 // this candidate is smaller
             }
-            else if (cmp_(*losers_[pos].keyp, *keyp)) {
+            else if (cmp_(*losers_[pos].keyp, *keyp))
+            {
                 // the other one is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].keyp, keyp);
             }
-            else {
+            else
+            {
                 // this candidate is smaller
             }
             pos /= 2;
@@ -483,28 +526,33 @@ public:
     using Source = typename Super::Source;
 
 protected:
+    using Super::cmp_;
     using Super::k_;
     using Super::losers_;
-    using Super::cmp_;
 
 public:
     explicit LoserTreePointer(Source k, const Comparator& cmp = Comparator())
-        : Super(k, cmp) { }
+        : Super(k, cmp)
+    {
+    }
 
-    void delete_min_insert(const ValueType* keyp, bool sup) {
+    void delete_min_insert(const ValueType* keyp, bool sup)
+    {
         using std::swap;
         assert(sup == (keyp == nullptr));
         unused(sup);
 
         Source source = losers_[0].source;
-        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
+        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2)
+        {
             // the smaller one gets promoted, ties are broken by source
             if ((!keyp &&
                  (losers_[pos].keyp || losers_[pos].source < source)) ||
                 (keyp && losers_[pos].keyp &&
                  ((cmp_(*losers_[pos].keyp, *keyp)) ||
                   (!cmp_(*keyp, *losers_[pos].keyp) &&
-                   losers_[pos].source < source)))) {
+                   losers_[pos].source < source))))
+            {
                 // the other one is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].keyp, keyp);
@@ -537,7 +585,8 @@ public:
 
 protected:
     //! Internal representation of a loser tree player/node
-    struct Loser {
+    struct Loser
+    {
         //! index of source
         Source source;
         //! copy of key value of the element in this node
@@ -556,22 +605,25 @@ protected:
 public:
     LoserTreeCopyUnguardedBase(Source k, const ValueType& sentinel,
                                const Comparator& cmp = Comparator())
-        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(k_ * 2),
-          cmp_(cmp) {
-        for (Source i = 0; i < 2 * k_; i++) {
+        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(k_ * 2), cmp_(cmp)
+    {
+        for (Source i = 0; i < 2 * k_; i++)
+        {
             losers_[i].source = invalid_;
             losers_[i].key = sentinel;
         }
     }
 
     //! return the index of the player with the smallest element.
-    Source min_source() {
+    Source min_source()
+    {
         assert(losers_[0].source != invalid_ &&
                "Data underrun in unguarded merging.");
         return losers_[0].source;
     }
 
-    void insert_start(const ValueType* keyp, const Source& source, bool sup) {
+    void insert_start(const ValueType* keyp, const Source& source, bool sup)
+    {
         Source pos = k_ + source;
 
         assert(pos < losers_.size());
@@ -582,25 +634,29 @@ public:
         losers_[pos].key = *keyp;
     }
 
-    Source init_winner(const Source& root) {
+    Source init_winner(const Source& root)
+    {
         if (root >= k_)
             return root;
 
         Source left = init_winner(2 * root);
         Source right = init_winner(2 * root + 1);
-        if (!cmp_(losers_[right].key, losers_[left].key)) {
+        if (!cmp_(losers_[right].key, losers_[left].key))
+        {
             // left one is less or equal
             losers_[root] = losers_[right];
             return left;
         }
-        else {
+        else
+        {
             // right one is less
             losers_[root] = losers_[left];
             return right;
         }
     }
 
-    void init() {
+    void init()
+    {
         if (TLX_UNLIKELY(k_ == 0))
             return;
         losers_[0] = losers_[init_winner(1)];
@@ -617,17 +673,20 @@ public:
     using Source = typename Super::Source;
 
 private:
+    using Super::cmp_;
     using Super::k_;
     using Super::losers_;
-    using Super::cmp_;
 
 public:
     LoserTreeCopyUnguarded(Source k, const ValueType& sentinel,
                            const Comparator& cmp = Comparator())
-        : Super(k, sentinel, cmp) { }
+        : Super(k, sentinel, cmp)
+    {
+    }
 
     // do not pass const reference since key will be used as local variable
-    void delete_min_insert(const ValueType* keyp, bool sup) {
+    void delete_min_insert(const ValueType* keyp, bool sup)
+    {
         using std::swap;
         assert(sup == (keyp == nullptr));
         unused(sup);
@@ -635,9 +694,11 @@ public:
         Source source = losers_[0].source;
         ValueType key = keyp ? *keyp : ValueType();
 
-        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
+        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2)
+        {
             // the smaller one gets promoted
-            if (cmp_(losers_[pos].key, key)) {
+            if (cmp_(losers_[pos].key, key))
+            {
                 // the other one is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].key, key);
@@ -658,17 +719,20 @@ public:
     using Source = typename Super::Source;
 
 private:
+    using Super::cmp_;
     using Super::k_;
     using Super::losers_;
-    using Super::cmp_;
 
 public:
     LoserTreeCopyUnguarded(Source k, const ValueType& sentinel,
                            const Comparator& comp = Comparator())
-        : Super(k, sentinel, comp) { }
+        : Super(k, sentinel, comp)
+    {
+    }
 
     // do not pass const reference since key will be used as local variable
-    void delete_min_insert(const ValueType* keyp, bool sup) {
+    void delete_min_insert(const ValueType* keyp, bool sup)
+    {
         using std::swap;
         assert(sup == (keyp == nullptr));
         unused(sup);
@@ -676,10 +740,11 @@ public:
         Source source = losers_[0].source;
         ValueType key = keyp ? *keyp : ValueType();
 
-        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
+        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2)
+        {
             if (cmp_(losers_[pos].key, key) ||
-                (!cmp_(key, losers_[pos].key) &&
-                 losers_[pos].source < source)) {
+                (!cmp_(key, losers_[pos].key) && losers_[pos].source < source))
+            {
                 // the other one is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].key, key);
@@ -713,7 +778,8 @@ public:
 
 protected:
     //! Internal representation of a loser tree player/node
-    struct Loser {
+    struct Loser
+    {
         //! index of source
         Source source;
         //! copy of key value of the element in this node
@@ -732,24 +798,29 @@ protected:
 public:
     LoserTreePointerUnguardedBase(const Source& k, const ValueType& sentinel,
                                   const Comparator& cmp = Comparator())
-        : ik_(k), k_(round_up_to_power_of_two(ik_)),
-          losers_(k_ * 2), cmp_(cmp) {
-        for (Source i = ik_ - 1; i < k_; i++) {
+        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(k_ * 2), cmp_(cmp)
+    {
+        for (Source i = ik_ - 1; i < k_; i++)
+        {
             losers_[i + k_].source = invalid_;
             losers_[i + k_].keyp = &sentinel;
         }
     }
 
     // non construction-copyable
-    LoserTreePointerUnguardedBase(
-        const LoserTreePointerUnguardedBase& other) = delete;
+    LoserTreePointerUnguardedBase(const LoserTreePointerUnguardedBase& other) =
+        delete;
     // non copyable
-    LoserTreePointerUnguardedBase& operator = (
+    LoserTreePointerUnguardedBase& operator=(
         const LoserTreePointerUnguardedBase&) = delete;
 
-    Source min_source() { return losers_[0].source; }
+    Source min_source()
+    {
+        return losers_[0].source;
+    }
 
-    void insert_start(const ValueType* keyp, const Source& source, bool sup) {
+    void insert_start(const ValueType* keyp, const Source& source, bool sup)
+    {
         Source pos = k_ + source;
 
         assert(pos < losers_.size());
@@ -760,25 +831,29 @@ public:
         losers_[pos].keyp = keyp;
     }
 
-    Source init_winner(const Source& root) {
+    Source init_winner(const Source& root)
+    {
         if (root >= k_)
             return root;
 
         Source left = init_winner(2 * root);
         Source right = init_winner(2 * root + 1);
-        if (!cmp_(*losers_[right].keyp, *losers_[left].keyp)) {
+        if (!cmp_(*losers_[right].keyp, *losers_[left].keyp))
+        {
             // left one is less or equal
             losers_[root] = losers_[right];
             return left;
         }
-        else {
+        else
+        {
             // right one is less
             losers_[root] = losers_[left];
             return right;
         }
     }
 
-    void init() {
+    void init()
+    {
         if (TLX_UNLIKELY(k_ == 0))
             return;
         losers_[0] = losers_[init_winner(1)];
@@ -795,24 +870,29 @@ public:
     using Source = typename Super::Source;
 
 protected:
+    using Super::cmp_;
     using Super::k_;
     using Super::losers_;
-    using Super::cmp_;
 
 public:
     LoserTreePointerUnguarded(const Source& k, const ValueType& sentinel,
                               const Comparator& cmp = Comparator())
-        : Super(k, sentinel, cmp) { }
+        : Super(k, sentinel, cmp)
+    {
+    }
 
-    void delete_min_insert(const ValueType* keyp, bool sup) {
+    void delete_min_insert(const ValueType* keyp, bool sup)
+    {
         using std::swap;
         assert(sup == (keyp == nullptr));
         unused(sup);
 
         Source source = losers_[0].source;
-        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
+        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2)
+        {
             // the smaller one gets promoted
-            if (cmp_(*losers_[pos].keyp, *keyp)) {
+            if (cmp_(*losers_[pos].keyp, *keyp))
+            {
                 // the other one is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].keyp, keyp);
@@ -833,26 +913,31 @@ public:
     using Source = typename Super::Source;
 
 protected:
+    using Super::cmp_;
     using Super::k_;
     using Super::losers_;
-    using Super::cmp_;
 
 public:
     LoserTreePointerUnguarded(const Source& k, const ValueType& sentinel,
                               const Comparator& cmp = Comparator())
-        : Super(k, sentinel, cmp) { }
+        : Super(k, sentinel, cmp)
+    {
+    }
 
-    void delete_min_insert(const ValueType* keyp, bool sup) {
+    void delete_min_insert(const ValueType* keyp, bool sup)
+    {
         using std::swap;
         assert(sup == (keyp == nullptr));
         unused(sup);
 
         Source source = losers_[0].source;
-        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2) {
+        for (Source pos = (k_ + source) / 2; pos > 0; pos /= 2)
+        {
             // the smaller one gets promoted, ties are broken by source
             if (cmp_(*losers_[pos].keyp, *keyp) ||
                 (!cmp_(*keyp, *losers_[pos].keyp) &&
-                 losers_[pos].source < source)) {
+                 losers_[pos].source < source))
+            {
                 // the other one is smaller
                 swap(losers_[pos].source, source);
                 swap(losers_[pos].keyp, keyp);

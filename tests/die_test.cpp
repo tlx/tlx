@@ -9,12 +9,11 @@
  ******************************************************************************/
 
 #include <tlx/die.hpp>
-
 #include <cmath>
 #include <iomanip>
 
-int main() {
-
+int main()
+{
     // test some double comparisons
     die_unless(tlx::die_equal_compare(NAN, NAN));
     die_unless(!tlx::die_equal_compare(NAN, 0));

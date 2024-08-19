@@ -9,7 +9,6 @@
  ******************************************************************************/
 
 #include <tlx/die/core.hpp>
-
 #include <atomic>
 #include <iostream>
 #include <sstream>
@@ -18,7 +17,8 @@ namespace tlx {
 
 /******************************************************************************/
 
-static std::atomic<bool> s_die_with_exception {
+static std::atomic<bool> s_die_with_exception
+{
 #if TLX_DIE_WITH_EXCEPTION
     true
 #else
@@ -26,30 +26,34 @@ static std::atomic<bool> s_die_with_exception {
 #endif
 };
 
-void die_with_message(const std::string& msg) {
-    if (s_die_with_exception) {
+void die_with_message(const std::string& msg)
+{
+    if (s_die_with_exception)
         throw DieException(msg);
-    }
-    else {
-        std::cerr << msg << std::endl;
-        std::terminate();
-    }
+
+    std::cerr << msg << std::endl;
+    std::terminate();
 }
 
-void die_with_message(const char* msg, const char* file, size_t line) {
+void die_with_message(const char* msg, const char* file, size_t line)
+{
     std::ostringstream oss;
     oss << msg << " @ " << file << ':' << line;
     die_with_message(oss.str());
 }
 
-void die_with_message(const std::string& msg, const char* file, size_t line) {
+void die_with_message(const std::string& msg, const char* file, size_t line)
+{
     return die_with_message(msg.c_str(), file, line);
 }
 
 DieException::DieException(const std::string& message)
-    : std::runtime_error(message) { }
+    : std::runtime_error(message)
+{
+}
 
-bool set_die_with_exception(bool b) {
+bool set_die_with_exception(bool b)
+{
     return s_die_with_exception.exchange(b);
 }
 
@@ -67,9 +71,11 @@ file/line information where it occurred.
 - `die_verbose_if(condition,message)` - terminates if condition is true
 
 - `die_unequal(a,b)` - terminates unless a == b.
-- `die_unequal_eps6(a,b)` - terminates unless abs(a - b) < 1e-6 for approximate equality.
+- `die_unequal_eps6(a,b)` - terminates unless abs(a - b) < 1e-6 for approximate
+    equality.
 - `die_equal(a,b)` - terminates if a == b.
-- `die_unless_throws(code,exception)` - terminate if code does not throw the exception
+- `die_unless_throws(code,exception)` - terminate if code does not throw the
+    exception
 
 Furthermore, some additional assert macros are also available. These are only
 active in Debug mode, if NDEBUG is defined they are compiled out.

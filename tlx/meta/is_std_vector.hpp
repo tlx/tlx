@@ -20,10 +20,14 @@ namespace tlx {
 
 //! test if is std::vector<T>
 template <typename T>
-struct is_std_vector : public std::false_type { };
+struct is_std_vector : public std::false_type
+{
+};
 
 template <typename T>
-struct is_std_vector<std::vector<T> >: public std::true_type { };
+struct is_std_vector<std::vector<T> > : public std::true_type
+{
+};
 
 //! \}
 

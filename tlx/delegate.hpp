@@ -101,17 +101,18 @@ public:
     Delegate(Delegate&&) = default;
 
     //! copy assignment operator
-    Delegate& operator = (const Delegate&) = default;
+    Delegate& operator=(const Delegate&) = default;
 
     //! move assignment operator
-    Delegate& operator = (Delegate&&) = default;
+    Delegate& operator=(Delegate&&) = default;
 
     //! \name Immediate Function Calls
     //! \{
 
     //! construction from an immediate function with no object or pointer.
-    template <R(*const Function)(A...)>
-    static Delegate make() noexcept {
+    template <R (*const Function)(A...)>
+    static Delegate make() noexcept
+    {
         return Delegate(function_caller<Function>, nullptr);
     }
 
@@ -121,15 +122,18 @@ public:
     //! \{
 
     //! constructor from a plain function pointer with no object.
-    explicit Delegate(R(*const function_ptr)(A...)) noexcept
+    explicit Delegate(R (*const function_ptr)(A...)) noexcept
         : Delegate(function_ptr_caller,
-                   * reinterpret_cast<void* const*>(&function_ptr)) { }
+                   *reinterpret_cast<void* const*>(&function_ptr))
+    {
+    }
 
     static_assert(sizeof(void*) == sizeof(void (*)(void)),
                   "object pointer and function pointer sizes must equal");
 
     //! construction from a plain function pointer with no object.
-    static Delegate make(R(*const function_ptr)(A...)) noexcept {
+    static Delegate make(R (*const function_ptr)(A...)) noexcept
+    {
         return Delegate(function_ptr);
     }
 
@@ -139,29 +143,33 @@ public:
     //! \{
 
     //! construction for an immediate class::method with class object
-    template <class C, R(C::* const Method)(A...)>
-    static Delegate make(C* const object_ptr) noexcept {
+    template <class C, R (C::*const Method)(A...)>
+    static Delegate make(C* const object_ptr) noexcept
+    {
         return Delegate(method_caller<C, Method>, object_ptr);
     }
 
     //! construction for an immediate class::method with class object
-    template <class C, R(C::* const Method)(A...) const>
-    static Delegate make(C const* const object_ptr) noexcept {
+    template <class C, R (C::*const Method)(A...) const>
+    static Delegate make(const C* const object_ptr) noexcept
+    {
         return Delegate(const_method_caller<C, Method>,
                         const_cast<C*>(object_ptr));
     }
 
     //! construction for an immediate class::method with class object by
     //! reference
-    template <class C, R(C::* const Method)(A...)>
-    static Delegate make(C& object) noexcept {
+    template <class C, R (C::*const Method)(A...)>
+    static Delegate make(C& object) noexcept
+    {
         return Delegate(method_caller<C, Method>, &object);
     }
 
     //! construction for an immediate class::method with class object by
     //! reference
-    template <class C, R(C::* const Method)(A...) const>
-    static Delegate make(C const& object) noexcept {
+    template <class C, R (C::*const Method)(A...) const>
+    static Delegate make(const C& object) noexcept
+    {
         return Delegate(const_method_caller<C, Method>,
                         const_cast<C*>(&object));
     }
@@ -173,26 +181,26 @@ public:
 
     //! constructor from any functor object T, which may be a lambda with
     //! capture or a MemberPair or ConstMemberPair wrapper.
-    template <
-        typename T,
-        typename = typename std::enable_if<
-            !std::is_same<Delegate, typename std::decay<T>::type>::value
-            >::type
-        >
+    template <typename T,
+              typename = typename std::enable_if<!std::is_same<
+                  Delegate, typename std::decay<T>::type>::value>::type>
     Delegate(T&& f)
         : store_(
               // allocate memory for T in shared_ptr with appropriate deleter
               typename std::allocator_traits<Allocator>::template rebind_alloc<
-                  typename std::decay<T>::type>{ }.allocate(1),
-              store_deleter<typename std::decay<T>::type>, Allocator()) {
-
+                  typename std::decay<T>::type>{}
+                  .allocate(1),
+              store_deleter<typename std::decay<T>::type>, Allocator())
+    {
         using Functor = typename std::decay<T>::type;
-        using Rebind = typename std::allocator_traits<Allocator>::template rebind_alloc<Functor>;
+        using Rebind = typename std::allocator_traits<
+            Allocator>::template rebind_alloc<Functor>;
 
         // copy-construct T into shared_ptr memory.
-        Rebind rebind{ };
+        Rebind rebind{};
         std::allocator_traits<Rebind>::construct(
-            rebind, static_cast<Functor*>(store_.get()), Functor(std::forward<T>(f)));
+            rebind, static_cast<Functor*>(store_.get()),
+            Functor(std::forward<T>(f)));
 
         object_ptr_ = store_.get();
 
@@ -202,54 +210,65 @@ public:
     //! constructor from any functor object T, which may be a lambda with
     //! capture or a MemberPair or ConstMemberPair wrapper.
     template <typename T>
-    static Delegate make(T&& f) {
+    static Delegate make(T&& f)
+    {
         return std::forward<T>(f);
     }
 
     //! constructor for wrapping a class::method with object pointer.
     template <class C>
-    Delegate(C* const object_ptr, R(C::* const method_ptr)(A...))
-        : Delegate(MemberPair<C>(object_ptr, method_ptr)) { }
+    Delegate(C* const object_ptr, R (C::*const method_ptr)(A...))
+        : Delegate(MemberPair<C>(object_ptr, method_ptr))
+    {
+    }
 
     //! constructor for wrapping a const class::method with object pointer.
     template <class C>
-    Delegate(C* const object_ptr, R(C::* const method_ptr)(A...) const)
-        : Delegate(ConstMemberPair<C>(object_ptr, method_ptr)) { }
+    Delegate(C* const object_ptr, R (C::*const method_ptr)(A...) const)
+        : Delegate(ConstMemberPair<C>(object_ptr, method_ptr))
+    {
+    }
 
     //! constructor for wrapping a class::method with object reference.
     template <class C>
-    Delegate(C& object, R(C::* const method_ptr)(A...))
-        : Delegate(MemberPair<C>(&object, method_ptr)) { }
+    Delegate(C& object, R (C::*const method_ptr)(A...))
+        : Delegate(MemberPair<C>(&object, method_ptr))
+    {
+    }
 
     //! constructor for wrapping a const class::method with object reference.
     template <class C>
-    Delegate(C const& object, R(C::* const method_ptr)(A...) const)
-        : Delegate(ConstMemberPair<C>(&object, method_ptr)) { }
+    Delegate(const C& object, R (C::*const method_ptr)(A...) const)
+        : Delegate(ConstMemberPair<C>(&object, method_ptr))
+    {
+    }
 
     //! constructor for wrapping a class::method with object pointer.
     template <class C>
-    static Delegate make(C* const object_ptr,
-                         R(C::* const method_ptr)(A...)) {
+    static Delegate make(C* const object_ptr, R (C::*const method_ptr)(A...))
+    {
         return MemberPair<C>(object_ptr, method_ptr);
     }
 
     //! constructor for wrapping a const class::method with object pointer.
     template <class C>
-    static Delegate make(C const* const object_ptr,
-                         R(C::* const method_ptr)(A...) const) {
+    static Delegate make(const C* const object_ptr,
+                         R (C::*const method_ptr)(A...) const)
+    {
         return ConstMemberPair<C>(object_ptr, method_ptr);
     }
 
     //! constructor for wrapping a class::method with object reference.
     template <class C>
-    static Delegate make(C& object, R(C::* const method_ptr)(A...)) {
+    static Delegate make(C& object, R (C::*const method_ptr)(A...))
+    {
         return MemberPair<C>(&object, method_ptr);
     }
 
     //! constructor for wrapping a const class::method with object reference.
     template <class C>
-    static Delegate make(C const& object,
-                         R(C::* const method_ptr)(A...) const) {
+    static Delegate make(const C& object, R (C::*const method_ptr)(A...) const)
+    {
         return ConstMemberPair<C>(&object, method_ptr);
     }
 
@@ -259,54 +278,75 @@ public:
     //! \{
 
     //! reset delegate to invalid.
-    void reset() { caller_ = nullptr; store_.reset(); }
+    void reset()
+    {
+        caller_ = nullptr;
+        store_.reset();
+    }
 
-    void reset_caller() noexcept { caller_ = nullptr; }
+    void reset_caller() noexcept
+    {
+        caller_ = nullptr;
+    }
 
     //! swap delegates
-    void swap(Delegate& other) noexcept { std::swap(*this, other); }
+    void swap(Delegate& other) noexcept
+    {
+        std::swap(*this, other);
+    }
 
     //! compare delegate with another
-    bool operator == (Delegate const& rhs) const noexcept {
+    bool operator==(const Delegate& rhs) const noexcept
+    {
         return (object_ptr_ == rhs.object_ptr_) && (caller_ == rhs.caller_);
     }
 
     //! compare delegate with another
-    bool operator != (Delegate const& rhs) const noexcept {
-        return !operator == (rhs);
+    bool operator!=(const Delegate& rhs) const noexcept
+    {
+        return !operator==(rhs);
     }
 
     //! compare delegate with another
-    bool operator < (Delegate const& rhs) const noexcept {
+    bool operator<(const Delegate& rhs) const noexcept
+    {
         return (object_ptr_ < rhs.object_ptr_) ||
-               ((object_ptr_ == rhs.object_ptr_) && (reinterpret_cast<const void*>(caller_) < reinterpret_cast<const void*>(rhs.caller_)));
+               ((object_ptr_ == rhs.object_ptr_) &&
+                (reinterpret_cast<const void*>(caller_) <
+                 reinterpret_cast<const void*>(rhs.caller_)));
     }
 
     //! compare delegate with another
-    bool operator == (std::nullptr_t const) const noexcept {
+    bool operator==(const std::nullptr_t) const noexcept
+    {
         return caller_ == nullptr;
     }
 
     //! compare delegate with another
-    bool operator != (std::nullptr_t const) const noexcept {
+    bool operator!=(const std::nullptr_t) const noexcept
+    {
         return caller_ != nullptr;
     }
 
     //! explicit conversion to bool -> valid or invalid.
-    explicit operator bool () const noexcept { return caller_ != nullptr; }
+    explicit operator bool() const noexcept
+    {
+        return caller_ != nullptr;
+    }
 
     //! most important method: call. The call is forwarded to the selected
     //! function caller.
-    R operator () (A... args) const {
+    R operator()(A... args) const
+    {
         assert(caller_);
-        return caller_(object_ptr_, std::forward<A>(args) ...);
+        return caller_(object_ptr_, std::forward<A>(args)...);
     }
 
     //! \}
 
 private:
     //! type of the function caller pointer.
-    using Caller = R (*)(void*, A&& ...);
+    using Caller = R (*)(void*, A&&...);
 
     using Deleter = void (*)(void*);
 
@@ -327,45 +367,54 @@ private:
     std::shared_ptr<void> store_;
 
     //! private constructor for plain
-    Delegate(const Caller& m, void* const obj) noexcept
-        : caller_(m), object_ptr_(obj) { }
+    Delegate(const Caller& m, void* const obj) noexcept : caller_(m),
+                                                          object_ptr_(obj)
+    {
+    }
 
     //! deleter for stored functor closures
     template <typename T>
-    static void store_deleter(void* const ptr) {
-        using Rebind = typename std::allocator_traits<Allocator>::template rebind_alloc<T>;
-        Rebind rebind{ };
+    static void store_deleter(void* const ptr)
+    {
+        using Rebind =
+            typename std::allocator_traits<Allocator>::template rebind_alloc<T>;
+        Rebind rebind{};
 
         std::allocator_traits<Rebind>::destroy(rebind, static_cast<T*>(ptr));
-        std::allocator_traits<Rebind>::deallocate(rebind, static_cast<T*>(ptr), 1);
+        std::allocator_traits<Rebind>::deallocate(rebind, static_cast<T*>(ptr),
+                                                  1);
     }
 
     //! \name Callers for simple function and immediate class::method calls.
     //! \{
 
     //! caller for an immediate function with no object or pointer.
-    template <R(*Function)(A...)>
-    static R function_caller(void* const, A&& ... args) {
-        return Function(std::forward<A>(args) ...);
+    template <R (*Function)(A...)>
+    static R function_caller(void* const, A&&... args)
+    {
+        return Function(std::forward<A>(args)...);
     }
 
     //! caller for a plain function pointer.
-    static R function_ptr_caller(void* const object_ptr, A&& ... args) {
-        return (*reinterpret_cast<R(*const*)(A...)>(&object_ptr))(args...);
+    static R function_ptr_caller(void* const object_ptr, A&&... args)
+    {
+        return (*reinterpret_cast<R (*const*)(A...)>(&object_ptr))(args...);
     }
 
     //! function caller for immediate class::method function calls
-    template <class C, R(C::* method_ptr)(A...)>
-    static R method_caller(void* const object_ptr, A&& ... args) {
+    template <class C, R (C::*method_ptr)(A...)>
+    static R method_caller(void* const object_ptr, A&&... args)
+    {
         return (static_cast<C*>(object_ptr)->*method_ptr)(
-            std::forward<A>(args) ...);
+            std::forward<A>(args)...);
     }
 
     //! function caller for immediate const class::method functions calls.
-    template <class C, R(C::* method_ptr)(A...) const>
-    static R const_method_caller(void* const object_ptr, A&& ... args) {
-        return (static_cast<C const*>(object_ptr)->*method_ptr)(
-            std::forward<A>(args) ...);
+    template <class C, R (C::*method_ptr)(A...) const>
+    static R const_method_caller(void* const object_ptr, A&&... args)
+    {
+        return (static_cast<const C*>(object_ptr)->*method_ptr)(
+            std::forward<A>(args)...);
     }
 
     //! \}
@@ -376,48 +425,56 @@ private:
     //! wrappers for indirect class::method calls containing (object,
     //! method_ptr)
     template <class C>
-    using MemberPair =
-        std::pair<C* const, R(C::* const)(A...)>;
+    using MemberPair = std::pair<C* const, R (C::*const)(A...)>;
 
     //! wrappers for indirect const class::method calls containing (object,
     //! const method_ptr)
     template <class C>
     using ConstMemberPair =
-        std::pair<C const* const, R(C::* const)(A...) const>;
+        std::pair<const C* const, R (C::*const)(A...) const>;
 
     //! template for class::function selector
     template <typename>
-    struct IsMemberPair : std::false_type { };
+    struct IsMemberPair : std::false_type
+    {
+    };
 
     //! specialization for class::function selector
     template <class C>
-    struct IsMemberPair<MemberPair<C> >: std::true_type { };
+    struct IsMemberPair<MemberPair<C> > : std::true_type
+    {
+    };
 
     //! template for const class::function selector
     template <typename>
-    struct IsConstMemberPair : std::false_type { };
+    struct IsConstMemberPair : std::false_type
+    {
+    };
 
     //! specialization for const class::function selector
     template <class C>
-    struct IsConstMemberPair<ConstMemberPair<C> >: std::true_type { };
+    struct IsConstMemberPair<ConstMemberPair<C> > : std::true_type
+    {
+    };
 
     //! function caller for functor class.
     template <typename T>
     static typename std::enable_if<
-        !(IsMemberPair<T>::value || IsConstMemberPair<T>::value), R
-        >::type
-    functor_caller(void* const object_ptr, A&& ... args) {
-        return (*static_cast<T*>(object_ptr))(std::forward<A>(args) ...);
+        !(IsMemberPair<T>::value || IsConstMemberPair<T>::value), R>::type
+    functor_caller(void* const object_ptr, A&&... args)
+    {
+        return (*static_cast<T*>(object_ptr))(std::forward<A>(args)...);
     }
 
     //! function caller for const functor class.
     template <typename T>
     static typename std::enable_if<
-        (IsMemberPair<T>::value || IsConstMemberPair<T>::value), R
-        >::type
-    functor_caller(void* const object_ptr, A&& ... args) {
-        return (static_cast<T*>(object_ptr)->first->*
-                static_cast<T*>(object_ptr)->second)(std::forward<A>(args) ...);
+        (IsMemberPair<T>::value || IsConstMemberPair<T>::value), R>::type
+    functor_caller(void* const object_ptr, A&&... args)
+    {
+        return (static_cast<T*>(object_ptr)->first->*static_cast<T*>(object_ptr)
+                                                         ->second)(
+            std::forward<A>(args)...);
     }
 
     //! \}
@@ -429,33 +486,35 @@ using delegate = Delegate<T, Allocator>;
 
 //! constructor for wrapping a class::method with object pointer.
 template <class C, typename R, typename... A>
-inline Delegate<R(A...)>
-make_delegate(
-    C* const object_ptr, R(C::* const method_ptr)(A...)) noexcept {
+inline Delegate<R(A...)> make_delegate(C* const object_ptr,
+                                       R (C::*const method_ptr)(A...)) noexcept
+{
     return Delegate<R(A...)>::template make<C>(object_ptr, method_ptr);
 }
 
 //! constructor for wrapping a const class::method with object pointer.
 template <class C, typename R, typename... A>
-inline Delegate<R(A...)>
-make_delegate(
-    C* const object_ptr, R(C::* const method_ptr)(A...) const) noexcept {
+inline Delegate<R(A...)> make_delegate(C* const object_ptr,
+                                       R (C::*const method_ptr)(A...)
+                                           const) noexcept
+{
     return Delegate<R(A...)>::template make<C>(object_ptr, method_ptr);
 }
 
 //! constructor for wrapping a class::method with object reference.
 template <class C, typename R, typename... A>
-inline Delegate<R(A...)>
-make_delegate(
-    C& object_ptr, R(C::* const method_ptr)(A...)) noexcept {   // NOLINT
+inline Delegate<R(A...)> make_delegate(C& object_ptr,
+                                       R (C::*const method_ptr)(A...)) noexcept
+{
     return Delegate<R(A...)>::template make<C>(object_ptr, method_ptr);
 }
 
 //! constructor for wrapping a const class::method with object reference.
 template <class C, typename R, typename... A>
-inline Delegate<R(A...)>
-make_delegate(
-    C const& object_ptr, R(C::* const method_ptr)(A...) const) noexcept {
+inline Delegate<R(A...)> make_delegate(const C& object_ptr,
+                                       R (C::*const method_ptr)(A...)
+                                           const) noexcept
+{
     return Delegate<R(A...)>::template make<C>(object_ptr, method_ptr);
 }
 

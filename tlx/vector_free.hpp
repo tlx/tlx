@@ -18,7 +18,8 @@ namespace tlx {
 //! Simple method to free the underlying memory in a vector, because .clear()
 //! need not do it.
 template <typename Type>
-void vector_free(std::vector<Type>& v) {
+void vector_free(std::vector<Type>& v)
+{
     std::vector<Type>().swap(v);
 }
 

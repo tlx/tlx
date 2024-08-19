@@ -21,8 +21,9 @@ namespace tlx {
 
 //! round n up to the next multiple of k, for n and k positive!
 template <typename IntegralN, typename IntegralK>
-static inline constexpr
-auto round_up(const IntegralN& n, const IntegralK& k)->decltype(n + k) {
+static inline constexpr auto round_up(const IntegralN& n, const IntegralK& k)
+    -> decltype(n + k)
+{
     return ((n + k - 1) / k) * k;
 }
 

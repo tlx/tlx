@@ -30,16 +30,15 @@ namespace tlx {
  * that the comparator does not work with unsigned types.
  */
 template <typename InputIterator1, typename InputIterator2,
-          typename OutputIterator,
-          typename Comparator,
+          typename OutputIterator, typename Comparator,
           typename Combine = std::plus<
               typename std::iterator_traits<InputIterator1>::value_type> >
-OutputIterator merge_combine(
-    InputIterator1 first1, InputIterator1 last1,
-    InputIterator2 first2, InputIterator2 last2,
-    OutputIterator result, Comparator cmp = Comparator(),
-    Combine combine = Combine()) {
-
+OutputIterator merge_combine(InputIterator1 first1, InputIterator1 last1,
+                             InputIterator2 first2, InputIterator2 last2,
+                             OutputIterator result,
+                             Comparator cmp = Comparator(),
+                             Combine combine = Combine())
+{
     while (true)
     {
         // if either range is done -> copy the rest of the other
@@ -49,15 +48,18 @@ OutputIterator merge_combine(
             return std::copy(first1, last1, result);
 
         // compare both items, copy or combine.
-        if (cmp(*first1, *first2) < 0) {
+        if (cmp(*first1, *first2) < 0)
+        {
             *result = *first1;
             ++first1;
         }
-        else if (cmp(*first1, *first2) > 0) {
+        else if (cmp(*first1, *first2) > 0)
+        {
             *result = *first2;
             ++first2;
         }
-        else {
+        else
+        {
             *result = combine(*first1, *first2);
             ++first1, ++first2;
         }

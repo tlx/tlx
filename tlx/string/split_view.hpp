@@ -34,12 +34,12 @@ namespace tlx {
  * \param limit     maximum number of parts returned
  */
 template <typename Functor>
-static inline
-void split_view(
-    char sep, const std::string& str, Functor&& callback,
-    std::string::size_type limit = std::string::npos) {
-
-    if (limit == 0) {
+static inline void split_view(char sep, const std::string& str,
+                              Functor&& callback,
+                              std::string::size_type limit = std::string::npos)
+{
+    if (limit == 0)
+    {
         callback(StringView(str.begin(), str.end()));
         return;
     }
@@ -47,7 +47,7 @@ void split_view(
     std::string::size_type count = 0;
     auto it = str.begin(), last = it;
 
-    for ( ; it != str.end(); ++it)
+    for (; it != str.end(); ++it)
     {
         if (*it == sep)
         {

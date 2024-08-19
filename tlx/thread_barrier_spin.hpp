@@ -12,7 +12,6 @@
 #define TLX_THREAD_BARRIER_SPIN_HEADER
 
 #include <tlx/meta/no_operation.hpp>
-
 #include <atomic>
 #include <thread>
 
@@ -33,7 +32,9 @@ public:
      * Creates a new barrier that waits for n threads.
      */
     explicit ThreadBarrierSpin(size_t thread_count)
-        : thread_count_(thread_count - 1) { }
+        : thread_count_(thread_count - 1)
+    {
+    }
 
     /*!
      * Waits for n threads to arrive. When they have arrive, execute lambda on
@@ -44,11 +45,13 @@ public:
      * the method.
      */
     template <typename Lambda = NoOperation<void> >
-    void wait(Lambda lambda = Lambda()) {
+    void wait(Lambda lambda = Lambda())
+    {
         // get synchronization generation step counter.
         size_t this_step = step_.load(std::memory_order_acquire);
 
-        if (waiting_.fetch_add(1, std::memory_order_acq_rel) == thread_count_) {
+        if (waiting_.fetch_add(1, std::memory_order_acq_rel) == thread_count_)
+        {
             // we are the last thread to wait() -> reset and increment step.
             waiting_.store(0, std::memory_order_release);
             // step other generation counters.
@@ -56,9 +59,11 @@ public:
             // the following statement releases all threads from busy waiting.
             step_.fetch_add(1, std::memory_order_acq_rel);
         }
-        else {
+        else
+        {
             // spin lock awaiting the last thread to increment the step counter.
-            while (step_.load(std::memory_order_acquire) == this_step) {
+            while (step_.load(std::memory_order_acquire) == this_step)
+            {
                 // busy spinning loop
             }
         }
@@ -73,11 +78,13 @@ public:
      * the method.
      */
     template <typename Lambda = NoOperation<void> >
-    void wait_yield(Lambda lambda = Lambda()) {
+    void wait_yield(Lambda lambda = Lambda())
+    {
         // get synchronization generation step counter.
         size_t this_step = step_.load(std::memory_order_acquire);
 
-        if (waiting_.fetch_add(1, std::memory_order_acq_rel) == thread_count_) {
+        if (waiting_.fetch_add(1, std::memory_order_acq_rel) == thread_count_)
+        {
             // we are the last thread to wait() -> reset and increment step.
             waiting_.store(0, std::memory_order_release);
             // step other generation counters.
@@ -85,16 +92,19 @@ public:
             // the following statement releases all threads from busy waiting.
             step_.fetch_add(1, std::memory_order_acq_rel);
         }
-        else {
+        else
+        {
             // spin lock awaiting the last thread to increment the step counter.
-            while (step_.load(std::memory_order_acquire) == this_step) {
+            while (step_.load(std::memory_order_acquire) == this_step)
+            {
                 std::this_thread::yield();
             }
         }
     }
 
     //! Return generation step counter
-    size_t step() const {
+    size_t step() const
+    {
         return step_.load(std::memory_order_acquire);
     }
 
@@ -103,10 +113,10 @@ protected:
     const size_t thread_count_;
 
     //! number of threads in spin lock
-    std::atomic<size_t> waiting_ { 0 };
+    std::atomic<size_t> waiting_{0};
 
     //! barrier synchronization generation
-    std::atomic<size_t> step_ { 0 };
+    std::atomic<size_t> step_{0};
 };
 
 } // namespace tlx

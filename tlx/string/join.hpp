@@ -32,8 +32,7 @@ namespace tlx {
  * \param parts    the vector of strings to join
  * \return string  constructed from the vector with the glue between two strings
  */
-std::string join(
-    char glue, const std::vector<std::string>& parts);
+std::string join(char glue, const std::vector<std::string>& parts);
 
 /*!
  * Join a vector of strings by some glue string between each pair from the
@@ -43,8 +42,7 @@ std::string join(
  * \param parts    the vector of strings to join
  * \return string  constructed from the vector with the glue between two strings
  */
-std::string join(
-    const char* glue, const std::vector<std::string>& parts);
+std::string join(const char* glue, const std::vector<std::string>& parts);
 
 /*!
  * Join a vector of strings by some glue string between each pair from the
@@ -54,8 +52,8 @@ std::string join(
  * \param parts    the vector of strings to join
  * \return string  constructed from the vector with the glue between two strings
  */
-std::string join(
-    const std::string& glue, const std::vector<std::string>& parts);
+std::string join(const std::string& glue,
+                 const std::vector<std::string>& parts);
 
 //! \}
 //! \}

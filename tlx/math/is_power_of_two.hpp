@@ -19,8 +19,10 @@ namespace tlx {
 /******************************************************************************/
 
 template <typename Integral>
-static inline bool is_power_of_two_template(Integral i) {
-    if (i <= 0) return false;
+static inline bool is_power_of_two_template(Integral i)
+{
+    if (i <= 0)
+        return false;
     return !(i & (i - 1));
 }
 
@@ -28,32 +30,38 @@ static inline bool is_power_of_two_template(Integral i) {
 // is_power_of_two()
 
 //! does what it says: true if i is a power of two
-static inline bool is_power_of_two(int i) {
+static inline bool is_power_of_two(int i)
+{
     return is_power_of_two_template(i);
 }
 
 //! does what it says: true if i is a power of two
-static inline bool is_power_of_two(unsigned int i) {
+static inline bool is_power_of_two(unsigned int i)
+{
     return is_power_of_two_template(i);
 }
 
 //! does what it says: true if i is a power of two
-static inline bool is_power_of_two(long i) {
+static inline bool is_power_of_two(long i)
+{
     return is_power_of_two_template(i);
 }
 
 //! does what it says: true if i is a power of two
-static inline bool is_power_of_two(unsigned long i) {
+static inline bool is_power_of_two(unsigned long i)
+{
     return is_power_of_two_template(i);
 }
 
 //! does what it says: true if i is a power of two
-static inline bool is_power_of_two(long long i) {
+static inline bool is_power_of_two(long long i)
+{
     return is_power_of_two_template(i);
 }
 
 //! does what it says: true if i is a power of two
-static inline bool is_power_of_two(unsigned long long i) {
+static inline bool is_power_of_two(unsigned long long i)
+{
     return is_power_of_two_template(i);
 }
 

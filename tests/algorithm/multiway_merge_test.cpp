@@ -8,40 +8,42 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/algorithm/multiway_merge.hpp>
+#include <tlx/algorithm/parallel_multiway_merge.hpp>
+#include <tlx/die.hpp>
+#include <tlx/logger.hpp>
 #include <iostream>
 #include <random>
 
-#include <tlx/die.hpp>
-#include <tlx/logger.hpp>
-
-#include <tlx/algorithm/multiway_merge.hpp>
-#include <tlx/algorithm/parallel_multiway_merge.hpp>
-
-struct Something {
+struct Something
+{
     unsigned int a, b;
 
-    explicit Something(unsigned int x = 0) noexcept
-        : a(x), b(x * x)
-    { }
+    explicit Something(unsigned int x = 0) noexcept : a(x), b(x* x)
+    {
+    }
 
-    bool operator < (const Something& other) const {
+    bool operator<(const Something& other) const
+    {
         return a < other.a;
     }
 
-    bool operator == (const Something& other) const {
+    bool operator==(const Something& other) const
+    {
         return (a == other.a) && (b == other.b);
     }
 
-    friend std::ostream& operator << (std::ostream& os, const Something& s) {
+    friend std::ostream& operator<<(std::ostream& os, const Something& s)
+    {
         return os << '(' << s.a << ',' << s.b << ')';
     }
 };
 
 template <typename ValueType, bool Parallel, bool Stable, bool Sentinels>
-void test_vecs(unsigned int vecnum,
-               const tlx::MultiwayMergeAlgorithm& mwma,
-               const tlx::MultiwayMergeSplittingAlgorithm& mwmsa = tlx::MWMSA_DEFAULT) {
-
+void test_vecs(
+    unsigned int vecnum, const tlx::MultiwayMergeAlgorithm& mwma,
+    const tlx::MultiwayMergeSplittingAlgorithm& mwmsa = tlx::MWMSA_DEFAULT)
+{
     static const bool debug = false;
 
     if (!Sentinels && mwma == tlx::MWMA_LOSER_TREE_SENTINEL)
@@ -62,7 +64,8 @@ void test_vecs(unsigned int vecnum,
     {
         // determine number of items in stream
         size_t inum = distr_size(randgen) + 64;
-        if (i == 3) inum = 0; // add an empty sequence
+        if (i == 3)
+            inum = 0; // add an empty sequence
         vec[i].resize(inum);
         totalsize += inum;
 
@@ -80,7 +83,8 @@ void test_vecs(unsigned int vecnum,
     if (Sentinels)
     {
         for (size_t i = 0; i < vecnum; ++i)
-            vec[i].push_back(ValueType(std::numeric_limits<unsigned int>::max()));
+            vec[i].push_back(
+                ValueType(std::numeric_limits<unsigned int>::max()));
     }
 
     // prepare output and correct vector
@@ -100,56 +104,62 @@ void test_vecs(unsigned int vecnum,
 
     // construct vector of input iterator ranges
     using input_iterator = typename std::vector<ValueType>::iterator;
-    using difference_type = typename std::iterator_traits<input_iterator>::difference_type;
+    using difference_type =
+        typename std::iterator_traits<input_iterator>::difference_type;
 
     std::vector<std::pair<input_iterator, input_iterator> > sequences(vecnum);
 
     for (size_t i = 0; i < vecnum; ++i)
     {
-        sequences[i] = std::make_pair(vec[i].begin(), vec[i].end() - (Sentinels ? 1 : 0));
+        sequences[i] =
+            std::make_pair(vec[i].begin(), vec[i].end() - (Sentinels ? 1 : 0));
 
         die_unless(std::is_sorted(vec[i].cbegin(), vec[i].cend()));
     }
 
-    if (Parallel) {
+    if (Parallel)
+    {
         tlx::parallel_multiway_merge_force_parallel = true;
         if (!Stable)
             tlx::parallel_multiway_merge(
-                sequences.begin(), sequences.end(),
-                output.begin(), static_cast<difference_type>(totalsize),
-                std::less<ValueType>(), mwma, mwmsa);
+                sequences.begin(), sequences.end(), output.begin(),
+                static_cast<difference_type>(totalsize), std::less<ValueType>(),
+                mwma, mwmsa);
         else
             tlx::stable_parallel_multiway_merge(
-                sequences.begin(), sequences.end(),
-                output.begin(), static_cast<difference_type>(totalsize),
-                std::less<ValueType>(), mwma, mwmsa);
+                sequences.begin(), sequences.end(), output.begin(),
+                static_cast<difference_type>(totalsize), std::less<ValueType>(),
+                mwma, mwmsa);
     }
-    else if (!Sentinels) {
+    else if (!Sentinels)
+    {
         if (!Stable)
-            tlx::multiway_merge(
-                sequences.begin(), sequences.end(),
-                output.begin(), static_cast<difference_type>(totalsize),
-                std::less<ValueType>(), mwma);
+            tlx::multiway_merge(sequences.begin(), sequences.end(),
+                                output.begin(),
+                                static_cast<difference_type>(totalsize),
+                                std::less<ValueType>(), mwma);
         else
-            tlx::stable_multiway_merge(
-                sequences.begin(), sequences.end(),
-                output.begin(), static_cast<difference_type>(totalsize),
-                std::less<ValueType>(), mwma);
+            tlx::stable_multiway_merge(sequences.begin(), sequences.end(),
+                                       output.begin(),
+                                       static_cast<difference_type>(totalsize),
+                                       std::less<ValueType>(), mwma);
     }
-    else {
+    else
+    {
         if (!Stable)
             tlx::multiway_merge_sentinels(
-                sequences.begin(), sequences.end(),
-                output.begin(), static_cast<difference_type>(totalsize),
-                std::less<ValueType>(), mwma);
+                sequences.begin(), sequences.end(), output.begin(),
+                static_cast<difference_type>(totalsize), std::less<ValueType>(),
+                mwma);
         else
             tlx::stable_multiway_merge_sentinels(
-                sequences.begin(), sequences.end(),
-                output.begin(), static_cast<difference_type>(totalsize),
-                std::less<ValueType>(), mwma);
+                sequences.begin(), sequences.end(), output.begin(),
+                static_cast<difference_type>(totalsize), std::less<ValueType>(),
+                mwma);
     }
 
-    if (debug || output != correct) {
+    if (debug || output != correct)
+    {
         for (size_t i = 0; i < output.size(); ++i)
             std::cout << '(' << output[i] << '=' << correct[i] << ')' << ' ';
     }
@@ -157,7 +167,8 @@ void test_vecs(unsigned int vecnum,
     die_unless(output == correct);
 }
 
-void test_all(const tlx::MultiwayMergeAlgorithm& mwma) {
+void test_all(const tlx::MultiwayMergeAlgorithm& mwma)
+{
     // run multiway merge tests for 0..256 sequences
     for (unsigned int n = 0; n <= 128; n += 1 + n / 16 + n / 32 + n / 64)
     {
@@ -193,7 +204,8 @@ void test_all(const tlx::MultiwayMergeAlgorithm& mwma) {
     }
 }
 
-int main() {
+int main()
+{
     test_all(tlx::MWMA_BUBBLE);
     test_all(tlx::MWMA_LOSER_TREE);
     test_all(tlx::MWMA_LOSER_TREE_COMBINED);

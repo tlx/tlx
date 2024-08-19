@@ -11,21 +11,18 @@
  ******************************************************************************/
 
 #include "sort_strings_test.hpp"
-
+#include <tlx/sort/strings.hpp>
 #include <tlx/sort/strings/insertion_sort.hpp>
 #include <tlx/sort/strings/multikey_quicksort.hpp>
 #include <tlx/sort/strings/radix_sort.hpp>
-
 #include <cstdint>
-#include <tlx/sort/strings.hpp>
 
 void TestFrontend(const size_t num_strings, const size_t num_chars,
-                  const std::string& letters) {
-
+                  const std::string& letters)
+{
     std::default_random_engine rng(seed);
 
-    LOG1 << "Running sort_strings() on " << num_strings
-         << " uint8_t* strings";
+    LOG1 << "Running sort_strings() on " << num_strings << " uint8_t* strings";
 
     // array of string pointers
     tlx::simple_vector<std::uint8_t*> cstrings(num_strings);
@@ -51,7 +48,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
 
         // check result
         if (!UCharStringSet(cstrings.data(), cstrings.data() + num_strings)
-            .check_order())
+                 .check_order())
         {
             LOG1 << "Result is not sorted!";
             abort();
@@ -76,7 +73,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
 
         // check result
         if (!CUCharStringSet(ccstrings.data(), ccstrings.data() + num_strings)
-            .check_order())
+                 .check_order())
         {
             LOG1 << "Result is not sorted!";
             abort();
@@ -94,8 +91,8 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
 
         tlx::simple_vector<std::uint32_t> lcp(num_strings);
 
-        tlx::sort_strings_lcp(
-            ccstrings.data(), num_strings, lcp.data(), /* memory */ 0);
+        tlx::sort_strings_lcp(ccstrings.data(), num_strings, lcp.data(),
+                              /* memory */ 0);
 
         double ts2 = tlx::timestamp();
         LOG1 << "sorting took " << ts2 - ts1 << " seconds";
@@ -107,7 +104,8 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
             LOG1 << "Result is not sorted!";
             abort();
         }
-        if (!check_lcp(ss, lcp.data())) {
+        if (!check_lcp(ss, lcp.data()))
+        {
             LOG1 << "LCP result is not correct!";
             abort();
         }
@@ -118,12 +116,15 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
         delete[] cstrings[i];
 }
 
-void test_all(const size_t num_strings) {
-    if (num_strings <= 1024) {
+void test_all(const size_t num_strings)
+{
+    if (num_strings <= 1024)
+    {
         run_tests(insertion_sort);
     }
 
-    if (num_strings <= 1024 * 1024) {
+    if (num_strings <= 1024 * 1024)
+    {
         run_tests(multikey_quicksort);
         run_tests(radixsort_CE0);
         run_tests(radixsort_CE2);
@@ -135,12 +136,14 @@ void test_all(const size_t num_strings) {
     }
 }
 
-int main() {
+int main()
+{
     // run tests
     test_all(16);
     test_all(256);
     test_all(65550);
-    if (tlx_more_tests) {
+    if (tlx_more_tests)
+    {
         test_all(1024 * 1024);
         test_all(16 * 1024 * 1024);
     }

@@ -9,19 +9,18 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <cmath>
-#include <cstddef>
-
 #include <tlx/die.hpp>
 #include <tlx/math/integer_log2.hpp>
 #include <tlx/meta/log2.hpp>
+#include <cmath>
+#include <cstddef>
 
 /******************************************************************************/
 // Log2 and Log2Floor
 
 template <unsigned long long Value>
-void test_log_i(size_t floor_value, size_t ceil_value) {
-
+void test_log_i(size_t floor_value, size_t ceil_value)
+{
     die_unequal(tlx::Log2Floor<Value>::value, tlx::integer_log2_floor(Value));
     die_unequal(tlx::Log2<Value>::floor, tlx::integer_log2_floor(Value));
     die_unequal(tlx::Log2<Value>::ceil, tlx::integer_log2_ceil(Value));
@@ -47,16 +46,18 @@ void test_log_i(size_t floor_value, size_t ceil_value) {
 }
 
 template <unsigned long long Value>
-void test_log2_value(size_t p) {
+void test_log2_value(size_t p)
+{
     test_log_i<Value - 1>(p - 1, p);
     test_log_i<Value>(p, p);
     test_log_i<Value + 1>(p, p + 1);
 }
 
-static void test_log2() {
-/*[[[perl
-  print "test_log2_value<1ull << $_>($_);\n" for (0..63);
-]]]*/
+static void test_log2()
+{
+    /*[[[perl
+      print "test_log2_value<1ull << $_>($_);\n" for (0..63);
+    ]]]*/
     test_log2_value<1ull << 0>(0);
     test_log2_value<1ull << 1>(1);
     test_log2_value<1ull << 2>(2);
@@ -121,12 +122,13 @@ static void test_log2() {
     test_log2_value<1ull << 61>(61);
     test_log2_value<1ull << 62>(62);
     test_log2_value<1ull << 63>(63);
-// [[[end]]]
+    // [[[end]]]
 }
 
 /******************************************************************************/
 
-int main() {
+int main()
+{
     test_log2();
     return 0;
 }

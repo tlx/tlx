@@ -41,8 +41,8 @@ size_t index_of_icase(const std::vector<std::string>& list, const char* str);
  * Attempts to find str in the list and return the index using case-insensitive
  * comparisons. Throws a std::runtime_error if it is not found.
  */
-size_t
-index_of_icase(const std::vector<std::string>& list, const std::string& str);
+size_t index_of_icase(const std::vector<std::string>& list,
+                      const std::string& str);
 
 //! \}
 

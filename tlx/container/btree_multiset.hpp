@@ -11,11 +11,10 @@
 #ifndef TLX_CONTAINER_BTREE_MULTISET_HEADER
 #define TLX_CONTAINER_BTREE_MULTISET_HEADER
 
+#include <tlx/container/btree.hpp>
 #include <functional>
 #include <memory>
 #include <utility>
-
-#include <tlx/container/btree.hpp>
 
 namespace tlx {
 
@@ -34,8 +33,7 @@ namespace tlx {
  * It is somewhat inefficient to implement a multiset using a B+ tree, a plain B
  * tree would hold fewer copies of the keys.
  */
-template <typename Key_,
-          typename Compare_ = std::less<Key_>,
+template <typename Key_, typename Compare_ = std::less<Key_>,
           typename Traits_ = btree_default_traits<Key_, Key_>,
           typename Alloc_ = std::allocator<Key_> >
 class btree_multiset
@@ -76,14 +74,19 @@ public:
     typedef btree_multiset<key_type, key_compare, traits, allocator_type> self;
 
     //! Key Extractor Struct
-    struct key_of_value {
+    struct key_of_value
+    {
         //! pull first out of pair
-        static const key_type& get(const value_type& v) { return v; }
+        static const key_type& get(const value_type& v)
+        {
+            return v;
+        }
     };
 
     //! Implementation type of the btree_base
-    typedef BTree<key_type, value_type, key_of_value, key_compare,
-                  traits, true, allocator_type> btree_impl;
+    typedef BTree<key_type, value_type, key_of_value, key_compare, traits, true,
+                  allocator_type>
+        btree_impl;
 
     //! Function class comparing two value_type keys.
     typedef typename btree_impl::value_compare value_compare;
@@ -168,20 +171,23 @@ public:
     //! comparison function
     explicit btree_multiset(const allocator_type& alloc = allocator_type())
         : tree_(alloc)
-    { }
+    {
+    }
 
     //! Constructor initializing an empty B+ tree with a special key
     //! comparison object
     explicit btree_multiset(const key_compare& kcf,
                             const allocator_type& alloc = allocator_type())
         : tree_(kcf, alloc)
-    { }
+    {
+    }
 
     //! Constructor initializing a B+ tree with the range [first,last)
     template <class InputIterator>
     btree_multiset(InputIterator first, InputIterator last,
                    const allocator_type& alloc = allocator_type())
-        : tree_(alloc) {
+        : tree_(alloc)
+    {
         insert(first, last);
     }
 
@@ -191,16 +197,19 @@ public:
     btree_multiset(InputIterator first, InputIterator last,
                    const key_compare& kcf,
                    const allocator_type& alloc = allocator_type())
-        : tree_(kcf, alloc) {
+        : tree_(kcf, alloc)
+    {
         insert(first, last);
     }
 
     //! Frees up all used B+ tree memory pages
     ~btree_multiset()
-    { }
+    {
+    }
 
     //! Fast swapping of two identical B+ tree objects.
-    void swap(btree_multiset& from) {
+    void swap(btree_multiset& from)
+    {
         std::swap(tree_, from.tree_);
     }
 
@@ -211,13 +220,15 @@ public:
     //! \{
 
     //! Constant access to the key comparison object sorting the B+ tree
-    key_compare key_comp() const {
+    key_compare key_comp() const
+    {
         return tree_.key_comp();
     }
 
     //! Constant access to a constructed value_type comparison object. Required
     //! by the STL
-    value_compare value_comp() const {
+    value_compare value_comp() const
+    {
         return tree_.value_comp();
     }
 
@@ -228,7 +239,8 @@ public:
     //! \{
 
     //! Return the base node allocator provided during construction.
-    allocator_type get_allocator() const {
+    allocator_type get_allocator() const
+    {
         return tree_.get_allocator();
     }
 
@@ -239,7 +251,8 @@ public:
     //! \{
 
     //! Frees all keys and all nodes of the tree
-    void clear() {
+    void clear()
+    {
         tree_.clear();
     }
 
@@ -251,49 +264,57 @@ public:
 
     //! Constructs a read/data-write iterator that points to the first slot in
     //! the first leaf of the B+ tree.
-    iterator begin() {
+    iterator begin()
+    {
         return tree_.begin();
     }
 
     //! Constructs a read/data-write iterator that points to the first invalid
     //! slot in the last leaf of the B+ tree.
-    iterator end() {
+    iterator end()
+    {
         return tree_.end();
     }
 
     //! Constructs a read-only constant iterator that points to the first slot
     //! in the first leaf of the B+ tree.
-    const_iterator begin() const {
+    const_iterator begin() const
+    {
         return tree_.begin();
     }
 
     //! Constructs a read-only constant iterator that points to the first
     //! invalid slot in the last leaf of the B+ tree.
-    const_iterator end() const {
+    const_iterator end() const
+    {
         return tree_.end();
     }
 
     //! Constructs a read/data-write reverse iterator that points to the first
     //! invalid slot in the last leaf of the B+ tree. Uses STL magic.
-    reverse_iterator rbegin() {
+    reverse_iterator rbegin()
+    {
         return tree_.rbegin();
     }
 
     //! Constructs a read/data-write reverse iterator that points to the first
     //! slot in the first leaf of the B+ tree. Uses STL magic.
-    reverse_iterator rend() {
+    reverse_iterator rend()
+    {
         return tree_.rend();
     }
 
     //! Constructs a read-only reverse iterator that points to the first
     //! invalid slot in the last leaf of the B+ tree. Uses STL magic.
-    const_reverse_iterator rbegin() const {
+    const_reverse_iterator rbegin() const
+    {
         return tree_.rbegin();
     }
 
     //! Constructs a read-only reverse iterator that points to the first slot
     //! in the first leaf of the B+ tree. Uses STL magic.
-    const_reverse_iterator rend() const {
+    const_reverse_iterator rend() const
+    {
         return tree_.rend();
     }
 
@@ -304,23 +325,27 @@ public:
     //! \{
 
     //! Return the number of keys in the B+ tree
-    size_type size() const {
+    size_type size() const
+    {
         return tree_.size();
     }
 
     //! Returns true if there is at least one key in the B+ tree
-    bool empty() const {
+    bool empty() const
+    {
         return tree_.empty();
     }
 
     //! Returns the largest possible size of the B+ Tree. This is just a
     //! function required by the STL standard, the B+ Tree can hold more items.
-    size_type max_size() const {
+    size_type max_size() const
+    {
         return tree_.max_size();
     }
 
     //! Return a const reference to the current statistics.
-    const tree_stats& get_stats() const {
+    const tree_stats& get_stats() const
+    {
         return tree_.get_stats();
     }
 
@@ -332,60 +357,70 @@ public:
 
     //! Non-STL function checking whether a key is in the B+ tree. The same as
     //! (find(k) != end()) or (count() != 0).
-    bool exists(const key_type& key) const {
+    bool exists(const key_type& key) const
+    {
         return tree_.exists(key);
     }
 
     //! Tries to locate a key in the B+ tree and returns an iterator to the key
     //! slot if found. If unsuccessful it returns end().
-    iterator find(const key_type& key) {
+    iterator find(const key_type& key)
+    {
         return tree_.find(key);
     }
 
     //! Tries to locate a key in the B+ tree and returns an constant iterator to
     //! the key slot if found. If unsuccessful it returns end().
-    const_iterator find(const key_type& key) const {
+    const_iterator find(const key_type& key) const
+    {
         return tree_.find(key);
     }
 
     //! Tries to locate a key in the B+ tree and returns the number of identical
     //! key entries found.
-    size_type count(const key_type& key) const {
+    size_type count(const key_type& key) const
+    {
         return tree_.count(key);
     }
 
     //! Searches the B+ tree and returns an iterator to the first pair equal to
     //! or greater than key, or end() if all keys are smaller.
-    iterator lower_bound(const key_type& key) {
+    iterator lower_bound(const key_type& key)
+    {
         return tree_.lower_bound(key);
     }
 
     //! Searches the B+ tree and returns a constant iterator to the first pair
     //! equal to or greater than key, or end() if all keys are smaller.
-    const_iterator lower_bound(const key_type& key) const {
+    const_iterator lower_bound(const key_type& key) const
+    {
         return tree_.lower_bound(key);
     }
 
     //! Searches the B+ tree and returns an iterator to the first pair greater
     //! than key, or end() if all keys are smaller or equal.
-    iterator upper_bound(const key_type& key) {
+    iterator upper_bound(const key_type& key)
+    {
         return tree_.upper_bound(key);
     }
 
     //! Searches the B+ tree and returns a constant iterator to the first pair
     //! greater than key, or end() if all keys are smaller or equal.
-    const_iterator upper_bound(const key_type& key) const {
+    const_iterator upper_bound(const key_type& key) const
+    {
         return tree_.upper_bound(key);
     }
 
     //! Searches the B+ tree and returns both lower_bound() and upper_bound().
-    std::pair<iterator, iterator> equal_range(const key_type& key) {
+    std::pair<iterator, iterator> equal_range(const key_type& key)
+    {
         return tree_.equal_range(key);
     }
 
     //! Searches the B+ tree and returns both lower_bound() and upper_bound().
     std::pair<const_iterator, const_iterator> equal_range(
-        const key_type& key) const {
+        const key_type& key) const
+    {
         return tree_.equal_range(key);
     }
 
@@ -397,33 +432,39 @@ public:
 
     //! Equality relation of B+ trees of the same type. B+ trees of the same
     //! size and equal key (counts) are considered equal.
-    bool operator == (const btree_multiset& other) const {
+    bool operator==(const btree_multiset& other) const
+    {
         return (tree_ == other.tree_);
     }
 
     //! Inequality relation. Based on operator==.
-    bool operator != (const btree_multiset& other) const {
+    bool operator!=(const btree_multiset& other) const
+    {
         return (tree_ != other.tree_);
     }
 
     //! Total ordering relation of B+ trees of the same type. It uses
     //! std::lexicographical_compare() for the actual comparison of elements.
-    bool operator < (const btree_multiset& other) const {
+    bool operator<(const btree_multiset& other) const
+    {
         return (tree_ < other.tree_);
     }
 
     //! Greater relation. Based on operator<.
-    bool operator > (const btree_multiset& other) const {
+    bool operator>(const btree_multiset& other) const
+    {
         return (tree_ > other.tree_);
     }
 
     //! Less-equal relation. Based on operator<.
-    bool operator <= (const btree_multiset& other) const {
+    bool operator<=(const btree_multiset& other) const
+    {
         return (tree_ <= other.tree_);
     }
 
     //! Greater-equal relation. Based on operator<.
-    bool operator >= (const btree_multiset& other) const {
+    bool operator>=(const btree_multiset& other) const
+    {
         return (tree_ >= other.tree_);
     }
 
@@ -434,7 +475,8 @@ public:
     //! \{
 
     //! Assignment operator. All the keys are copied
-    btree_multiset& operator = (const btree_multiset& other) {
+    btree_multiset& operator=(const btree_multiset& other)
+    {
         if (this != &other)
             tree_ = other.tree_;
         return *this;
@@ -442,9 +484,9 @@ public:
 
     //! Copy constructor. The newly initialized B+ tree object will contain a
     //! copy of all keys.
-    btree_multiset(const btree_multiset& other)
-        : tree_(other.tree_)
-    { }
+    btree_multiset(const btree_multiset& other) : tree_(other.tree_)
+    {
+    }
 
     //! \}
 
@@ -454,20 +496,23 @@ public:
 
     //! Attempt to insert a key into the B+ tree. As this set allows duplicates,
     //! this function never fails.
-    iterator insert(const key_type& x) {
+    iterator insert(const key_type& x)
+    {
         return tree_.insert(x).first;
     }
 
     //! Attempt to insert a key into the B+ tree. The iterator hint is currently
     //! ignored by the B+ tree insertion routine.
-    iterator insert(iterator hint, const key_type& x) {
+    iterator insert(iterator hint, const key_type& x)
+    {
         return tree_.insert(hint, x);
     }
 
     //! Attempt to insert the range [first,last) of key_type into the B+
     //! tree. Each key is inserted individually.
     template <typename InputIterator>
-    void insert(InputIterator first, InputIterator last) {
+    void insert(InputIterator first, InputIterator last)
+    {
         InputIterator iter = first;
         while (iter != last)
         {
@@ -480,7 +525,8 @@ public:
     //! constructs a B-tree above them. The tree must be empty when calling this
     //! function.
     template <typename Iterator>
-    void bulk_load(Iterator first, Iterator last) {
+    void bulk_load(Iterator first, Iterator last)
+    {
         return tree_.bulk_load(first, last);
     }
 
@@ -491,25 +537,29 @@ public:
     //! \{
 
     //! Erases one (the first) entry of the given key.
-    bool erase_one(const key_type& key) {
+    bool erase_one(const key_type& key)
+    {
         return tree_.erase_one(key);
     }
 
     //! Erases all the entries of the given key. This is implemented using
     //! erase_one() and thus not very efficient.
-    size_type erase(const key_type& key) {
+    size_type erase(const key_type& key)
+    {
         return tree_.erase(key);
     }
 
     //! Erase the key/data pair referenced by the iterator.
-    void erase(iterator iter) {
+    void erase(iterator iter)
+    {
         return tree_.erase(iter);
     }
 
 #ifdef TLX_BTREE_TODO
     //! Erase all keys in the range [first,last). This function is currently
     //! not implemented by the B+ Tree.
-    void erase(iterator /* first */, iterator /* last */) {
+    void erase(iterator /* first */, iterator /* last */)
+    {
         abort();
     }
 #endif
@@ -525,12 +575,14 @@ public:
     //! Print out the B+ tree structure with keys onto the given ostream. This
     //! function requires that the header is compiled with TLX_BTREE_DEBUG and
     //! that key_type is printable via std::ostream.
-    void print(std::ostream& os) const {
+    void print(std::ostream& os) const
+    {
         tree_.print(os);
     }
 
     //! Print out only the leaves via the double linked list.
-    void print_leaves(std::ostream& os) const {
+    void print_leaves(std::ostream& os) const
+    {
         tree_.print_leaves(os);
     }
 
@@ -543,7 +595,8 @@ public:
 
     //! Run a thorough verification of all B+ tree invariants. The program
     //! aborts via TLX_BTREE_ASSERT() if something is wrong.
-    void verify() const {
+    void verify() const
+    {
         tree_.verify();
     }
 

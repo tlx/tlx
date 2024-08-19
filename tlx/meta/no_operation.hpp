@@ -23,9 +23,12 @@ class NoOperation
 {
 public:
     explicit NoOperation(ReturnType return_value = ReturnType())
-        : return_value_(return_value) { }
+        : return_value_(return_value)
+    {
+    }
 
-    ReturnType operator () (...) const noexcept {
+    ReturnType operator()(...) const noexcept
+    {
         return return_value_;
     }
 
@@ -38,7 +41,9 @@ template <>
 class NoOperation<void>
 {
 public:
-    void operator () (...) const noexcept { }
+    void operator()(...) const noexcept
+    {
+    }
 };
 
 //! \}

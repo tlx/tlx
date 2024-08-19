@@ -41,7 +41,7 @@ template <typename KeyType, unsigned Arity = 2,
 class DAryAddressableIntHeap
 {
     static_assert(std::numeric_limits<KeyType>::is_integer &&
-                  !std::numeric_limits<KeyType>::is_signed,
+                      !std::numeric_limits<KeyType>::is_signed,
                   "KeyType must be an unsigned integer type.");
     static_assert(Arity, "Arity must be greater than zero.");
 
@@ -62,18 +62,23 @@ protected:
     compare_type cmp_;
 
     //! Marks a key that is not in the heap.
-    static constexpr key_type not_present() {
+    static constexpr key_type not_present()
+    {
         return static_cast<key_type>(-1);
     }
 
 public:
     //! Allocates an empty heap.
     explicit DAryAddressableIntHeap(compare_type cmp = compare_type())
-        : heap_(0), handles_(0), cmp_(cmp) { }
+        : heap_(0), handles_(0), cmp_(cmp)
+    {
+    }
 
     //! Allocates space for \c new_size items.
-    void reserve(size_t new_size) {
-        if (handles_.size() < new_size) {
+    void reserve(size_t new_size)
+    {
+        if (handles_.size() < new_size)
+        {
             handles_.resize(new_size, not_present());
             heap_.reserve(new_size);
         }
@@ -81,37 +86,46 @@ public:
 
     //! Copy.
     DAryAddressableIntHeap(const DAryAddressableIntHeap&) = default;
-    DAryAddressableIntHeap& operator = (const DAryAddressableIntHeap&) = default;
+    DAryAddressableIntHeap& operator=(const DAryAddressableIntHeap&) = default;
 
     //! Move.
     DAryAddressableIntHeap(DAryAddressableIntHeap&&) = default;
-    DAryAddressableIntHeap& operator = (DAryAddressableIntHeap&&) = default;
+    DAryAddressableIntHeap& operator=(DAryAddressableIntHeap&&) = default;
 
     //! Empties the heap.
-    void clear() {
+    void clear()
+    {
         std::fill(handles_.begin(), handles_.end(), not_present());
         heap_.clear();
     }
 
     //! Returns the number of items in the heap.
-    size_t size() const noexcept { return heap_.size(); }
+    size_t size() const noexcept
+    {
+        return heap_.size();
+    }
 
     //! Returns the capacity of the heap.
-    size_t capacity() const noexcept { return heap_.capacity(); }
+    size_t capacity() const noexcept
+    {
+        return heap_.capacity();
+    }
 
     //! Returns true if the heap has no items, false otherwise.
-    bool empty() const noexcept { return heap_.empty(); }
+    bool empty() const noexcept
+    {
+        return heap_.empty();
+    }
 
     //! Inserts a new item.
-    void push(const key_type& new_key) {
+    void push(const key_type& new_key)
+    {
         // Avoid to add the key that we use to mark non present keys.
         assert(new_key != not_present());
-        if (new_key >= handles_.size()) {
+        if (new_key >= handles_.size())
             handles_.resize(new_key + 1, not_present());
-        }
-        else {
+        else
             assert(handles_[new_key] == not_present());
-        }
 
         // Insert the new item at the end of the heap.
         handles_[new_key] = static_cast<key_type>(heap_.size());
@@ -120,15 +134,14 @@ public:
     }
 
     //! Inserts a new item.
-    void push(key_type&& new_key) {
+    void push(key_type&& new_key)
+    {
         // Avoid to add the key that we use to mark non present keys.
         assert(new_key != not_present());
-        if (new_key >= handles_.size()) {
+        if (new_key >= handles_.size())
             handles_.resize(new_key + 1, not_present());
-        }
-        else {
+        else
             assert(handles_[new_key] == not_present());
-        }
 
         // Insert the new item at the end of the heap.
         handles_[new_key] = static_cast<key_type>(heap_.size());
@@ -137,7 +150,8 @@ public:
     }
 
     //! Removes the item with key \c key.
-    void remove(key_type key) {
+    void remove(key_type key)
+    {
         assert(contains(key));
         key_type h = handles_[key];
         std::swap(heap_[h], heap_.back());
@@ -145,34 +159,39 @@ public:
         handles_[heap_.back()] = not_present();
         heap_.pop_back();
         // If we did not remove the last item in the heap vector.
-        if (h < size()) {
-            if (h && cmp_(heap_[h], heap_[parent(h)])) {
+        if (h < size())
+        {
+            if (h && cmp_(heap_[h], heap_[parent(h)]))
                 sift_up(h);
-            }
-            else {
+            else
                 sift_down(h);
-            }
         }
     }
 
     //! Returns the top item.
-    const key_type& top() const noexcept {
+    const key_type& top() const noexcept
+    {
         assert(!empty());
         return heap_[0];
     }
 
     //! Removes the top item.
-    void pop() { remove(heap_[0]); }
+    void pop()
+    {
+        remove(heap_[0]);
+    }
 
     //! Removes and returns the top item.
-    key_type extract_top() {
+    key_type extract_top()
+    {
         key_type top_item = top();
         pop();
         return top_item;
     }
 
     //! Rebuilds the heap.
-    void update_all() {
+    void update_all()
+    {
         heapify();
     }
 
@@ -184,40 +203,42 @@ public:
      * Note: if not called after a priority is changed, the behavior of the data
      * structure is undefined.
      */
-    void update(key_type key) {
-        if (key >= handles_.size() || handles_[key] == not_present()) {
+    void update(key_type key)
+    {
+        if (key >= handles_.size() || handles_[key] == not_present())
             push(key);
-        }
         else if (handles_[key] &&
-                 cmp_(heap_[handles_[key]], heap_[parent(handles_[key])])) {
+                 cmp_(heap_[handles_[key]], heap_[parent(handles_[key])]))
             sift_up(handles_[key]);
-        }
-        else {
+        else
             sift_down(handles_[key]);
-        }
     }
 
     //! Returns true if the key \c key is in the heap, false otherwise.
-    bool contains(key_type key) const {
+    bool contains(key_type key) const
+    {
         return key < handles_.size() ? handles_[key] != not_present() : false;
     }
 
     //! Builds a heap from a container.
     template <class InputIterator>
-    void build_heap(InputIterator first, InputIterator last) {
+    void build_heap(InputIterator first, InputIterator last)
+    {
         heap_.assign(first, last);
         heapify();
     }
 
     //! Builds a heap from the vector \c keys. Items of \c keys are copied.
-    void build_heap(const std::vector<key_type>& keys) {
+    void build_heap(const std::vector<key_type>& keys)
+    {
         heap_.resize(keys.size());
         std::copy(keys.begin(), keys.end(), heap_.begin());
         heapify();
     }
 
     //! Builds a heap from the vector \c keys. Items of \c keys are moved.
-    void build_heap(std::vector<key_type>&& keys) {
+    void build_heap(std::vector<key_type>&& keys)
+    {
         if (!empty())
             heap_.clear();
         heap_ = std::move(keys);
@@ -226,8 +247,10 @@ public:
 
     //! For debugging: runs a BFS from the root node and verifies that the heap
     //! property is respected.
-    bool sanity_check() {
-        if (empty()) {
+    bool sanity_check()
+    {
+        if (empty())
+        {
             return true;
         }
         std::vector<unsigned char> mark(handles_.size());
@@ -236,11 +259,13 @@ public:
         q.push(0);
         // mark first value as seen
         mark.at(heap_[0]) = 1;
-        while (!q.empty()) {
+        while (!q.empty())
+        {
             size_t s = q.front();
             q.pop();
             size_t l = left(s);
-            for (size_t i = 0; i < arity && l < heap_.size(); ++i) {
+            for (size_t i = 0; i < arity && l < heap_.size(); ++i)
+            {
                 // check that the priority of the children is not strictly less
                 // than their parent.
                 if (cmp_(heap_[l], heap_[s]))
@@ -254,7 +279,8 @@ public:
             }
         }
         // check not_present handles
-        for (size_t i = 0; i < mark.size(); ++i) {
+        for (size_t i = 0; i < mark.size(); ++i)
+        {
             if (mark[i] != (handles_[i] != not_present()))
                 return false;
         }
@@ -263,17 +289,25 @@ public:
 
 private:
     //! Returns the position of the left child of the node at position \c k.
-    size_t left(size_t k) const { return arity * k + 1; }
+    size_t left(size_t k) const
+    {
+        return arity * k + 1;
+    }
 
     //! Returns the position of the parent of the node at position \c k.
-    size_t parent(size_t k) const { return (k - 1) / arity; }
+    size_t parent(size_t k) const
+    {
+        return (k - 1) / arity;
+    }
 
     //! Pushes the node at position \c k up until either it becomes the root or
     //! its parent has lower or equal priority.
-    void sift_up(size_t k) {
+    void sift_up(size_t k)
+    {
         key_type value = std::move(heap_[k]);
         size_t p = parent(k);
-        while (k > 0 && !cmp_(heap_[p], value)) {
+        while (k > 0 && !cmp_(heap_[p], value))
+        {
             heap_[k] = std::move(heap_[p]);
             handles_[heap_[k]] = k;
             k = p, p = parent(k);
@@ -284,27 +318,28 @@ private:
 
     //! Pushes the item at position \c k down until either it becomes a leaf or
     //! all its children have higher priority
-    void sift_down(size_t k) {
+    void sift_down(size_t k)
+    {
         key_type value = std::move(heap_[k]);
-        while (true) {
+        while (true)
+        {
             size_t l = left(k);
-            if (l >= heap_.size()) {
+            if (l >= heap_.size())
                 break;
-            }
+
             // Get the min child.
             size_t c = l;
             size_t right = std::min(heap_.size(), c + arity);
-            while (++l < right) {
-                if (cmp_(heap_[l], heap_[c])) {
+            while (++l < right)
+            {
+                if (cmp_(heap_[l], heap_[c]))
                     c = l;
-                }
             }
 
             // Current item has lower or equal priority than the child with
             // minimum priority, stop.
-            if (!cmp_(heap_[c], value)) {
+            if (!cmp_(heap_[c], value))
                 break;
-            }
 
             // Swap current item with the child with minimum priority.
             heap_[k] = std::move(heap_[c]);
@@ -316,24 +351,29 @@ private:
     }
 
     //! Reorganize heap_ into a heap.
-    void heapify() {
+    void heapify()
+    {
         key_type max_key = heap_.empty() ? 0 : heap_.front();
-        if (heap_.size() >= 2) {
+        if (heap_.size() >= 2)
+        {
             // Iterate from the last internal node up to the root.
             size_t last_internal = (heap_.size() - 2) / arity;
-            for (size_t i = last_internal + 1; i; --i) {
+            for (size_t i = last_internal + 1; i; --i)
+            {
                 // Index of the current internal node.
                 size_t cur = i - 1;
                 key_type value = std::move(heap_[cur]);
                 max_key = std::max(max_key, value);
 
-                do {
+                do
+                {
                     size_t l = left(cur);
                     max_key = std::max(max_key, heap_[l]);
                     // Find the minimum child of cur.
                     size_t min_elem = l;
-                    for (size_t j = l + 1;
-                         j - l < arity && j < heap_.size(); ++j) {
+                    for (size_t j = l + 1; j - l < arity && j < heap_.size();
+                         ++j)
+                    {
                         if (cmp_(heap_[j], heap_[min_elem]))
                             min_elem = j;
                         max_key = std::max(max_key, heap_[j]);
@@ -341,7 +381,8 @@ private:
 
                     // One of the children of cur is less then cur: swap and
                     // do another iteration.
-                    if (cmp_(heap_[min_elem], value)) {
+                    if (cmp_(heap_[min_elem], value))
+                    {
                         heap_[cur] = std::move(heap_[min_elem]);
                         cur = min_elem;
                     }
@@ -352,7 +393,9 @@ private:
             }
         }
         // initialize handles_ vector
-        handles_.resize(std::max(handles_.size(), static_cast<size_t>(max_key) + 1), not_present());
+        handles_.resize(
+            std::max(handles_.size(), static_cast<size_t>(max_key) + 1),
+            not_present());
         for (size_t i = 0; i < heap_.size(); ++i)
             handles_[heap_[i]] = i;
     }

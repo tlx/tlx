@@ -49,7 +49,8 @@ std::string hexdump(const std::string& str);
  * \return   string of hexadecimal pairs
  */
 template <typename Type>
-std::string hexdump_type(const Type& t) {
+std::string hexdump_type(const Type& t)
+{
     return hexdump(&t, sizeof(t));
 }
 
@@ -77,8 +78,8 @@ std::string hexdump(const std::vector<std::uint8_t>& data);
  * \param var_name  name of the array variable in the outputted code snippet
  * \return          string holding C source snippet
  */
-std::string hexdump_sourcecode(
-    const std::string& str, const std::string& var_name = "name");
+std::string hexdump_sourcecode(const std::string& str,
+                               const std::string& var_name = "name");
 
 /******************************************************************************/
 // Lowercase Hexdump Methods
@@ -107,7 +108,8 @@ std::string hexdump_lc(const std::string& str);
  * \return   string of hexadecimal pairs
  */
 template <typename Type>
-std::string hexdump_lc_type(const Type& t) {
+std::string hexdump_lc_type(const Type& t)
+{
     return hexdump_lc(&t, sizeof(t));
 }
 

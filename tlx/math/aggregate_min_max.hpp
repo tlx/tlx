@@ -33,40 +33,60 @@ public:
     AggregateMinMax() = default;
 
     //! initializing constructor
-    AggregateMinMax(const Type& min, const Type& max) noexcept
-        : min_(min), max_(max) { }
+    AggregateMinMax(const Type& min, const Type& max) noexcept : min_(min),
+                                                                 max_(max)
+    {
+    }
 
     //! add a value to the running aggregation
-    AggregateMinMax& add(const Type& value) noexcept {
+    AggregateMinMax& add(const Type& value) noexcept
+    {
         min_ = std::min(min_, value);
         max_ = std::max(max_, value);
         return *this;
     }
 
     //! return minimum over all values aggregated
-    const Type& min() const noexcept { return min_; }
+    const Type& min() const noexcept
+    {
+        return min_;
+    }
 
     //! return maximum over all values aggregated
-    const Type& max() const noexcept { return max_; }
+    const Type& max() const noexcept
+    {
+        return max_;
+    }
 
     //! return maximum - minimum over all values aggregated
-    Type span() const noexcept { return max_ - min_; }
+    Type span() const noexcept
+    {
+        return max_ - min_;
+    }
 
     //! change currently aggregated minimum
-    void set_min(const Type& v) noexcept { min_ = v; }
+    void set_min(const Type& v) noexcept
+    {
+        min_ = v;
+    }
 
     //! change currently aggregated minimum
-    void set_max(const Type& v) noexcept { max_ = v; }
+    void set_max(const Type& v) noexcept
+    {
+        max_ = v;
+    }
 
     //! operator + to combine two AggregateMinMax<>
-    AggregateMinMax operator + (const AggregateMinMax& a) const noexcept {
+    AggregateMinMax operator+(const AggregateMinMax& a) const noexcept
+    {
         return AggregateMinMax(
             // min, max
             std::min(min_, a.min_), std::max(max_, a.max_));
     }
 
     //! operator += to combine two AggregateMinMax<>
-    AggregateMinMax& operator += (const AggregateMinMax& a) noexcept {
+    AggregateMinMax& operator+=(const AggregateMinMax& a) noexcept
+    {
         min_ = std::min(min_, a.min_);
         max_ = std::max(max_, a.max_);
         return *this;
@@ -74,7 +94,8 @@ public:
 
     //! serialization method for cereal.
     template <typename Archive>
-    void serialize(Archive& archive) {
+    void serialize(Archive& archive)
+    {
         archive(min_, max_);
     }
 

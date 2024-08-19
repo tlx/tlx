@@ -29,9 +29,10 @@ namespace meta_detail {
 //! helper for fold_right_tuple: forwards tuple entries
 template <typename Reduce, typename Initial, typename Tuple, std::size_t... Is>
 auto fold_right_tuple_impl(Reduce&& r, Initial&& init, Tuple&& t,
-                           index_sequence<Is...>) {
+                           index_sequence<Is...>)
+{
     return fold_right(std::forward<Reduce>(r), std::forward<Initial>(init),
-                      std::get<Is>(std::forward<Tuple>(t)) ...);
+                      std::get<Is>(std::forward<Tuple>(t))...);
 }
 
 } // namespace meta_detail
@@ -39,7 +40,8 @@ auto fold_right_tuple_impl(Reduce&& r, Initial&& init, Tuple&& t,
 //! Implements fold_right() -- (a * (b * c)) -- with a binary Reduce operation
 //! and initial value on a tuple.
 template <typename Reduce, typename Initial, typename Tuple>
-auto fold_right_tuple(Reduce&& r, Initial&& init, Tuple&& t) {
+auto fold_right_tuple(Reduce&& r, Initial&& init, Tuple&& t)
+{
     using Indices = make_index_sequence<
         std::tuple_size<typename std::decay<Tuple>::type>::value>;
     return meta_detail::fold_right_tuple_impl(

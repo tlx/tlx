@@ -12,10 +12,8 @@
  ******************************************************************************/
 
 #include <tlx/digest/sha256.hpp>
-
 #include <tlx/math/ror.hpp>
 #include <tlx/string/hexdump.hpp>
-
 #include <algorithm>
 #include <cstdint>
 
@@ -48,49 +46,68 @@ static const u32 K[64] = {
     0xd6990624UL, 0xf40e3585UL, 0x106aa070UL, 0x19a4c116UL, 0x1e376c08UL,
     0x2748774cUL, 0x34b0bcb5UL, 0x391c0cb3UL, 0x4ed8aa4aUL, 0x5b9cca4fUL,
     0x682e6ff3UL, 0x748f82eeUL, 0x78a5636fUL, 0x84c87814UL, 0x8cc70208UL,
-    0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL
-};
+    0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL};
 
-static inline u32 min(u32 x, u32 y) {
+static inline u32 min(u32 x, u32 y)
+{
     return x < y ? x : y;
 }
 
-static inline u32 load32(const std::uint8_t* y) {
-    return (u32(y[0]) << 24) | (u32(y[1]) << 16) |
-           (u32(y[2]) << 8) | (u32(y[3]) << 0);
+static inline u32 load32(const std::uint8_t* y)
+{
+    return (u32(y[0]) << 24) | (u32(y[1]) << 16) | (u32(y[2]) << 8) |
+           (u32(y[3]) << 0);
 }
-static inline void store64(u64 x, std::uint8_t* y) {
+
+static inline void store64(u64 x, std::uint8_t* y)
+{
     for (int i = 0; i != 8; ++i)
         y[i] = (x >> ((7 - i) * 8)) & 255;
 }
-static inline void store32(u32 x, std::uint8_t* y) {
+
+static inline void store32(u32 x, std::uint8_t* y)
+{
     for (int i = 0; i != 4; ++i)
         y[i] = (x >> ((3 - i) * 8)) & 255;
 }
 
-static inline u32 Ch(u32 x, u32 y, u32 z) {
+static inline u32 Ch(u32 x, u32 y, u32 z)
+{
     return z ^ (x & (y ^ z));
 }
-static inline u32 Maj(u32 x, u32 y, u32 z) {
+
+static inline u32 Maj(u32 x, u32 y, u32 z)
+{
     return ((x | y) & z) | (x & y);
 }
-static inline u32 Sh(u32 x, u32 n) {
+
+static inline u32 Sh(u32 x, u32 n)
+{
     return x >> n;
 }
-static inline u32 Sigma0(u32 x) {
+
+static inline u32 Sigma0(u32 x)
+{
     return ror32(x, 2) ^ ror32(x, 13) ^ ror32(x, 22);
 }
-static inline u32 Sigma1(u32 x) {
+
+static inline u32 Sigma1(u32 x)
+{
     return ror32(x, 6) ^ ror32(x, 11) ^ ror32(x, 25);
 }
-static inline u32 Gamma0(u32 x) {
+
+static inline u32 Gamma0(u32 x)
+{
     return ror32(x, 7) ^ ror32(x, 18) ^ Sh(x, 3);
 }
-static inline u32 Gamma1(u32 x) {
+
+static inline u32 Gamma1(u32 x)
+{
     return ror32(x, 17) ^ ror32(x, 19) ^ Sh(x, 10);
 }
 
-static void sha256_compress(std::uint32_t state[8], const std::uint8_t* buf) {
+static void sha256_compress(std::uint32_t state[8], const std::uint8_t* buf)
+{
     u32 S[8], W[64], t0, t1, t;
 
     // Copy state into S
@@ -106,20 +123,19 @@ static void sha256_compress(std::uint32_t state[8], const std::uint8_t* buf) {
         W[i] = Gamma1(W[i - 2]) + W[i - 7] + Gamma0(W[i - 15]) + W[i - 16];
 
     // Compress
-    auto RND =
-        [&](u32 a, u32 b, u32 c, u32& d, u32 e, u32 f, u32 g, u32& h, u32 i)
-        {
-            t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];
-            t1 = Sigma0(a) + Maj(a, b, c);
-            d += t0;
-            h = t0 + t1;
-        };
+    auto RND = [&](u32 a, u32 b, u32 c, u32& d, u32 e, u32 f, u32 g, u32& h,
+                   u32 i) {
+        t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];
+        t1 = Sigma0(a) + Maj(a, b, c);
+        d += t0;
+        h = t0 + t1;
+    };
 
     for (size_t i = 0; i < 64; ++i)
     {
         RND(S[0], S[1], S[2], S[3], S[4], S[5], S[6], S[7], i);
-        t = S[7], S[7] = S[6], S[6] = S[5], S[5] = S[4],
-        S[4] = S[3], S[3] = S[2], S[2] = S[1], S[1] = S[0], S[0] = t;
+        t = S[7], S[7] = S[6], S[6] = S[5], S[5] = S[4], S[4] = S[3],
+        S[3] = S[2], S[2] = S[1], S[1] = S[0], S[0] = t;
     }
 
     // Feedback
@@ -129,7 +145,8 @@ static void sha256_compress(std::uint32_t state[8], const std::uint8_t* buf) {
 
 } // namespace
 
-SHA256::SHA256() {
+SHA256::SHA256()
+{
     curlen_ = 0;
     length_ = 0;
     state_[0] = 0x6A09E667UL;
@@ -142,17 +159,18 @@ SHA256::SHA256() {
     state_[7] = 0x5BE0CD19UL;
 }
 
-SHA256::SHA256(const void* data, std::uint32_t size)
-    : SHA256() {
+SHA256::SHA256(const void* data, std::uint32_t size) : SHA256()
+{
     process(data, size);
 }
 
-SHA256::SHA256(const std::string& str)
-    : SHA256() {
+SHA256::SHA256(const std::string& str) : SHA256()
+{
     process(str);
 }
 
-void SHA256::process(const void* data, u32 size) {
+void SHA256::process(const void* data, u32 size)
+{
     const u32 block_size = sizeof(SHA256::buf_);
     auto in = static_cast<const std::uint8_t*>(data);
 
@@ -183,11 +201,13 @@ void SHA256::process(const void* data, u32 size) {
     }
 }
 
-void SHA256::process(const std::string& str) {
+void SHA256::process(const std::string& str)
+{
     return process(str.data(), str.size());
 }
 
-void SHA256::finalize(void* digest) {
+void SHA256::finalize(void* digest)
+{
     // Increase the length of the message
     length_ += curlen_ * 8;
 
@@ -218,37 +238,44 @@ void SHA256::finalize(void* digest) {
         store32(state_[i], static_cast<std::uint8_t*>(digest) + (4 * i));
 }
 
-std::string SHA256::digest() {
+std::string SHA256::digest()
+{
     std::string out(kDigestLength, '0');
     finalize(const_cast<char*>(out.data()));
     return out;
 }
 
-std::string SHA256::digest_hex() {
+std::string SHA256::digest_hex()
+{
     std::uint8_t digest[kDigestLength];
     finalize(digest);
     return hexdump_lc(digest, kDigestLength);
 }
 
-std::string SHA256::digest_hex_uc() {
+std::string SHA256::digest_hex_uc()
+{
     std::uint8_t digest[kDigestLength];
     finalize(digest);
     return hexdump(digest, kDigestLength);
 }
 
-std::string sha256_hex(const void* data, std::uint32_t size) {
+std::string sha256_hex(const void* data, std::uint32_t size)
+{
     return SHA256(data, size).digest_hex();
 }
 
-std::string sha256_hex(const std::string& str) {
+std::string sha256_hex(const std::string& str)
+{
     return SHA256(str).digest_hex();
 }
 
-std::string sha256_hex_uc(const void* data, std::uint32_t size) {
+std::string sha256_hex_uc(const void* data, std::uint32_t size)
+{
     return SHA256(data, size).digest_hex_uc();
 }
 
-std::string sha256_hex_uc(const std::string& str) {
+std::string sha256_hex_uc(const std::string& str)
+{
     return SHA256(str).digest_hex_uc();
 }
 

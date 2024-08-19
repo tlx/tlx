@@ -12,9 +12,7 @@
 #include <tlx/container/btree_multimap.hpp>
 #include <tlx/container/btree_multiset.hpp>
 #include <tlx/container/btree_set.hpp>
-
 #include <tlx/die.hpp>
-
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -40,9 +38,11 @@ template class tlx::btree_multimap<int, int>;
 // Simple Tests
 
 template <int Slots>
-struct SimpleTest {
+struct SimpleTest
+{
     template <typename KeyType>
-    struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType> {
+    struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType>
+    {
         static const bool self_verify = true;
         static const bool debug = false;
 
@@ -50,10 +50,10 @@ struct SimpleTest {
         static const int inner_slots = Slots;
     };
 
-    static void test_empty() {
-        typedef tlx::btree_multiset<
-                unsigned int,
-                std::less<unsigned int>, traits_nodebug<unsigned int> >
+    static void test_empty()
+    {
+        typedef tlx::btree_multiset<unsigned int, std::less<unsigned int>,
+                                    traits_nodebug<unsigned int> >
             btree_type;
 
         btree_type bt, bt2;
@@ -64,10 +64,10 @@ struct SimpleTest {
         die_unless(bt == bt2);
     }
 
-    static void test_set_insert_erase_3200() {
-        typedef tlx::btree_multiset<
-                unsigned int,
-                std::less<unsigned int>, traits_nodebug<unsigned int> >
+    static void test_set_insert_erase_3200()
+    {
+        typedef tlx::btree_multiset<unsigned int, std::less<unsigned int>,
+                                    traits_nodebug<unsigned int> >
             btree_type;
 
         btree_type bt;
@@ -92,10 +92,10 @@ struct SimpleTest {
         die_unless(bt.empty());
     }
 
-    static void test_set_insert_erase_3200_descending() {
-        typedef tlx::btree_multiset<
-                unsigned int,
-                std::greater<unsigned int>, traits_nodebug<unsigned int> >
+    static void test_set_insert_erase_3200_descending()
+    {
+        typedef tlx::btree_multiset<unsigned int, std::greater<unsigned int>,
+                                    traits_nodebug<unsigned int> >
             btree_type;
 
         btree_type bt;
@@ -119,10 +119,11 @@ struct SimpleTest {
         die_unless(bt.empty());
     }
 
-    static void test_map_insert_erase_3200() {
-        typedef tlx::btree_multimap<
-                unsigned int, std::string,
-                std::less<unsigned int>, traits_nodebug<unsigned int> >
+    static void test_map_insert_erase_3200()
+    {
+        typedef tlx::btree_multimap<unsigned int, std::string,
+                                    std::less<unsigned int>,
+                                    traits_nodebug<unsigned int> >
             btree_type;
 
         btree_type bt;
@@ -147,10 +148,11 @@ struct SimpleTest {
         bt.verify();
     }
 
-    static void test_map_insert_erase_3200_descending() {
-        typedef tlx::btree_multimap<
-                unsigned int, std::string,
-                std::greater<unsigned int>, traits_nodebug<unsigned int> >
+    static void test_map_insert_erase_3200_descending()
+    {
+        typedef tlx::btree_multimap<unsigned int, std::string,
+                                    std::greater<unsigned int>,
+                                    traits_nodebug<unsigned int> >
             btree_type;
 
         btree_type bt;
@@ -175,10 +177,11 @@ struct SimpleTest {
         bt.verify();
     }
 
-    static void test2_map_insert_erase_strings() {
-        typedef tlx::btree_multimap<
-                std::string, unsigned int,
-                std::less<std::string>, traits_nodebug<std::string> >
+    static void test2_map_insert_erase_strings()
+    {
+        typedef tlx::btree_multimap<std::string, unsigned int,
+                                    std::less<std::string>,
+                                    traits_nodebug<std::string> >
             btree_type;
 
         std::string letters = "abcdefghijklmnopqrstuvwxyz";
@@ -209,7 +212,8 @@ struct SimpleTest {
         bt.verify();
     }
 
-    static void test_set_100000_uint64() {
+    static void test_set_100000_uint64()
+    {
         tlx::btree_map<std::uint64_t, std::uint8_t> bt;
 
         for (std::uint64_t i = 10; i < 100000; ++i)
@@ -225,7 +229,8 @@ struct SimpleTest {
         die_unless(bt.size() == 1000);
     }
 
-    static void test_multiset_100000_uint32() {
+    static void test_multiset_100000_uint32()
+    {
         tlx::btree_multiset<std::uint32_t> bt;
 
         for (std::uint64_t i = 0; i < 100000; ++i)
@@ -238,7 +243,8 @@ struct SimpleTest {
         die_unless(bt.size() == 100000);
     }
 
-    SimpleTest() {
+    SimpleTest()
+    {
         test_empty();
         test_set_insert_erase_3200();
         test_set_insert_erase_3200_descending();
@@ -250,9 +256,11 @@ struct SimpleTest {
     }
 };
 
-void test_simple() {
+void test_simple()
+{
     // test binary search on different slot sizes
-    if (tlx_more_tests) {
+    if (tlx_more_tests)
+    {
         SimpleTest<8>();
         SimpleTest<9>();
         SimpleTest<10>();
@@ -263,7 +271,8 @@ void test_simple() {
         SimpleTest<15>();
     }
     SimpleTest<16>();
-    if (tlx_more_tests) {
+    if (tlx_more_tests)
+    {
         SimpleTest<17>();
         SimpleTest<19>();
         SimpleTest<20>();
@@ -284,7 +293,8 @@ void test_simple() {
 // Large Test
 
 template <typename KeyType>
-struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType> {
+struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType>
+{
     static const bool self_verify = true;
     static const bool debug = false;
 
@@ -292,10 +302,11 @@ struct traits_nodebug : tlx::btree_default_traits<KeyType, KeyType> {
     static const int inner_slots = 8;
 };
 
-void test_large_multiset(const unsigned int insnum, const unsigned int modulo) {
-    typedef tlx::btree_multiset<
-            unsigned int,
-            std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
+void test_large_multiset(const unsigned int insnum, const unsigned int modulo)
+{
+    typedef tlx::btree_multiset<unsigned int, std::less<unsigned int>,
+                                traits_nodebug<unsigned int> >
+        btree_type;
 
     btree_type bt;
 
@@ -321,7 +332,7 @@ void test_large_multiset(const unsigned int insnum, const unsigned int modulo) {
     // *** iterate
     btree_type::iterator bi = bt.begin();
     multiset_type::const_iterator si = set.begin();
-    for ( ; bi != bt.end() && si != set.end(); ++bi, ++si)
+    for (; bi != bt.end() && si != set.end(); ++bi, ++si)
     {
         die_unless(*si == bi.key());
     }
@@ -369,7 +380,8 @@ void test_large_multiset(const unsigned int insnum, const unsigned int modulo) {
     die_unless(set.empty());
 }
 
-void test_large() {
+void test_large()
+{
     test_large_multiset(320, 1000);
     test_large_multiset(320, 10000);
     test_large_multiset(3200, 10);
@@ -379,10 +391,11 @@ void test_large() {
     test_large_multiset(32000, 10000);
 }
 
-void test_large_sequence() {
-    typedef tlx::btree_multiset<
-            unsigned int,
-            std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
+void test_large_sequence()
+{
+    typedef tlx::btree_multiset<unsigned int, std::less<unsigned int>,
+                                traits_nodebug<unsigned int> >
+        btree_type;
 
     btree_type bt;
 
@@ -410,7 +423,7 @@ void test_large_sequence() {
     // *** iterate
     btree_type::iterator bi = bt.begin();
     multiset_type::const_iterator si = set.begin();
-    for ( ; bi != bt.end() && si != set.end(); ++bi, ++si)
+    for (; bi != bt.end() && si != set.end(); ++bi, ++si)
     {
         die_unless(*si == bi.key());
     }
@@ -461,10 +474,12 @@ void test_large_sequence() {
 /******************************************************************************/
 // Upper/Lower Bound Tests
 
-void test_bounds_multimap(const unsigned int insnum, const unsigned int modulo) {
-    typedef tlx::btree_multimap<
-            unsigned int, unsigned int,
-            std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
+void test_bounds_multimap(const unsigned int insnum, const unsigned int modulo)
+{
+    typedef tlx::btree_multimap<unsigned int, unsigned int,
+                                std::less<unsigned int>,
+                                traits_nodebug<unsigned int> >
+        btree_type;
     btree_type bt;
 
     typedef std::multiset<unsigned int> multiset_type;
@@ -491,10 +506,9 @@ void test_bounds_multimap(const unsigned int insnum, const unsigned int modulo) 
     {
         btree_type::iterator bi = bt.begin();
         multiset_type::const_iterator si = set.begin();
-        for ( ; bi != bt.end() && si != set.end(); ++bi, ++si)
-        {
+        for (; bi != bt.end() && si != set.end(); ++bi, ++si)
             die_unless(*si == bi.key());
-        }
+
         die_unless(bi == bt.end());
         die_unless(si == set.end());
     }
@@ -548,8 +562,10 @@ void test_bounds_multimap(const unsigned int insnum, const unsigned int modulo) 
     // *** equal_range
     for (unsigned int k = 0; k < modulo + 100; k++)
     {
-        std::pair<multiset_type::const_iterator, multiset_type::const_iterator> si = set.equal_range(k);
-        std::pair<btree_type::const_iterator, btree_type::const_iterator> bi = bt.equal_range(k);
+        std::pair<multiset_type::const_iterator, multiset_type::const_iterator>
+            si = set.equal_range(k);
+        std::pair<btree_type::const_iterator, btree_type::const_iterator> bi =
+            bt.equal_range(k);
 
         if (bi.first == bt.end())
             die_unless(si.first == set.end());
@@ -588,7 +604,8 @@ void test_bounds_multimap(const unsigned int insnum, const unsigned int modulo) 
     die_unless(set.empty());
 }
 
-void test_bounds() {
+void test_bounds()
+{
     test_bounds_multimap(3200, 10);
     test_bounds_multimap(320, 1000);
 }
@@ -596,18 +613,17 @@ void test_bounds() {
 /******************************************************************************/
 // Test Iterators
 
-void test_iterator1() {
-    typedef tlx::btree_multiset<
-            unsigned int,
-            std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
+void test_iterator1()
+{
+    typedef tlx::btree_multiset<unsigned int, std::less<unsigned int>,
+                                traits_nodebug<unsigned int> >
+        btree_type;
 
     std::vector<unsigned int> vector;
 
     srand(34234235);
     for (unsigned int i = 0; i < 3200; i++)
-    {
         vector.push_back(rand() % 1000);
-    }
 
     die_unless(vector.size() == 3200);
 
@@ -658,18 +674,18 @@ void test_iterator1() {
     die_unless(ri == bt2.rend());
 }
 
-void test_iterator2() {
-    typedef tlx::btree_multimap<
-            unsigned int, unsigned int,
-            std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
+void test_iterator2()
+{
+    typedef tlx::btree_multimap<unsigned int, unsigned int,
+                                std::less<unsigned int>,
+                                traits_nodebug<unsigned int> >
+        btree_type;
 
     std::vector<btree_type::value_type> vector;
 
     srand(34234235);
     for (unsigned int i = 0; i < 3200; i++)
-    {
         vector.push_back(btree_type::value_type(rand() % 1000, 0));
-    }
 
     die_unless(vector.size() == 3200);
 
@@ -719,26 +735,24 @@ void test_iterator2() {
     die_unless(ri == bt2.rend());
 }
 
-void test_iterator3() {
-    typedef tlx::btree_map<
-            unsigned int, unsigned int,
-            std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
+void test_iterator3()
+{
+    typedef tlx::btree_map<unsigned int, unsigned int, std::less<unsigned int>,
+                           traits_nodebug<unsigned int> >
+        btree_type;
 
     btree_type map;
 
     unsigned int maxnum = 1000;
 
     for (unsigned int i = 0; i < maxnum; ++i)
-    {
         map.insert(std::make_pair(i, i * 3));
-    }
 
     {
         // test iterator prefix++
         unsigned int nownum = 0;
 
-        for (btree_type::iterator i = map.begin();
-             i != map.end(); ++i)
+        for (btree_type::iterator i = map.begin(); i != map.end(); ++i)
         {
             die_unless(nownum == i->first);
             die_unless(nownum * 3 == i->second);
@@ -774,8 +788,7 @@ void test_iterator3() {
         // test const_iterator prefix++
         unsigned int nownum = 0;
 
-        for (btree_type::const_iterator i = map.begin();
-             i != map.end(); ++i)
+        for (btree_type::const_iterator i = map.begin(); i != map.end(); ++i)
         {
             die_unless(nownum == i->first);
             die_unless(nownum * 3 == i->second);
@@ -811,8 +824,8 @@ void test_iterator3() {
         // test reverse_iterator prefix++
         unsigned int nownum = maxnum;
 
-        for (btree_type::reverse_iterator i = map.rbegin();
-             i != map.rend(); ++i)
+        for (btree_type::reverse_iterator i = map.rbegin(); i != map.rend();
+             ++i)
         {
             nownum--;
 
@@ -887,8 +900,7 @@ void test_iterator3() {
         // test iterator postfix++
         unsigned int nownum = 0;
 
-        for (btree_type::iterator i = map.begin();
-             i != map.end(); i++)
+        for (btree_type::iterator i = map.begin(); i != map.end(); i++)
         {
             die_unless(nownum == i->first);
             die_unless(nownum * 3 == i->second);
@@ -924,8 +936,7 @@ void test_iterator3() {
         // test const_iterator postfix++
         unsigned int nownum = 0;
 
-        for (btree_type::const_iterator i = map.begin();
-             i != map.end(); i++)
+        for (btree_type::const_iterator i = map.begin(); i != map.end(); i++)
         {
             die_unless(nownum == i->first);
             die_unless(nownum * 3 == i->second);
@@ -961,8 +972,8 @@ void test_iterator3() {
         // test reverse_iterator postfix++
         unsigned int nownum = maxnum;
 
-        for (btree_type::reverse_iterator i = map.rbegin();
-             i != map.rend(); i++)
+        for (btree_type::reverse_iterator i = map.rbegin(); i != map.rend();
+             i++)
         {
             nownum--;
 
@@ -1032,26 +1043,24 @@ void test_iterator3() {
     }
 }
 
-void test_iterator4() {
-    typedef tlx::btree_set<
-            unsigned int,
-            std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
+void test_iterator4()
+{
+    typedef tlx::btree_set<unsigned int, std::less<unsigned int>,
+                           traits_nodebug<unsigned int> >
+        btree_type;
 
     btree_type set;
 
     unsigned int maxnum = 1000;
 
     for (unsigned int i = 0; i < maxnum; ++i)
-    {
         set.insert(i);
-    }
 
     {
         // test iterator prefix++
         unsigned int nownum = 0;
 
-        for (btree_type::iterator i = set.begin();
-             i != set.end(); ++i)
+        for (btree_type::iterator i = set.begin(); i != set.end(); ++i)
         {
             die_unless(nownum == *i);
             nownum++;
@@ -1079,8 +1088,7 @@ void test_iterator4() {
         // test const_iterator prefix++
         unsigned int nownum = 0;
 
-        for (btree_type::const_iterator i = set.begin();
-             i != set.end(); ++i)
+        for (btree_type::const_iterator i = set.begin(); i != set.end(); ++i)
         {
             die_unless(nownum++ == *i);
         }
@@ -1107,8 +1115,8 @@ void test_iterator4() {
         // test reverse_iterator prefix++
         unsigned int nownum = maxnum;
 
-        for (btree_type::reverse_iterator i = set.rbegin();
-             i != set.rend(); ++i)
+        for (btree_type::reverse_iterator i = set.rbegin(); i != set.rend();
+             ++i)
         {
             die_unless(--nownum == *i);
         }
@@ -1165,8 +1173,7 @@ void test_iterator4() {
         // test iterator postfix++
         unsigned int nownum = 0;
 
-        for (btree_type::iterator i = set.begin();
-             i != set.end(); i++)
+        for (btree_type::iterator i = set.begin(); i != set.end(); i++)
         {
             die_unless(nownum++ == *i);
         }
@@ -1181,7 +1188,6 @@ void test_iterator4() {
         btree_type::iterator i;
         for (i = --set.end(); i != set.begin(); i--)
         {
-
             die_unless(--nownum == *i);
         }
 
@@ -1194,8 +1200,7 @@ void test_iterator4() {
         // test const_iterator postfix++
         unsigned int nownum = 0;
 
-        for (btree_type::const_iterator i = set.begin();
-             i != set.end(); i++)
+        for (btree_type::const_iterator i = set.begin(); i != set.end(); i++)
         {
             die_unless(nownum++ == *i);
         }
@@ -1222,8 +1227,8 @@ void test_iterator4() {
         // test reverse_iterator postfix++
         unsigned int nownum = maxnum;
 
-        for (btree_type::reverse_iterator i = set.rbegin();
-             i != set.rend(); i++)
+        for (btree_type::reverse_iterator i = set.rbegin(); i != set.rend();
+             i++)
         {
             die_unless(--nownum == *i);
         }
@@ -1275,19 +1280,18 @@ void test_iterator4() {
     }
 }
 
-void test_iterator5() {
-    typedef tlx::btree_set<
-            unsigned int,
-            std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
+void test_iterator5()
+{
+    typedef tlx::btree_set<unsigned int, std::less<unsigned int>,
+                           traits_nodebug<unsigned int> >
+        btree_type;
 
     btree_type set;
 
     unsigned int maxnum = 100;
 
     for (unsigned int i = 0; i < maxnum; ++i)
-    {
         set.insert(i);
-    }
 
     {
         btree_type::iterator it;
@@ -1370,10 +1374,10 @@ void test_iterator5() {
     }
 }
 
-void test_erase_iterator1() {
-    typedef tlx::btree_multimap<
-            int, int,
-            std::less<int>, traits_nodebug<int> > btree_type;
+void test_erase_iterator1()
+{
+    typedef tlx::btree_multimap<int, int, std::less<int>, traits_nodebug<int> >
+        btree_type;
 
     btree_type map;
 
@@ -1383,9 +1387,7 @@ void test_erase_iterator1() {
     for (int i = 0; i < size1; ++i)
     {
         for (int j = 0; j < size2; ++j)
-        {
             map.insert2(i, j);
-        }
     }
 
     die_unless(map.size() == size1 * size2);
@@ -1415,7 +1417,8 @@ void test_erase_iterator1() {
     die_unless(map.size() == 0);
 }
 
-void test_iterators() {
+void test_iterators()
+{
     test_iterator1();
     test_iterator2();
     test_iterator3();
@@ -1427,35 +1430,40 @@ void test_iterators() {
 /******************************************************************************/
 // Test with Structs
 
-struct TestData {
+struct TestData
+{
     unsigned int a, b;
 
     // required by the btree
-    TestData()
-        : a(0), b(0)
-    { }
+    TestData() : a(0), b(0)
+    {
+    }
 
     // also used as implicit conversion constructor
-    inline TestData(unsigned int _a)
-        : a(_a), b(0)
-    { }
+    inline TestData(unsigned int _a) : a(_a), b(0)
+    {
+    }
 };
 
-struct TestCompare {
+struct TestCompare
+{
     unsigned int somevalue;
 
-    inline TestCompare(unsigned int sv)
-        : somevalue(sv)
-    { }
+    inline TestCompare(unsigned int sv) : somevalue(sv)
+    {
+    }
 
-    bool operator () (const struct TestData& a, const struct TestData& b) const {
+    bool operator()(const struct TestData& a, const struct TestData& b) const
+    {
         return a.a > b.a;
     }
 };
 
-void test_struct() {
+void test_struct()
+{
     typedef tlx::btree_multiset<struct TestData, struct TestCompare,
-                                struct traits_nodebug<struct TestData> > btree_type;
+                                struct traits_nodebug<struct TestData> >
+        btree_type;
 
     btree_type bt(TestCompare(42));
 
@@ -1479,10 +1487,11 @@ void test_struct() {
 /******************************************************************************/
 // Test Relations
 
-void test_relations() {
-    typedef tlx::btree_multiset<
-            unsigned int,
-            std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
+void test_relations()
+{
+    typedef tlx::btree_multiset<unsigned int, std::less<unsigned int>,
+                                traits_nodebug<unsigned int> >
+        btree_type;
 
     btree_type bt1, bt2;
 
@@ -1526,10 +1535,11 @@ void test_relations() {
 /******************************************************************************/
 // Test Bulk Load
 
-void test_bulkload_set_instance(size_t numkeys, unsigned int mod) {
-    typedef tlx::btree_multiset<
-            unsigned int,
-            std::less<unsigned int>, traits_nodebug<unsigned int> > btree_type;
+void test_bulkload_set_instance(size_t numkeys, unsigned int mod)
+{
+    typedef tlx::btree_multiset<unsigned int, std::less<unsigned int>,
+                                traits_nodebug<unsigned int> >
+        btree_type;
 
     std::vector<unsigned int> keys(numkeys);
 
@@ -1545,17 +1555,17 @@ void test_bulkload_set_instance(size_t numkeys, unsigned int mod) {
     bt.bulk_load(keys.begin(), keys.end());
 
     unsigned int i = 0;
-    for (btree_type::iterator it = bt.begin();
-         it != bt.end(); ++it, ++i)
+    for (btree_type::iterator it = bt.begin(); it != bt.end(); ++it, ++i)
     {
         die_unless(*it == keys[i]);
     }
 }
 
-void test_bulkload_map_instance(size_t numkeys, unsigned int mod) {
-    typedef tlx::btree_multimap<
-            int, std::string,
-            std::less<int>, traits_nodebug<int> > btree_type;
+void test_bulkload_map_instance(size_t numkeys, unsigned int mod)
+{
+    typedef tlx::btree_multimap<int, std::string, std::less<int>,
+                                traits_nodebug<int> >
+        btree_type;
 
     std::vector<std::pair<int, std::string> > pairs(numkeys);
 
@@ -1572,14 +1582,14 @@ void test_bulkload_map_instance(size_t numkeys, unsigned int mod) {
     bt.bulk_load(pairs.begin(), pairs.end());
 
     unsigned int i = 0;
-    for (btree_type::iterator it = bt.begin();
-         it != bt.end(); ++it, ++i)
+    for (btree_type::iterator it = bt.begin(); it != bt.end(); ++it, ++i)
     {
         die_unless(*it == pairs[i]);
     }
 }
 
-void test_bulkload() {
+void test_bulkload()
+{
     for (size_t n = 6; n < 3200; ++n)
         test_bulkload_set_instance(n, 1000);
 
@@ -1597,10 +1607,11 @@ void test_bulkload() {
 
 /******************************************************************************/
 
-int main() {
-
+int main()
+{
     test_simple();
-    if (tlx_more_tests) {
+    if (tlx_more_tests)
+    {
         test_large();
         test_large_sequence();
         test_bounds();

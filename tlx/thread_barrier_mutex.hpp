@@ -12,7 +12,6 @@
 #define TLX_THREAD_BARRIER_MUTEX_HEADER
 
 #include <tlx/meta/no_operation.hpp>
-
 #include <condition_variable>
 #include <mutex>
 
@@ -29,7 +28,9 @@ public:
      * Creates a new barrier that waits for n threads.
      */
     explicit ThreadBarrierMutex(size_t thread_count)
-        : thread_count_(thread_count) { }
+        : thread_count_(thread_count)
+    {
+    }
 
     /*!
      * Waits for n threads to arrive.
@@ -39,18 +40,22 @@ public:
      * last thread entering the barrier.
      */
     template <typename Lambda = NoOperation<void> >
-    void wait(Lambda lambda = Lambda()) {
+    void wait(Lambda lambda = Lambda())
+    {
         std::unique_lock<std::mutex> lock(mutex_);
 
         size_t current = step_;
         counts_[current]++;
 
-        if (counts_[current] < thread_count_) {
-            while (counts_[current] < thread_count_) {
+        if (counts_[current] < thread_count_)
+        {
+            while (counts_[current] < thread_count_)
+            {
                 cv_.wait(lock);
             }
         }
-        else {
+        else
+        {
             // last thread has reached the barrier
             step_ = step_ ? 0 : 1;
             counts_[step_] = 0;
@@ -68,12 +73,14 @@ public:
      * last thread entering the barrier.
      */
     template <typename Lambda = NoOperation<void> >
-    void wait_yield(Lambda lambda = Lambda()) {
+    void wait_yield(Lambda lambda = Lambda())
+    {
         return wait(lambda);
     }
 
     //! return generation step bit: 0 or 1
-    size_t step() const {
+    size_t step() const
+    {
         return step_;
     }
 
@@ -88,7 +95,7 @@ protected:
     std::condition_variable cv_;
 
     //! two counters: switch between them every run.
-    size_t counts_[2] = { 0, 0 };
+    size_t counts_[2] = {0, 0};
 
     //! current counter used.
     size_t step_ = 0;

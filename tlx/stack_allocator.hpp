@@ -17,11 +17,10 @@
 #ifndef TLX_STACK_ALLOCATOR_HEADER
 #define TLX_STACK_ALLOCATOR_HEADER
 
+#include <tlx/allocator_base.hpp>
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>
-
-#include <tlx/allocator_base.hpp>
 
 namespace tlx {
 
@@ -34,18 +33,20 @@ class StackArena
     static constexpr size_t alignment = 16;
 
     //! union to enforce alignment of buffer area
-    union AlignmentHelper {
+    union AlignmentHelper
+    {
         int i;
         long l;
         long long ll;
         long double ld;
         double d;
         void* p;
-        void (* pf)();
+        void (*pf)();
         AlignmentHelper* ps;
     };
 
-    union {
+    union
+    {
         //! stack memory area used for allocations.
         char buf_[Size];
         //! enforce alignment
@@ -57,24 +58,33 @@ class StackArena
 
     //! debug method to check whether ptr_ is still in buf_.
     bool pointer_in_buffer(char* p) noexcept
-    { return buf_ <= p && p <= buf_ + Size; }
+    {
+        return buf_ <= p && p <= buf_ + Size;
+    }
 
 public:
     //! default constructor: free pointer at the beginning.
-    StackArena() noexcept : ptr_(buf_) { }
+    StackArena() noexcept : ptr_(buf_)
+    {
+    }
 
     //! destructor clears ptr_ for debugging.
-    ~StackArena() { ptr_ = nullptr; }
+    ~StackArena()
+    {
+        ptr_ = nullptr;
+    }
 
     StackArena(const StackArena&) = delete;
-    StackArena& operator = (const StackArena&) = delete;
+    StackArena& operator=(const StackArena&) = delete;
 
-    char * allocate(size_t n) {
+    char* allocate(size_t n)
+    {
         assert(pointer_in_buffer(ptr_) &&
                "StackAllocator has outlived StackArena");
 
         // try to allocate from stack memory area
-        if (buf_ + Size >= ptr_ + n) {
+        if (buf_ + Size >= ptr_ + n)
+        {
             char* r = ptr_;
             ptr_ += n;
             if (n % alignment != 0)
@@ -85,29 +95,41 @@ public:
         return static_cast<char*>(malloc(n));
     }
 
-    void deallocate(char* p, size_t n) noexcept {
+    void deallocate(char* p, size_t n) noexcept
+    {
         assert(pointer_in_buffer(ptr_) &&
                "StackAllocator has outlived StackArena");
 
-        if (pointer_in_buffer(p)) {
+        if (pointer_in_buffer(p))
+        {
             // free memory area (only works for a stack-ordered
             // allocations/deallocations).
             if (p + n == ptr_)
                 ptr_ = p;
         }
-        else {
+        else
+        {
             free(p);
         }
     }
 
     //! size of memory area
-    static constexpr size_t size() noexcept { return Size; }
+    static constexpr size_t size() noexcept
+    {
+        return Size;
+    }
 
     //! return number of bytes used in StackArena
-    size_t used() const noexcept { return static_cast<size_t>(ptr_ - buf_); }
+    size_t used() const noexcept
+    {
+        return static_cast<size_t>(ptr_ - buf_);
+    }
 
     //! reset memory area
-    void reset() noexcept { ptr_ = buf_; }
+    void reset() noexcept
+    {
+        ptr_ = buf_;
+    }
 };
 
 template <typename Type, size_t Size>
@@ -127,54 +149,66 @@ public:
 
     //! required rebind.
     template <typename Other>
-    struct rebind { using other = StackAllocator<Other, Size>; };
+    struct rebind
+    {
+        using other = StackAllocator<Other, Size>;
+    };
 
     //! default constructor to invalid arena
-    StackAllocator() noexcept : arena_(nullptr) { }
+    StackAllocator() noexcept : arena_(nullptr)
+    {
+    }
 
     //! constructor with explicit arena reference
-    explicit StackAllocator(StackArena<Size>& arena) noexcept
-        : arena_(&arena) { }
+    explicit StackAllocator(StackArena<Size>& arena) noexcept : arena_(&arena)
+    {
+    }
 
     //! constructor from another allocator with same arena size
     template <typename Other>
     StackAllocator(const StackAllocator<Other, Size>& other) noexcept
-        : arena_(other.arena_) { }
+        : arena_(other.arena_)
+    {
+    }
 
     //! copy-constructor: default
     StackAllocator(const StackAllocator&) noexcept = default;
 
 #if !defined(_MSC_VER)
     //! copy-assignment: default
-    StackAllocator& operator = (const StackAllocator&) noexcept = default;
+    StackAllocator& operator=(const StackAllocator&) noexcept = default;
 
     //! move-constructor: default
     StackAllocator(StackAllocator&&) noexcept = default;
 
     //! move-assignment: default
-    StackAllocator& operator = (StackAllocator&&) noexcept = default;
+    StackAllocator& operator=(StackAllocator&&) noexcept = default;
 #endif
 
     //! allocate method: get memory from arena
-    pointer allocate(size_t n) {
+    pointer allocate(size_t n)
+    {
         return reinterpret_cast<Type*>(arena_->allocate(n * sizeof(Type)));
     }
 
     //! deallocate method: release from arena
-    void deallocate(pointer p, size_t n) noexcept {
+    void deallocate(pointer p, size_t n) noexcept
+    {
         arena_->deallocate(reinterpret_cast<char*>(p), n * sizeof(Type));
     }
 
     template <typename Other, size_t OtherSize>
-    bool operator == (
-        const StackAllocator<Other, OtherSize>& other) const noexcept {
+    bool operator==(
+        const StackAllocator<Other, OtherSize>& other) const noexcept
+    {
         return Size == OtherSize && arena_ == other.arena_;
     }
 
     template <typename Other, size_t OtherSize>
-    bool operator != (
-        const StackAllocator<Other, OtherSize>& other) const noexcept {
-        return !operator == (other);
+    bool operator!=(
+        const StackAllocator<Other, OtherSize>& other) const noexcept
+    {
+        return !operator==(other);
     }
 
     template <typename Other, size_t OtherSize>

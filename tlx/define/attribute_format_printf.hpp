@@ -20,8 +20,7 @@ namespace tlx {
 // __attribute__ ((format(printf, #, #))
 
 #if defined(__GNUC__) || defined(__clang__)
-#define TLX_ATTRIBUTE_FORMAT_PRINTF(X, Y) \
-    __attribute__ ((format(printf, X, Y))) // NOLINT
+#define TLX_ATTRIBUTE_FORMAT_PRINTF(X, Y) __attribute__((format(printf, X, Y)))
 #else
 #define TLX_ATTRIBUTE_FORMAT_PRINTF(X, Y)
 #endif

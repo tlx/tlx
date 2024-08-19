@@ -20,7 +20,7 @@ namespace tlx {
 // __attribute__ ((packed))
 
 #if defined(__GNUC__) || defined(__clang__)
-#define TLX_ATTRIBUTE_PACKED __attribute__ ((packed))
+#define TLX_ATTRIBUTE_PACKED __attribute__((packed))
 #else
 #define TLX_ATTRIBUTE_PACKED
 #endif

@@ -10,18 +10,17 @@
 
 #include <tlx/cmdline_parser.hpp>
 #include <tlx/simple_vector.hpp>
-#include <tlx/string/format_iec_units.hpp>
-#include <tlx/timestamp.hpp>
-
 #include <tlx/sort/strings.hpp>
 #include <tlx/sort/strings_parallel.hpp>
-
+#include <tlx/string/format_iec_units.hpp>
+#include <tlx/timestamp.hpp>
 #include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     tlx::CmdlineParser cp;
 
     // add description
@@ -40,12 +39,14 @@ int main(int argc, char* argv[]) {
 
     std::cerr << "Opening " << file << std::endl;
     std::ifstream in(file.c_str());
-    if (!in.good()) {
+    if (!in.good())
+    {
         std::cerr << "Error opening file: " << strerror(errno) << std::endl;
         return -1;
     }
 
-    if (!in.seekg(0, std::ios::end).good()) {
+    if (!in.seekg(0, std::ios::end).good())
+    {
         std::cerr << "Error seeking to end of file: " << strerror(errno)
                   << std::endl;
         return -1;
@@ -66,23 +67,25 @@ int main(int argc, char* argv[]) {
     strings.push_back(data.data() + 0);
 
     size_t pos = 0;
-    while (pos < size) {
+    while (pos < size)
+    {
         size_t rem = std::min<size_t>(2 * 1024 * 1024u, size - pos);
         in.read(reinterpret_cast<char*>(data.data() + pos), rem);
 
         std::uint8_t* chunk = data.data() + pos;
 
-        for (size_t i = 0; i < rem; ++i) {
-            if (chunk[i] == '\n') {
+        for (size_t i = 0; i < rem; ++i)
+        {
+            if (chunk[i] == '\n')
+            {
                 chunk[i] = 0;
-                if (pos + i + 1 < size) {
+                if (pos + i + 1 < size)
                     strings.push_back(chunk + i + 1);
-                }
             }
-            else if (chunk[i] == '\0') {
-                if (pos + i + 1 < size) {
+            else if (chunk[i] == '\0')
+            {
+                if (pos + i + 1 < size)
                     strings.push_back(chunk + i + 1);
-                }
             }
         }
         pos += rem;
@@ -115,9 +118,8 @@ int main(int argc, char* argv[]) {
     // output sorted strings
     double ts1_write = tlx::timestamp();
 
-    for (size_t i = 0; i < strings.size(); ++i) {
+    for (size_t i = 0; i < strings.size(); ++i)
         std::cout << strings[i] << '\n';
-    }
 
     double ts2_write = tlx::timestamp();
 

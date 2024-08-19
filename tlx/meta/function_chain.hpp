@@ -18,7 +18,6 @@
 #define TLX_META_FUNCTION_CHAIN_HEADER
 
 #include <tlx/meta/index_sequence.hpp>
-
 #include <tuple>
 
 namespace tlx {
@@ -31,10 +30,9 @@ namespace meta_detail {
 /*!
  * Base case for the chaining of functors: zero functors, returns the identity.
  */
-static inline auto call_chain() {
-    return [](const auto& input) mutable -> auto {
-               return input;
-    };
+static inline auto call_chain()
+{
+    return [](const auto& input) mutable -> auto { return input; };
 }
 
 /*!
@@ -44,11 +42,12 @@ static inline auto call_chain() {
  * \param functor functor that represents the chain end.
  */
 template <typename Functor>
-auto call_chain(const Functor& functor) {
+auto call_chain(const Functor& functor)
+{
     // the functor is captured by non-const copy so that we can use functors
     // with non-const operator(), i.e. stateful functors (e.g. for sampling)
     return [functor = functor](const auto& input) mutable -> auto {
-               return functor(input);
+        return functor(input);
     };
 }
 
@@ -61,11 +60,12 @@ auto call_chain(const Functor& functor) {
  * \param rest Remaining functors.
  */
 template <typename Functor, typename... MoreFunctors>
-auto call_chain(const Functor& functor, const MoreFunctors& ... rest) {
+auto call_chain(const Functor& functor, const MoreFunctors&... rest)
+{
     // the functor is captured by non-const copy so that we can use functors
     // with non-const operator(), i.e. stateful functors (e.g. for sampling)
     return [=, functor = functor](const auto& input) mutable -> auto {
-               return call_chain(rest...)(functor(input));
+        return call_chain(rest...)(functor(input));
     };
 }
 
@@ -95,8 +95,9 @@ public:
      *
      * \param chain Tuple of functors.
      */
-    explicit FunctionChain(const std::tuple<Functors...>& chain)
-        : chain_(chain) { }
+    explicit FunctionChain(const std::tuple<Functors...>& chain) : chain_(chain)
+    {
+    }
 
     /*!
      * Add a functor to the end of the chain.
@@ -108,7 +109,8 @@ public:
      * \return New chain containing the previous and new functor(s).
      */
     template <typename Functor>
-    auto push(const Functor& functor) const {
+    auto push(const Functor& functor) const
+    {
         // append to function chain's type the new function.
         return FunctionChain<Functors..., Functor>(
             std::tuple_cat(chain_, std::make_tuple(functor)));
@@ -124,7 +126,10 @@ public:
      * \return New chain containing the previous and new functor(s).
      */
     template <typename Functor>
-    auto operator & (const Functor& functor) const { return push(functor); }
+    auto operator&(const Functor& functor) const
+    {
+        return push(functor);
+    }
 
     /*!
      * Build a single functor by "folding" the chain.  Folding means
@@ -132,23 +137,25 @@ public:
      *
      * \return Single "folded" functor representing the chain.
      */
-    auto fold() const {
-        return fold_chain(make_index_sequence<sizeof ... (Functors)>{ });
+    auto fold() const
+    {
+        return fold_chain(make_index_sequence<sizeof...(Functors)>{});
     }
 
     /*!
      * Directly call the folded function chain with a value.
      */
     template <typename... Input>
-    auto operator () (Input&& ... value) const {
+    auto operator()(Input&&... value) const
+    {
         return fold()(std::move(value...));
     }
 
     //! Is true if the FunctionChain is empty.
-    static constexpr bool empty = (sizeof ... (Functors) == 0);
+    static constexpr bool empty = (sizeof...(Functors) == 0);
 
     //! Number of functors in the FunctionChain
-    static constexpr size_t size = sizeof ... (Functors);
+    static constexpr size_t size = sizeof...(Functors);
 
 private:
     //! Tuple of varying type that stores all functors.
@@ -161,21 +168,22 @@ private:
      * \return Single "folded" functor representing the chain.
      */
     template <size_t... Is>
-    auto fold_chain(index_sequence<Is...>) const {
-        return meta_detail::call_chain(std::get<Is>(chain_) ...);
+    auto fold_chain(index_sequence<Is...>) const
+    {
+        return meta_detail::call_chain(std::get<Is>(chain_)...);
     }
 };
 
 //! Functor chain maker. Can also be called with a lambda function.
 template <typename Functor>
-static inline
-auto make_function_chain(const Functor& functor) {
+static inline auto make_function_chain(const Functor& functor)
+{
     return FunctionChain<Functor>(std::make_tuple(functor));
 }
 
 //! Construct and empty function chain.
-static inline
-auto make_function_chain() {
+static inline auto make_function_chain()
+{
     return FunctionChain<>();
 }
 

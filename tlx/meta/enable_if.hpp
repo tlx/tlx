@@ -19,10 +19,12 @@ namespace tlx {
 //! SFINAE enable_if -- copy of std::enable_if<> with less extra cruft.
 template <bool, typename T = void>
 struct enable_if
-{ };
+{
+};
 
 template <typename T>
-struct enable_if<true, T> {
+struct enable_if<true, T>
+{
     typedef T type;
 };
 

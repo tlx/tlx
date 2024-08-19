@@ -11,13 +11,12 @@
 // this makes sleep_for() available in older GCC versions
 #define _GLIBCXX_USE_NANOSLEEP
 
+#include <tlx/die.hpp>
 #include <tlx/multi_timer.hpp>
-
 #include <thread>
 
-#include <tlx/die.hpp>
-
-int main() {
+int main()
+{
     tlx::MultiTimer mtimer;
 
     mtimer.start("first");

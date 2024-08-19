@@ -11,8 +11,8 @@
 #include <tlx/container/ring_buffer.hpp>
 #include <tlx/die.hpp>
 
-static void test_fill_circular(size_t rb_size) {
-
+static void test_fill_circular(size_t rb_size)
+{
     tlx::RingBuffer<size_t> ring(rb_size);
 
     // put first element
@@ -20,7 +20,8 @@ static void test_fill_circular(size_t rb_size) {
     ring.push_back(0);
 
     // put nine more
-    for (size_t i = 1; i < 10; ++i) {
+    for (size_t i = 1; i < 10; ++i)
+    {
         die_unequal(i, ring.size());
         ring.emplace_back(i);
     }
@@ -28,9 +29,8 @@ static void test_fill_circular(size_t rb_size) {
     die_unequal(10u, ring.size());
 
     // check contents of ring buffer
-    for (size_t i = 0; i < ring.size(); ++i) {
+    for (size_t i = 0; i < ring.size(); ++i)
         die_unequal(i, ring[i]);
-    }
 
     // copy ring buffer and check contents
     {
@@ -38,17 +38,15 @@ static void test_fill_circular(size_t rb_size) {
         die_unequal(ring.size(), ring2.size());
 
         // check contents of ring buffer
-        for (size_t i = 0; i < ring2.size(); ++i) {
+        for (size_t i = 0; i < ring2.size(); ++i)
             die_unequal(i, ring2[i]);
-        }
 
         tlx::RingBuffer<size_t> ring3 = std::move(ring2);
         die_unequal(ring.size(), ring3.size());
 
         // check contents of ring buffer
-        for (size_t i = 0; i < ring3.size(); ++i) {
+        for (size_t i = 0; i < ring3.size(); ++i)
             die_unequal(i, ring3[i]);
-        }
     }
 
     // copy assign ring buffer and check contents
@@ -58,26 +56,25 @@ static void test_fill_circular(size_t rb_size) {
         die_unequal(ring.size(), ring2.size());
 
         // check contents of ring buffer
-        for (size_t i = 0; i < ring2.size(); ++i) {
+        for (size_t i = 0; i < ring2.size(); ++i)
             die_unequal(i, ring2[i]);
-        }
 
         tlx::RingBuffer<size_t> ring3;
         ring3 = std::move(ring2);
         die_unequal(ring.size(), ring3.size());
 
         // check contents of ring buffer
-        for (size_t i = 0; i < ring3.size(); ++i) {
+        for (size_t i = 0; i < ring3.size(); ++i)
             die_unequal(i, ring3[i]);
-        }
     }
 
     // cycle ring buffer a few times
-    for (size_t j = 0; j < 1000; ++j) {
+    for (size_t j = 0; j < 1000; ++j)
+    {
         // check contents of ring buffer
-        for (size_t i = 0; i < ring.size(); ++i) {
+        for (size_t i = 0; i < ring.size(); ++i)
             die_unequal(j + i, ring[i]);
-        }
+
         die_unequal(j, ring.front());
         die_unequal(j + 9u, ring.back());
 
@@ -88,15 +85,17 @@ static void test_fill_circular(size_t rb_size) {
     }
 }
 
-struct MyStruct {
+struct MyStruct
+{
     int i1, i2;
 
-    MyStruct(int _i1, int _i2)
-        : i1(_i1), i2(_i2) { }
+    MyStruct(int _i1, int _i2) : i1(_i1), i2(_i2)
+    {
+    }
 };
 
-static void test_non_default_constructible() {
-
+static void test_non_default_constructible()
+{
     tlx::RingBuffer<MyStruct> ring(12);
 
     ring.push_back(MyStruct(0, 1));
@@ -119,7 +118,8 @@ template class RingBuffer<MyStruct>;
 
 } // namespace tlx
 
-int main() {
+int main()
+{
     test_fill_circular(12);
     test_fill_circular(16);
     test_fill_circular(20);

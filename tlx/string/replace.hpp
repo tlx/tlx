@@ -33,8 +33,8 @@ namespace tlx {
  * \param instead       replace needle with instead
  * \return              reference to str
  */
-std::string& replace_first(
-    std::string* str, const std::string& needle, const std::string& instead);
+std::string& replace_first(std::string* str, const std::string& needle,
+                           const std::string& instead);
 
 /*!
  * Replace only the first occurrence of needle in str. The needle will be
@@ -46,8 +46,8 @@ std::string& replace_first(
  * \param instead       replace needle with instead
  * \return              reference to str
  */
-std::string& replace_first(
-    std::string* str, const std::string& needle, const char* instead);
+std::string& replace_first(std::string* str, const std::string& needle,
+                           const char* instead);
 
 /*!
  * Replace only the first occurrence of needle in str. The needle will be
@@ -59,8 +59,8 @@ std::string& replace_first(
  * \param instead       replace needle with instead
  * \return              reference to str
  */
-std::string& replace_first(
-    std::string* str, const char* needle, const std::string& instead);
+std::string& replace_first(std::string* str, const char* needle,
+                           const std::string& instead);
 
 /*!
  * Replace only the first occurrence of needle in str. The needle will be
@@ -72,8 +72,8 @@ std::string& replace_first(
  * \param instead       replace needle with instead
  * \return              reference to str
  */
-std::string& replace_first(
-    std::string* str, const char* needle, const char* instead);
+std::string& replace_first(std::string* str, const char* needle,
+                           const char* instead);
 
 /*!
  * Replace only the first occurrence of needle in str. The needle will be
@@ -100,9 +100,8 @@ std::string& replace_first(std::string* str, char needle, char instead);
  * \param instead       replace needle with instead
  * \return              copy of string possibly with replacement
  */
-std::string replace_first(
-    const std::string& str,
-    const std::string& needle, const std::string& instead);
+std::string replace_first(const std::string& str, const std::string& needle,
+                          const std::string& instead);
 
 /*!
  * Replace only the first occurrence of needle in str. The needle will be
@@ -114,8 +113,8 @@ std::string replace_first(
  * \param instead       replace needle with instead
  * \return              copy of string possibly with replacement
  */
-std::string replace_first(
-    const std::string& str, const std::string& needle, const char* instead);
+std::string replace_first(const std::string& str, const std::string& needle,
+                          const char* instead);
 
 /*!
  * Replace only the first occurrence of needle in str. The needle will be
@@ -127,8 +126,8 @@ std::string replace_first(
  * \param instead       replace needle with instead
  * \return              copy of string possibly with replacement
  */
-std::string replace_first(
-    const std::string& str, const char* needle, const std::string& instead);
+std::string replace_first(const std::string& str, const char* needle,
+                          const std::string& instead);
 
 /*!
  * Replace only the first occurrence of needle in str. The needle will be
@@ -140,8 +139,8 @@ std::string replace_first(
  * \param instead       replace needle with instead
  * \return              copy of string possibly with replacement
  */
-std::string replace_first(
-    const std::string& str, const char* needle, const char* instead);
+std::string replace_first(const std::string& str, const char* needle,
+                          const char* instead);
 
 /*!
  * Replace only the first occurrence of needle in str. The needle will be
@@ -168,8 +167,8 @@ std::string replace_first(const std::string& str, char needle, char instead);
  * \param instead       replace needle with instead
  * \return              reference to str
  */
-std::string& replace_all(
-    std::string* str, const std::string& needle, const std::string& instead);
+std::string& replace_all(std::string* str, const std::string& needle,
+                         const std::string& instead);
 
 /*!
  * Replace all occurrences of needle in str. Each needle will be replaced with
@@ -181,8 +180,8 @@ std::string& replace_all(
  * \param instead       replace needle with instead
  * \return              reference to str
  */
-std::string& replace_all(
-    std::string* str, const std::string& needle, const char* instead);
+std::string& replace_all(std::string* str, const std::string& needle,
+                         const char* instead);
 
 /*!
  * Replace all occurrences of needle in str. Each needle will be replaced with
@@ -194,8 +193,8 @@ std::string& replace_all(
  * \param instead       replace needle with instead
  * \return              reference to str
  */
-std::string& replace_all(
-    std::string* str, const char* needle, const std::string& instead);
+std::string& replace_all(std::string* str, const char* needle,
+                         const std::string& instead);
 
 /*!
  * Replace all occurrences of needle in str. Each needle will be replaced with
@@ -207,8 +206,8 @@ std::string& replace_all(
  * \param instead       replace needle with instead
  * \return              reference to str
  */
-std::string& replace_all(
-    std::string* str, const char* needle, const char* instead);
+std::string& replace_all(std::string* str, const char* needle,
+                         const char* instead);
 
 /*!
  * Replace all occurrences of needle in str. Each needle will be replaced with
@@ -234,9 +233,8 @@ std::string& replace_all(std::string* str, char needle, char instead);
  * \param instead       replace needle with instead
  * \return              copy of string possibly with replacements
  */
-std::string replace_all(
-    const std::string& str,
-    const std::string& needle, const std::string& instead);
+std::string replace_all(const std::string& str, const std::string& needle,
+                        const std::string& instead);
 
 /*!
  * Replace all occurrences of needle in str. Each needle will be replaced with
@@ -247,8 +245,8 @@ std::string replace_all(
  * \param instead       replace needle with instead
  * \return              copy of string possibly with replacements
  */
-std::string replace_all(
-    const std::string& str, const std::string& needle, const char* instead);
+std::string replace_all(const std::string& str, const std::string& needle,
+                        const char* instead);
 
 /*!
  * Replace all occurrences of needle in str. Each needle will be replaced with
@@ -259,8 +257,8 @@ std::string replace_all(
  * \param instead       replace needle with instead
  * \return              copy of string possibly with replacements
  */
-std::string replace_all(
-    const std::string& str, const char* needle, const std::string& instead);
+std::string replace_all(const std::string& str, const char* needle,
+                        const std::string& instead);
 
 /*!
  * Replace all occurrences of needle in str. Each needle will be replaced with
@@ -271,8 +269,8 @@ std::string replace_all(
  * \param instead       replace needle with instead
  * \return              copy of string possibly with replacements
  */
-std::string replace_all(
-    const std::string& str, const char* needle, const char* instead);
+std::string replace_all(const std::string& str, const char* needle,
+                        const char* instead);
 
 /*!
  * Replace all occurrences of needle in str. Each needle will be replaced with

@@ -9,20 +9,21 @@
  ******************************************************************************/
 
 #include <tlx/string/parse_si_iec_units.hpp>
-
 #include <cstdint>
 #include <cstdlib>
 
 namespace tlx {
 
-bool parse_si_iec_units(
-    const char* str, std::uint64_t* out_size, char default_unit) {
-
+bool parse_si_iec_units(const char* str, std::uint64_t* out_size,
+                        char default_unit)
+{
     char* endptr;
     *out_size = strtoul(str, &endptr, 10);
-    if (endptr == nullptr) return false;        // parse failed, no number
+    if (endptr == nullptr)
+        return false; // parse failed, no number
 
-    while (*endptr == ' ') ++endptr;            // skip over spaces
+    while (*endptr == ' ')
+        ++endptr; // skip over spaces
 
     // multiply with base ^ power
     unsigned int base = 1000;
@@ -44,7 +45,8 @@ bool parse_si_iec_units(
         base = 1024, ++endptr;
 
     // byte indicator
-    if (*endptr == 'b' || *endptr == 'B') {
+    if (*endptr == 'b' || *endptr == 'B')
+    {
         ++endptr;
     }
     else if (power == 0)
@@ -52,32 +54,44 @@ bool parse_si_iec_units(
         // no explicit power indicator, and no 'b' or 'B' -> apply default unit
         switch (default_unit)
         {
-        default: break;
-        case 'k': power = 1, base = 1000;
+        default:
             break;
-        case 'm': power = 2, base = 1000;
+        case 'k':
+            power = 1, base = 1000;
             break;
-        case 'g': power = 3, base = 1000;
+        case 'm':
+            power = 2, base = 1000;
             break;
-        case 't': power = 4, base = 1000;
+        case 'g':
+            power = 3, base = 1000;
             break;
-        case 'p': power = 5, base = 1000;
+        case 't':
+            power = 4, base = 1000;
             break;
-        case 'K': power = 1, base = 1024;
+        case 'p':
+            power = 5, base = 1000;
             break;
-        case 'M': power = 2, base = 1024;
+        case 'K':
+            power = 1, base = 1024;
             break;
-        case 'G': power = 3, base = 1024;
+        case 'M':
+            power = 2, base = 1024;
             break;
-        case 'T': power = 4, base = 1024;
+        case 'G':
+            power = 3, base = 1024;
             break;
-        case 'P': power = 5, base = 1024;
+        case 'T':
+            power = 4, base = 1024;
+            break;
+        case 'P':
+            power = 5, base = 1024;
             break;
         }
     }
 
     // skip over spaces
-    while (*endptr == ' ') ++endptr;
+    while (*endptr == ' ')
+        ++endptr;
 
     // multiply size
     for (unsigned int p = 0; p < power; ++p)
@@ -86,8 +100,9 @@ bool parse_si_iec_units(
     return (*endptr == 0);
 }
 
-bool parse_si_iec_units(
-    const std::string& str, std::uint64_t* out_size, char default_unit) {
+bool parse_si_iec_units(const std::string& str, std::uint64_t* out_size,
+                        char default_unit)
+{
     return parse_si_iec_units(str.c_str(), out_size, default_unit);
 }
 

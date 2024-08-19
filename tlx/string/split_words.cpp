@@ -12,18 +12,21 @@
 
 namespace tlx {
 
-std::vector<std::string> split_words(
-    const std::string& str, std::string::size_type limit) {
+std::vector<std::string> split_words(const std::string& str,
+                                     std::string::size_type limit)
+{
     std::vector<std::string> out;
-    if (limit == 0) return out;
+    if (limit == 0)
+        return out;
 
     std::string::const_iterator it = str.begin(), last = it;
 
-    for ( ; it != str.end(); ++it)
+    for (; it != str.end(); ++it)
     {
         if (*it == ' ' || *it == '\n' || *it == '\t' || *it == '\r')
         {
-            if (it == last) { // skip over empty split substrings
+            if (it == last)
+            { // skip over empty split substrings
                 last = it + 1;
                 continue;
             }

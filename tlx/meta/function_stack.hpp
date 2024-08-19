@@ -21,7 +21,6 @@
 #define TLX_META_FUNCTION_STACK_HEADER
 
 #include <tlx/meta/index_sequence.hpp>
-
 #include <tuple>
 
 namespace tlx {
@@ -39,12 +38,13 @@ namespace meta_detail {
  * \param functor Functor that represents the chain end.
  */
 template <typename Functor>
-auto call_stack(const Functor& functor) {
+auto call_stack(const Functor& functor)
+{
     // the functor object is captured by non-const copy so that we can use
     // functors with non-const operator(), i.e. stateful functors (e.g. for
     // sampling)
     return [=, functor = functor](const auto& input) mutable -> void {
-               functor(input);
+        functor(input);
     };
 }
 
@@ -58,12 +58,13 @@ auto call_stack(const Functor& functor) {
  * \param rest Remaining functors.
  */
 template <typename Functor, typename... MoreFunctors>
-auto call_stack(const Functor& functor, const MoreFunctors& ... rest) {
+auto call_stack(const Functor& functor, const MoreFunctors&... rest)
+{
     // the functor object is captured by non-const copy so that we can use
     // functors with non-const operator(), i.e. stateful functors (e.g. for
     // sampling)
     return [=, functor = functor](const auto& input) mutable -> void {
-               functor(input, call_stack(rest...));
+        functor(input, call_stack(rest...));
     };
 }
 
@@ -100,8 +101,9 @@ public:
      *
      * \param stack Tuple of functor.
      */
-    explicit FunctionStack(const std::tuple<Functors...>& stack)
-        : stack_(stack) { }
+    explicit FunctionStack(const std::tuple<Functors...>& stack) : stack_(stack)
+    {
+    }
 
     /*!
      * Add a functor function to the end of the stack.
@@ -113,7 +115,8 @@ public:
      * \return New stack containing the previous and new functor(s).
      */
     template <typename Functor>
-    auto push(const Functor& functor) const {
+    auto push(const Functor& functor) const
+    {
         // append to function stack's type the new function.
         return FunctionStack<Input, Functors..., Functor>(
             std::tuple_cat(stack_, std::make_tuple(functor)));
@@ -129,7 +132,10 @@ public:
      * \return New stack containing the previous and new functor(s).
      */
     template <typename Functor>
-    auto operator & (const Functor& functor) const { return push(functor); }
+    auto operator&(const Functor& functor) const
+    {
+        return push(functor);
+    }
 
     /*!
      * Build a single functor by "folding" the stack.  Folding means that the
@@ -138,15 +144,16 @@ public:
      *
      * \return Single "folded" functor representing the whole stack.
      */
-    auto fold() const {
-        return fold_stack(make_index_sequence<sizeof ... (Functors)>{ });
+    auto fold() const
+    {
+        return fold_stack(make_index_sequence<sizeof...(Functors)>{});
     }
 
     //! Is true if the FunctionStack is empty.
-    static constexpr bool empty = (sizeof ... (Functors) == 0);
+    static constexpr bool empty = (sizeof...(Functors) == 0);
 
     //! Number of functors on the FunctionStack
-    static constexpr size_t size = sizeof ... (Functors);
+    static constexpr size_t size = sizeof...(Functors);
 
 private:
     //! Tuple of varying type that stores all functor objects functions.
@@ -159,15 +166,16 @@ private:
      * \return Single "folded" functor representing the stack.
      */
     template <size_t... Is>
-    auto fold_stack(index_sequence<Is...>) const {
-        return meta_detail::call_stack(std::get<Is>(stack_) ...);
+    auto fold_stack(index_sequence<Is...>) const
+    {
+        return meta_detail::call_stack(std::get<Is>(stack_)...);
     }
 };
 
 //! Function-style construction of a FunctionStack
 template <typename Input, typename Functor>
-static inline
-auto make_function_stack(const Functor& functor) {
+static inline auto make_function_stack(const Functor& functor)
+{
     return FunctionStack<Input, Functor>(std::make_tuple(functor));
 }
 

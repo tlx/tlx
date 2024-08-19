@@ -13,18 +13,22 @@
 
 using tlx::Delegate;
 
-using TestDelegate = Delegate<int (int)>;
+using TestDelegate = Delegate<int(int)>;
+
 // TODO(tb): add tests with a different allocator
 
-int func1(int a) {
+int func1(int a)
+{
     return a + 5;
 }
 
-int func2(int a) {
+int func2(int a)
+{
     return a + 10;
 }
 
-static void test_plain_functions() {
+static void test_plain_functions()
+{
     {
         // construction from a immediate function with no object or pointer.
         TestDelegate d = TestDelegate::make<func1>();
@@ -47,22 +51,25 @@ class A
 public:
     int x;
 
-    int func(int a) {
+    int func(int a)
+    {
         return a + x;
     }
 
-    int const_func(int a) const {
+    int const_func(int a) const
+    {
         return a + x;
     }
 
-    int func2(int a) {
+    int func2(int a)
+    {
         return a + x + x;
     }
 };
 
-static void test_class_methods() {
-
-    A a = { 2 };
+static void test_class_methods()
+{
+    A a = {2};
     {
         // construction for an immediate class::method with class object
         TestDelegate d = TestDelegate::make<A, &A::func>(&a);
@@ -155,14 +162,15 @@ class AddFunctor
 public:
     int x;
 
-    int operator () (int a) {
+    int operator()(int a)
+    {
         return a + x;
     }
 };
 
-static void test_functor_class() {
-
-    AddFunctor f = { 12 };
+static void test_functor_class()
+{
+    AddFunctor f = {12};
 
     {
         // calls general functor constructor
@@ -176,8 +184,8 @@ static void test_functor_class() {
     }
 }
 
-static void test_lambdas() {
-
+static void test_lambdas()
+{
     {
         TestDelegate d = TestDelegate([](int x) { return x + 1; });
         die_unequal(42, d(41));
@@ -198,7 +206,8 @@ static void test_lambdas() {
     }
 }
 
-int main() {
+int main()
+{
     test_plain_functions();
     test_class_methods();
     test_functor_class();

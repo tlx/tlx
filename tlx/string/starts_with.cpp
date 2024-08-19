@@ -9,42 +9,50 @@
  ******************************************************************************/
 
 #include <tlx/string/starts_with.hpp>
-
-#include <algorithm>
-
 #include <tlx/string/to_lower.hpp>
+#include <algorithm>
 
 namespace tlx {
 
 /******************************************************************************/
 
-bool starts_with(const char* str, const char* match) {
-    while (*match != 0) {
-        if (*str == 0 || *str != *match) return false;
+bool starts_with(const char* str, const char* match)
+{
+    while (*match != 0)
+    {
+        if (*str == 0 || *str != *match)
+            return false;
         ++str, ++match;
     }
     return true;
 }
 
-bool starts_with(const char* str, const std::string& match) {
+bool starts_with(const char* str, const std::string& match)
+{
     std::string::const_iterator m = match.begin();
-    while (m != match.end()) {
-        if (*str == 0 || *str != *m) return false;
+    while (m != match.end())
+    {
+        if (*str == 0 || *str != *m)
+            return false;
         ++str, ++m;
     }
     return true;
 }
 
-bool starts_with(const std::string& str, const char* match) {
+bool starts_with(const std::string& str, const char* match)
+{
     std::string::const_iterator s = str.begin();
-    while (*match != 0) {
-        if (s == str.end() || *s != *match) return false;
+    while (*match != 0)
+    {
+        if (s == str.end() || *s != *match)
+            return false;
         ++s, ++match;
     }
     return true;
 }
 
-bool starts_with(const std::string& str, const std::string& match) {
+bool starts_with(const std::string& str, const std::string& match)
+{
     if (match.size() > str.size())
         return false;
     return std::equal(match.begin(), match.end(), str.begin());
@@ -52,8 +60,10 @@ bool starts_with(const std::string& str, const std::string& match) {
 
 /******************************************************************************/
 
-bool starts_with_icase(const char* str, const char* match) {
-    while (*match != 0) {
+bool starts_with_icase(const char* str, const char* match)
+{
+    while (*match != 0)
+    {
         if (*str == 0 || to_lower(*str) != to_lower(*match))
             return false;
         ++str, ++match;
@@ -61,18 +71,23 @@ bool starts_with_icase(const char* str, const char* match) {
     return true;
 }
 
-bool starts_with_icase(const char* str, const std::string& match) {
+bool starts_with_icase(const char* str, const std::string& match)
+{
     std::string::const_iterator m = match.begin();
-    while (m != match.end()) {
-        if (*str == 0 || to_lower(*str) != to_lower(*m)) return false;
+    while (m != match.end())
+    {
+        if (*str == 0 || to_lower(*str) != to_lower(*m))
+            return false;
         ++str, ++m;
     }
     return true;
 }
 
-bool starts_with_icase(const std::string& str, const char* match) {
+bool starts_with_icase(const std::string& str, const char* match)
+{
     std::string::const_iterator s = str.begin();
-    while (*match != 0) {
+    while (*match != 0)
+    {
         if (s == str.end() || to_lower(*s) != to_lower(*match))
             return false;
         ++s, ++match;
@@ -80,7 +95,8 @@ bool starts_with_icase(const std::string& str, const char* match) {
     return true;
 }
 
-bool starts_with_icase(const std::string& str, const std::string& match) {
+bool starts_with_icase(const std::string& str, const std::string& match)
+{
     if (match.size() > str.size())
         return false;
     return std::equal(match.begin(), match.end(), str.begin(),

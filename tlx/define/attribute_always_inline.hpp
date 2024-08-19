@@ -20,7 +20,7 @@ namespace tlx {
 // __attribute__ ((always_inline))
 
 #if defined(__GNUC__) || defined(__clang__)
-#define TLX_ATTRIBUTE_ALWAYS_INLINE __attribute__ ((always_inline))
+#define TLX_ATTRIBUTE_ALWAYS_INLINE __attribute__((always_inline))
 #else
 #define TLX_ATTRIBUTE_ALWAYS_INLINE
 #endif

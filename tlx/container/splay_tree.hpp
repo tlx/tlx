@@ -66,12 +66,13 @@ namespace tlx {
 
 //! check the tree order, recursively calculate min and max elements
 template <typename Tree, typename Compare>
-bool splay_check(const Tree* t,
-                 const Tree*& out_tmin, const Tree*& out_tmax,
-                 const Compare& cmp) {
-    if (t == nullptr) return true;
+bool splay_check(const Tree* t, const Tree*& out_tmin, const Tree*& out_tmax,
+                 const Compare& cmp)
+{
+    if (t == nullptr)
+        return true;
 
-    const Tree* tmin = nullptr, * tmax = nullptr;
+    const Tree *tmin = nullptr, *tmax = nullptr;
     if (!splay_check(t->left, out_tmin, tmax, cmp) ||
         !splay_check(t->right, tmin, out_tmax, cmp))
         return false;
@@ -85,55 +86,69 @@ bool splay_check(const Tree* t,
 
 //! check the tree order
 template <typename Tree, typename Compare>
-bool splay_check(const Tree* t, const Compare& cmp) {
-    if (t == nullptr) return true;
-    const Tree* tmin = nullptr, * tmax = nullptr;
+bool splay_check(const Tree* t, const Compare& cmp)
+{
+    if (t == nullptr)
+        return true;
+    const Tree *tmin = nullptr, *tmax = nullptr;
     return splay_check(t, tmin, tmax, cmp);
 }
 
 //! Splay using the key i (which may or may not be in the tree.)  The starting
 //! root is t, and the tree used is defined by rat size fields are maintained.
 template <typename Key, typename Tree, typename Compare>
-Tree * splay(const Key& k, Tree* t, const Compare& cmp) {
-    Tree* N_left = nullptr, * N_right = nullptr;
-    Tree* l = nullptr, * r = nullptr;
+Tree* splay(const Key& k, Tree* t, const Compare& cmp)
+{
+    Tree *N_left = nullptr, *N_right = nullptr;
+    Tree *l = nullptr, *r = nullptr;
 
-    if (t == nullptr) return t;
+    if (t == nullptr)
+        return t;
 
-    for ( ; ; ) {
-        if (cmp(k, t->key)) {
-            if (t->left == nullptr) break;
+    for (;;)
+    {
+        if (cmp(k, t->key))
+        {
+            if (t->left == nullptr)
+                break;
 
-            if (cmp(k, t->left->key)) {
+            if (cmp(k, t->left->key))
+            {
                 // rotate right
                 Tree* y = t->left;
                 t->left = y->right;
                 y->right = t;
                 t = y;
-                if (t->left == nullptr) break;
+                if (t->left == nullptr)
+                    break;
             }
             // link right
             (r ? r->left : N_left) = t;
             r = t;
             t = t->left;
         }
-        else if (cmp(t->key, k)) {
-            if (t->right == nullptr) break;
+        else if (cmp(t->key, k))
+        {
+            if (t->right == nullptr)
+                break;
 
-            if (cmp(t->right->key, k)) {
+            if (cmp(t->right->key, k))
+            {
                 // rotate left
                 Tree* y = t->right;
                 t->right = y->left;
                 y->left = t;
                 t = y;
-                if (t->right == nullptr) break;
+                if (t->right == nullptr)
+                    break;
             }
             // link left
             (l ? l->right : N_right) = t;
             l = t;
             t = t->right;
         }
-        else {
+        else
+        {
             break;
         }
     }
@@ -153,16 +168,20 @@ Tree * splay(const Key& k, Tree* t, const Compare& cmp) {
 //! this method, one *MUST* call splay() to rotate the tree to the right
 //! position. Return a pointer to the resulting tree.
 template <typename Tree, typename Compare>
-Tree * splay_insert(Tree* nn, Tree* t, const Compare& cmp) {
-    if (t == nullptr) {
+Tree* splay_insert(Tree* nn, Tree* t, const Compare& cmp)
+{
+    if (t == nullptr)
+    {
         nn->left = nn->right = nullptr;
     }
-    else if (cmp(nn->key, t->key)) {
+    else if (cmp(nn->key, t->key))
+    {
         nn->left = t->left;
         nn->right = t;
         t->left = nullptr;
     }
-    else {
+    else
+    {
         nn->right = t->right;
         nn->left = t;
         t->right = nullptr;
@@ -173,24 +192,30 @@ Tree * splay_insert(Tree* nn, Tree* t, const Compare& cmp) {
 //! Erases i from the tree if it's there.  Return a pointer to the resulting
 //! tree.
 template <typename Key, typename Tree, typename Compare>
-Tree * splay_erase(const Key& k, Tree*& t, const Compare& cmp) {
-    if (t == nullptr) return nullptr;
+Tree* splay_erase(const Key& k, Tree*& t, const Compare& cmp)
+{
+    if (t == nullptr)
+        return nullptr;
     t = splay(k, t, cmp);
     // k == t->key ?
-    if (!cmp(k, t->key) && !cmp(t->key, k)) {
+    if (!cmp(k, t->key) && !cmp(t->key, k))
+    {
         // found it
         Tree* r = t;
-        if (t->left == nullptr) {
+        if (t->left == nullptr)
+        {
             t = t->right;
         }
-        else {
+        else
+        {
             Tree* x = splay(k, t->left, cmp);
             x->right = t->right;
             t = x;
         }
         return r;
     }
-    else {
+    else
+    {
         // it wasn't there
         return nullptr;
     }
@@ -198,8 +223,10 @@ Tree * splay_erase(const Key& k, Tree*& t, const Compare& cmp) {
 
 //! traverse the tree in preorder (left, node, right)
 template <typename Tree, typename Functor>
-void splay_traverse_preorder(const Functor& f, const Tree* t) {
-    if (t == nullptr) return;
+void splay_traverse_preorder(const Functor& f, const Tree* t)
+{
+    if (t == nullptr)
+        return;
     splay_traverse_preorder(f, t->left);
     f(t);
     splay_traverse_preorder(f, t->right);
@@ -207,8 +234,10 @@ void splay_traverse_preorder(const Functor& f, const Tree* t) {
 
 //! traverse the tree in postorder (left, right, node)
 template <typename Tree, typename Functor>
-void splay_traverse_postorder(const Functor& f, Tree* t) {
-    if (t == nullptr) return;
+void splay_traverse_postorder(const Functor& f, Tree* t)
+{
+    if (t == nullptr)
+        return;
     splay_traverse_postorder(f, t->left);
     splay_traverse_postorder(f, t->right);
     f(t);
@@ -218,34 +247,44 @@ void splay_traverse_postorder(const Functor& f, Tree* t) {
 // Splay Tree
 
 template <typename Key, typename Compare = std::less<Key>,
-          bool Duplicates = false,
-          typename Allocator = std::allocator<Key> >
+          bool Duplicates = false, typename Allocator = std::allocator<Key> >
 class SplayTree
 {
 public:
     //! splay tree node, also seen as public iterator
-    struct Node {
-        Node* left = nullptr, * right = nullptr;
+    struct Node
+    {
+        Node *left = nullptr, *right = nullptr;
         Key key;
-        explicit Node(const Key& k) : key(k) { }
+
+        explicit Node(const Key& k) : key(k)
+        {
+        }
     };
 
-    explicit SplayTree(Allocator alloc = Allocator())
-        : node_allocator_(alloc) { }
+    explicit SplayTree(Allocator alloc = Allocator()) : node_allocator_(alloc)
+    {
+    }
 
     explicit SplayTree(Compare cmp, Allocator alloc = Allocator())
-        : cmp_(cmp), node_allocator_(alloc) { }
+        : cmp_(cmp), node_allocator_(alloc)
+    {
+    }
 
-    ~SplayTree() {
+    ~SplayTree()
+    {
         clear();
     }
 
     //! insert key into tree if it does not exist, returns true if inserted.
-    bool insert(const Key& k) {
-        if (root_ != nullptr) {
+    bool insert(const Key& k)
+    {
+        if (root_ != nullptr)
+        {
             root_ = splay(k, root_, cmp_);
             // k == t->key ?
-            if (!Duplicates && !cmp_(k, root_->key) && !cmp_(root_->key, k)) {
+            if (!Duplicates && !cmp_(k, root_->key) && !cmp_(root_->key, k))
+            {
                 // it's already there
                 return false;
             }
@@ -257,52 +296,62 @@ public:
     }
 
     //! erase key from tree, return true if it existed.
-    bool erase(const Key& k) {
+    bool erase(const Key& k)
+    {
         Node* out = splay_erase(k, root_, cmp_);
-        if (!out) return false;
+        if (!out)
+            return false;
         delete_node(out);
         return true;
     }
 
     //! erase node from tree, return true if it existed.
-    bool erase(const Node* n) {
+    bool erase(const Node* n)
+    {
         return erase(n->key);
     }
 
     //! free all nodes
-    void clear() {
+    void clear()
+    {
         splay_traverse_postorder([this](Node* n) { delete_node(n); }, root_);
     }
 
     //! check if key exists
-    bool exists(const Key& k) {
+    bool exists(const Key& k)
+    {
         root_ = splay(k, root_, cmp_);
         return !cmp_(root_->key, k) && !cmp_(k, root_->key);
     }
 
     //! return number of items in tree
-    size_t size() const {
+    size_t size() const
+    {
         return size_;
     }
 
     //! return true if tree is empty
-    bool empty() const {
+    bool empty() const
+    {
         return size_ == 0;
     }
 
     //! find tree node containing key or return smallest key larger than k
-    Node * find(const Key& k) {
+    Node* find(const Key& k)
+    {
         return (root_ = splay(k, root_, cmp_));
     }
 
     //! check the tree order
-    bool check() const {
+    bool check() const
+    {
         return splay_check(root_, cmp_);
     }
 
     //! traverse the whole tree in preorder (key order)s
     template <typename Functor>
-    void traverse_preorder(const Functor& f) const {
+    void traverse_preorder(const Functor& f) const
+    {
         splay_traverse_preorder([&f](const Node* n) { f(n->key); }, root_);
     }
 
@@ -317,13 +366,16 @@ private:
     Allocator alloc_;
 
     //! node allocator
-    typedef typename std::allocator_traits<Allocator>::template rebind_alloc<Node> node_alloc_type;
+    typedef
+        typename std::allocator_traits<Allocator>::template rebind_alloc<Node>
+            node_alloc_type;
 
     //! node allocator
     node_alloc_type node_allocator_;
 
     //! delete node
-    void delete_node(Node* n) {
+    void delete_node(Node* n)
+    {
         n->~Node();
         node_allocator_.deallocate(n, 1);
         size_--;

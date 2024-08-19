@@ -15,7 +15,6 @@
 #define TLX_SORT_NETWORKS_BEST_HEADER
 
 #include <tlx/sort/networks/cswap.hpp>
-
 #include <functional>
 
 namespace tlx {
@@ -33,18 +32,20 @@ namespace best {
 
 //! default conditional swap implementation
 template <typename Iterator>
-using DefaultCSwap = CS_IfSwap<
-    std::less<typename std::iterator_traits<Iterator>::value_type> >;
+using DefaultCSwap =
+    CS_IfSwap<std::less<typename std::iterator_traits<Iterator>::value_type> >;
 
 //! sorting network for two elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort2(Iterator a, CSwap cswap = CSwap()) {
+static void sort2(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[0], a[1]);
 }
 
 //! sorting network for three elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort3(Iterator a, CSwap cswap = CSwap()) {
+static void sort3(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[1], a[2]);
     cswap(a[0], a[2]);
     cswap(a[0], a[1]);
@@ -52,7 +53,8 @@ static void sort3(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for four elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort4(Iterator a, CSwap cswap = CSwap()) {
+static void sort4(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[0], a[1]);
     cswap(a[2], a[3]);
     cswap(a[0], a[2]);
@@ -62,7 +64,8 @@ static void sort4(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for five elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort5(Iterator a, CSwap cswap = CSwap()) {
+static void sort5(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[0], a[1]);
     cswap(a[3], a[4]);
     cswap(a[2], a[4]);
@@ -76,7 +79,8 @@ static void sort5(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for six elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort6(Iterator a, CSwap cswap = CSwap()) {
+static void sort6(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[1], a[2]);
     cswap(a[0], a[2]);
     cswap(a[0], a[1]);
@@ -93,7 +97,8 @@ static void sort6(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for seven elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort7(Iterator a, CSwap cswap = CSwap()) {
+static void sort7(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[1], a[2]);
     cswap(a[0], a[2]);
     cswap(a[0], a[1]);
@@ -114,7 +119,8 @@ static void sort7(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for eight elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort8(Iterator a, CSwap cswap = CSwap()) {
+static void sort8(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[0], a[1]);
     cswap(a[2], a[3]);
     cswap(a[0], a[2]);
@@ -138,7 +144,8 @@ static void sort8(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for nine elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort9(Iterator a, CSwap cswap = CSwap()) {
+static void sort9(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[0], a[1]);
     cswap(a[3], a[4]);
     cswap(a[6], a[7]);
@@ -168,7 +175,8 @@ static void sort9(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for ten elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort10(Iterator a, CSwap cswap = CSwap()) {
+static void sort10(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[4], a[9]);
     cswap(a[3], a[8]);
     cswap(a[2], a[7]);
@@ -202,7 +210,8 @@ static void sort10(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for eleven elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort11(Iterator a, CSwap cswap = CSwap()) {
+static void sort11(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[0], a[1]);
     cswap(a[2], a[3]);
     cswap(a[4], a[5]);
@@ -242,7 +251,8 @@ static void sort11(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for twelve elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort12(Iterator a, CSwap cswap = CSwap()) {
+static void sort12(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[0], a[1]);
     cswap(a[2], a[3]);
     cswap(a[4], a[5]);
@@ -286,7 +296,8 @@ static void sort12(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for thirteen elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort13(Iterator a, CSwap cswap = CSwap()) {
+static void sort13(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[1], a[7]);
     cswap(a[9], a[11]);
     cswap(a[3], a[4]);
@@ -336,7 +347,8 @@ static void sort13(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for fourteen elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort14(Iterator a, CSwap cswap = CSwap()) {
+static void sort14(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[0], a[1]);
     cswap(a[2], a[3]);
     cswap(a[4], a[5]);
@@ -392,7 +404,8 @@ static void sort14(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for fifteen elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort15(Iterator a, CSwap cswap = CSwap()) {
+static void sort15(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[0], a[1]);
     cswap(a[2], a[3]);
     cswap(a[4], a[5]);
@@ -453,7 +466,8 @@ static void sort15(Iterator a, CSwap cswap = CSwap()) {
 
 //! sorting network for sixteen elements
 template <typename Iterator, typename CSwap = DefaultCSwap<Iterator> >
-static void sort16(Iterator a, CSwap cswap = CSwap()) {
+static void sort16(Iterator a, CSwap cswap = CSwap())
+{
     cswap(a[0], a[1]);
     cswap(a[2], a[3]);
     cswap(a[4], a[5]);
@@ -518,12 +532,15 @@ static void sort16(Iterator a, CSwap cswap = CSwap()) {
 
 //! Call best known sorting network for up to sixteen elements with given
 //! comparison method
-template <typename Iterator, typename Comparator =
+template <typename Iterator,
+          typename Comparator =
               std::less<typename std::iterator_traits<Iterator>::value_type> >
-static void sort(Iterator begin, Iterator end, Comparator cmp = Comparator()) {
+static void sort(Iterator begin, Iterator end, Comparator cmp = Comparator())
+{
     CS_IfSwap<Comparator> cswap(cmp);
 
-    switch (end - begin) {
+    switch (end - begin)
+    {
     case 0:
         break;
     case 1:

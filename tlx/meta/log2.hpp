@@ -30,7 +30,8 @@ template <std::uint64_t Input>
 class Log2Floor
 {
 public:
-    enum {
+    enum
+    {
         value = Log2Floor<Input / 2>::value + 1
     };
 };
@@ -39,14 +40,20 @@ template <>
 class Log2Floor<1>
 {
 public:
-    enum { value = 0 };
+    enum
+    {
+        value = 0
+    };
 };
 
 template <>
 class Log2Floor<0>
 {
 public:
-    enum { value = 0 };
+    enum
+    {
+        value = 0
+    };
 };
 
 /******************************************************************************/
@@ -56,7 +63,8 @@ template <std::uint64_t Input>
 class Log2
 {
 public:
-    enum {
+    enum
+    {
         floor = Log2Floor<Input>::value,
         ceil = Log2Floor<Input - 1>::value + 1
     };
@@ -66,7 +74,8 @@ template <>
 class Log2<1>
 {
 public:
-    enum {
+    enum
+    {
         floor = 0,
         ceil = 0
     };
@@ -76,7 +85,8 @@ template <>
 class Log2<0>
 {
 public:
-    enum {
+    enum
+    {
         floor = 0,
         ceil = 0
     };

@@ -11,9 +11,8 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/siphash.hpp>
-
 #include <tlx/die.hpp>
+#include <tlx/siphash.hpp>
 
 static const std::uint64_t test_vectors_data[64] = {
     0x726fdb47dd0e0e31ull, 0x74f839c593dc67fdull, 0x0d6c8009d9a94f5aull,
@@ -37,17 +36,17 @@ static const std::uint64_t test_vectors_data[64] = {
     0x7fa8220ba3b2eceaull, 0x245731c13ca42499ull, 0xb78dbfaf3a8d83bdull,
     0xea1ad565322a1a0bull, 0x60e61c23a3795013ull, 0x6606d7e446282b93ull,
     0x6ca4ecb15c5f91e1ull, 0x9f626da15c9625f3ull, 0xe51b38608ef25f57ull,
-    0x958a324ceb064572ull
-};
+    0x958a324ceb064572ull};
 
-void test_vectors() {
-
+void test_vectors()
+{
     unsigned char key[16], msg[1024];
 
     for (size_t i = 0; i < 16; i++)
         key[i] = i;
 
-    for (size_t i = 0; i < 64; i++) {
+    for (size_t i = 0; i < 64; i++)
+    {
         msg[i] = i;
         std::uint64_t res1 = tlx::siphash(key, msg, i);
         die_unequal(res1, test_vectors_data[i]);
@@ -57,7 +56,8 @@ void test_vectors() {
     }
 }
 
-int main() {
+int main()
+{
     test_vectors();
 
     return 0;

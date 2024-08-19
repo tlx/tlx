@@ -25,7 +25,8 @@ namespace tlx {
 //! \{
 
 //! enum class to select SimpleVector object initialization
-enum class SimpleVectorMode {
+enum class SimpleVectorMode
+{
     //! Initialize objects at allocation and destroy on deallocation
     Normal,
     //! Do not initialize objects at allocation, but destroy on
@@ -45,8 +46,7 @@ enum class SimpleVectorMode {
  * types allow faster compilation and is less error prone to copying and other
  * problems.
  */
-template <typename ValueType,
-          SimpleVectorMode Mode = SimpleVectorMode::Normal>
+template <typename ValueType, SimpleVectorMode Mode = SimpleVectorMode::Normal>
 class SimpleVector
 {
 public:
@@ -70,13 +70,13 @@ public:
 
 public:
     //! allocate empty simple vector
-    SimpleVector()
-        : size_(0), array_(nullptr)
-    { }
+    SimpleVector() : size_(0), array_(nullptr)
+    {
+    }
 
     //! allocate vector's memory
-    explicit SimpleVector(const size_type& sz)
-        : size_(sz), array_(nullptr) {
+    explicit SimpleVector(const size_type& sz) : size_(sz), array_(nullptr)
+    {
         if (size_ > 0)
             array_ = create_array(size_);
     }
@@ -84,16 +84,19 @@ public:
     //! non-copyable: delete copy-constructor
     SimpleVector(const SimpleVector&) = delete;
     //! non-copyable: delete assignment operator
-    SimpleVector& operator = (const SimpleVector&) = delete;
+    SimpleVector& operator=(const SimpleVector&) = delete;
 
     //! move-constructor
-    SimpleVector(SimpleVector&& v) noexcept
-        : size_(v.size_), array_(v.array_)
-    { v.size_ = 0, v.array_ = nullptr; }
+    SimpleVector(SimpleVector&& v) noexcept : size_(v.size_), array_(v.array_)
+    {
+        v.size_ = 0, v.array_ = nullptr;
+    }
 
     //! move-assignment
-    SimpleVector& operator = (SimpleVector&& v) noexcept {
-        if (&v == this) return *this;
+    SimpleVector& operator=(SimpleVector&& v) noexcept
+    {
+        if (&v == this)
+            return *this;
         destroy_array(array_, size_);
         size_ = v.size_, array_ = v.array_;
         v.size_ = 0, v.array_ = nullptr;
@@ -101,119 +104,155 @@ public:
     }
 
     //! swap vector with another one
-    void swap(SimpleVector& obj) noexcept {
+    void swap(SimpleVector& obj) noexcept
+    {
         std::swap(size_, obj.size_);
         std::swap(array_, obj.array_);
     }
 
     //! delete vector
-    ~SimpleVector() {
+    ~SimpleVector()
+    {
         destroy_array(array_, size_);
     }
 
     //! return iterator to beginning of vector
-    iterator data() noexcept {
+    iterator data() noexcept
+    {
         return array_;
     }
+
     //! return iterator to beginning of vector
-    const_iterator data() const noexcept {
+    const_iterator data() const noexcept
+    {
         return array_;
     }
+
     //! return number of items in vector
-    size_type size() const noexcept {
+    size_type size() const noexcept
+    {
         return size_;
     }
 
     //! return mutable iterator to first element
-    iterator begin() noexcept {
+    iterator begin() noexcept
+    {
         return array_;
     }
+
     //! return constant iterator to first element
-    const_iterator begin() const noexcept {
+    const_iterator begin() const noexcept
+    {
         return array_;
     }
+
     //! return constant iterator to first element
-    const_iterator cbegin() const noexcept {
+    const_iterator cbegin() const noexcept
+    {
         return begin();
     }
 
     //! return mutable iterator beyond last element
-    iterator end() noexcept {
+    iterator end() noexcept
+    {
         return array_ + size_;
     }
+
     //! return constant iterator beyond last element
-    const_iterator end() const noexcept {
+    const_iterator end() const noexcept
+    {
         return array_ + size_;
     }
+
     //! return constant iterator beyond last element
-    const_iterator cend() const noexcept {
+    const_iterator cend() const noexcept
+    {
         return end();
     }
 
     //! returns reference to the last element in the container
-    reference front() noexcept {
+    reference front() noexcept
+    {
         return array_[0];
     }
+
     //! returns reference to the first element in the container
-    const_reference front() const noexcept {
+    const_reference front() const noexcept
+    {
         return array_[0];
     }
+
     //! returns reference to the first element in the container
-    reference back() noexcept {
+    reference back() noexcept
+    {
         return array_[size_ - 1];
     }
+
     //! returns reference to the last element in the container
-    const_reference back() const noexcept {
+    const_reference back() const noexcept
+    {
         return array_[size_ - 1];
     }
 
     //! return the i-th position of the vector
-    reference operator [] (size_type i) noexcept {
+    reference operator[](size_type i) noexcept
+    {
         return *(begin() + i);
     }
+
     //! return constant reference to the i-th position of the vector
-    const_reference operator [] (size_type i) const noexcept {
+    const_reference operator[](size_type i) const noexcept
+    {
         return *(begin() + i);
     }
 
     //! return the i-th position of the vector
-    reference at(size_type i) noexcept {
+    reference at(size_type i) noexcept
+    {
         return *(begin() + i);
     }
+
     //! return constant reference to the i-th position of the vector
-    const_reference at(size_type i) const noexcept {
+    const_reference at(size_type i) const noexcept
+    {
         return *(begin() + i);
     }
 
     //! resize the array to contain exactly new_size items
-    void resize(size_type new_size) {
-        if (array_) {
+    void resize(size_type new_size)
+    {
+        if (array_)
+        {
             value_type* tmp = array_;
             array_ = create_array(new_size);
             std::move(tmp, tmp + std::min(size_, new_size), array_);
             destroy_array(tmp, size_);
             size_ = new_size;
         }
-        else {
+        else
+        {
             array_ = create_array(new_size);
             size_ = new_size;
         }
     }
 
     //! deallocate contained array
-    void destroy() {
+    void destroy()
+    {
         destroy_array(array_, size_);
         array_ = nullptr;
         size_ = 0;
     }
 
     //! Zero the whole array content.
-    void fill(const value_type& v = value_type()) noexcept {
+    void fill(const value_type& v = value_type()) noexcept
+    {
         std::fill(array_, array_ + size_, v);
     }
 
 private:
-    static ValueType * create_array(size_t size) {
+    static ValueType* create_array(size_t size)
+    {
         switch (Mode)
         {
         case SimpleVectorMode::Normal:
@@ -222,13 +261,14 @@ private:
         case SimpleVectorMode::NoInitButDestroy:
         case SimpleVectorMode::NoInitNoDestroy:
             // operator new allocates bytes
-            return static_cast<ValueType*>(
-                operator new (size * sizeof(ValueType)));
+            return static_cast<ValueType*>(operator new(size *
+                                                        sizeof(ValueType)));
         }
         abort();
     }
 
-    static void destroy_array(ValueType* array, size_t size) {
+    static void destroy_array(ValueType* array, size_t size)
+    {
         switch (Mode)
         {
         case SimpleVectorMode::Normal:
@@ -239,11 +279,11 @@ private:
             // destroy objects and deallocate memory
             for (size_t i = 0; i < size; ++i)
                 array[i].~ValueType();
-            operator delete (array);
+            operator delete(array);
             return;
         case SimpleVectorMode::NoInitNoDestroy:
             // only deallocate memory
-            operator delete (array);
+            operator delete(array);
             return;
         }
         abort();

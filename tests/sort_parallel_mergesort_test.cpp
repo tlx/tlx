@@ -10,34 +10,36 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/die.hpp>
+#include <tlx/logger.hpp>
+#include <tlx/sort/parallel_mergesort.hpp>
 #include <functional>
 #include <iostream>
 #include <random>
 #include <vector>
 
-#include <tlx/die.hpp>
-#include <tlx/logger.hpp>
-
-#include <tlx/sort/parallel_mergesort.hpp>
-
-struct Something {
+struct Something
+{
     int a, b;
 
-    explicit Something(int x = 0) noexcept
-        : a(x), b(x * x)
-    { }
+    explicit Something(int x = 0) noexcept : a(x), b(x* x)
+    {
+    }
 
-    bool operator < (const Something& other) const {
+    bool operator<(const Something& other) const
+    {
         return a < other.a;
     }
 
-    friend std::ostream& operator << (std::ostream& os, const Something& s) {
+    friend std::ostream& operator<<(std::ostream& os, const Something& s)
+    {
         return os << '(' << s.a << ',' << s.b << ')';
     }
 };
 
 template <bool Stable>
-void test_size(unsigned int size, tlx::MultiwayMergeSplittingAlgorithm mwmsa) {
+void test_size(unsigned int size, tlx::MultiwayMergeSplittingAlgorithm mwmsa)
+{
     // std::cout << "testing parallel_mergesort with " << size << " items.\n";
 
     std::vector<Something> v(size);
@@ -49,19 +51,22 @@ void test_size(unsigned int size, tlx::MultiwayMergeSplittingAlgorithm mwmsa) {
     for (unsigned int i = 0; i < size; ++i)
         v[i] = Something(distr(randgen));
 
-    if (Stable) {
-        tlx::stable_parallel_mergesort(
-            v.begin(), v.end(), cmp, /* num_threads */ 8, mwmsa);
+    if (Stable)
+    {
+        tlx::stable_parallel_mergesort(v.begin(), v.end(), cmp,
+                                       /* num_threads */ 8, mwmsa);
     }
-    else {
-        tlx::parallel_mergesort(
-            v.begin(), v.end(), cmp, /* num_threads */ 8, mwmsa);
+    else
+    {
+        tlx::parallel_mergesort(v.begin(), v.end(), cmp, /* num_threads */ 8,
+                                mwmsa);
     }
 
     die_unless(std::is_sorted(v.cbegin(), v.cend(), cmp));
 }
 
-int main() {
+int main()
+{
     // run multiway mergesort tests for 0..256 sequences
     for (unsigned int i = 0; i < 256; ++i)
     {

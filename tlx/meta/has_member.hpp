@@ -33,17 +33,17 @@ namespace tlx {
                "check MyClass for existence of attribute/method myfunc");
  \endcode
 */
-#define TLX_MAKE_HAS_MEMBER(Member)                      \
-    template <typename Type>                             \
-    class has_member_ ## Member                          \
-    {                                                    \
-        template <typename C>                            \
-        static char test(decltype(&C::Member));          \
-        template <typename C>                            \
-        static int test(...);                            \
-    public:                                              \
-        static const bool value = (         /* NOLINT */ \
-            sizeof(test<Type>(0)) == sizeof(char));      \
+#define TLX_MAKE_HAS_MEMBER(Member)                                            \
+    template <typename Type>                                                   \
+    class has_member_##Member                                                  \
+    {                                                                          \
+        template <typename C>                                                  \
+        static char test(decltype(&C::Member));                                \
+        template <typename C>                                                  \
+        static int test(...);                                                  \
+                                                                               \
+    public:                                                                    \
+        static const bool value = sizeof(test<Type>(0)) == sizeof(char);       \
     }
 
 /*!
@@ -58,17 +58,17 @@ namespace tlx {
                "if instantiated with <float, int>");
  \endcode
 */
-#define TLX_MAKE_HAS_TEMPLATE_MEMBER(Member)                      \
-    template <typename Type, typename... Args>                    \
-    class has_member_ ## Member                                   \
-    {                                                             \
-        template <typename C>                                     \
-        static char test(decltype(&C::template Member<Args...>)); \
-        template <typename C>                                     \
-        static int test(...);                                     \
-    public:                                                       \
-        static const bool value = (                  /* NOLINT */ \
-            sizeof(test<Type>(0)) == sizeof(char));               \
+#define TLX_MAKE_HAS_TEMPLATE_MEMBER(Member)                                   \
+    template <typename Type, typename... Args>                                 \
+    class has_member_##Member                                                  \
+    {                                                                          \
+        template <typename C>                                                  \
+        static char test(decltype(&C::template Member<Args...>));              \
+        template <typename C>                                                  \
+        static int test(...);                                                  \
+                                                                               \
+    public:                                                                    \
+        static const bool value = sizeof(test<Type>(0)) == sizeof(char);       \
     }
 
 //! \}

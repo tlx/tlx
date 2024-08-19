@@ -11,14 +11,14 @@
 // this makes sleep_for() available in older GCC versions
 #define _GLIBCXX_USE_NANOSLEEP
 
+#include <tlx/die.hpp>
+#include <tlx/thread_pool.hpp>
 #include <numeric>
 #include <string>
 #include <vector>
 
-#include <tlx/die.hpp>
-#include <tlx/thread_pool.hpp>
-
-void test_loop_until_empty() {
+void test_loop_until_empty()
+{
     size_t job_num = 256;
 
     std::vector<size_t> result1(job_num, 0), result2(job_num, 0);
@@ -26,20 +26,17 @@ void test_loop_until_empty() {
     {
         tlx::ThreadPool pool(8);
 
-        for (size_t r = 0; r != 16; ++r) {
+        for (size_t r = 0; r != 16; ++r)
+        {
+            for (size_t i = 0; i != job_num; ++i)
+            {
+                pool.enqueue([i, &result1, &result2, &pool]() {
+                    // set flag
+                    result1[i] = 1 + i;
 
-            for (size_t i = 0; i != job_num; ++i) {
-                pool.enqueue(
-                    [i, &result1, &result2, &pool]() {
-                        // set flag
-                        result1[i] = 1 + i;
-
-                        // enqueue more work.
-                        pool.enqueue(
-                            [i, &result2]() {
-                                result2[i] = 2 + i;
-                            });
-                    });
+                    // enqueue more work.
+                    pool.enqueue([i, &result2]() { result2[i] = 2 + i; });
+                });
             }
 
             pool.loop_until_empty();
@@ -47,13 +44,15 @@ void test_loop_until_empty() {
     }
 
     // check that the threads have run
-    for (size_t i = 0; i != job_num; ++i) {
+    for (size_t i = 0; i != job_num; ++i)
+    {
         die_unequal(result1[i], 1 + i);
         die_unequal(result2[i], 2 + i);
     }
 }
 
-void test_loop_until_terminate(size_t sleep_msec) {
+void test_loop_until_terminate(size_t sleep_msec)
+{
     size_t job_num = 256;
 
     std::vector<int> result1(job_num, 0), result2(job_num, 0);
@@ -62,20 +61,19 @@ void test_loop_until_terminate(size_t sleep_msec) {
 
     tlx::ThreadPool pool(8);
 
-    for (size_t i = 0; i != job_num; ++i) {
-        pool.enqueue(
-            [i, &result1, &result2, &pool, &sleep_time]() {
-                // set flag
-                result1[i] = 1;
-                std::this_thread::sleep_for(sleep_time);
+    for (size_t i = 0; i != job_num; ++i)
+    {
+        pool.enqueue([i, &result1, &result2, &pool, &sleep_time]() {
+            // set flag
+            result1[i] = 1;
+            std::this_thread::sleep_for(sleep_time);
 
-                // enqueue more work: how to call this lambda again?
-                pool.enqueue(
-                    [i, &result2, &sleep_time]() {
-                        result2[i] = 1;
-                        std::this_thread::sleep_for(sleep_time);
-                    });
+            // enqueue more work: how to call this lambda again?
+            pool.enqueue([i, &result2, &sleep_time]() {
+                result2[i] = 1;
+                std::this_thread::sleep_for(sleep_time);
             });
+        });
     }
 
     using steady_clock = std::chrono::steady_clock;
@@ -83,11 +81,10 @@ void test_loop_until_terminate(size_t sleep_msec) {
 
     // start thread which will stop the thread pool (if we would enqueue this as
     // job, it would be no different from the first test).
-    std::thread stopper_thr = std::thread(
-        [&pool]() {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            pool.terminate();
-        });
+    std::thread stopper_thr = std::thread([&pool]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        pool.terminate();
+    });
 
     pool.loop_until_terminate();
 
@@ -104,9 +101,9 @@ void test_loop_until_terminate(size_t sleep_msec) {
     die_unequal(sum, pool.done());
 }
 
-void test_init_thread() {
-
-    std::atomic<size_t> count { 0 };
+void test_init_thread()
+{
+    std::atomic<size_t> count{0};
 
     {
         tlx::ThreadPool pool(
@@ -120,7 +117,8 @@ void test_init_thread() {
     die_unequal(count.load(), (7 * 8) / 2u);
 }
 
-int main() {
+int main()
+{
     test_loop_until_empty();
 
     for (size_t i = 0; i < 10; ++i)

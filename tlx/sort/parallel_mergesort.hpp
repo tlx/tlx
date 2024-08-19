@@ -41,7 +41,8 @@ namespace parallel_mergesort_detail {
 
 //! Subsequence description.
 template <typename DiffType>
-struct PMWMSPiece {
+struct PMWMSPiece
+{
     //! Begin of subsequence.
     DiffType begin;
     //! End of subsequence.
@@ -54,7 +55,8 @@ struct PMWMSPiece {
  * PMWMS = parallel multiway mergesort
  */
 template <typename RandomAccessIterator>
-struct PMWMSSortingData {
+struct PMWMSSortingData
+{
     using ValueType =
         typename std::iterator_traits<RandomAccessIterator>::value_type;
     using DiffType =
@@ -79,31 +81,31 @@ struct PMWMSSortingData {
           temporary(num_threads),
           offsets(num_threads - 1),
           pieces(num_threads)
-    { }
+    {
+    }
 };
 
 /*!
  * Select samples from a sequence.
- * \param sd Pointer to sorting data struct. Result will be placed in \c sd->samples.
- * \param num_samples Number of samples to select.
- * \param iam my thread number
- * \param num_threads number of threads in group
+ * \param sd Pointer to sorting data struct. Result will be placed in \c
+ * sd->samples. \param num_samples Number of samples to select. \param iam my
+ * thread number \param num_threads number of threads in group
  */
 template <typename RandomAccessIterator, typename DiffType>
 void determine_samples(PMWMSSortingData<RandomAccessIterator>* sd,
-                       DiffType& num_samples,
-                       size_t iam,
-                       size_t num_threads) {
-
+                       DiffType& num_samples, size_t iam, size_t num_threads)
+{
     num_samples = parallel_multiway_merge_oversampling * num_threads - 1;
 
     simple_vector<DiffType> es(num_samples + 2);
-    multiway_merge_detail::equally_split(
-        sd->starts[iam + 1] - sd->starts[iam],
-        static_cast<size_t>(num_samples + 1), es.begin());
+    multiway_merge_detail::equally_split(sd->starts[iam + 1] - sd->starts[iam],
+                                         static_cast<size_t>(num_samples + 1),
+                                         es.begin());
 
-    for (DiffType i = 0; i < num_samples; i++) {
-        sd->samples[iam * num_samples + i] = sd->source[sd->starts[iam] + es[i + 1]];
+    for (DiffType i = 0; i < num_samples; i++)
+    {
+        sd->samples[iam * num_samples + i] =
+            sd->source[sd->starts[iam] + es[i + 1]];
     }
 }
 
@@ -118,11 +120,10 @@ void determine_samples(PMWMSSortingData<RandomAccessIterator>* sd,
  */
 template <bool Stable, typename RandomAccessIterator, typename Comparator>
 void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
-                           size_t iam,
-                           size_t num_threads,
-                           ThreadBarrierMutex& barrier,
-                           Comparator& comp,
-                           MultiwayMergeSplittingAlgorithm mwmsa) {
+                           size_t iam, size_t num_threads,
+                           ThreadBarrierMutex& barrier, Comparator& comp,
+                           MultiwayMergeSplittingAlgorithm mwmsa)
+{
     using ValueType =
         typename std::iterator_traits<RandomAccessIterator>::value_type;
     using DiffType =
@@ -135,7 +136,7 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
 
     // sort in temporary storage, leave space for sentinel
     sd->temporary[iam] = static_cast<ValueType*>(
-        ::operator new (sizeof(ValueType) * (length_local + 1)));
+        ::operator new(sizeof(ValueType) * (length_local + 1)));
 
     // copy there
     std::uninitialized_copy(sd->source + sd->starts[iam],
@@ -144,11 +145,10 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
 
     // sort locally
     if (Stable)
-        std::stable_sort(sd->temporary[iam],
-                         sd->temporary[iam] + length_local, comp);
+        std::stable_sort(sd->temporary[iam], sd->temporary[iam] + length_local,
+                         comp);
     else
-        std::sort(sd->temporary[iam],
-                  sd->temporary[iam] + length_local, comp);
+        std::sort(sd->temporary[iam], sd->temporary[iam] + length_local, comp);
 
     // invariant: locally sorted subsequence in sd->temporary[iam],
     // sd->temporary[iam] + length_local
@@ -159,9 +159,7 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
         determine_samples(sd, num_samples, iam, num_threads);
 
         barrier.wait(
-            [&]() {
-                std::sort(sd->samples.begin(), sd->samples.end(), comp);
-            });
+            [&]() { std::sort(sd->samples.begin(), sd->samples.end(), comp); });
 
         for (size_t s = 0; s < num_threads; s++)
         {
@@ -169,21 +167,21 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
             if (num_samples * iam > 0)
                 sd->pieces[iam][s].begin =
                     std::lower_bound(sd->temporary[s],
-                                     sd->temporary[s] + sd->starts[s + 1] - sd->starts[s],
-                                     sd->samples[num_samples * iam],
-                                     comp)
-                    - sd->temporary[s];
+                                     sd->temporary[s] + sd->starts[s + 1] -
+                                         sd->starts[s],
+                                     sd->samples[num_samples * iam], comp) -
+                    sd->temporary[s];
             else
                 // absolute beginning
                 sd->pieces[iam][s].begin = 0;
 
             if ((num_samples * (iam + 1)) < (num_samples * num_threads))
                 sd->pieces[iam][s].end =
-                    std::lower_bound(sd->temporary[s],
-                                     sd->temporary[s] + sd->starts[s + 1] - sd->starts[s],
-                                     sd->samples[num_samples * (iam + 1)],
-                                     comp)
-                    - sd->temporary[s];
+                    std::lower_bound(
+                        sd->temporary[s],
+                        sd->temporary[s] + sd->starts[s + 1] - sd->starts[s],
+                        sd->samples[num_samples * (iam + 1)], comp) -
+                    sd->temporary[s];
             else
                 // absolute end
                 sd->pieces[iam][s].end = sd->starts[s + 1] - sd->starts[s];
@@ -193,13 +191,13 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
     {
         barrier.wait();
 
-        simple_vector<std::pair<SortingPlacesIterator,
-                                SortingPlacesIterator> > seqs(num_threads);
+        simple_vector<std::pair<SortingPlacesIterator, SortingPlacesIterator> >
+            seqs(num_threads);
 
         for (size_t s = 0; s < num_threads; s++)
-            seqs[s] = std::make_pair(
-                sd->temporary[s],
-                sd->temporary[s] + sd->starts[s + 1] - sd->starts[s]);
+            seqs[s] = std::make_pair(sd->temporary[s], sd->temporary[s] +
+                                                           sd->starts[s + 1] -
+                                                           sd->starts[s]);
 
         simple_vector<SortingPlacesIterator> offsets(num_threads);
 
@@ -215,7 +213,8 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
                 sd->pieces[iam][seq].end = offsets[seq] - seqs[seq].first;
             else
                 // absolute end of this sequence
-                sd->pieces[iam][seq].end = sd->starts[seq + 1] - sd->starts[seq];
+                sd->pieces[iam][seq].end =
+                    sd->starts[seq + 1] - sd->starts[seq];
         }
 
         barrier.wait();
@@ -241,23 +240,21 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
 
     // merge directly to target
 
-    simple_vector<std::pair<SortingPlacesIterator,
-                            SortingPlacesIterator> > seqs(num_threads);
+    simple_vector<std::pair<SortingPlacesIterator, SortingPlacesIterator> >
+        seqs(num_threads);
 
     for (size_t s = 0; s < num_threads; s++)
     {
-        seqs[s] = std::make_pair(
-            sd->temporary[s] + sd->pieces[iam][s].begin,
-            sd->temporary[s] + sd->pieces[iam][s].end);
+        seqs[s] = std::make_pair(sd->temporary[s] + sd->pieces[iam][s].begin,
+                                 sd->temporary[s] + sd->pieces[iam][s].end);
     }
 
     multiway_merge_base<Stable, /* Sentinels */ false>(
-        seqs.begin(), seqs.end(),
-        sd->source + offset, length_am, comp);
+        seqs.begin(), seqs.end(), sd->source + offset, length_am, comp);
 
     barrier.wait();
 
-    operator delete (sd->temporary[iam]);
+    operator delete(sd->temporary[iam]);
 }
 
 } // namespace parallel_mergesort_detail
@@ -275,15 +272,12 @@ void parallel_sort_mwms_pu(PMWMSSortingData<RandomAccessIterator>* sd,
  * \param mwmsa MultiwayMergeSplittingAlgorithm to use.
  * \tparam Stable Stable sorting.
  */
-template <bool Stable,
-          typename RandomAccessIterator, typename Comparator>
+template <bool Stable, typename RandomAccessIterator, typename Comparator>
 void parallel_mergesort_base(
-    RandomAccessIterator begin,
-    RandomAccessIterator end,
-    Comparator comp,
+    RandomAccessIterator begin, RandomAccessIterator end, Comparator comp,
     size_t num_threads = std::thread::hardware_concurrency(),
-    MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT) {
-
+    MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT)
+{
     using namespace parallel_mergesort_detail;
 
     using DiffType =
@@ -301,9 +295,11 @@ void parallel_mergesort_base(
     PMWMSSortingData<RandomAccessIterator> sd(num_threads);
     sd.source = begin;
 
-    if (mwmsa == MWMSA_SAMPLING) {
+    if (mwmsa == MWMSA_SAMPLING)
+    {
         sd.samples.resize(
-            num_threads * (parallel_multiway_merge_oversampling * num_threads - 1));
+            num_threads *
+            (parallel_multiway_merge_oversampling * num_threads - 1));
     }
 
     for (size_t s = 0; s < num_threads; s++)
@@ -315,8 +311,8 @@ void parallel_mergesort_base(
     for (size_t i = 0; i < num_threads; i++)
     {
         starts[i] = start;
-        start += (i < static_cast<size_t>(split))
-                 ? (chunk_length + 1) : chunk_length;
+        start += (i < static_cast<size_t>(split)) ? (chunk_length + 1) :
+                                                    chunk_length;
     }
     starts[num_threads] = start;
 
@@ -328,19 +324,20 @@ void parallel_mergesort_base(
 #pragma omp parallel num_threads(num_threads)
     {
         size_t iam = omp_get_thread_num();
-        parallel_sort_mwms_pu<Stable>(
-            &sd, iam, num_threads, barrier, comp, mwmsa);
+        parallel_sort_mwms_pu<Stable>(&sd, iam, num_threads, barrier, comp,
+                                      mwmsa);
     }
 #else
     simple_vector<std::thread> threads(num_threads);
-    for (size_t iam = 0; iam < num_threads; ++iam) {
-        threads[iam] = std::thread(
-            [&, iam]() {
-                parallel_sort_mwms_pu<Stable>(
-                    &sd, iam, num_threads, barrier, comp, mwmsa);
-            });
+    for (size_t iam = 0; iam < num_threads; ++iam)
+    {
+        threads[iam] = std::thread([&, iam]() {
+            parallel_sort_mwms_pu<Stable>(&sd, iam, num_threads, barrier, comp,
+                                          mwmsa);
+        });
     }
-    for (size_t i = 0; i < num_threads; i++) {
+    for (size_t i = 0; i < num_threads; i++)
+    {
         threads[i].join();
     }
 #endif // defined(_OPENMP)
@@ -359,14 +356,13 @@ template <typename RandomAccessIterator,
           typename Comparator = std::less<
               typename std::iterator_traits<RandomAccessIterator>::value_type> >
 void parallel_mergesort(
-    RandomAccessIterator begin,
-    RandomAccessIterator end,
+    RandomAccessIterator begin, RandomAccessIterator end,
     Comparator comp = Comparator(),
     size_t num_threads = std::thread::hardware_concurrency(),
-    MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT) {
-
-    return parallel_mergesort_base</* Stable */ false>(
-        begin, end, comp, num_threads, mwmsa);
+    MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT)
+{
+    return parallel_mergesort_base</* Stable */ false>(begin, end, comp,
+                                                       num_threads, mwmsa);
 }
 
 /*!
@@ -382,14 +378,13 @@ template <typename RandomAccessIterator,
           typename Comparator = std::less<
               typename std::iterator_traits<RandomAccessIterator>::value_type> >
 void stable_parallel_mergesort(
-    RandomAccessIterator begin,
-    RandomAccessIterator end,
+    RandomAccessIterator begin, RandomAccessIterator end,
     Comparator comp = Comparator(),
     size_t num_threads = std::thread::hardware_concurrency(),
-    MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT) {
-
-    return parallel_mergesort_base</* Stable */ true>(
-        begin, end, comp, num_threads, mwmsa);
+    MultiwayMergeSplittingAlgorithm mwmsa = MWMSA_DEFAULT)
+{
+    return parallel_mergesort_base</* Stable */ true>(begin, end, comp,
+                                                      num_threads, mwmsa);
 }
 
 //! \}

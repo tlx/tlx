@@ -11,9 +11,8 @@
 #ifndef TLX_META_CALL_FOREACH_WITH_INDEX_HEADER
 #define TLX_META_CALL_FOREACH_WITH_INDEX_HEADER
 
-#include <utility>
-
 #include <tlx/meta/static_index.hpp>
+#include <utility>
 
 namespace tlx {
 
@@ -30,16 +29,18 @@ namespace meta_detail {
 
 //! helper for call_foreach_with_index: base case
 template <size_t Index, typename Functor, typename Arg>
-void call_foreach_with_index_impl(Functor&& f, Arg&& arg) {
+void call_foreach_with_index_impl(Functor&& f, Arg&& arg)
+{
     std::forward<Functor>(f)(StaticIndex<Index>(), std::forward<Arg>(arg));
 }
 
 //! helper for call_foreach_with_index: general recursive case
 template <size_t Index, typename Functor, typename Arg, typename... MoreArgs>
-void call_foreach_with_index_impl(Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
+void call_foreach_with_index_impl(Functor&& f, Arg&& arg, MoreArgs&&... rest)
+{
     std::forward<Functor>(f)(StaticIndex<Index>(), std::forward<Arg>(arg));
-    call_foreach_with_index_impl<Index + 1>(
-        std::forward<Functor>(f), std::forward<MoreArgs>(rest) ...);
+    call_foreach_with_index_impl<Index + 1>(std::forward<Functor>(f),
+                                            std::forward<MoreArgs>(rest)...);
 }
 
 } // namespace meta_detail
@@ -47,9 +48,10 @@ void call_foreach_with_index_impl(Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
 //! Call a generic functor (like a generic lambda) for each variadic template
 //! argument together with its zero-based index.
 template <typename Functor, typename... Args>
-void call_foreach_with_index(Functor&& f, Args&& ... args) {
-    meta_detail::call_foreach_with_index_impl<0>(
-        std::forward<Functor>(f), std::forward<Args>(args) ...);
+void call_foreach_with_index(Functor&& f, Args&&... args)
+{
+    meta_detail::call_foreach_with_index_impl<0>(std::forward<Functor>(f),
+                                                 std::forward<Args>(args)...);
 }
 
 //! \}

@@ -54,7 +54,8 @@ std::string bitdump_8_msb(const std::string& str);
  * \return   string of binary digits
  */
 template <typename Type>
-std::string bitdump_8_msb_type(const Type& t) {
+std::string bitdump_8_msb_type(const Type& t)
+{
     return bitdump_8_msb(&t, sizeof(t));
 }
 
@@ -68,7 +69,8 @@ std::string bitdump_le8(const std::string& str);
 
 //! deprecated method: unclear naming and documentation.
 template <typename Type>
-std::string bitdump_le8_type(const Type& t) {
+std::string bitdump_le8_type(const Type& t)
+{
     return bitdump_8_msb_type(t);
 }
 
@@ -104,7 +106,8 @@ std::string bitdump_8_lsb(const std::string& str);
  * \return   string of binary digits
  */
 template <typename Type>
-std::string bitdump_8_lsb_type(const Type& t) {
+std::string bitdump_8_lsb_type(const Type& t)
+{
     return bitdump_8_lsb(&t, sizeof(t));
 }
 
@@ -118,7 +121,8 @@ std::string bitdump_be8(const std::string& str);
 
 //! deprecated method: unclear naming and documentation.
 template <typename Type>
-std::string bitdump_be8_type(const Type& t) {
+std::string bitdump_be8_type(const Type& t)
+{
     return bitdump_8_lsb_type(t);
 }
 

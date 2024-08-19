@@ -12,12 +12,13 @@
 
 namespace tlx {
 
-static inline bool is_white(char c) {
+static inline bool is_white(char c)
+{
     return c == ' ' || c == '\n' || c == '\t' || c == '\r';
 }
 
-bool contains_word(const std::string& str, const char* word) {
-
+bool contains_word(const std::string& str, const char* word)
+{
     // all strings contain the empty word
     if (*word == 0)
         return true;
@@ -27,33 +28,41 @@ bool contains_word(const std::string& str, const char* word) {
     while (it != str.end())
     {
         // skip over whitespace
-        while (is_white(*it)) {
-            if (++it == str.end()) return false;
+        while (is_white(*it))
+        {
+            if (++it == str.end())
+                return false;
         }
 
         // check if this non-whitespace matches the string
         const char* wi = word;
-        while (*it == *wi) {
+        while (*it == *wi)
+        {
             ++it, ++wi;
-            if (*wi == 0) {
+            if (*wi == 0)
+            {
                 if (it == str.end() || is_white(*it))
                     return true;
-                else break;
+                else
+                    break;
             }
-            if (it == str.end()) return false;
+            if (it == str.end())
+                return false;
         }
 
         // skip over not matching whitespace
-        while (!is_white(*it)) {
-            if (++it == str.end()) return false;
+        while (!is_white(*it))
+        {
+            if (++it == str.end())
+                return false;
         }
     }
 
     return false;
 }
 
-bool contains_word(const std::string& str, const std::string& word) {
-
+bool contains_word(const std::string& str, const std::string& word)
+{
     // all strings contain the empty word
     if (word.empty())
         return true;
@@ -63,25 +72,33 @@ bool contains_word(const std::string& str, const std::string& word) {
     while (it != str.end())
     {
         // skip over whitespace
-        while (is_white(*it)) {
-            if (++it == str.end()) return false;
+        while (is_white(*it))
+        {
+            if (++it == str.end())
+                return false;
         }
 
         // check if this non-whitespace matches the string
         std::string::const_iterator wi = word.begin();
-        while (*it == *wi) {
+        while (*it == *wi)
+        {
             ++it, ++wi;
-            if (wi == word.end()) {
+            if (wi == word.end())
+            {
                 if (it == str.end() || is_white(*it))
                     return true;
-                else break;
+                else
+                    break;
             }
-            if (it == str.end()) return false;
+            if (it == str.end())
+                return false;
         }
 
         // skip over not matching whitespace
-        while (!is_white(*it)) {
-            if (++it == str.end()) return false;
+        while (!is_white(*it))
+        {
+            if (++it == str.end())
+                return false;
         }
     }
 

@@ -12,7 +12,6 @@
 #define TLX_BACKTRACE_HEADER
 
 #include <tlx/define/attribute_format_printf.hpp>
-
 #include <cstdio>
 
 namespace tlx {
@@ -29,9 +28,8 @@ void print_raw_backtrace(FILE* out = stderr, unsigned int max_frames = 63);
  * Print a plain hex stack backtrace of the called function to FILE* out,
  * prefixed with the given printf formatted output.
  */
-void print_raw_backtrace(FILE* out, unsigned int max_frames,
-                         const char* fmt, ...)
-TLX_ATTRIBUTE_FORMAT_PRINTF(3, 4);
+void print_raw_backtrace(FILE* out, unsigned int max_frames, const char* fmt,
+                         ...) TLX_ATTRIBUTE_FORMAT_PRINTF(3, 4);
 
 /*!
  * Print a demangled stack backtrace of the caller function to FILE* out.

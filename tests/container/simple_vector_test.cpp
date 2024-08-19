@@ -10,23 +10,25 @@
 
 #include <tlx/container/simple_vector.hpp>
 #include <tlx/die.hpp>
-
 #include <algorithm>
 
-struct MyInteger {
+struct MyInteger
+{
     size_t val_ = 1;
     size_t dummy_ = 42;
 };
 
-struct MyInteger2 {
+struct MyInteger2
+{
     size_t val_ = 1;
     size_t dummy_ = 42;
 
     //! SimpleVector needs default constructor
     MyInteger2() = default;
 
-    MyInteger2(size_t val, size_t dummy)
-        : val_(val), dummy_(dummy) { }
+    MyInteger2(size_t val, size_t dummy) : val_(val), dummy_(dummy)
+    {
+    }
 };
 
 // force instantiation
@@ -38,7 +40,8 @@ template class SimpleVector<MyInteger2>;
 
 } // namespace tlx
 
-int main() {
+int main()
+{
     tlx::SimpleVector<MyInteger> x;
     die_unequal(x.size(), 0u);
 
@@ -63,10 +66,9 @@ int main() {
     die_unequal(y.front().val_, y.size() - 1);
     die_unequal(y.back().val_, 0u);
 
-    std::sort(y.begin(), y.end(),
-              [](const MyInteger& a, const MyInteger& b) {
-                  return a.val_ < b.val_;
-              });
+    std::sort(y.begin(), y.end(), [](const MyInteger& a, const MyInteger& b) {
+        return a.val_ < b.val_;
+    });
 
     for (size_t i = 0; i < y.size(); ++i)
         die_unequal(y[i].val_, i);

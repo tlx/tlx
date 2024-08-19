@@ -9,28 +9,31 @@
  ******************************************************************************/
 
 #include <tlx/string/expand_environment_variables.hpp>
-
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
 
 namespace tlx {
 
-std::string& expand_environment_variables(std::string* sp) {
+std::string& expand_environment_variables(std::string* sp)
+{
     std::string& s = *sp;
     size_t p = 0;
-    while (p < s.size()) {
+    while (p < s.size())
+    {
         // find a dollar sing
         std::string::size_type dp = s.find('$', p);
         if (dp == std::string::npos)
             return s;
 
-        if (dp + 1 < s.size() && s[dp + 1] == '{') {
+        if (dp + 1 < s.size() && s[dp + 1] == '{')
+        {
             // match "${[^}]*}"
 
             // find matching '}'
             std::string::size_type de = s.find('}', dp + 2);
-            if (de == std::string::npos) {
+            if (de == std::string::npos)
+            {
                 p = dp + 1;
                 continue;
             }
@@ -49,12 +52,11 @@ std::string& expand_environment_variables(std::string* sp) {
             p = dp + vlen + 1;
         }
         else if (dp + 1 < s.size() &&
-                 (std::isalpha(s[dp + 1]) || s[dp + 1] == '_')) {
-
+                 (std::isalpha(s[dp + 1]) || s[dp + 1] == '_'))
+        {
             // match "$[a-zA-Z][a-zA-Z0-9]*"
             std::string::size_type de = dp + 1;
-            while (de < s.size() &&
-                   (std::isalnum(s[de]) || s[de] == '_'))
+            while (de < s.size() && (std::isalnum(s[de]) || s[de] == '_'))
                 ++de;
 
             // cut out variable name
@@ -70,20 +72,23 @@ std::string& expand_environment_variables(std::string* sp) {
 
             p = dp + vlen;
         }
-        else {
+        else
+        {
             p = dp + 1;
         }
     }
     return s;
 }
 
-std::string expand_environment_variables(const std::string& s) {
+std::string expand_environment_variables(const std::string& s)
+{
     std::string copy = s;
     expand_environment_variables(&copy);
     return copy;
 }
 
-std::string expand_environment_variables(const char* s) {
+std::string expand_environment_variables(const char* s)
+{
     std::string copy = s;
     expand_environment_variables(&copy);
     return copy;

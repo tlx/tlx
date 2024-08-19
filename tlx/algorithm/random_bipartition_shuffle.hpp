@@ -42,32 +42,35 @@ namespace tlx {
  */
 template <typename RandomAccessIt, typename RandomBits>
 void random_bipartition_shuffle(RandomAccessIt begin, RandomAccessIt end,
-                                size_t size_left_partition, RandomBits& urng) {
+                                size_t size_left_partition, RandomBits& urng)
+{
     const size_t size = std::distance(begin, end);
     assert(size_left_partition <= size);
 
     // ensure that both paritions are non-empty
     const size_t size_right_partition = size - size_left_partition;
-    if (!size_left_partition || !size_right_partition) return;
+    if (!size_left_partition || !size_right_partition)
+        return;
 
     // this idea is borrow from GNU stdlibc++ and generates two random
     // variates uniform on [0, a) and [0, b) respectively.
-    auto two_random_variates =
-        [&urng](size_t a, size_t b) {
-            auto x = std::uniform_int_distribution<size_t>{ 0, (a * b) - 1 }(urng);
-            return std::make_pair(x / b, x % b);
-        };
+    auto two_random_variates = [&urng](size_t a, size_t b) {
+        auto x = std::uniform_int_distribution<size_t>{0, (a * b) - 1}(urng);
+        return std::make_pair(x / b, x % b);
+    };
 
     using std::swap; // allow ADL
 
     // Perform a Fisher-Yates shuffle, but iterate only over the positions
     // of the smaller partition.
-    if (size_left_partition < size_right_partition) {
+    if (size_left_partition < size_right_partition)
+    {
         auto it = begin;
 
         // To avoid wasted random bits, we draw two variates at once
         // and shuffle two positions per iteration
-        for (size_t i = 1; i < size_left_partition; i += 2) {
+        for (size_t i = 1; i < size_left_partition; i += 2)
+        {
             auto rand = two_random_variates(size - i + 1, size - i);
             swap(*it++, *std::next(begin, size - 1 - rand.first));
             swap(*it++, *std::next(begin, size - 1 - rand.second));
@@ -75,23 +78,29 @@ void random_bipartition_shuffle(RandomAccessIt begin, RandomAccessIt end,
 
         // In case the partition contains an odd number of elements,
         // there's a special case for the last element
-        if (size_left_partition % 2) {
-            auto x = std::uniform_int_distribution<size_t>{ size_left_partition - 1, size - 1 }(urng);
+        if (size_left_partition % 2)
+        {
+            auto x = std::uniform_int_distribution<size_t>{
+                size_left_partition - 1, size - 1}(urng);
             swap(*it, *std::next(begin, x));
         }
     }
-    else {
+    else
+    {
         // Symmetric case to above, this time shuffling the right partition
         auto it = std::next(begin, size - 1);
 
-        for (size_t i = size - 2; i >= size_left_partition; i -= 2) {
+        for (size_t i = size - 2; i >= size_left_partition; i -= 2)
+        {
             auto rand = two_random_variates(i + 2, i + 1);
             swap(*it--, *std::next(begin, rand.first));
             swap(*it--, *std::next(begin, rand.second));
         }
 
-        if (size_right_partition % 2) {
-            auto x = std::uniform_int_distribution<size_t>{ 0, size_left_partition }(urng);
+        if (size_right_partition % 2)
+        {
+            auto x = std::uniform_int_distribution<size_t>{
+                0, size_left_partition}(urng);
             swap(*it--, *std::next(begin, x));
         }
     }

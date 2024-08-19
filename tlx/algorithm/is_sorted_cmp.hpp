@@ -24,10 +24,13 @@ namespace tlx {
  */
 template <typename ForwardIterator, typename Comparator>
 ForwardIterator is_sorted_until_cmp(ForwardIterator first, ForwardIterator last,
-                                    Comparator cmp) {
-    if (first != last) {
+                                    Comparator cmp)
+{
+    if (first != last)
+    {
         ForwardIterator next = first;
-        while (++next != last) {
+        while (++next != last)
+        {
             if (cmp(*first, *next) > 0)
                 return next;
             first = next;
@@ -41,8 +44,8 @@ ForwardIterator is_sorted_until_cmp(ForwardIterator first, ForwardIterator last,
  * semantics).
  */
 template <typename ForwardIterator, typename Comparator>
-bool is_sorted_cmp(ForwardIterator first, ForwardIterator last,
-                   Comparator cmp) {
+bool is_sorted_cmp(ForwardIterator first, ForwardIterator last, Comparator cmp)
+{
     return is_sorted_until_cmp(first, last, cmp) == last;
 }
 

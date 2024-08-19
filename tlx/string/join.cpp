@@ -13,16 +13,18 @@
 
 namespace tlx {
 
-std::string join(char glue, const std::vector<std::string>& parts) {
+std::string join(char glue, const std::vector<std::string>& parts)
+{
     return join(glue, parts.begin(), parts.end());
 }
 
-std::string join(const char* glue, const std::vector<std::string>& parts) {
+std::string join(const char* glue, const std::vector<std::string>& parts)
+{
     return join(glue, parts.begin(), parts.end());
 }
 
-std::string join(
-    const std::string& glue, const std::vector<std::string>& parts) {
+std::string join(const std::string& glue, const std::vector<std::string>& parts)
+{
     return join(glue, parts.begin(), parts.end());
 }
 

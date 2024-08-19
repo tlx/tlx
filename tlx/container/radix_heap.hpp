@@ -11,6 +11,11 @@
 #ifndef TLX_CONTAINER_RADIX_HEAP_HEADER
 #define TLX_CONTAINER_RADIX_HEAP_HEADER
 
+#include <tlx/define/likely.hpp>
+#include <tlx/math/clz.hpp>
+#include <tlx/math/div_ceil.hpp>
+#include <tlx/math/ffs.hpp>
+#include <tlx/meta/log2.hpp>
 #include <array>
 #include <cassert>
 #include <cstddef>
@@ -19,12 +24,6 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
-
-#include <tlx/define/likely.hpp>
-#include <tlx/math/clz.hpp>
-#include <tlx/math/div_ceil.hpp>
-#include <tlx/math/ffs.hpp>
-#include <tlx/meta/log2.hpp>
 
 namespace tlx {
 namespace radix_heap_detail {
@@ -51,36 +50,36 @@ public:
 
     //! Maps value i to its rank in int_type. For any pair T x < y the invariant
     //! IntegerRank<T>::rank_of_int(x) < IntegerRank<T>::rank_of_int(y) holds.
-    static constexpr rank_type rank_of_int(int_type i) {
-        return use_identity_
-               ? static_cast<rank_type>(i)
-               : static_cast<rank_type>(i) ^ sign_bit_;
+    static constexpr rank_type rank_of_int(int_type i)
+    {
+        return use_identity_ ? static_cast<rank_type>(i) :
+                               static_cast<rank_type>(i) ^ sign_bit_;
     }
 
     //! Returns the r-th smallest number of int_r. It is the inverse of
     //! rank_of_int, i.e. int_at_rank(rank_of_int(i)) == i for all i.
-    static constexpr int_type int_at_rank(rank_type r) {
-        return use_identity_
-               ? static_cast<int_type>(r)
-               : static_cast<int_type>(r ^ sign_bit_);
+    static constexpr int_type int_at_rank(rank_type r)
+    {
+        return use_identity_ ? static_cast<int_type>(r) :
+                               static_cast<int_type>(r ^ sign_bit_);
     }
 
 private:
     constexpr static bool use_identity_ = !std::is_signed<int_type>::value;
 
-    constexpr static rank_type sign_bit_
-        = (rank_type(1) << (8 * sizeof(rank_type) - 1));
+    constexpr static rank_type sign_bit_ =
+        (rank_type(1) << (8 * sizeof(rank_type) - 1));
 
     // These test fail if a signed type does not use Two's complement
     static_assert(rank_of_int(std::numeric_limits<int_type>::min()) == 0,
                   "Rank of minimum is not zero");
     static_assert(rank_of_int(std::numeric_limits<int_type>::min() + 1) == 1,
                   "Rank of minimum+1 is not one");
-    static_assert(rank_of_int(std::numeric_limits<int_type>::max())
-                  == std::numeric_limits<rank_type>::max(),
+    static_assert(rank_of_int(std::numeric_limits<int_type>::max()) ==
+                      std::numeric_limits<rank_type>::max(),
                   "Rank of maximum is not maximum rank");
     static_assert(rank_of_int(std::numeric_limits<int_type>::max()) >
-                  rank_of_int(int_type(0)),
+                      rank_of_int(int_type(0)),
                   "Rank of maximum is not larger than rank of zero");
 };
 
@@ -98,14 +97,13 @@ class BitArrayRecursive<Size, false>
     static constexpr size_t width = tlx::Log2<Size>::ceil;
     static_assert(width > leaf_width,
                   "Size has to be larger than 2**leaf_width");
-    static constexpr size_t root_width = (width % leaf_width)
-                                         ? (width % leaf_width)
-                                         : leaf_width;
+    static constexpr size_t root_width =
+        (width % leaf_width) ? (width % leaf_width) : leaf_width;
     static constexpr size_t child_width = width - root_width;
     using child_type = BitArrayRecursive<1llu << child_width, child_width <= 6>;
 
     static constexpr size_t root_size = div_ceil(Size, child_type::size);
-    using root_type = BitArrayRecursive < root_size <= 32 ? 32 : 64, true >;
+    using root_type = BitArrayRecursive<root_size <= 32 ? 32 : 64, true>;
 
     using child_array_type = std::array<child_type, root_size>;
 
@@ -115,38 +113,44 @@ public:
     explicit BitArrayRecursive() noexcept = default;
     BitArrayRecursive(const BitArrayRecursive&) noexcept = default;
     BitArrayRecursive(BitArrayRecursive&&) noexcept = default;
-    BitArrayRecursive& operator = (const BitArrayRecursive&) noexcept = default;
-    BitArrayRecursive& operator = (BitArrayRecursive&&) noexcept = default;
+    BitArrayRecursive& operator=(const BitArrayRecursive&) noexcept = default;
+    BitArrayRecursive& operator=(BitArrayRecursive&&) noexcept = default;
 
-    void set_bit(const size_t i) {
+    void set_bit(const size_t i)
+    {
         const auto idx = get_index_(i);
         root_.set_bit(idx.first);
         children_[idx.first].set_bit(idx.second);
     }
 
-    void clear_bit(const size_t i) {
+    void clear_bit(const size_t i)
+    {
         const auto idx = get_index_(i);
         children_[idx.first].clear_bit(idx.second);
         if (children_[idx.first].empty())
             root_.clear_bit(idx.first);
     }
 
-    bool is_set(const size_t i) const {
+    bool is_set(const size_t i) const
+    {
         const auto idx = get_index_(i);
         return children_[idx.first].is_set(idx.second);
     }
 
-    void clear_all() {
+    void clear_all()
+    {
         root_.clear_all();
         for (auto& child : children_)
             child.clear_all();
     }
 
-    bool empty() const {
+    bool empty() const
+    {
         return root_.empty();
     }
 
-    size_t find_lsb() const {
+    size_t find_lsb() const
+    {
         assert(!empty());
 
         const size_t child_idx = root_.find_lsb();
@@ -159,9 +163,10 @@ private:
     child_array_type children_;
     root_type root_;
 
-    std::pair<size_t, size_t> get_index_(size_t i) const {
+    std::pair<size_t, size_t> get_index_(size_t i) const
+    {
         assert(i < size);
-        return { i / child_type::size, i % child_type::size };
+        return {i / child_type::size, i % child_type::size};
     }
 };
 
@@ -169,42 +174,51 @@ template <size_t Size>
 class BitArrayRecursive<Size, true>
 {
     static_assert(Size <= 64, "Support at most 64 bits");
-    using uint_type = typename std::conditional<
-        Size <= 32, std::uint32_t, std::uint64_t>::type;
+    using uint_type = typename std::conditional<Size <= 32, std::uint32_t,
+                                                std::uint64_t>::type;
 
 public:
     static constexpr size_t size = Size;
 
-    explicit BitArrayRecursive() noexcept : flags_(0) { }
+    explicit BitArrayRecursive() noexcept : flags_(0)
+    {
+    }
+
     BitArrayRecursive(const BitArrayRecursive&) noexcept = default;
     BitArrayRecursive(BitArrayRecursive&&) noexcept = default;
-    BitArrayRecursive& operator = (const BitArrayRecursive&) noexcept = default;
-    BitArrayRecursive& operator = (BitArrayRecursive&&) noexcept = default;
+    BitArrayRecursive& operator=(const BitArrayRecursive&) noexcept = default;
+    BitArrayRecursive& operator=(BitArrayRecursive&&) noexcept = default;
 
-    void set_bit(const size_t i) {
+    void set_bit(const size_t i)
+    {
         assert(i < size);
         flags_ |= uint_type(1) << i;
     }
 
-    void clear_bit(const size_t i) {
+    void clear_bit(const size_t i)
+    {
         assert(i < size);
         flags_ &= ~(uint_type(1) << i);
     }
 
-    bool is_set(const size_t i) const {
+    bool is_set(const size_t i) const
+    {
         assert(i < size);
         return (flags_ & (uint_type(1) << i)) != 0;
     }
 
-    void clear_all() {
+    void clear_all()
+    {
         flags_ = 0;
     }
 
-    bool empty() const {
+    bool empty() const
+    {
         return !flags_;
     }
 
-    size_t find_lsb() const {
+    size_t find_lsb() const
+    {
         assert(!empty());
         return tlx::ffs(flags_) - 1;
     }
@@ -234,37 +248,43 @@ public:
     explicit BitArray() noexcept = default;
     BitArray(const BitArray&) noexcept = default;
     BitArray(BitArray&&) noexcept = default;
-    BitArray& operator = (const BitArray&) noexcept = default;
-    BitArray& operator = (BitArray&&) noexcept = default;
+    BitArray& operator=(const BitArray&) noexcept = default;
+    BitArray& operator=(BitArray&&) noexcept = default;
 
     //! Set the i-th bit to true
-    void set_bit(const size_t i) {
+    void set_bit(const size_t i)
+    {
         impl_.set_bit(i);
     }
 
     //! Set the i-th bit to false
-    void clear_bit(const size_t i) {
+    void clear_bit(const size_t i)
+    {
         impl_.clear_bit(i);
     }
 
     //! Returns value of the i-th
-    bool is_set(const size_t i) const {
+    bool is_set(const size_t i) const
+    {
         return impl_.is_set(i);
     }
 
     //! Sets all bits to false
-    void clear_all() {
+    void clear_all()
+    {
         impl_.clear_all();
     }
 
     //! True if all bits are false
-    bool empty() const {
+    bool empty() const
+    {
         return impl_.empty();
     }
 
     //! Finds the bit with smallest index that is set
     //! \warning If empty() is true, the result is undefined
-    size_t find_lsb() const {
+    size_t find_lsb() const
+    {
         return impl_.find_lsb();
     }
 
@@ -280,13 +300,15 @@ class BucketComputation
 
 public:
     //! Return bucket index key x belongs to given the current insertion limit
-    size_t operator () (const Int x, const Int insertion_limit) const {
+    size_t operator()(const Int x, const Int insertion_limit) const
+    {
         constexpr Int mask = (1u << radix_bits) - 1;
 
         assert(x >= insertion_limit);
 
         const auto diff = x ^ insertion_limit;
-        if (!diff) return 0;
+        if (!diff)
+            return 0;
 
         const auto diff_in_bit = (8 * sizeof(Int) - 1) - clz(diff);
 
@@ -299,7 +321,8 @@ public:
     }
 
     //! Return smallest key possible in bucket idx assuming insertion_limit==0
-    Int lower_bound(const size_t idx) const {
+    Int lower_bound(const size_t idx) const
+    {
         assert(idx < num_buckets);
 
         if (idx < Radix)
@@ -312,7 +335,8 @@ public:
     }
 
     //! Return largest key possible in bucket idx assuming insertion_limit==0
-    Int upper_bound(const size_t idx) const {
+    Int upper_bound(const size_t idx) const
+    {
         assert(idx < num_buckets);
 
         if (idx == num_buckets - 1)
@@ -322,10 +346,11 @@ public:
     }
 
 private:
-    constexpr static size_t num_buckets_(size_t bits) {
-        return (bits >= radix_bits)
-               ? (Radix - 1) + num_buckets_(bits - radix_bits)
-               : (1 << bits) - 1;
+    constexpr static size_t num_buckets_(size_t bits)
+    {
+        return (bits >= radix_bits) ?
+                   (Radix - 1) + num_buckets_(bits - radix_bits) :
+                   (1 << bits) - 1;
     }
 
 public:
@@ -336,10 +361,12 @@ public:
 
 //! Used as an adapter to implement RadixHeapPair on top of RadixHeap.
 template <typename KeyType, typename DataType>
-struct PairKeyExtract {
+struct PairKeyExtract
+{
     using allow_emplace_pair = bool;
 
-    KeyType operator () (const std::pair<KeyType, DataType>& p) const {
+    KeyType operator()(const std::pair<KeyType, DataType>& p) const
+    {
         return p.first;
     }
 };
@@ -373,8 +400,8 @@ struct PairKeyExtract {
  * \tparam DataType  Type of data payload
  * \tparam Radix     A power of two <= 64.
  */
-template <typename ValueType, typename KeyExtract,
-          typename KeyType, unsigned Radix = 8>
+template <typename ValueType, typename KeyExtract, typename KeyType,
+          unsigned Radix = 8>
 class RadixHeap
 {
     static_assert(Log2<Radix>::floor == Log2<Radix>::ceil,
@@ -403,24 +430,27 @@ protected:
 public:
     using bucket_data_type = std::vector<value_type>;
 
-    explicit RadixHeap(KeyExtract key_extract = KeyExtract { })
-        : key_extract_(key_extract) {
+    explicit RadixHeap(KeyExtract key_extract = KeyExtract{})
+        : key_extract_(key_extract)
+    {
         initialize_();
     }
 
     // Copy
     RadixHeap(const RadixHeap&) = default;
-    RadixHeap& operator = (const RadixHeap&) = default;
+    RadixHeap& operator=(const RadixHeap&) = default;
 
     // Move
     RadixHeap(RadixHeap&&) = default;
-    RadixHeap& operator = (RadixHeap&&) = default;
+    RadixHeap& operator=(RadixHeap&&) = default;
 
-    bucket_index_type get_bucket(const value_type& value) const {
+    bucket_index_type get_bucket(const value_type& value) const
+    {
         return get_bucket_key(key_extract_(value));
     }
 
-    bucket_index_type get_bucket_key(const key_type key) const {
+    bucket_index_type get_bucket_key(const key_type key) const
+    {
         const auto enc = Encoder::rank_of_int(key);
         assert(enc >= insertion_limit_);
 
@@ -432,20 +462,22 @@ public:
     //! explicitly as the first argument. All other arguments are passed to
     //! the constructor of the element.
     template <typename... Args>
-    bucket_index_type emplace(const key_type key, Args&& ... args) {
+    bucket_index_type emplace(const key_type key, Args&&... args)
+    {
         const auto enc = Encoder::rank_of_int(key);
         assert(enc >= insertion_limit_);
         const auto idx = bucket_map_(enc, insertion_limit_);
 
-        emplace_in_bucket(idx, std::forward<Args>(args) ...);
+        emplace_in_bucket(idx, std::forward<Args>(args)...);
         return idx;
     }
 
     //! In case the first parameter can be directly casted into key_type,
     //! using this method avoid repeating it.
     template <typename... Args>
-    bucket_index_type emplace_keyfirst(const key_type key, Args&& ... args) {
-        return emplace(key, key, std::forward<Args>(args) ...);
+    bucket_index_type emplace_keyfirst(const key_type key, Args&&... args)
+    {
+        return emplace(key, key, std::forward<Args>(args)...);
     }
 
     //! Construct and insert element into bucket idx (useful if an item
@@ -453,20 +485,24 @@ public:
     //! \warning Calling any method which updates the current
     //! can invalidate this hint
     template <typename... Args>
-    void emplace_in_bucket(const bucket_index_type idx, Args&& ... args) {
-        if (buckets_data_[idx].empty()) filled_.set_bit(idx);
-        buckets_data_[idx].emplace_back(std::forward<Args>(args) ...);
+    void emplace_in_bucket(const bucket_index_type idx, Args&&... args)
+    {
+        if (buckets_data_[idx].empty())
+            filled_.set_bit(idx);
+        buckets_data_[idx].emplace_back(std::forward<Args>(args)...);
 
-        const auto enc = Encoder::rank_of_int(
-            key_extract_(buckets_data_[idx].back()));
-        if (mins_[idx] > enc) mins_[idx] = enc;
+        const auto enc =
+            Encoder::rank_of_int(key_extract_(buckets_data_[idx].back()));
+        if (mins_[idx] > enc)
+            mins_[idx] = enc;
         assert(idx == bucket_map_(enc, insertion_limit_));
 
         size_++;
     }
 
     //! Insert element with priority key
-    bucket_index_type push(const value_type& value) {
+    bucket_index_type push(const value_type& value)
+    {
         const auto enc = Encoder::rank_of_int(key_extract_(value));
         assert(enc >= insertion_limit_);
 
@@ -481,32 +517,38 @@ public:
     //! was inserted into the same bucket directly before)
     //! \warning Calling any method which updates the current
     //! can invalidate this hint
-    void push_to_bucket(const bucket_index_type idx, const value_type& value) {
+    void push_to_bucket(const bucket_index_type idx, const value_type& value)
+    {
         const auto enc = Encoder::rank_of_int(key_extract_(value));
 
         assert(enc >= insertion_limit_);
         assert(idx == get_bucket(value));
 
-        if (buckets_data_[idx].empty()) filled_.set_bit(idx);
+        if (buckets_data_[idx].empty())
+            filled_.set_bit(idx);
         buckets_data_[idx].push_back(value);
 
-        if (mins_[idx] > enc) mins_[idx] = enc;
+        if (mins_[idx] > enc)
+            mins_[idx] = enc;
 
         size_++;
     }
 
     //! Indicates whether size() == 0
-    bool empty() const {
+    bool empty() const
+    {
         return size() == 0;
     }
 
     //! Returns number of elements currently stored
-    size_t size() const {
+    size_t size() const
+    {
         return size_;
     }
 
     //! Returns currently smallest key without updating the insertion limit
-    key_type peak_top_key() const {
+    key_type peak_top_key() const
+    {
         assert(!empty());
         const auto first = filled_.find_lsb();
         return Encoder::int_at_rank(mins_[first]);
@@ -514,14 +556,16 @@ public:
 
     //! Returns currently smallest key and data
     //! \warning Updates insertion limit; no smaller keys can be inserted later
-    const value_type& top() {
+    const value_type& top()
+    {
         reorganize_();
         return buckets_data_[current_bucket_].back();
     }
 
     //! Removes smallest element
     //! \warning Updates insertion limit; no smaller keys can be inserted later
-    void pop() {
+    void pop()
+    {
         reorganize_();
         buckets_data_[current_bucket_].pop_back();
         if (buckets_data_[current_bucket_].empty())
@@ -533,7 +577,8 @@ public:
     //! Can be used for bulk removals and may reduce allocation overhead
     //! \warning The exchange bucket has to be empty
     //! \warning Updates insertion limit; no smaller keys can be inserted later
-    void swap_top_bucket(bucket_data_type& exchange_bucket) {
+    void swap_top_bucket(bucket_data_type& exchange_bucket)
+    {
         reorganize_();
 
         assert(exchange_bucket.empty());
@@ -544,16 +589,18 @@ public:
     }
 
     //! Clears all internal queues and resets insertion limit
-    void clear() {
-        for (auto& x : buckets_data_) x.clear();
+    void clear()
+    {
+        for (auto& x : buckets_data_)
+            x.clear();
         initialize_();
     }
 
 protected:
     KeyExtract key_extract_;
-    size_t size_ { 0 };
-    ranked_key_type insertion_limit_{ 0 };
-    size_t current_bucket_{ 0 };
+    size_t size_{0};
+    ranked_key_type insertion_limit_{0};
+    size_t current_bucket_{0};
 
     bucket_map_type bucket_map_;
 
@@ -562,7 +609,8 @@ protected:
     std::array<ranked_key_type, num_buckets> mins_;
     radix_heap_detail::BitArray<num_buckets> filled_;
 
-    void initialize_() {
+    void initialize_()
+    {
         size_ = 0;
         insertion_limit_ = std::numeric_limits<ranked_key_type>::min();
         current_bucket_ = 0;
@@ -573,11 +621,13 @@ protected:
         filled_.clear_all();
     }
 
-    void reorganize_() {
+    void reorganize_()
+    {
         assert(!empty());
 
         // nothing do to if we already know a suited bucket
-        if (TLX_LIKELY(!buckets_data_[current_bucket_].empty())) {
+        if (TLX_LIKELY(!buckets_data_[current_bucket_].empty()))
+        {
             assert(current_bucket_ < Radix);
             return;
         }
@@ -592,7 +642,8 @@ protected:
         {
             assert(first_non_empty < num_buckets);
 
-            for (size_t i = 0; i < first_non_empty; i++) {
+            for (size_t i = 0; i < first_non_empty; i++)
+            {
                 assert(buckets_data_[i].empty());
                 assert(mins_[i] == std::numeric_limits<ranked_key_type>::max());
             }
@@ -601,7 +652,8 @@ protected:
         }
 #endif
 
-        if (TLX_LIKELY(first_non_empty < Radix)) {
+        if (TLX_LIKELY(first_non_empty < Radix))
+        {
             // the first_non_empty non-empty bucket belongs to the smallest row
             // it hence contains only one key and we do not need to reorganise
             current_bucket_ = first_non_empty;
@@ -617,18 +669,21 @@ protected:
 
         auto& data_source = buckets_data_[first_non_empty];
 
-        for (auto& x : data_source) {
+        for (auto& x : data_source)
+        {
             const ranked_key_type key = Encoder::rank_of_int(key_extract_(x));
             assert(key >= mins_[first_non_empty]);
-            assert(first_non_empty == mins_.size() - 1
-                   || key < mins_[first_non_empty + 1]);
+            assert(first_non_empty == mins_.size() - 1 ||
+                   key < mins_[first_non_empty + 1]);
             const auto idx = bucket_map_(key, insertion_limit_);
             assert(idx < first_non_empty);
 
             // insert into bucket
-            if (buckets_data_[idx].empty()) filled_.set_bit(idx);
+            if (buckets_data_[idx].empty())
+                filled_.set_bit(idx);
             buckets_data_[idx].push_back(std::move(x));
-            if (mins_[idx] > key) mins_[idx] = key;
+            if (mins_[idx] > key)
+                mins_[idx] = key;
         }
 
         data_source.clear();
@@ -650,14 +705,12 @@ protected:
  * Refer to RadixHeap for description of parameters.
  */
 template <typename DataType, unsigned Radix = 8, typename KeyExtract = void>
-auto make_radix_heap(KeyExtract&& key_extract)->
-RadixHeap<DataType, KeyExtract,
-          decltype(key_extract(std::declval<DataType>())), Radix> {
-    return (RadixHeap<DataType,
-                      KeyExtract,
-                      decltype(key_extract(DataType{ })), Radix> {
-                key_extract
-            });
+auto make_radix_heap(KeyExtract&& key_extract)
+    -> RadixHeap<DataType, KeyExtract,
+                 decltype(key_extract(std::declval<DataType>())), Radix>
+{
+    return (RadixHeap<DataType, KeyExtract, decltype(key_extract(DataType{})),
+                      Radix>{key_extract});
 }
 
 /*!
@@ -666,11 +719,10 @@ RadixHeap<DataType, KeyExtract,
  * implemented with std::pair.
  */
 template <typename KeyType, typename DataType, unsigned Radix = 8>
-using RadixHeapPair = RadixHeap<
-    std::pair<KeyType, DataType>,
-    radix_heap_detail::PairKeyExtract<KeyType, DataType>,
-    KeyType, Radix
-    >;
+using RadixHeapPair =
+    RadixHeap<std::pair<KeyType, DataType>,
+              radix_heap_detail::PairKeyExtract<KeyType, DataType>, KeyType,
+              Radix>;
 
 //! \}
 

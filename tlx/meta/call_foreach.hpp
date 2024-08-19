@@ -26,17 +26,18 @@ namespace meta_detail {
 
 //! helper for call_foreach: base case
 template <typename Functor, typename Arg>
-void call_foreach_impl(Functor&& f, Arg&& arg) {
+void call_foreach_impl(Functor&& f, Arg&& arg)
+{
     std::forward<Functor>(f)(std::forward<Arg>(arg));
 }
 
 //! helper for call_foreach: general recursive case
 template <typename Functor, typename Arg, typename... MoreArgs>
-void call_foreach_impl(
-    Functor&& f, Arg&& arg, MoreArgs&& ... rest) {
+void call_foreach_impl(Functor&& f, Arg&& arg, MoreArgs&&... rest)
+{
     std::forward<Functor>(f)(std::forward<Arg>(arg));
-    call_foreach_impl(
-        std::forward<Functor>(f), std::forward<MoreArgs>(rest) ...);
+    call_foreach_impl(std::forward<Functor>(f),
+                      std::forward<MoreArgs>(rest)...);
 }
 
 } // namespace meta_detail
@@ -44,9 +45,10 @@ void call_foreach_impl(
 //! Call a generic functor (like a generic lambda) for each variadic template
 //! argument.
 template <typename Functor, typename... Args>
-void call_foreach(Functor&& f, Args&& ... args) {
-    meta_detail::call_foreach_impl(
-        std::forward<Functor>(f), std::forward<Args>(args) ...);
+void call_foreach(Functor&& f, Args&&... args)
+{
+    meta_detail::call_foreach_impl(std::forward<Functor>(f),
+                                   std::forward<Args>(args)...);
 }
 
 //! \}

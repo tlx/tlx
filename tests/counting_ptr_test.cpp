@@ -14,18 +14,23 @@
 static unsigned int count_deletes = 0;
 
 // derive from counted_object to include reference counter
-struct MyIntegerRC : public tlx::ReferenceCounter {
-
+struct MyIntegerRC : public tlx::ReferenceCounter
+{
     //! some value
     int i;
 
-    explicit MyIntegerRC(int _i) : i(_i) { }
+    explicit MyIntegerRC(int _i) : i(_i)
+    {
+    }
 
     //! default copy constructor for unify()
     MyIntegerRC(const MyIntegerRC&) = default;
 
     // count number of destructor calls
-    ~MyIntegerRC() { ++count_deletes; }
+    ~MyIntegerRC()
+    {
+        ++count_deletes;
+    }
 };
 
 using IntegerPtr = tlx::CountingPtr<MyIntegerRC>;
@@ -33,12 +38,13 @@ using IntegerCPtr = tlx::CountingPtr<const MyIntegerRC>;
 
 template class tlx::CountingPtr<MyIntegerRC>;
 
-static IntegerPtr MakeIntegerPtr() {
+static IntegerPtr MakeIntegerPtr()
+{
     return tlx::make_counting<MyIntegerRC>(24);
 }
 
-int main() {
-
+int main()
+{
     count_deletes = 0;
     {
         {
@@ -51,7 +57,7 @@ int main() {
             die_unless(i1->unique());
 
             // make pointer sharing same object
-            IntegerPtr i2 = i1; // NOLINT
+            IntegerPtr i2 = i1;
 
             die_unequal(42, i2->i);
             die_unless(!i1->unique());

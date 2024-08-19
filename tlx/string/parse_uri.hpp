@@ -23,23 +23,27 @@ namespace tlx {
  * parts path, query_string, and fragment. The parts are returned as
  * tlx::string_views to avoid copying data.
  */
-static inline
-void parse_uri(const char* uri, tlx::string_view* path,
-               tlx::string_view* query_string, tlx::string_view* fragment) {
+static inline void parse_uri(const char* uri, tlx::string_view* path,
+                             tlx::string_view* query_string,
+                             tlx::string_view* fragment)
+{
     const char* c = uri;
 
     // find path part
     const char* begin = c;
-    while (!(*c == '?' || *c == '#' || *c == 0)) {
+    while (!(*c == '?' || *c == '#' || *c == 0))
+    {
         ++c;
     }
     *path = tlx::string_view(begin, c - begin);
 
     // find query string
     begin = c;
-    if (*c == '?') {
+    if (*c == '?')
+    {
         begin = ++c;
-        while (!(*c == '#' || *c == 0)) {
+        while (!(*c == '#' || *c == 0))
+        {
             ++c;
         }
     }
@@ -47,9 +51,11 @@ void parse_uri(const char* uri, tlx::string_view* path,
 
     // find fragment
     begin = c;
-    if (*c == '#') {
+    if (*c == '#')
+    {
         begin = ++c;
-        while (*c != 0) {
+        while (*c != 0)
+        {
             ++c;
         }
     }
@@ -61,9 +67,10 @@ void parse_uri(const char* uri, tlx::string_view* path,
  * parts path, query_string, and fragment. The parts are returned as
  * tlx::string_views to avoid copying data.
  */
-static inline
-void parse_uri(const std::string& uri, tlx::string_view* path,
-               tlx::string_view* query_string, tlx::string_view* fragment) {
+static inline void parse_uri(const std::string& uri, tlx::string_view* path,
+                             tlx::string_view* query_string,
+                             tlx::string_view* fragment)
+{
     return parse_uri(uri.c_str(), path, query_string, fragment);
 }
 

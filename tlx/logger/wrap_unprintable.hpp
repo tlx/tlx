@@ -12,7 +12,6 @@
 #define TLX_LOGGER_WRAP_UNPRINTABLE_HEADER
 
 #include <tlx/meta/enable_if.hpp>
-
 #include <ostream>
 #include <utility>
 
@@ -21,19 +20,24 @@ namespace tlx {
 //! SFINAE magic helper for wrap_unprintable()
 template <typename, typename = void>
 struct has_ostream_operator
-{ static constexpr bool value = false; };
+{
+    static constexpr bool value = false;
+};
 
 template <typename Type>
-struct has_ostream_operator<
-    Type, decltype(
-        std::declval<std::ostream&>() << std::declval<Type const&>(), void())>
-{ static constexpr bool value = true; };
+struct has_ostream_operator<Type, decltype(std::declval<std::ostream&>()
+                                               << std::declval<const Type&>(),
+                                           void())>
+{
+    static constexpr bool value = true;
+};
 
 //! SFINAE magic to return "<unprintable>" instead if the value HAS NO ostream
 //! operator << available.  Identical to shorter wrap_unp().
 template <typename Type>
 typename enable_if<!has_ostream_operator<Type>::value, const char*>::type
-wrap_unprintable(Type, const char* instead = "<unprintable>") {
+wrap_unprintable(Type, const char* instead = "<unprintable>")
+{
     return instead;
 }
 
@@ -41,7 +45,8 @@ wrap_unprintable(Type, const char* instead = "<unprintable>") {
 //! available.  Identical to shorter wrap_unp().
 template <typename Type>
 typename enable_if<has_ostream_operator<Type>::value, Type>::type
-wrap_unprintable(Type value, const char* = nullptr) {
+wrap_unprintable(Type value, const char* = nullptr)
+{
     return value;
 }
 
@@ -49,15 +54,17 @@ wrap_unprintable(Type value, const char* = nullptr) {
 //! operator << available.  Shortened name of wrap_unprintable()
 template <typename Type>
 typename enable_if<!has_ostream_operator<Type>::value, const char*>::type
-wrap_unp(Type, const char* instead = "<unprintable>") {
+wrap_unp(Type, const char* instead = "<unprintable>")
+{
     return instead;
 }
 
 //! SFINAE magic to return the value if the value HAS a ostream operator <<
 //! available.  Shortened name of wrap_unprintable()
 template <typename Type>
-typename enable_if<has_ostream_operator<Type>::value, Type>::type
-wrap_unp(Type value, const char* = nullptr) {
+typename enable_if<has_ostream_operator<Type>::value, Type>::type wrap_unp(
+    Type value, const char* = nullptr)
+{
     return value;
 }
 

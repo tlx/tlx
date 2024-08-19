@@ -9,15 +9,17 @@
  ******************************************************************************/
 
 #include <tlx/timestamp.hpp>
-
 #include <chrono>
 
 namespace tlx {
 
-double timestamp() {
+double timestamp()
+{
     return static_cast<double>(
-        std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::steady_clock::now().time_since_epoch()).count()) / 1e6;
+               std::chrono::duration_cast<std::chrono::microseconds>(
+                   std::chrono::steady_clock::now().time_since_epoch())
+                   .count()) /
+           1e6;
 }
 
 } // namespace tlx

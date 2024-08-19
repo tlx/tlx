@@ -11,10 +11,9 @@
 #ifndef TLX_META_VMAP_FOR_RANGE_HEADER
 #define TLX_META_VMAP_FOR_RANGE_HEADER
 
+#include <tlx/meta/static_index.hpp>
 #include <tuple>
 #include <utility>
-
-#include <tlx/meta/static_index.hpp>
 
 namespace tlx {
 
@@ -35,7 +34,8 @@ template <size_t Index, size_t Size, typename Functor>
 class VMapForRangeImpl
 {
 public:
-    static auto call(Functor&& f) {
+    static auto call(Functor&& f)
+    {
         // call this index before recursion
         auto x = std::forward<Functor>(f)(StaticIndex<Index>());
         return std::tuple_cat(
@@ -50,7 +50,8 @@ template <size_t Index, typename Functor>
 class VMapForRangeImpl<Index, 0, Functor>
 {
 public:
-    static auto call(Functor&& /* f */) {
+    static auto call(Functor&& /* f */)
+    {
         return std::tuple<>();
     }
 };
@@ -59,14 +60,16 @@ public:
 
 //! Vmap a generic functor (like a generic lambda) for the integers [0,Size).
 template <size_t Size, typename Functor>
-auto vmap_for_range(Functor&& f) {
+auto vmap_for_range(Functor&& f)
+{
     return meta_detail::VMapForRangeImpl<0, Size, Functor>::call(
         std::forward<Functor>(f));
 }
 
 //! Vmap a generic functor (like a generic lambda) for the integers [Begin,End).
 template <size_t Begin, size_t End, typename Functor>
-auto vmap_for_range(Functor&& f) {
+auto vmap_for_range(Functor&& f)
+{
     return meta_detail::VMapForRangeImpl<Begin, End - Begin, Functor>::call(
         std::forward<Functor>(f));
 }

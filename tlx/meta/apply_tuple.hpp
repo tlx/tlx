@@ -11,10 +11,9 @@
 #ifndef TLX_META_APPLY_TUPLE_HEADER
 #define TLX_META_APPLY_TUPLE_HEADER
 
+#include <tlx/meta/index_sequence.hpp>
 #include <tuple>
 #include <utility>
-
-#include <tlx/meta/index_sequence.hpp>
 
 namespace tlx {
 
@@ -28,20 +27,21 @@ namespace tlx {
 namespace meta_detail {
 
 template <typename Functor, typename Tuple, std::size_t... Is>
-auto apply_tuple_impl(Functor&& f, Tuple&& t, index_sequence<Is...>) {
-    return std::forward<Functor>(f)(
-        std::get<Is>(std::forward<Tuple>(t)) ...);
+auto apply_tuple_impl(Functor&& f, Tuple&& t, index_sequence<Is...>)
+{
+    return std::forward<Functor>(f)(std::get<Is>(std::forward<Tuple>(t))...);
 }
 
 } // namespace meta_detail
 
 //! Call the functor f with the contents of t as arguments.
 template <typename Functor, typename Tuple>
-auto apply_tuple(Functor&& f, Tuple&& t) {
+auto apply_tuple(Functor&& f, Tuple&& t)
+{
     using Indices = make_index_sequence<
         std::tuple_size<typename std::decay<Tuple>::type>::value>;
-    return meta_detail::apply_tuple_impl(
-        std::forward<Functor>(f), std::forward<Tuple>(t), Indices());
+    return meta_detail::apply_tuple_impl(std::forward<Functor>(f),
+                                         std::forward<Tuple>(t), Indices());
 }
 
 //! \}

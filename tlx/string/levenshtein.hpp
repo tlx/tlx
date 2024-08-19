@@ -13,7 +13,6 @@
 
 #include <tlx/simple_vector.hpp>
 #include <tlx/string/to_lower.hpp>
-
 #include <algorithm>
 #include <cstring>
 #include <string>
@@ -29,24 +28,30 @@ namespace tlx {
  * Standard parameters to levenshtein distance function. Costs are all 1 and
  * characters are compared directly.
  */
-struct LevenshteinStandardParameters {
+struct LevenshteinStandardParameters
+{
     static const unsigned int cost_insert_delete = 1;
     static const unsigned int cost_replace = 1;
 
     static inline bool char_equal(const char& a, const char& b)
-    { return (a == b); }
+    {
+        return (a == b);
+    }
 };
 
 /*!
  * Standard parameters to Levenshtein distance function. Costs are all 1 and
  * characters are compared case-insensitively.
  */
-struct LevenshteinStandardICaseParameters {
+struct LevenshteinStandardICaseParameters
+{
     static const unsigned int cost_insert_delete = 1;
     static const unsigned int cost_replace = 1;
 
     static inline bool char_equal(const char& a, const char& b)
-    { return to_lower(a) == to_lower(b); }
+    {
+        return to_lower(a) == to_lower(b);
+    }
 };
 
 /*!
@@ -63,16 +68,19 @@ struct LevenshteinStandardICaseParameters {
  * \return       Levenshtein distance
  */
 template <typename Param>
-static inline
-size_t levenshtein_algorithm(const char* a, size_t a_size,
-                             const char* b, size_t b_size) {
+static inline size_t levenshtein_algorithm(const char* a, size_t a_size,
+                                           const char* b, size_t b_size)
+{
     // if one of the strings is zero, then all characters of the other must
     // be inserted.
-    if (a_size == 0) return b_size * Param::cost_insert_delete;
-    if (b_size == 0) return a_size * Param::cost_insert_delete;
+    if (a_size == 0)
+        return b_size * Param::cost_insert_delete;
+    if (b_size == 0)
+        return a_size * Param::cost_insert_delete;
 
     // make "as" the longer string and "bs" the shorter.
-    if (a_size < b_size) {
+    if (a_size < b_size)
+    {
         std::swap(a, b);
         std::swap(a_size, b_size);
     }
@@ -82,7 +90,8 @@ size_t levenshtein_algorithm(const char* a, size_t a_size,
     simple_vector<size_t> thisrow(a_size + 1);
 
     // fill this row with ascending ordinals.
-    for (size_t i = 0; i < a_size + 1; i++) {
+    for (size_t i = 0; i < a_size + 1; i++)
+    {
         thisrow[i] = i;
     }
 
@@ -105,10 +114,9 @@ size_t levenshtein_algorithm(const char* a, size_t a_size,
                     // top plus delete cost
                     lastrow[i] + Param::cost_insert_delete),
                 // top left plus replacement cost
-                lastrow[i - 1] + (
-                    Param::char_equal(a[i - 1], b[j - 1])
-                    ? 0 : Param::cost_replace)
-                );
+                lastrow[i - 1] + (Param::char_equal(a[i - 1], b[j - 1]) ?
+                                      0 :
+                                      Param::cost_replace));
         }
     }
 
@@ -125,7 +133,8 @@ size_t levenshtein_algorithm(const char* a, size_t a_size,
  * \param b     second string
  * \return      Levenshtein distance
  */
-static inline size_t levenshtein(const char* a, const char* b) {
+static inline size_t levenshtein(const char* a, const char* b)
+{
     return levenshtein_algorithm<LevenshteinStandardParameters>(
         a, std::strlen(a), b, std::strlen(b));
 }
@@ -139,7 +148,8 @@ static inline size_t levenshtein(const char* a, const char* b) {
  * \param b     second string
  * \return      Levenshtein distance
  */
-static inline size_t levenshtein_icase(const char* a, const char* b) {
+static inline size_t levenshtein_icase(const char* a, const char* b)
+{
     return levenshtein_algorithm<LevenshteinStandardICaseParameters>(
         a, std::strlen(a), b, std::strlen(b));
 }
@@ -153,7 +163,8 @@ static inline size_t levenshtein_icase(const char* a, const char* b) {
  * \param b     second string
  * \return      Levenshtein distance
  */
-static inline size_t levenshtein(const std::string& a, const std::string& b) {
+static inline size_t levenshtein(const std::string& a, const std::string& b)
+{
     return levenshtein_algorithm<LevenshteinStandardParameters>(
         a.data(), a.size(), b.data(), b.size());
 }
@@ -167,8 +178,9 @@ static inline size_t levenshtein(const std::string& a, const std::string& b) {
  * \param b     second string
  * \return      Levenshtein distance
  */
-static inline
-size_t levenshtein_icase(const std::string& a, const std::string& b) {
+static inline size_t levenshtein_icase(const std::string& a,
+                                       const std::string& b)
+{
     return levenshtein_algorithm<LevenshteinStandardICaseParameters>(
         a.data(), a.size(), b.data(), b.size());
 }

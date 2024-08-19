@@ -36,20 +36,24 @@ public:
     //! start new polynomial regression calculation
     PolynomialRegression(size_t order)
         : order_(order), size_(0), X_(2 * order + 1, 0), Y_(order + 1, 0)
-    { }
+    {
+    }
 
     //! number of points
-    size_t size() const {
+    size_t size() const
+    {
         return size_;
     }
 
     //! 2D point
-    struct Point {
+    struct Point
+    {
         Type x, y;
     };
 
     //! add point. this invalidates cached coefficients until next evaluate()
-    PolynomialRegression& add(const Type& x, const Type& y) {
+    PolynomialRegression& add(const Type& x, const Type& y)
+    {
         X_[0] += 1.0;
         if (1 < 2 * order_ + 1)
             X_[1] += x;
@@ -67,7 +71,7 @@ public:
             Y_[i] += Type(std::pow(x, i)) * y;
 
         if (WithStore)
-            points_.emplace_back(Point { x, y });
+            points_.emplace_back(Point{x, y});
 
         ++size_;
         coefficients_.clear();
@@ -75,25 +79,30 @@ public:
     }
 
     //! return a point. Only available if WithStore is true.
-    const Point& point(size_t i) {
+    const Point& point(size_t i)
+    {
         return points_[i];
     }
 
     //! polynomial stored as the coefficients of
     //! \f$ a_0+a_1 x^1+a_2 x^2+\cdots+a_n x^n \f$
-    struct Coefficients : public std::vector<Type> {
+    struct Coefficients : public std::vector<Type>
+    {
         //! evaluate polynomial at x using Horner schema
-        Type evaluate(const Type& x) const {
+        Type evaluate(const Type& x) const
+        {
             Type result = 0.0;
-            for (size_t i = this->size(); i != 0; ) {
-                result = result * x + this->operator [] (--i);
+            for (size_t i = this->size(); i != 0;)
+            {
+                result = result * x + this->operator[](--i);
             }
             return result;
         }
     };
 
     //! get r^2. Only available if WithStore is true.
-    Type r_square() {
+    Type r_square()
+    {
         if (size_ == 0 || !WithStore)
             return NAN;
 
@@ -108,7 +117,8 @@ public:
         // values and the values of y predicted by the polynomial
         Type ss_error = 0.0;
 
-        for (const Point& p : points_) {
+        for (const Point& p : points_)
+        {
             ss_total += (p.y - y_mean) * (p.y - y_mean);
             Type y = evaluate(p.x);
             ss_error += (p.y - y) * (p.y - y);
@@ -119,13 +129,16 @@ public:
     }
 
     //! returns value of y predicted by the polynomial for a given value of x
-    Type evaluate(const Type& x) {
+    Type evaluate(const Type& x)
+    {
         return coefficients().evaluate(x);
     }
 
     //! return coefficients vector
-    const Coefficients& coefficients() {
-        if (coefficients_.empty()) {
+    const Coefficients& coefficients()
+    {
+        if (coefficients_.empty())
+        {
             fit_coefficients();
         }
         return coefficients_;
@@ -151,8 +164,8 @@ protected:
     Coefficients coefficients_;
 
     //! polynomial regression by inverting a Vandermonde matrix.
-    void fit_coefficients() {
-
+    void fit_coefficients()
+    {
         coefficients_.clear();
 
         if (size_ == 0)
@@ -163,22 +176,29 @@ protected:
         // B = normal augmented matrix that stores the equations.
         std::vector<Type> B(np1 * np2, 0);
 
-        for (size_t i = 0; i <= order_; ++i) {
-            for (size_t j = 0; j <= order_; ++j) {
+        for (size_t i = 0; i <= order_; ++i)
+        {
+            for (size_t j = 0; j <= order_; ++j)
+            {
                 B[i * np2 + j] = X_[i + j];
             }
         }
 
         // load values of Y_ as last column of B
-        for (size_t i = 0; i <= order_; ++i) {
+        for (size_t i = 0; i <= order_; ++i)
+        {
             B[i * np2 + np1] = Y_[i];
         }
 
         // pivotization of the B matrix.
-        for (size_t i = 0; i < order_ + 1; ++i) {
-            for (size_t k = i + 1; k < order_ + 1; ++k) {
-                if (B[i * np2 + i] < B[k * np2 + i]) {
-                    for (size_t j = 0; j <= order_ + 1; ++j) {
+        for (size_t i = 0; i < order_ + 1; ++i)
+        {
+            for (size_t k = i + 1; k < order_ + 1; ++k)
+            {
+                if (B[i * np2 + i] < B[k * np2 + i])
+                {
+                    for (size_t j = 0; j <= order_ + 1; ++j)
+                    {
                         std::swap(B[i * np2 + j], B[k * np2 + j]);
                     }
                 }
@@ -186,10 +206,13 @@ protected:
         }
 
         // perform Gaussian elimination.
-        for (size_t i = 0; i < order_; ++i) {
-            for (size_t k = i + 1; k < order_ + 1; ++k) {
+        for (size_t i = 0; i < order_; ++i)
+        {
+            for (size_t k = i + 1; k < order_ + 1; ++k)
+            {
                 Type t = B[k * np2 + i] / B[i * np2 + i];
-                for (size_t j = 0; j <= order_ + 1; ++j) {
+                for (size_t j = 0; j <= order_ + 1; ++j)
+                {
                     B[k * np2 + j] -= t * B[i * np2 + j];
                 }
             }
@@ -197,10 +220,12 @@ protected:
 
         // back substitution to calculate final coefficients.
         coefficients_.resize(np1);
-        for (size_t i = order_ + 1; i != 0; ) {
+        for (size_t i = order_ + 1; i != 0;)
+        {
             --i;
             coefficients_[i] = B[i * np2 + order_ + 1];
-            for (size_t j = 0; j < order_ + 1; ++j) {
+            for (size_t j = 0; j < order_ + 1; ++j)
+            {
                 if (j != i)
                     coefficients_[i] -= B[i * np2 + j] * coefficients_[j];
             }

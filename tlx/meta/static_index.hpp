@@ -21,12 +21,16 @@ namespace tlx {
 //! Helper for call_foreach_with_index() to save the index as a compile-time
 //! index
 template <size_t Index>
-struct StaticIndex {
+struct StaticIndex
+{
     //! compile-time index
     static constexpr size_t index = Index;
 
     //! implicit conversion to a run-time index.
-    operator size_t () const { return index; }
+    operator size_t() const
+    {
+        return index;
+    }
 };
 
 //! \}

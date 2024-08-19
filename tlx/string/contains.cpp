@@ -12,15 +12,18 @@
 
 namespace tlx {
 
-bool contains(const std::string& str, const std::string& pattern) {
+bool contains(const std::string& str, const std::string& pattern)
+{
     return str.find(pattern) != std::string::npos;
 }
 
-bool contains(const std::string& str, const char* pattern) {
+bool contains(const std::string& str, const char* pattern)
+{
     return str.find(pattern) != std::string::npos;
 }
 
-bool contains(const std::string& str, const char ch) {
+bool contains(const std::string& str, const char ch)
+{
     return str.find(ch) != std::string::npos;
 }
 

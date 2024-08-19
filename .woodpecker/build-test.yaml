@@ -1,0 +1,157 @@
+when:
+  - event: pull_request
+  - event: manual
+
+matrix:
+  include:
+    - IMAGE:        ubuntu-14.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-14.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-16.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-16.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-16.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-16.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-18.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-18.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:    -m32
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-18.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-18.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:    -fsanitize=address
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-20.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:    -m32
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-20.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-20.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-20.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-22.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:    -m32
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-22.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:
+      CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
+
+    - IMAGE:        ubuntu-22.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-22.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-22.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:    -DTLX_USE_CLANG_TIDY=ON
+      CMAKE_FLAGS:
+
+steps:
+  - name: build
+    image: docker.io/bingmann/dev:${IMAGE}
+    commands:
+      - cmake --version
+      - mkdir build; cd build
+      - cmake ${CMAKE_FLAGS}
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+          -DCMAKE_C_COMPILER=${C_COMPILER}
+          -DCMAKE_CXX_COMPILER=${CXX_COMPILER}
+          -DCMAKE_CXX_FLAGS=${CXX_FLAGS}
+          -DTLX_WARNINGS_ARE_ERRORS=ON
+          -DTLX_BUILD_TESTS=ON
+          -DTLX_TRY_COMPILE_HEADERS=ON
+          ..
+      - ninja
+      - ninja test

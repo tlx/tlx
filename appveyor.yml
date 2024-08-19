@@ -2,33 +2,33 @@ version: 0.1.{build}
 pull_requests:
   do_not_increment_build_number: true
 image:
-- Visual Studio 2017
+  - Visual Studio 2017
 configuration:
-- Debug
-- Release
+  - Debug
+  - Release
 platform:
-- x64
+  - x64
 clone_folder: c:\dev\tlx
 
 init:
-- set arch=
-- if "%PLATFORM%"=="x64" (set arch= Win64)
-- echo %APPVEYOR_BUILD_WORKER_IMAGE%
-- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" (set generator="Visual Studio 15 2017%arch%")
-- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (set generator="Visual Studio 14 2015%arch%")
-- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" (set generator="Visual Studio 12 2013%arch%")
-- echo %generator%
-- set more_tests=OFF
-- if "%CONFIGURATION%"=="Release" (set more_tests=ON)
+  - set arch=
+  - if "%PLATFORM%"=="x64" (set arch= Win64)
+  - echo %APPVEYOR_BUILD_WORKER_IMAGE%
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" (set generator="Visual Studio 15 2017%arch%")
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (set generator="Visual Studio 14 2015%arch%")
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" (set generator="Visual Studio 12 2013%arch%")
+  - echo %generator%
+  - set more_tests=OFF
+  - if "%CONFIGURATION%"=="Release" (set more_tests=ON)
 
 before_build:
-- cmd: |-
-    echo Running cmake for %generator%...
-    echo %CONFIGURATION%
-    cd c:\dev\tlx
-    md build
-    cd build
-    cmake -G %generator% -DTLX_BUILD_TESTS=ON -DTLX_TRY_COMPILE_HEADERS=ON -DTLX_MORE_TESTS=%more_tests% ..
+  - cmd: |-
+      echo Running cmake for %generator%...
+      echo %CONFIGURATION%
+      cd c:\dev\tlx
+      md build
+      cd build
+      cmake -G %generator% -DTLX_BUILD_TESTS=ON -DTLX_TRY_COMPILE_HEADERS=ON -DTLX_MORE_TESTS=%more_tests% ..
 
 build:
   project: c:\dev\tlx\build\tlx.sln
@@ -36,4 +36,4 @@ build:
   verbosity: minimal
 
 test_script:
-- cmd: ctest -V --build-config %CONFIGURATION%
+  - cmd: ctest -V --build-config %CONFIGURATION%

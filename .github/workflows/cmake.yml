@@ -1,8 +1,8 @@
 name: Compile and Test
 
 on:
-  push:
   pull_request:
+  workflow_dispatch:
   release:
 
 jobs:

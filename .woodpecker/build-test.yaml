@@ -130,7 +130,7 @@ matrix:
       BUILD_TYPE:   Release
       C_COMPILER:   clang
       CXX_COMPILER: clang++
-      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CXX_FLAGS:    -fsanitize=address
       CMAKE_FLAGS:
 
     - IMAGE:        ubuntu-24.04
@@ -158,7 +158,7 @@ matrix:
       BUILD_TYPE:   Release
       C_COMPILER:   clang
       CXX_COMPILER: clang++
-      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CXX_FLAGS:    -fsanitize=undefined
       CMAKE_FLAGS:
 
     - IMAGE:        debian-9
@@ -228,8 +228,8 @@ matrix:
       BUILD_TYPE:   Release
       C_COMPILER:   gcc
       CXX_COMPILER: g++
-      CXX_FLAGS:
-      CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
+      CXX_FLAGS:    -fsanitize=address
+      CMAKE_FLAGS:
 
     - IMAGE:        debian-11
       BUILD_TYPE:   Debug
@@ -242,7 +242,7 @@ matrix:
       BUILD_TYPE:   Release
       C_COMPILER:   clang
       CXX_COMPILER: clang++
-      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG -DTLX_MORE_TESTS=ON
       CMAKE_FLAGS:
 
     - IMAGE:        debian-12
@@ -256,8 +256,8 @@ matrix:
       BUILD_TYPE:   Release
       C_COMPILER:   gcc
       CXX_COMPILER: g++
-      CXX_FLAGS:
-      CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CMAKE_FLAGS:
 
     - IMAGE:        debian-12
       BUILD_TYPE:   Debug
@@ -270,7 +270,7 @@ matrix:
       BUILD_TYPE:   Release
       C_COMPILER:   clang
       CXX_COMPILER: clang++
-      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG -fsanitize=address
       CMAKE_FLAGS:
 
 steps:
@@ -281,10 +281,10 @@ steps:
       - mkdir build && cd build
       - cmake ${CMAKE_FLAGS}
           -G Ninja
-          -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-          -DCMAKE_CXX_COMPILER=${CXX_COMPILER}
-          -DCMAKE_CXX_FLAGS=${CXX_FLAGS}
-          -DCMAKE_C_COMPILER=${C_COMPILER}
+          -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
+          -DCMAKE_CXX_COMPILER="${CXX_COMPILER}"
+          -DCMAKE_CXX_FLAGS="${CXX_FLAGS}"
+          -DCMAKE_C_COMPILER="${C_COMPILER}"
           -DTLX_BUILD_TESTS=ON
           -DTLX_TRY_COMPILE_HEADERS=ON
           -DTLX_WARNINGS_ARE_ERRORS=ON

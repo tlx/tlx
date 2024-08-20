@@ -13,6 +13,8 @@
 
 #include <tlx/container/lru_cache.hpp>
 #include <tlx/die.hpp>
+#include <cstddef>
+#include <stdexcept>
 
 namespace tlx {
 

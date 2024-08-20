@@ -9,6 +9,8 @@
  ******************************************************************************/
 
 #include <tlx/string/split_words.hpp>
+#include <string>
+#include <vector>
 
 namespace tlx {
 

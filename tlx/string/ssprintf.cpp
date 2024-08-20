@@ -11,6 +11,7 @@
 #include <tlx/string/ssprintf.hpp>
 #include <cstdarg>
 #include <cstdio>
+#include <string>
 
 namespace tlx {
 

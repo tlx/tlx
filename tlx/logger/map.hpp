@@ -13,6 +13,7 @@
 
 #include <tlx/logger/core.hpp>
 #include <map>
+#include <ostream>
 
 namespace tlx {
 

@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_HASH_SDBM_HEADER
 #define TLX_STRING_HASH_SDBM_HEADER
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 

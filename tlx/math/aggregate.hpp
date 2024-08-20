@@ -11,9 +11,9 @@
 #ifndef TLX_MATH_AGGREGATE_HEADER
 #define TLX_MATH_AGGREGATE_HEADER
 
-#include <tlx/define/likely.hpp>
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <limits>
 
 namespace tlx {

@@ -10,6 +10,7 @@
 
 #include <tlx/string/contains_word.hpp>
 #include <tlx/string/union_words.hpp>
+#include <string>
 
 namespace tlx {
 

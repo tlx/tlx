@@ -11,9 +11,7 @@
 
 #include <tlx/die.hpp>
 #include <tlx/meta/function_chain.hpp>
-#include <iostream>
 #include <string>
-#include <vector>
 
 static void test_chain_maker()
 {

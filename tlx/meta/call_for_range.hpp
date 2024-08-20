@@ -12,6 +12,7 @@
 #define TLX_META_CALL_FOR_RANGE_HEADER
 
 #include <tlx/meta/static_index.hpp>
+#include <cstddef>
 #include <utility>
 
 namespace tlx {

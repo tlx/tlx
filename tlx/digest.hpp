@@ -15,12 +15,14 @@
 //! Message Digests: MD-5, SHA-256, and SHA-512.
 
 /*[[[perl
-print "#include <$_>\n" foreach sort glob("tlx/digest/"."*.hpp");
+foreach (sort glob("tlx/digest/"."*.hpp")) {
+  print "#include <$_> // NOLINT(misc-include-cleaner)\n"
+}
 ]]]*/
-#include <tlx/digest/md5.hpp>
-#include <tlx/digest/sha1.hpp>
-#include <tlx/digest/sha256.hpp>
-#include <tlx/digest/sha512.hpp>
+#include <tlx/digest/md5.hpp>    // NOLINT(misc-include-cleaner)
+#include <tlx/digest/sha1.hpp>   // NOLINT(misc-include-cleaner)
+#include <tlx/digest/sha256.hpp> // NOLINT(misc-include-cleaner)
+#include <tlx/digest/sha512.hpp> // NOLINT(misc-include-cleaner)
 // [[[end]]]
 
 #endif // !TLX_DIGEST_HEADER

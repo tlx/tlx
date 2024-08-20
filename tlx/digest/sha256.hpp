@@ -14,6 +14,7 @@
 #ifndef TLX_DIGEST_SHA256_HEADER
 #define TLX_DIGEST_SHA256_HEADER
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 

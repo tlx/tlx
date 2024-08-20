@@ -10,6 +10,7 @@
 
 #include <tlx/string/word_wrap.hpp>
 #include <cctype>
+#include <string>
 
 namespace tlx {
 

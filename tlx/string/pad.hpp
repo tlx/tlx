@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_PAD_HEADER
 #define TLX_STRING_PAD_HEADER
 
+#include <cstddef>
 #include <string>
 
 namespace tlx {

@@ -9,7 +9,13 @@
  ******************************************************************************/
 
 #include <tlx/thread_pool.hpp>
+#include <atomic>
+#include <cassert>
+#include <cstddef>
+#include <exception>
 #include <iostream>
+#include <mutex>
+#include <utility>
 
 namespace tlx {
 

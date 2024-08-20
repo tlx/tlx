@@ -19,9 +19,8 @@
 #include <cassert>
 #include <cstddef>
 #include <functional>
-#include <istream>
+#include <iterator>
 #include <memory>
-#include <ostream>
 #include <utility>
 
 namespace tlx {

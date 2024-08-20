@@ -15,7 +15,9 @@
 #include <tlx/math/ror.hpp>
 #include <tlx/string/hexdump.hpp>
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <string>
 
 namespace tlx {
 

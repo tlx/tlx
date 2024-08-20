@@ -21,6 +21,7 @@
 #define TLX_META_FUNCTION_STACK_HEADER
 
 #include <tlx/meta/index_sequence.hpp>
+#include <cstddef>
 #include <tuple>
 
 namespace tlx {

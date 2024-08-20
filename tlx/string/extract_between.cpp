@@ -10,6 +10,7 @@
 
 #include <tlx/string/extract_between.hpp>
 #include <cstring>
+#include <string>
 
 namespace tlx {
 
@@ -36,13 +37,13 @@ static inline std::string extract_between_template(const std::string& str,
 std::string extract_between(const std::string& str, const char* sep1,
                             const char* sep2)
 {
-    return extract_between_template(str, sep1, strlen(sep1), sep2);
+    return extract_between_template(str, sep1, std::strlen(sep1), sep2);
 }
 
 std::string extract_between(const std::string& str, const char* sep1,
                             const std::string& sep2)
 {
-    return extract_between_template(str, sep1, strlen(sep1), sep2);
+    return extract_between_template(str, sep1, std::strlen(sep1), sep2);
 }
 
 std::string extract_between(const std::string& str, const std::string& sep1,

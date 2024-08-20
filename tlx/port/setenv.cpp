@@ -9,7 +9,7 @@
  ******************************************************************************/
 
 #include <tlx/port/setenv.hpp>
-#include <cstdlib>
+#include <stdlib.h>
 
 namespace tlx {
 

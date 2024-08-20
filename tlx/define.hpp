@@ -15,18 +15,20 @@
 //! Attribute macros and other defines
 
 /*[[[perl
-print "#include <$_>\n" foreach sort glob("tlx/define/"."*.hpp");
+foreach (sort glob("tlx/define/"."*.hpp")) {
+  print "#include <$_> // NOLINT(misc-include-cleaner)\n"
+}
 ]]]*/
-#include <tlx/define/attribute_always_inline.hpp>
-#include <tlx/define/attribute_fallthrough.hpp>
-#include <tlx/define/attribute_format_printf.hpp>
-#include <tlx/define/attribute_packed.hpp>
-#include <tlx/define/attribute_warn_unused_result.hpp>
-#include <tlx/define/constexpr.hpp>
-#include <tlx/define/deprecated.hpp>
-#include <tlx/define/endian.hpp>
-#include <tlx/define/likely.hpp>
-#include <tlx/define/visibility_hidden.hpp>
+#include <tlx/define/attribute_always_inline.hpp> // NOLINT(misc-include-cleaner)
+#include <tlx/define/attribute_fallthrough.hpp> // NOLINT(misc-include-cleaner)
+#include <tlx/define/attribute_format_printf.hpp> // NOLINT(misc-include-cleaner)
+#include <tlx/define/attribute_packed.hpp> // NOLINT(misc-include-cleaner)
+#include <tlx/define/attribute_warn_unused_result.hpp> // NOLINT(misc-include-cleaner)
+#include <tlx/define/constexpr.hpp>         // NOLINT(misc-include-cleaner)
+#include <tlx/define/deprecated.hpp>        // NOLINT(misc-include-cleaner)
+#include <tlx/define/endian.hpp>            // NOLINT(misc-include-cleaner)
+#include <tlx/define/likely.hpp>            // NOLINT(misc-include-cleaner)
+#include <tlx/define/visibility_hidden.hpp> // NOLINT(misc-include-cleaner)
 // [[[end]]]
 
 #endif // !TLX_DEFINE_HEADER

@@ -21,9 +21,12 @@
 #include <tlx/algorithm/merge_advance.hpp>
 #include <tlx/container/loser_tree.hpp>
 #include <tlx/container/simple_vector.hpp>
+#include <tlx/define/likely.hpp>
 #include <tlx/unused.hpp>
 #include <algorithm>
+#include <cassert>
 #include <functional>
+#include <iterator>
 #include <numeric>
 #include <utility>
 #include <vector>

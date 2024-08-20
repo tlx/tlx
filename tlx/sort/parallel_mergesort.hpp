@@ -18,19 +18,20 @@
 #ifndef TLX_SORT_PARALLEL_MERGESORT_HEADER
 #define TLX_SORT_PARALLEL_MERGESORT_HEADER
 
+#include <tlx/algorithm/multiway_merge_splitting.hpp>
+#include <tlx/algorithm/parallel_multiway_merge.hpp>
+#include <tlx/container/simple_vector.hpp>
+#include <tlx/thread_barrier_mutex.hpp>
 #include <algorithm>
+#include <cstddef>
 #include <functional>
+#include <iterator>
 #include <thread>
 #include <utility>
 
 #if defined(_OPENMP)
 #include <omp.h>
 #endif
-
-#include <tlx/algorithm/multisequence_selection.hpp>
-#include <tlx/algorithm/parallel_multiway_merge.hpp>
-#include <tlx/simple_vector.hpp>
-#include <tlx/thread_barrier_mutex.hpp>
 
 namespace tlx {
 

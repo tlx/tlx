@@ -11,6 +11,7 @@
 #ifndef TLX_CMDLINE_PARSER_HEADER
 #define TLX_CMDLINE_PARSER_HEADER
 
+#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <string>

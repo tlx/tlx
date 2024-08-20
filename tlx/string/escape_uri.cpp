@@ -10,6 +10,7 @@
 
 #include <tlx/string/escape_uri.hpp>
 #include <cstring>
+#include <string>
 
 namespace tlx {
 

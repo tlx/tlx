@@ -8,11 +8,16 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/algorithm.hpp>
+#include <tlx/algorithm/exclusive_scan.hpp>
+#include <tlx/algorithm/is_sorted_cmp.hpp>
+#include <tlx/algorithm/merge_combine.hpp>
 #include <tlx/die.hpp>
 #include <tlx/logger.hpp>
+#include <algorithm>
+#include <cstddef>
 #include <functional>
 #include <iterator>
+#include <utility>
 #include <vector>
 
 static void test_merge_combine()

@@ -9,6 +9,8 @@
  ******************************************************************************/
 
 #include <tlx/string/pad.hpp>
+#include <cstddef>
+#include <string>
 
 namespace tlx {
 

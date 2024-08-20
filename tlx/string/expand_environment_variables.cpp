@@ -12,6 +12,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
+#include <string>
 
 namespace tlx {
 

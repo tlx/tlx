@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <new>
 #include <utility>
 
 namespace tlx {
@@ -264,7 +265,7 @@ private:
             return static_cast<ValueType*>(operator new(size *
                                                         sizeof(ValueType)));
         }
-        abort();
+        std::abort();
     }
 
     static void destroy_array(ValueType* array, size_t size)
@@ -286,7 +287,7 @@ private:
             operator delete(array);
             return;
         }
-        abort();
+        std::abort();
     }
 };
 

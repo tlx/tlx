@@ -13,6 +13,7 @@
 
 #include <array>
 #include <cstddef>
+#include <type_traits>
 
 namespace tlx {
 

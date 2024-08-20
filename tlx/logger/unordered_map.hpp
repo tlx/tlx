@@ -12,6 +12,7 @@
 #define TLX_LOGGER_UNORDERED_MAP_HEADER
 
 #include <tlx/logger/core.hpp>
+#include <ostream>
 #include <unordered_map>
 
 namespace tlx {

@@ -10,6 +10,8 @@
 
 #include <tlx/string/join.hpp>
 #include <tlx/string/join_generic.hpp>
+#include <string>
+#include <vector>
 
 namespace tlx {
 

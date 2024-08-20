@@ -13,9 +13,10 @@
 #ifndef TLX_SORT_STRINGS_HEADER
 #define TLX_SORT_STRINGS_HEADER
 
-#include <tlx/sort/strings/insertion_sort.hpp>
-#include <tlx/sort/strings/multikey_quicksort.hpp>
 #include <tlx/sort/strings/radix_sort.hpp>
+#include <tlx/sort/strings/string_ptr.hpp>
+#include <tlx/sort/strings/string_set.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>

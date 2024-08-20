@@ -10,9 +10,10 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/algorithm/multiway_merge_splitting.hpp>
 #include <tlx/die.hpp>
-#include <tlx/logger.hpp>
 #include <tlx/sort/parallel_mergesort.hpp>
+#include <algorithm>
 #include <functional>
 #include <iostream>
 #include <random>

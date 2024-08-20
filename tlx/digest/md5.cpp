@@ -14,7 +14,9 @@
 #include <tlx/digest/md5.hpp>
 #include <tlx/math/rol.hpp>
 #include <tlx/string/hexdump.hpp>
+#include <cstddef>
 #include <cstdint>
+#include <string>
 
 namespace tlx {
 

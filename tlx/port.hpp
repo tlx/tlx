@@ -15,9 +15,11 @@
 //! Tools to enable easier writing of portable code.
 
 /*[[[perl
-print "#include <$_>\n" foreach sort glob("tlx/port/"."*.hpp");
+foreach (sort glob("tlx/port/"."*.hpp")) {
+  print "#include <$_> // NOLINT(misc-include-cleaner)\n";
+}
 ]]]*/
-#include <tlx/port/setenv.hpp>
+#include <tlx/port/setenv.hpp> // NOLINT(misc-include-cleaner)
 // [[[end]]]
 
 #endif // !TLX_PORT_HEADER

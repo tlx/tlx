@@ -10,7 +10,10 @@
 
 #include <tlx/string/equal_icase.hpp>
 #include <tlx/string/index_of.hpp>
+#include <cstddef>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace tlx {
 

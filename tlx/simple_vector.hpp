@@ -13,7 +13,7 @@
 #ifndef TLX_SIMPLE_VECTOR_HEADER
 #define TLX_SIMPLE_VECTOR_HEADER
 
-#include <tlx/container/simple_vector.hpp>
+#include <tlx/container/simple_vector.hpp> // NOLINT(misc-include-cleaner)
 
 #endif // !TLX_SIMPLE_VECTOR_HEADER
 

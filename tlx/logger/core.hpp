@@ -13,6 +13,7 @@
 #ifndef TLX_LOGGER_CORE_HEADER
 #define TLX_LOGGER_CORE_HEADER
 
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <utility>

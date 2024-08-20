@@ -10,8 +10,18 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/simple_vector.hpp>
+#include <tlx/logger.hpp>
 #include <tlx/sort/strings/parallel_sample_sort.hpp>
+#include <tlx/sort/strings/sample_sort_tools.hpp>
 #include <tlx/sort/strings_parallel.hpp>
+#include <tlx/timestamp.hpp>
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <random>
+#include <string>
 #include "sort_strings_test.hpp"
 
 /******************************************************************************/
@@ -72,7 +82,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
                  .check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
     }
 
@@ -97,7 +107,7 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
                  .check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
     }
 
@@ -123,12 +133,12 @@ void TestFrontend(const size_t num_strings, const size_t num_chars,
         if (!ss.check_order())
         {
             LOG1 << "Result is not sorted!";
-            abort();
+            std::abort();
         }
         if (!check_lcp(ss, lcp.data()))
         {
             LOG1 << "LCP result is not correct!";
-            abort();
+            std::abort();
         }
     }
 

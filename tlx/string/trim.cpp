@@ -11,6 +11,7 @@
 #include <tlx/string/trim.hpp>
 #include <algorithm>
 #include <cstring>
+#include <string>
 
 namespace tlx {
 

@@ -18,6 +18,8 @@
 #include <cstddef>
 #include <iostream>
 #include <sstream>
+#include <string>
+#include <tuple>
 
 /******************************************************************************/
 // vmap_foreach

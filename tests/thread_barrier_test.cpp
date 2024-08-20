@@ -13,10 +13,12 @@
 // this makes yield() available in older GCC versions
 #define _GLIBCXX_USE_SCHED_YIELD
 
+#include <tlx/container/simple_vector.hpp>
 #include <tlx/die.hpp>
-#include <tlx/simple_vector.hpp>
 #include <tlx/thread_barrier_mutex.hpp>
 #include <tlx/thread_barrier_spin.hpp>
+#include <chrono>
+#include <cstddef>
 #include <cstdint>
 #include <random>
 #include <thread>

@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_HASH_DJB2_HEADER
 #define TLX_STRING_HASH_DJB2_HEADER
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 

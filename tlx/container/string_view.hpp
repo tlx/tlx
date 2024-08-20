@@ -24,7 +24,9 @@
 
 #include <tlx/string/hash_djb2.hpp>
 #include <algorithm>
+#include <cstddef>
 #include <cstring>
+#include <functional>
 #include <iterator>
 #include <ostream>
 #include <stdexcept>

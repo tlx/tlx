@@ -13,7 +13,9 @@
 
 #include <tlx/logger/core.hpp>
 #include <tlx/meta/call_foreach_tuple_with_index.hpp>
+#include <ostream>
 #include <tuple>
+#include <type_traits>
 
 namespace tlx {
 

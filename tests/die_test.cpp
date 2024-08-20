@@ -9,8 +9,8 @@
  ******************************************************************************/
 
 #include <tlx/die.hpp>
+#include <tlx/die/core.hpp>
 #include <cmath>
-#include <iomanip>
 
 int main()
 {

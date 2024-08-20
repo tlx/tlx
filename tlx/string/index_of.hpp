@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_INDEX_OF_HEADER
 #define TLX_STRING_INDEX_OF_HEADER
 
+#include <cstddef>
 #include <string>
 #include <vector>
 

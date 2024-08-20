@@ -13,6 +13,7 @@
 
 #include <tlx/logger/core.hpp>
 #include <deque>
+#include <ostream>
 
 namespace tlx {
 

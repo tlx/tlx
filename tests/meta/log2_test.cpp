@@ -56,7 +56,7 @@ void test_log2_value(size_t p)
 static void test_log2()
 {
     /*[[[perl
-      print "test_log2_value<1ull << $_>($_);\n" for (0..63);
+      print "    test_log2_value<1ull << $_>($_);\n" for (0..63);
     ]]]*/
     test_log2_value<1ull << 0>(0);
     test_log2_value<1ull << 1>(1);

@@ -8,12 +8,10 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
-#include <tlx/die.hpp>
 #include <tlx/meta/has_member.hpp>
 #include <tlx/meta/has_method.hpp>
 #include <tlx/unused.hpp>
 #include <cmath>
-#include <cstddef>
 #include <string>
 
 /******************************************************************************/
@@ -32,6 +30,12 @@ public:
     void tfunc123(const Type& x)
     {
         tlx::unused(x);
+    }
+
+    static double func42(std::string s)
+    {
+        tlx::unused(s);
+        return 42.0;
     }
 };
 
@@ -59,7 +63,8 @@ static_assert(!has_member_tfunc456<ClassA, int>::value,
 // has_method test
 
 // the following code does not work with gcc 4.8
-#if __GNUC__ > 4 || (__GNUC__ == 4 && (__GNUC_MINOR__ > 8))
+#if __GNUC__ > 4 || (__GNUC__ == 4 && (__GNUC_MINOR__ > 8)) ||                 \
+    defined(__clang__)
 
 class ClassC
 {

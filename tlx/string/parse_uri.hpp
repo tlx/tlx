@@ -12,6 +12,7 @@
 #define TLX_STRING_PARSE_URI_HEADER
 
 #include <tlx/container/string_view.hpp>
+#include <string>
 
 namespace tlx {
 

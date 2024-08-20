@@ -12,7 +12,10 @@
 #include <tlx/container/d_ary_heap.hpp>
 #include <tlx/die.hpp>
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
+#include <functional>
+#include <ostream>
 #include <random>
 #include <set>
 #include <vector>

@@ -14,6 +14,7 @@
 #ifndef TLX_DIGEST_MD5_HEADER
 #define TLX_DIGEST_MD5_HEADER
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 

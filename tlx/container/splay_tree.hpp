@@ -11,6 +11,7 @@
 #ifndef TLX_CONTAINER_SPLAY_TREE_HEADER
 #define TLX_CONTAINER_SPLAY_TREE_HEADER
 
+#include <cstddef>
 #include <functional>
 #include <memory>
 

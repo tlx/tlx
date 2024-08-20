@@ -9,6 +9,9 @@
  ******************************************************************************/
 
 #include <tlx/string/join_quoted.hpp>
+#include <cstddef>
+#include <string>
+#include <vector>
 
 namespace tlx {
 

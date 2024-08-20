@@ -10,6 +10,8 @@
 
 #include <tlx/container/ring_buffer.hpp>
 #include <tlx/die.hpp>
+#include <cstddef>
+#include <utility>
 
 static void test_fill_circular(size_t rb_size)
 {

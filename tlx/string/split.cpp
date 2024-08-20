@@ -9,7 +9,10 @@
  ******************************************************************************/
 
 #include <tlx/string/split.hpp>
+#include <algorithm>
 #include <cstring>
+#include <string>
+#include <vector>
 
 namespace tlx {
 

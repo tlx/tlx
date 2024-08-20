@@ -11,8 +11,10 @@
 #include <tlx/die.hpp>
 #include <tlx/logger.hpp>
 #include <tlx/math/polynomial_regression.hpp>
-#include <iomanip>
+#include <cmath>
+#include <cstddef>
 #include <iostream>
+#include <vector>
 
 void test1()
 {

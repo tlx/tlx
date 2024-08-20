@@ -9,8 +9,8 @@
  ******************************************************************************/
 
 #include <tlx/string/replace.hpp>
-#include <algorithm>
 #include <cstring>
+#include <string>
 
 namespace tlx {
 

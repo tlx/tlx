@@ -11,6 +11,7 @@
 #include <tlx/string/less_icase.hpp>
 #include <tlx/string/to_lower.hpp>
 #include <algorithm>
+#include <string>
 
 namespace tlx {
 

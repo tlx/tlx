@@ -10,8 +10,12 @@
 
 #include <tlx/die/core.hpp>
 #include <atomic>
+#include <cstddef>
+#include <exception>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
+#include <string>
 
 namespace tlx {
 

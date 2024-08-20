@@ -13,6 +13,7 @@
 
 #include <tlx/meta/no_operation.hpp>
 #include <atomic>
+#include <cstddef>
 #include <thread>
 
 namespace tlx {

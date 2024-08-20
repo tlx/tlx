@@ -12,6 +12,7 @@
 #define TLX_ALGORITHM_RANDOM_BIPARTITION_SHUFFLE_HEADER
 
 #include <cassert>
+#include <cstddef>
 #include <iterator>
 #include <random>
 

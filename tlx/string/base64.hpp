@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_BASE64_HEADER
 #define TLX_STRING_BASE64_HEADER
 
+#include <cstddef>
 #include <string>
 
 namespace tlx {

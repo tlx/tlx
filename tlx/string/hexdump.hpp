@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_HEXDUMP_HEADER
 #define TLX_STRING_HEXDUMP_HEADER
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>

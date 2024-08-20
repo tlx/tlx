@@ -11,8 +11,8 @@
 #ifndef TLX_STRING_FORMAT_SI_IEC_UNITS_HEADER
 #define TLX_STRING_FORMAT_SI_IEC_UNITS_HEADER
 
-#include <tlx/string/format_iec_units.hpp>
-#include <tlx/string/format_si_units.hpp>
+#include <tlx/string/format_iec_units.hpp> // NOLINT(misc-include-cleaner)
+#include <tlx/string/format_si_units.hpp>  // NOLINT(misc-include-cleaner)
 
 #endif // !TLX_STRING_FORMAT_SI_IEC_UNITS_HEADER
 

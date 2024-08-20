@@ -1,6 +1,9 @@
 when:
   - event: pull_request
   - event: manual
+  - event: push
+    repo: tlx/tlx
+    branch: master
 
 matrix:
   include:
@@ -15,7 +18,7 @@ steps:
     image: docker.io/bingmann/dev:${IMAGE}
     commands:
       - cmake --version
-      - mkdir build; cd build
+      - mkdir build && cd build
       - cmake
           -G Ninja
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE}

@@ -1,6 +1,9 @@
 when:
   - event: pull_request
   - event: manual
+  - event: push
+    repo: tlx/tlx
+    branch: master
 
 matrix:
   include:
@@ -130,11 +133,144 @@ matrix:
       CXX_FLAGS:    -D_GLIBCXX_DEBUG
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-22.04
+    - IMAGE:        ubuntu-24.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:    -m32
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-24.04
       BUILD_TYPE:   Release
       C_COMPILER:   gcc
       CXX_COMPILER: g++
-      CXX_FLAGS:    -DTLX_USE_CLANG_TIDY=ON
+      CXX_FLAGS:
+      CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
+
+    - IMAGE:        ubuntu-24.04
+      BUILD_TYPE:   Debug
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        ubuntu-24.04
+      BUILD_TYPE:   Release
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-9
+      BUILD_TYPE:   Debug
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:    -m32
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-9
+      BUILD_TYPE:   Release
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:
+      CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
+
+    - IMAGE:        debian-9
+      BUILD_TYPE:   Debug
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-9
+      BUILD_TYPE:   Release
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-10
+      BUILD_TYPE:   Debug
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:    -m32
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-10
+      BUILD_TYPE:   Release
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:
+      CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
+
+    - IMAGE:        debian-10
+      BUILD_TYPE:   Debug
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-10
+      BUILD_TYPE:   Release
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-11
+      BUILD_TYPE:   Debug
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:    -m32
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-11
+      BUILD_TYPE:   Release
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:
+      CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
+
+    - IMAGE:        debian-11
+      BUILD_TYPE:   Debug
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-11
+      BUILD_TYPE:   Release
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-12
+      BUILD_TYPE:   Debug
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:    -m32
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-12
+      BUILD_TYPE:   Release
+      C_COMPILER:   gcc
+      CXX_COMPILER: g++
+      CXX_FLAGS:
+      CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
+
+    - IMAGE:        debian-12
+      BUILD_TYPE:   Debug
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:
+      CMAKE_FLAGS:
+
+    - IMAGE:        debian-12
+      BUILD_TYPE:   Release
+      C_COMPILER:   clang
+      CXX_COMPILER: clang++
+      CXX_FLAGS:    -D_GLIBCXX_DEBUG
       CMAKE_FLAGS:
 
 steps:
@@ -142,7 +278,7 @@ steps:
     image: docker.io/bingmann/dev:${IMAGE}
     commands:
       - cmake --version
-      - mkdir build; cd build
+      - mkdir build && cd build
       - cmake ${CMAKE_FLAGS}
           -G Ninja
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE}

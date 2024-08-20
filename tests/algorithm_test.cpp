@@ -59,7 +59,7 @@ static void test_merge_combine()
 static void exclusive_scan()
 {
     {
-        const std::vector<int> vec1;
+        const std::vector<int> vec1 = {};
         std::vector<int> vec2(1);
         int init = 1;
         const auto res1 =

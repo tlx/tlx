@@ -146,12 +146,12 @@ steps:
       - cmake ${CMAKE_FLAGS}
           -G Ninja
           -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-          -DCMAKE_C_COMPILER=${C_COMPILER}
           -DCMAKE_CXX_COMPILER=${CXX_COMPILER}
           -DCMAKE_CXX_FLAGS=${CXX_FLAGS}
-          -DTLX_WARNINGS_ARE_ERRORS=ON
+          -DCMAKE_C_COMPILER=${C_COMPILER}
           -DTLX_BUILD_TESTS=ON
           -DTLX_TRY_COMPILE_HEADERS=ON
+          -DTLX_WARNINGS_ARE_ERRORS=ON
           ..
       - ninja
       - ninja test

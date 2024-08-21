@@ -102,12 +102,12 @@ void dump(PolynomialRegression& pr, double xmin, double xmax)
          << pr.r_square();
 
     for (double x = xmin; x <= xmax; x += 0.1)
-        std::cout << x << '\t' << pr.evaluate(x) << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
+        std::cout << x << '\t' << pr.evaluate(x) << '\n';
+    std::cout << '\n';
+    std::cout << '\n';
 
     for (size_t i = 0; i < pr.size(); ++i)
-        std::cout << pr.point(i).x << '\t' << pr.point(i).y << std::endl;
+        std::cout << pr.point(i).x << '\t' << pr.point(i).y << '\n';
 }
 
 void test6()

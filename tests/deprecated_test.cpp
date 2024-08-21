@@ -28,7 +28,7 @@ int main()
     also_do_not_use();
 
     std::cout << "This test takes place during compilation.\n"
-              << "Nothing to see here, move on!" << std::endl;
+              << "Nothing to see here, move on!\n";
     return 0;
 }
 

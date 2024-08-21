@@ -35,6 +35,7 @@ void die_with_message(const std::string& msg)
     if (s_die_with_exception)
         throw DieException(msg);
 
+    // NOLINTNEXTLINE(performance-avoid-endl)
     std::cerr << msg << std::endl;
     std::terminate();
 }

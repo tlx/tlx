@@ -38,12 +38,12 @@ public:
     Semaphore& operator=(const Semaphore&) = delete;
 
     //! move-constructor: just move the value
-    Semaphore(Semaphore&& s) : value_(s.value_)
+    Semaphore(Semaphore&& s) noexcept : value_(s.value_)
     {
     }
 
     //! move-assignment: just move the value
-    Semaphore& operator=(Semaphore&& s)
+    Semaphore& operator=(Semaphore&& s) noexcept
     {
         value_ = s.value_;
         return *this;

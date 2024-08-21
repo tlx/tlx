@@ -345,7 +345,7 @@ void benchmark_losertree(const char* benchmark, size_t num_vectors,
               << " benchmark=" << benchmark << " num_vectors=" << num_vectors
               << " vector_size=" << vector_size
               << " init_time=" << time_delta(tp1, tp2)
-              << " merge_time=" << time_delta(tp2, tp3) << std::endl;
+              << " merge_time=" << time_delta(tp2, tp3) << '\n';
 }
 
 int main(int argc, char* argv[])

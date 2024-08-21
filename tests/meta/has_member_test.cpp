@@ -32,7 +32,7 @@ public:
         tlx::unused(x);
     }
 
-    static double func42(std::string s)
+    static double func42(const std::string& s)
     {
         tlx::unused(s);
         return 42.0;
@@ -74,7 +74,7 @@ public:
         tlx::unused(i);
     }
 
-    static double func456(std::string s)
+    static double func456(const std::string& s)
     {
         tlx::unused(s);
         return 42.0;
@@ -90,7 +90,7 @@ public:
 class ClassD
 {
 public:
-    void func123(std::string)
+    void func123(const std::string&)
     {
     }
 };
@@ -109,7 +109,7 @@ static_assert(has_method_func123<ClassC, std::string(int)>::value == false,
 
 TLX_MAKE_HAS_STATIC_METHOD(func456);
 
-static_assert(has_method_func456<ClassC, double(std::string)>::value,
+static_assert(has_method_func456<ClassC, double(const std::string&)>::value,
               "has_method_func123 test failed.");
 static_assert(has_method_func456<ClassC, double(int)>::value == false,
               "has_method_func123 test failed.");

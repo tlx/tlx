@@ -2,6 +2,11 @@
 Checks:
   - "-*"
   - "misc-include-cleaner"
+  - "openmp-*"
+  - "performance-*"
+  - "-performance-enum-size"
+  - "portability-*"
+  - "-portability-simd-intrinsics"
   - "readability-else-after-return"
 
 WarningsAsErrors: '*'

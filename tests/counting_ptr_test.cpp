@@ -57,6 +57,7 @@ int main()
             die_unless(i1->unique());
 
             // make pointer sharing same object
+            // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
             IntegerPtr i2 = i1;
 
             die_unequal(42, i2->i);

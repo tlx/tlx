@@ -39,11 +39,10 @@ std::vector<std::string> split_quoted(const std::string& str, char sep,
             while (true)
             {
                 if (it == str.end())
-                {
                     throw std::runtime_error(
                         "unmatched end quote in split_quoted().");
-                }
-                else if (*it == quote)
+
+                if (*it == quote)
                 {
                     ++it;
                     if (it == str.end())
@@ -52,30 +51,27 @@ std::vector<std::string> split_quoted(const std::string& str, char sep,
                         out.emplace_back(std::move(entry));
                         return out;
                     }
-                    else if (*it == sep)
+                    if (*it == sep)
                     {
                         // quote + sep -> end of this entry
                         out.emplace_back(std::move(entry));
                         ++it;
                         break;
                     }
-                    else
-                    {
-                        throw std::runtime_error(
-                            std::string("extra quote enclosed in entry,"
-                                        " followed by ") +
-                            *it);
-                    }
+
+                    throw std::runtime_error(
+                        std::string(
+                            "extra quote enclosed in entry, followed by ") +
+                        *it);
                 }
-                else if (*it == escape)
+                if (*it == escape)
                 {
                     ++it;
                     if (it == str.end())
-                    {
                         throw std::runtime_error(
                             "escape as last character in string");
-                    }
-                    else if (*it == quote)
+
+                    if (*it == quote)
                     {
                         // escape + quote -> quote
                         entry += *it++;
@@ -126,18 +122,17 @@ std::vector<std::string> split_quoted(const std::string& str, char sep,
                     out.emplace_back(std::move(entry));
                     return out;
                 }
-                else if (*it == sep)
+
+                if (*it == sep)
                 {
                     // sep -> end of this entry
                     out.emplace_back(std::move(entry));
                     ++it;
                     break;
                 }
-                else
-                {
-                    // normal character
-                    entry += *it++;
-                }
+
+                // normal character
+                entry += *it++;
             }
         }
     }

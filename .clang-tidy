@@ -2,6 +2,7 @@
 Checks:
   - "-*"
   - "misc-include-cleaner"
+  - "readability-else-after-return"
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

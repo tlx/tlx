@@ -258,14 +258,10 @@ public:
     StringShadowPtr copy_back() const
     {
         if (!flipped_)
-        {
             return *this;
-        }
-        else
-        {
-            std::move(active_.begin(), active_.end(), shadow_.begin());
-            return StringShadowPtr(shadow_, active_, !flipped_);
-        }
+
+        std::move(active_.begin(), active_.end(), shadow_.begin());
+        return StringShadowPtr(shadow_, active_, !flipped_);
     }
 
     //! if we want to save the LCPs
@@ -364,14 +360,10 @@ public:
     StringShadowLcpPtr copy_back() const
     {
         if (!flipped_)
-        {
             return *this;
-        }
-        else
-        {
-            std::move(active_.begin(), active_.end(), shadow_.begin());
-            return StringShadowLcpPtr(shadow_, active_, lcp_, !flipped_);
-        }
+
+        std::move(active_.begin(), active_.end(), shadow_.begin());
+        return StringShadowLcpPtr(shadow_, active_, lcp_, !flipped_);
     }
 
     //! if we want to save the LCPs

@@ -215,11 +215,9 @@ Tree* splay_erase(const Key& k, Tree*& t, const Compare& cmp)
         }
         return r;
     }
-    else
-    {
-        // it wasn't there
-        return nullptr;
-    }
+
+    // it wasn't there
+    return nullptr;
 }
 
 //! traverse the tree in preorder (left, node, right)

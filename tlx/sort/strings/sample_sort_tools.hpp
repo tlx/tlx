@@ -207,26 +207,24 @@ public:
 
             return recurse(midhi, hi, 2 * treeidx + 1, mykey);
         }
-        else
-        {
-            key_type xorSplit = rec_prevkey ^ mykey;
 
-            TLX_LOGC(debug_splitter)                        //
-                << "    lcp: " << hexdump_type(rec_prevkey) //
-                << " XOR " << hexdump_type(mykey)           //
-                << " = " << hexdump_type(xorSplit)          //
-                << " - " << clz(xorSplit)                   //
-                << " bits = " << clz(xorSplit) / 8          //
-                << " chars lcp";
+        key_type xorSplit = rec_prevkey ^ mykey;
 
-            *splitter_++ = mykey;
+        TLX_LOGC(debug_splitter)                        //
+            << "    lcp: " << hexdump_type(rec_prevkey) //
+            << " XOR " << hexdump_type(mykey)           //
+            << " = " << hexdump_type(xorSplit)          //
+            << " - " << clz(xorSplit)                   //
+            << " bits = " << clz(xorSplit) / 8          //
+            << " chars lcp";
 
-            *lcp_iter_++ = (clz(xorSplit) / 8) |
-                           // marker for done splitters
-                           ((mykey & 0xFF) ? 0 : 0x80);
+        *splitter_++ = mykey;
 
-            return mykey;
-        }
+        *lcp_iter_++ = (clz(xorSplit) / 8) |
+                       // marker for done splitters
+                       ((mykey & 0xFF) ? 0 : 0x80);
+
+        return mykey;
     }
 
 private:
@@ -313,24 +311,22 @@ public:
 
             return recurse(midhi, hi, 2 * treeidx + 1, mykey);
         }
-        else
-        {
-            key_type xorSplit = rec_prevkey ^ mykey;
 
-            TLX_LOGC(debug_splitter)                        //
-                << "    lcp: " << hexdump_type(rec_prevkey) //
-                << " XOR " << hexdump_type(mykey)           //
-                << " = " << hexdump_type(xorSplit)          //
-                << " - " << clz(xorSplit)                   //
-                << " bits = " << clz(xorSplit) / 8          //
-                << " chars lcp";
+        key_type xorSplit = rec_prevkey ^ mykey;
 
-            *lcp_iter_++ = (clz(xorSplit) / 8) |
-                           // marker for done splitters
-                           ((mykey & 0xFF) ? 0 : 0x80);
+        TLX_LOGC(debug_splitter)                        //
+            << "    lcp: " << hexdump_type(rec_prevkey) //
+            << " XOR " << hexdump_type(mykey)           //
+            << " = " << hexdump_type(xorSplit)          //
+            << " - " << clz(xorSplit)                   //
+            << " bits = " << clz(xorSplit) / 8          //
+            << " chars lcp";
 
-            return mykey;
-        }
+        *lcp_iter_++ = (clz(xorSplit) / 8) |
+                       // marker for done splitters
+                       ((mykey & 0xFF) ? 0 : 0x80);
+
+        return mykey;
     }
 
 private:

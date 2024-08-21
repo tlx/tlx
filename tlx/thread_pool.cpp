@@ -140,6 +140,7 @@ void ThreadPool::worker(size_t p)
                 }
                 catch (std::exception& e)
                 {
+                    // NOLINTNEXTLINE(performance-avoid-endl)
                     std::cerr << "EXCEPTION: " << e.what() << std::endl;
                 }
                 // destroy job by closing scope

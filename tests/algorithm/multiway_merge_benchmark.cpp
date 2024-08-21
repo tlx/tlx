@@ -338,7 +338,7 @@ void test_multiway_merge(size_t seq_count, const size_t seq_size)
                   << " time/item[ns]="
                   << (ts2 - ts1) / static_cast<double>(g_inner_repeat) /
                          total_size * 1e9 //
-                  << std::endl;
+                  << '\n';
     }
 
     die_unless(std::is_sorted(out.cbegin(), out.cend(), cmp));

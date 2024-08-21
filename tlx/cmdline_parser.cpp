@@ -550,7 +550,7 @@ void CmdlineParser::output_wrap(std::ostream& os, const std::string& text,
             to = lspace + 1;
 
         // output line
-        os << std::string(indent, ' ') << text.substr(t, to - t) << std::endl;
+        os << std::string(indent, ' ') << text.substr(t, to - t) << '\n';
 
         current = 0;
         indent = indent_rest;
@@ -1044,24 +1044,24 @@ void CmdlineParser::print_usage(std::ostream& os)
            << (arg->repeated_ ? " ..." : "") << (arg->required_ ? '>' : ']');
     }
 
-    os << std::endl;
+    os << '\n';
 
     if (!description_.empty())
     {
-        os << std::endl;
+        os << '\n';
         output_wrap(os, description_, line_wrap_);
     }
     if (!author_.empty())
     {
-        os << "Author: " << author_ << std::endl;
+        os << "Author: " << author_ << '\n';
     }
 
     if (!description_.empty() || !author_.empty())
-        os << std::endl;
+        os << '\n';
 
     if (!param_list_.empty())
     {
-        os << "Parameters:" << std::endl;
+        os << "Parameters:\n";
 
         for (ArgumentList::const_iterator it = param_list_.begin();
              it != param_list_.end(); ++it)
@@ -1077,7 +1077,7 @@ void CmdlineParser::print_usage(std::ostream& os)
 
     if (!option_list_.empty())
     {
-        os << "Options:" << std::endl;
+        os << "Options:\n";
 
         for (ArgumentList::const_iterator it = option_list_.begin();
              it != option_list_.end(); ++it)
@@ -1107,8 +1107,8 @@ void CmdlineParser::print_option_error(int argc, const char* const* argv,
         os << '"' << argv[0] << '"';
 
     os << " for " << arg->type_name() << " option " << arg->option_text()
-       << (argc == 0 ? " is missing!" : " is invalid!") << std::endl
-       << std::endl;
+       << (argc == 0 ? " is missing!" : " is invalid!") << '\n'
+       << '\n';
 
     print_usage(os);
 }
@@ -1121,8 +1121,8 @@ void CmdlineParser::print_param_error(int argc, const char* const* argv,
         os << '"' << argv[0] << '"';
 
     os << " for " << arg->type_name() << " parameter " << arg->param_text()
-       << (argc == 0 ? " is missing!" : " is invalid!") << std::endl
-       << std::endl;
+       << (argc == 0 ? " is missing!" : " is invalid!") << '\n'
+       << '\n';
 
     print_usage(os);
 }
@@ -1179,16 +1179,14 @@ bool CmdlineParser::process(int argc, const char* const* argv, std::ostream& os)
                                 os << "Option " << (*oi)->option_text()
                                    << " set to ";
                                 (*oi)->print_value(os);
-                                os << '.' << std::endl;
+                                os << '.' << '\n';
                             }
                             break;
                         }
                     }
                     if (oi == option_list_.end())
                     {
-                        os << "Error: unknown option \"" << arg << "\"."
-                           << std::endl
-                           << std::endl;
+                        os << "Error: unknown option \"" << arg << "\".\n\n";
                         print_usage(os);
                         return false;
                     }
@@ -1199,7 +1197,7 @@ bool CmdlineParser::process(int argc, const char* const* argv, std::ostream& os)
                 // short option
                 if (arg[1] == 0)
                 {
-                    os << "Invalid option \"" << arg << "\"." << std::endl;
+                    os << "Invalid option \"" << arg << "\".\n";
                 }
                 else
                 {
@@ -1226,7 +1224,7 @@ bool CmdlineParser::process(int argc, const char* const* argv, std::ostream& os)
                                     os << "Option " << (*oi)->option_text()
                                        << " set to ";
                                     (*oi)->print_value(os);
-                                    os << '.' << std::endl;
+                                    os << '.' << '\n';
                                 }
                                 break;
                             }
@@ -1240,7 +1238,7 @@ bool CmdlineParser::process(int argc, const char* const* argv, std::ostream& os)
                                 os << "-" << arg[offset] << "\" at position "
                                    << offset << " in option sequence \"";
                             }
-                            os << arg << "\"." << std::endl << std::endl;
+                            os << arg << "\".\n\n";
                             print_usage(os);
                             return false;
                         }
@@ -1262,7 +1260,7 @@ bool CmdlineParser::process(int argc, const char* const* argv, std::ostream& os)
                 {
                     os << "Parameter " << (*argi)->param_text() << " set to ";
                     (*argi)->print_value(os);
-                    os << '.' << std::endl;
+                    os << '.' << '\n';
                 }
                 (*argi)->found_ = true;
                 if (!(*argi)->repeated_)
@@ -1271,8 +1269,7 @@ bool CmdlineParser::process(int argc, const char* const* argv, std::ostream& os)
             else
             {
                 os << "Error: unexpected extra argument "
-                   << "\"" << argv[0] << "\"." << std::endl
-                   << std::endl;
+                   << "\"" << argv[0] << "\".\n\n";
                 --argc, ++argv;
                 print_usage(os);
                 return false;
@@ -1288,14 +1285,14 @@ bool CmdlineParser::process(int argc, const char* const* argv, std::ostream& os)
         if ((*it)->required_ && !(*it)->found_)
         {
             os << "Error: argument for parameter " << (*it)->longkey_
-               << " is required!" << std::endl;
+               << " is required!\n";
             good = false;
         }
     }
 
     if (!good)
     {
-        os << std::endl;
+        os << '\n';
         print_usage(os);
     }
 
@@ -1315,7 +1312,7 @@ void CmdlineParser::print_result(std::ostream& os)
 
     if (!param_list_.empty())
     {
-        os << "Parameters:" << std::endl;
+        os << "Parameters:\n";
 
         for (ArgumentList::const_iterator it = param_list_.begin();
              it != param_list_.end(); ++it)
@@ -1333,13 +1330,13 @@ void CmdlineParser::print_result(std::ostream& os)
 
             arg->print_value(os);
 
-            os << std::endl;
+            os << '\n';
         }
     }
 
     if (!option_list_.empty())
     {
-        os << "Options:" << std::endl;
+        os << "Options:\n";
 
         for (ArgumentList::const_iterator it = option_list_.begin();
              it != option_list_.end(); ++it)
@@ -1357,7 +1354,7 @@ void CmdlineParser::print_result(std::ostream& os)
 
             arg->print_value(os);
 
-            os << std::endl;
+            os << '\n';
         }
     }
 

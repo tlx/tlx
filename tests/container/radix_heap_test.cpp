@@ -71,7 +71,7 @@ public:
         die("find_lsb on empty field");
     }
 
-    void swap(naive_bitarray& o)
+    void swap(naive_bitarray& o) noexcept
     {
         std::swap(bits_, o.bits_);
     }

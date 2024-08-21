@@ -45,9 +45,9 @@ public:
     //! default assignment operator
     MultiTimer& operator=(const MultiTimer&);
     //! move-constructor: default
-    MultiTimer(MultiTimer&&);
+    MultiTimer(MultiTimer&&) noexcept;
     //! move-assignment operator: default
-    MultiTimer& operator=(MultiTimer&&);
+    MultiTimer& operator=(MultiTimer&&) noexcept;
 
     //! destructor
     ~MultiTimer();

@@ -146,8 +146,8 @@ inline bool die_equal_compare(double a, double b)
 #define tlx_die_unequal(X, Y)                                                  \
     do                                                                         \
     {                                                                          \
-        auto x__ = (X);                                                        \
-        auto y__ = (Y);                                                        \
+        auto x__ = (X); /* NOLINT */                                           \
+        auto y__ = (Y); /* NOLINT */                                           \
         if (!::tlx::die_equal_compare(x__, y__))                               \
         {                                                                      \
             tlx_die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "            \
@@ -170,8 +170,8 @@ inline bool die_equal_compare(double a, double b)
 #define tlx_die_verbose_unequal(X, Y, msg)                                     \
     do                                                                         \
     {                                                                          \
-        auto x__ = (X);                                                        \
-        auto y__ = (Y);                                                        \
+        auto x__ = (X); /* NOLINT */                                           \
+        auto y__ = (Y); /* NOLINT */                                           \
         if (!::tlx::die_equal_compare(x__, y__))                               \
         {                                                                      \
             tlx_die_with_sstream("DIE-UNEQUAL: " #X " != " #Y " : "            \
@@ -204,8 +204,8 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps)
 #define tlx_die_unequal_eps(X, Y, eps)                                         \
     do                                                                         \
     {                                                                          \
-        auto x__ = (X);                                                        \
-        auto y__ = (Y);                                                        \
+        auto x__ = (X); /* NOLINT */                                           \
+        auto y__ = (Y); /* NOLINT */                                           \
         if (!::tlx::die_equal_eps_compare(x__, y__, eps))                      \
         {                                                                      \
             tlx_die("DIE-UNEQUAL-EPS: " #X " != " #Y " : "                     \
@@ -220,8 +220,8 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps)
 #define tlx_die_verbose_unequal_eps(X, Y, eps, msg)                            \
     do                                                                         \
     {                                                                          \
-        auto x__ = (X);                                                        \
-        auto y__ = (Y);                                                        \
+        auto x__ = (X); /* NOLINT */                                           \
+        auto y__ = (Y); /* NOLINT */                                           \
         if (!::tlx::die_equal_eps_compare(x__, y__, eps))                      \
         {                                                                      \
             tlx_die("DIE-UNEQUAL-EPS: " #X " != " #Y " : "                     \
@@ -249,8 +249,8 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps)
 #define tlx_die_equal(X, Y)                                                    \
     do                                                                         \
     {                                                                          \
-        auto x__ = (X);                                                        \
-        auto y__ = (Y);                                                        \
+        auto x__ = (X); /* NOLINT */                                           \
+        auto y__ = (Y); /* NOLINT */                                           \
         if (::tlx::die_equal_compare(x__, y__))                                \
         {                                                                      \
             tlx_die_with_sstream("DIE-EQUAL: " #X " == " #Y " : "              \
@@ -273,8 +273,8 @@ inline bool die_equal_eps_compare(TypeA x, TypeB y, double eps)
 #define tlx_die_verbose_equal(X, Y, msg)                                       \
     do                                                                         \
     {                                                                          \
-        auto x__ = (X);                                                        \
-        auto y__ = (Y);                                                        \
+        auto x__ = (X); /* NOLINT */                                           \
+        auto y__ = (Y); /* NOLINT */                                           \
         if (::tlx::die_equal_compare(x__, y__))                                \
         {                                                                      \
             tlx_die_with_sstream("DIE-EQUAL: " #X " == " #Y " : "              \

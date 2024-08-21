@@ -40,18 +40,18 @@ int main(int argc, char* argv[])
     if (!cp.process(argc, argv))
         return -1;
 
-    std::cerr << "Opening " << file << std::endl;
+    std::cerr << "Opening " << file << '\n';
     std::ifstream in(file.c_str());
     if (!in.good())
     {
-        std::cerr << "Error opening file: " << strerror(errno) << std::endl;
+        std::cerr << "Error opening file: " << strerror(errno) << '\n';
         return -1;
     }
 
     if (!in.seekg(0, std::ios::end).good())
     {
         std::cerr << "Error seeking to end of file: " << strerror(errno)
-                  << std::endl;
+                  << '\n';
         return -1;
     }
     size_t size = in.tellg();
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
     // read file and make string pointer array
     double ts1_read = tlx::timestamp();
 
-    std::cerr << "Reading " << size << " bytes" << std::endl;
+    std::cerr << "Reading " << size << " bytes\n";
     in.seekg(0, std::ios::beg);
 
     // first string pointer
@@ -100,10 +100,9 @@ int main(int argc, char* argv[])
     double ts2_read = tlx::timestamp();
 
     std::cerr << "Reading took " << ts2_read - ts1_read << " seconds at "
-              << tlx::format_iec_units(size / (ts2_read - ts1_read)) << "B/s"
-              << std::endl;
+              << tlx::format_iec_units(size / (ts2_read - ts1_read)) << "B/s\n";
 
-    std::cerr << "Found " << strings.size() << " strings to sort." << std::endl;
+    std::cerr << "Found " << strings.size() << " strings to sort.\n";
 
     // sort
     double ts1_sort = tlx::timestamp();
@@ -115,8 +114,7 @@ int main(int argc, char* argv[])
     }
     double ts2_sort = tlx::timestamp();
 
-    std::cerr << "Sorting took " << ts2_sort - ts1_sort << " seconds."
-              << std::endl;
+    std::cerr << "Sorting took " << ts2_sort - ts1_sort << " seconds.\n";
 
     // output sorted strings
     double ts1_write = tlx::timestamp();
@@ -127,8 +125,8 @@ int main(int argc, char* argv[])
     double ts2_write = tlx::timestamp();
 
     std::cerr << "Writing took " << ts2_write - ts1_write << " seconds at "
-              << tlx::format_iec_units(size / (ts2_write - ts1_write)) << "/s"
-              << std::endl;
+              << tlx::format_iec_units(size / (ts2_write - ts1_write))
+              << "/s\n";
 
     return 0;
 }

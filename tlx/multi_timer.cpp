@@ -48,8 +48,8 @@ MultiTimer::MultiTimer()
 
 MultiTimer::MultiTimer(const MultiTimer&) = default;
 MultiTimer& MultiTimer::operator=(const MultiTimer&) = default;
-MultiTimer::MultiTimer(MultiTimer&&) = default;
-MultiTimer& MultiTimer::operator=(MultiTimer&&) = default;
+MultiTimer::MultiTimer(MultiTimer&&) noexcept = default;
+MultiTimer& MultiTimer::operator=(MultiTimer&&) noexcept = default;
 
 MultiTimer::~MultiTimer() = default;
 
@@ -134,7 +134,7 @@ void MultiTimer::print(const char* info, std::ostream& os) const
     {
         os << ' ' << timer.name << '=' << timer.duration.count();
     }
-    os << " total=" << total_duration_.count() << std::endl;
+    os << " total=" << total_duration_.count() << '\n';
 }
 
 void MultiTimer::print(const char* info) const

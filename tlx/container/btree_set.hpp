@@ -207,7 +207,7 @@ public:
     }
 
     //! Fast swapping of two identical B+ tree objects.
-    void swap(btree_set& from)
+    void swap(btree_set& from) noexcept
     {
         std::swap(tree_, from.tree_);
     }

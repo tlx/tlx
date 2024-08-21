@@ -13,6 +13,7 @@
 // this makes yield() available in older GCC versions
 #define _GLIBCXX_USE_SCHED_YIELD
 
+#include <tlx/cmdline_parser.hpp>
 #include <tlx/container/simple_vector.hpp>
 #include <tlx/die.hpp>
 #include <tlx/thread_barrier_mutex.hpp>
@@ -24,22 +25,22 @@
 #include <thread>
 
 template <typename ThreadBarrier>
-static void TestWaitFor(int count, int slowThread = -1)
+static void TestWaitFor(int thread_count, int slowThread = -1)
 {
     int maxWaitTime = 10000;
 
-    ThreadBarrier barrier(count);
+    ThreadBarrier barrier(thread_count);
 
-    tlx::simple_vector<std::uint8_t> flags(count);
-    tlx::simple_vector<std::thread> threads(count);
+    tlx::simple_vector<std::uint8_t> flags(thread_count);
+    tlx::simple_vector<std::thread> threads(thread_count);
 
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < thread_count; i++)
         flags[i] = false;
 
-    for (int t = 0; t < count; t++)
+    for (int t = 0; t < thread_count; t++)
     {
-        threads[t] =
-            std::thread([maxWaitTime, count, slowThread, &barrier, &flags, t] {
+        threads[t] = std::thread(
+            [maxWaitTime, thread_count, slowThread, &barrier, &flags, t] {
                 for (size_t r = 0; r < 100; ++r)
                 {
                     std::minstd_rand0 rng(t + r);
@@ -61,7 +62,7 @@ static void TestWaitFor(int count, int slowThread = -1)
 
                     barrier.wait();
 
-                    for (int i = 0; i < count; i++)
+                    for (int i = 0; i < thread_count; i++)
                     {
                         // check flags
                         die_unequal(flags[i], true);
@@ -69,35 +70,49 @@ static void TestWaitFor(int count, int slowThread = -1)
 
                     barrier.wait_yield([&]() {
                         // reset flags
-                        for (int i = 0; i < count; i++)
+                        for (int i = 0; i < thread_count; i++)
                             flags[i] = false;
                     });
                 }
             });
     }
 
-    for (int t = 0; t < count; t++)
+    for (int t = 0; t < thread_count; t++)
         threads[t].join();
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-    int count = 8;
+    tlx::CmdlineParser cp;
 
-    // run with 8 threads, one slow one
-    for (int i = 0; i < count; i++)
-        TestWaitFor<tlx::ThreadBarrierMutex>(count, i);
+    // add description
+    cp.set_description("Test program for tlx::ThreadBarrier.");
 
-    // run with 32 threads
-    TestWaitFor<tlx::ThreadBarrierMutex>(32);
+    int thread_count = 4;
+    cp.add_int('t', "threads", thread_count, "number of threads");
+
+    int high_thread_count = 16;
+    cp.add_int('T', "high-threads", high_thread_count,
+               "number of threads for high thread tests");
+
+    // process command line
+    if (!cp.process(argc, argv))
+        return -1;
+
+    // run with 4 threads, one slow one
+    for (int i = 0; i < thread_count; i++)
+        TestWaitFor<tlx::ThreadBarrierMutex>(thread_count, i);
+
+    // run with 16 threads
+    TestWaitFor<tlx::ThreadBarrierMutex>(high_thread_count);
 
 #if !defined(TLX_HAVE_THREAD_SANITIZER)
-    // run with 8 threads, one slow one
-    for (int i = 0; i < count; i++)
-        TestWaitFor<tlx::ThreadBarrierSpin>(count, i);
+    // run with 4 threads, one slow one
+    for (int i = 0; i < thread_count; i++)
+        TestWaitFor<tlx::ThreadBarrierSpin>(thread_count, i);
 
-    // run with 32 threads
-    TestWaitFor<tlx::ThreadBarrierSpin>(32);
+    // run with 16 threads
+    TestWaitFor<tlx::ThreadBarrierSpin>(high_thread_count);
 #endif // !defined(TLX_HAVE_THREAD_SANITIZER)
 
     return 0;

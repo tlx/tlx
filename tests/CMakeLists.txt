@@ -52,7 +52,7 @@ macro(tlx_build_test PROGNAME)
   tlx_build_only(${PROGNAME})
 
   string(REPLACE "/" "_" TESTNAME "${PROGNAME}") # replace slashes
-  tlx_test_only(${TESTNAME})
+  tlx_test_only(${TESTNAME} ${ARGN})
 
 endmacro(tlx_build_test)
 
@@ -98,7 +98,12 @@ tlx_build_test(sort_strings_parallel_test)
 tlx_build_test(sort_strings_test)
 tlx_build_test(stack_allocator_test)
 tlx_build_test(string_test)
-tlx_build_test(thread_barrier_test)
+if(MSVC)
+  # Reduce number of threads in test as the CI machine only has a single virtual core.
+  tlx_build_test(thread_barrier_test --threads 2 --high-threads 4)
+else()
+  tlx_build_test(thread_barrier_test)
+endif()
 tlx_build_test(thread_pool_test)
 if(TLX_CXX_HAS_CXX14)
   tlx_build_test(meta/call_for_test)

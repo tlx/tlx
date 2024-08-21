@@ -1343,7 +1343,10 @@ void CmdlineParser::print_result(std::ostream& os)
             os << "  " << std::setw(static_cast<int>(maxlong)) << std::left
                << arg->param_text();
 
-            std::string typestr = "(" + std::string(arg->type_name()) + ")";
+            std::string typestr;
+            typestr += '(';
+            typestr += arg->type_name();
+            typestr += ')';
             os << std::setw(max_type_name_ + 4) << typestr;
 
             arg->print_value(os);
@@ -1364,7 +1367,10 @@ void CmdlineParser::print_result(std::ostream& os)
             os << "  " << std::setw(static_cast<int>(maxlong)) << std::left
                << arg->option_text();
 
-            std::string typestr = "(" + std::string(arg->type_name()) + ")";
+            std::string typestr;
+            typestr += '(';
+            typestr += arg->type_name();
+            typestr += ')';
             os << std::setw(max_type_name_ + 4) << std::left << typestr;
 
             arg->print_value(os);

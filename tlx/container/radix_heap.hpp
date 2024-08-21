@@ -12,6 +12,7 @@
 #define TLX_CONTAINER_RADIX_HEAP_HEADER
 
 #include <tlx/define/likely.hpp>
+#include <tlx/die.hpp>
 #include <tlx/math/clz.hpp>
 #include <tlx/math/div_ceil.hpp>
 #include <tlx/math/ffs.hpp>
@@ -220,6 +221,7 @@ public:
     size_t find_lsb() const
     {
         assert(!empty());
+        die_unless(!empty());
         return tlx::ffs(flags_) - 1;
     }
 

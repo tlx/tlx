@@ -130,8 +130,7 @@ public:
         size_t threshold = this->smallsort_threshold;
         if (this->enable_rest_size)
             return std::max(threshold, rest_size / num_threads);
-        else
-            return std::max(threshold, total_size / num_threads);
+        return std::max(threshold, total_size / num_threads);
     }
 
     //! decrement number of unordered strings
@@ -700,14 +699,12 @@ public:
                 return k;
             return i;
         }
-        else
-        {
-            if (A[j] > A[k])
-                return j;
-            if (A[i] < A[k])
-                return i;
-            return k;
-        }
+
+        if (A[j] > A[k])
+            return j;
+        if (A[i] < A[k])
+            return i;
+        return k;
     }
 
     //! Insertion sort the strings only based on the cached characters.
@@ -860,7 +857,7 @@ public:
                         min_gt = std::min(min_gt, cache[llt]);
                         break;
                     }
-                    else if (r == 0)
+                    if (r == 0)
                     {
                         std::swap(strset.at(leq), strset.at(llt));
                         std::swap(cache[leq], cache[llt]);
@@ -880,7 +877,7 @@ public:
                         max_lt = std::max(max_lt, cache[rgt]);
                         break;
                     }
-                    else if (r == 0)
+                    if (r == 0)
                     {
                         std::swap(strset.at(req), strset.at(rgt));
                         std::swap(cache[req], cache[rgt]);

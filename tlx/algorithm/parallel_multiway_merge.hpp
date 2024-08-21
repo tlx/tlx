@@ -241,11 +241,9 @@ RandomAccessIterator3 parallel_multiway_merge(
         return parallel_multiway_merge_base</* Stable */ false>(
             seqs_begin, seqs_end, target, size, comp, mwma, mwmsa, num_threads);
     }
-    else
-    {
-        return multiway_merge_base</* Stable */ false, /* Sentinels */ false>(
-            seqs_begin, seqs_end, target, size, comp, mwma);
-    }
+
+    return multiway_merge_base</* Stable */ false, /* Sentinels */ false>(
+        seqs_begin, seqs_end, target, size, comp, mwma);
 }
 
 /*!
@@ -294,11 +292,9 @@ RandomAccessIterator3 stable_parallel_multiway_merge(
         return parallel_multiway_merge_base</* Stable */ true>(
             seqs_begin, seqs_end, target, size, comp, mwma, mwmsa, num_threads);
     }
-    else
-    {
-        return multiway_merge_base</* Stable */ true, /* Sentinels */ false>(
-            seqs_begin, seqs_end, target, size, comp, mwma);
-    }
+
+    return multiway_merge_base</* Stable */ true, /* Sentinels */ false>(
+        seqs_begin, seqs_end, target, size, comp, mwma);
 }
 
 /*!
@@ -347,11 +343,9 @@ RandomAccessIterator3 parallel_multiway_merge_sentinels(
         return parallel_multiway_merge_base</* Stable */ false>(
             seqs_begin, seqs_end, target, size, comp, mwma, mwmsa, num_threads);
     }
-    else
-    {
-        return multiway_merge_base</* Stable */ false, /* Sentinels */ true>(
-            seqs_begin, seqs_end, target, size, comp, mwma);
-    }
+
+    return multiway_merge_base</* Stable */ false, /* Sentinels */ true>(
+        seqs_begin, seqs_end, target, size, comp, mwma);
 }
 
 /*!
@@ -400,11 +394,9 @@ RandomAccessIterator3 stable_parallel_multiway_merge_sentinels(
         return parallel_multiway_merge_base</* Stable */ true>(
             seqs_begin, seqs_end, target, size, comp, mwma, mwmsa, num_threads);
     }
-    else
-    {
-        return multiway_merge_base</* Stable */ true, /* Sentinels */ true>(
-            seqs_begin, seqs_end, target, size, comp, mwma);
-    }
+
+    return multiway_merge_base</* Stable */ true, /* Sentinels */ true>(
+        seqs_begin, seqs_end, target, size, comp, mwma);
 }
 
 //! \}

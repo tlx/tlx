@@ -163,10 +163,7 @@ public:
             dest_ = static_cast<int>(x);
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     void print_value(std::ostream& os) const final
@@ -210,10 +207,7 @@ public:
             dest_ = static_cast<unsigned int>(x);
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     void print_value(std::ostream& os) const final
@@ -256,10 +250,7 @@ public:
             dest_ = x;
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     void print_value(std::ostream& os) const final
@@ -300,10 +291,7 @@ public:
             --argc, ++argv;
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     void print_value(std::ostream& os) const final
@@ -345,10 +333,7 @@ public:
             --argc, ++argv;
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     void print_value(std::ostream& os) const final
@@ -392,10 +377,7 @@ public:
             --argc, ++argv;
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     void print_value(std::ostream& os) const final
@@ -436,10 +418,7 @@ public:
             --argc, ++argv;
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     void print_value(std::ostream& os) const final
@@ -1194,7 +1173,8 @@ bool CmdlineParser::process(int argc, const char* const* argv, std::ostream& os)
                                 print_option_error(argc, argv, *oi, os);
                                 return false;
                             }
-                            else if (verbose_process_)
+
+                            if (verbose_process_)
                             {
                                 os << "Option " << (*oi)->option_text()
                                    << " set to ";
@@ -1240,7 +1220,8 @@ bool CmdlineParser::process(int argc, const char* const* argv, std::ostream& os)
                                     print_option_error(argc, argv, *oi, os);
                                     return false;
                                 }
-                                else if (verbose_process_)
+
+                                if (verbose_process_)
                                 {
                                     os << "Option " << (*oi)->option_text()
                                        << " set to ";
@@ -1276,7 +1257,8 @@ bool CmdlineParser::process(int argc, const char* const* argv, std::ostream& os)
                     print_param_error(argc, argv, *argi, os);
                     return false;
                 }
-                else if (verbose_process_)
+
+                if (verbose_process_)
                 {
                     os << "Parameter " << (*argi)->param_text() << " set to ";
                     (*argi)->print_value(os);

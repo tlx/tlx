@@ -165,12 +165,10 @@ public:
             losers_[root] = losers_[right];
             return left;
         }
-        else
-        {
-            // right one is less
-            losers_[root] = losers_[left];
-            return right;
-        }
+
+        // right one is less
+        losers_[root] = losers_[left];
+        return right;
     }
 
     void init()
@@ -425,12 +423,10 @@ public:
             losers_[root] = losers_[right];
             return left;
         }
-        else
-        {
-            // right one is less
-            losers_[root] = losers_[left];
-            return right;
-        }
+
+        // right one is less
+        losers_[root] = losers_[left];
+        return right;
     }
 
     void init()
@@ -649,12 +645,10 @@ public:
             losers_[root] = losers_[right];
             return left;
         }
-        else
-        {
-            // right one is less
-            losers_[root] = losers_[left];
-            return right;
-        }
+
+        // right one is less
+        losers_[root] = losers_[left];
+        return right;
     }
 
     void init()
@@ -846,12 +840,10 @@ public:
             losers_[root] = losers_[right];
             return left;
         }
-        else
-        {
-            // right one is less
-            losers_[root] = losers_[left];
-            return right;
-        }
+
+        // right one is less
+        losers_[root] = losers_[left];
+        return right;
     }
 
     void init()

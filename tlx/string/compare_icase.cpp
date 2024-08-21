@@ -25,16 +25,14 @@ int compare_icase(const char* a, const char* b)
             continue;
         if (ca < cb)
             return -1;
-        else
-            return +1;
+        return +1;
     }
 
     if (*a == 0 && *b != 0)
         return +1;
-    else if (*a != 0 && *b == 0)
+    if (*a != 0 && *b == 0)
         return -1;
-    else
-        return 0;
+    return 0;
 }
 
 int compare_icase(const char* a, const std::string& b)
@@ -50,16 +48,14 @@ int compare_icase(const char* a, const std::string& b)
             continue;
         if (ca < cb)
             return -1;
-        else
-            return +1;
+        return +1;
     }
 
     if (*a == 0 && bi != b.end())
         return +1;
-    else if (*a != 0 && bi == b.end())
+    if (*a != 0 && bi == b.end())
         return -1;
-    else
-        return 0;
+    return 0;
 }
 
 int compare_icase(const std::string& a, const char* b)
@@ -75,16 +71,14 @@ int compare_icase(const std::string& a, const char* b)
             continue;
         if (ca < cb)
             return -1;
-        else
-            return +1;
+        return +1;
     }
 
     if (ai == a.end() && *b != 0)
         return +1;
-    else if (ai != a.end() && *b == 0)
+    if (ai != a.end() && *b == 0)
         return -1;
-    else
-        return 0;
+    return 0;
 }
 
 int compare_icase(const std::string& a, const std::string& b)
@@ -101,16 +95,14 @@ int compare_icase(const std::string& a, const std::string& b)
             continue;
         if (ca < cb)
             return -1;
-        else
-            return +1;
+        return +1;
     }
 
     if (ai == a.end() && bi != b.end())
         return +1;
-    else if (ai != a.end() && bi == b.end())
+    if (ai != a.end() && bi == b.end())
         return -1;
-    else
-        return 0;
+    return 0;
 }
 
 } // namespace tlx

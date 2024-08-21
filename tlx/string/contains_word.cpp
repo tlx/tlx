@@ -44,8 +44,7 @@ bool contains_word(const std::string& str, const char* word)
             {
                 if (it == str.end() || is_white(*it))
                     return true;
-                else
-                    break;
+                break;
             }
             if (it == str.end())
                 return false;
@@ -88,8 +87,7 @@ bool contains_word(const std::string& str, const std::string& word)
             {
                 if (it == str.end() || is_white(*it))
                     return true;
-                else
-                    break;
+                break;
             }
             if (it == str.end())
                 return false;

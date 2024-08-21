@@ -117,7 +117,8 @@ insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */)
                 ss[begin + i - 1] = std::move(cur_str);
                 break;
             }
-            else if (cur_lcp == new_lcp)
+
+            if (cur_lcp == new_lcp)
             {
                 // CASE 2: compare more characters
 
@@ -177,7 +178,8 @@ insertion_sort(const StringPtr& strptr, size_t depth, size_t /* memory */)
                 ss[begin + i - 1] = std::move(cur_str);
                 break;
             }
-            else if (cur_lcp == new_lcp)
+
+            if (cur_lcp == new_lcp)
             {
                 // CASE 2: compare more characters
 

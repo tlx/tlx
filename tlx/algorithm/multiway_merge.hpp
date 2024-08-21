@@ -803,8 +803,7 @@ RandomAccessIterator3 multiway_merge_bubble(
                         --nrp;
                         break;
                     }
-                    else
-                        pl[0] = *(TLX_POS(source[0]));
+                    pl[0] = *(TLX_POS(source[0]));
                 }
             }
             else
@@ -826,8 +825,7 @@ RandomAccessIterator3 multiway_merge_bubble(
                         --nrp;
                         break;
                     }
-                    else
-                        pl[0] = *(TLX_POS(source[0]));
+                    pl[0] = *(TLX_POS(source[0]));
                 }
             }
 
@@ -865,8 +863,7 @@ RandomAccessIterator3 multiway_merge_bubble(
                     --nrp;
                     break;
                 }
-                else
-                    pl[0] = *(TLX_POS(source[0]));
+                pl[0] = *(TLX_POS(source[0]));
             }
 
             // sink down

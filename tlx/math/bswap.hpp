@@ -101,14 +101,14 @@ static inline std::uint32_t bswap32(const std::uint32_t& v)
 //! bswap64 - generic implementation
 static inline std::uint64_t bswap64_generic(const std::uint64_t& x)
 {
-    return ((x >> 56) & 0x00000000000000FFull) |
-           ((x >> 40) & 0x000000000000FF00ull) |
-           ((x >> 24) & 0x0000000000FF0000ull) |
-           ((x >> 8) & 0x00000000FF000000ull) |
-           ((x << 8) & 0x000000FF00000000ull) |
-           ((x << 24) & 0x0000FF0000000000ull) |
-           ((x << 40) & 0x00FF000000000000ull) |
-           ((x << 56) & 0xFF00000000000000ull);
+    return ((x >> 56) & 0x00000000000000FFULL) |
+           ((x >> 40) & 0x000000000000FF00ULL) |
+           ((x >> 24) & 0x0000000000FF0000ULL) |
+           ((x >> 8) & 0x00000000FF000000ULL) |
+           ((x << 8) & 0x000000FF00000000ULL) |
+           ((x << 24) & 0x0000FF0000000000ULL) |
+           ((x << 40) & 0x00FF000000000000ULL) |
+           ((x << 56) & 0xFF00000000000000ULL);
 }
 
 #if defined(__GNUC__) || defined(__clang__)

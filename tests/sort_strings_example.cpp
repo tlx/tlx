@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
     size_t pos = 0;
     while (pos < size)
     {
-        size_t rem = std::min<size_t>(2 * 1024 * 1024u, size - pos);
+        size_t rem = std::min<size_t>(2 * 1024 * 1024U, size - pos);
         in.read(reinterpret_cast<char*>(data.data() + pos), rem);
 
         std::uint8_t* chunk = data.data() + pos;

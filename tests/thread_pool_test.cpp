@@ -117,7 +117,7 @@ void test_init_thread()
         pool.loop_until_empty();
     }
 
-    die_unequal(count.load(), (7 * 8) / 2u);
+    die_unequal(count.load(), (7 * 8) / 2U);
 }
 
 int main()

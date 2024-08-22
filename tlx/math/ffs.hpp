@@ -27,7 +27,7 @@ template <typename Integral>
 static inline unsigned ffs_template(Integral x)
 {
     if (x == 0)
-        return 0u;
+        return 0U;
     unsigned r = 1;
     while ((x & 1) == 0)
         x >>= 1, ++r;

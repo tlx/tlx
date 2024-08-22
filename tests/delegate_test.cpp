@@ -51,6 +51,7 @@ class A
 public:
     int x;
 
+    // NOLINTNEXTLINE(readability-make-member-function-const)
     int func(int a)
     {
         return a + x;
@@ -61,6 +62,7 @@ public:
         return a + x;
     }
 
+    // NOLINTNEXTLINE(readability-make-member-function-const)
     int func2(int a)
     {
         return a + x + x;
@@ -162,7 +164,7 @@ class AddFunctor
 public:
     int x;
 
-    int operator()(int a)
+    int operator()(int a) const
     {
         return a + x;
     }

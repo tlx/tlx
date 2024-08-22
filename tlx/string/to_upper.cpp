@@ -16,7 +16,7 @@ namespace tlx {
 
 char to_upper(char ch)
 {
-    if (static_cast<unsigned>(ch - 'a') < 26u)
+    if (static_cast<unsigned>(ch - 'a') < 26U)
         ch = static_cast<char>(ch - 'a' + 'A');
     return ch;
 }

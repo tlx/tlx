@@ -45,13 +45,13 @@ template class SimpleVector<MyInteger2>;
 int main()
 {
     tlx::SimpleVector<MyInteger> x;
-    die_unequal(x.size(), 0u);
+    die_unequal(x.size(), 0U);
 
     tlx::SimpleVector<MyInteger> y(20);
-    die_unequal(y.size(), 20u);
+    die_unequal(y.size(), 20U);
 
     for (size_t i = 0; i < y.size(); ++i)
-        die_unequal(y[i].val_, 1u);
+        die_unequal(y[i].val_, 1U);
 
     // use iterators
     for (size_t i = 0; i < y.size(); ++i)
@@ -66,7 +66,7 @@ int main()
         die_unequal(y.at(i).val_, y.size() - 1 - i);
 
     die_unequal(y.front().val_, y.size() - 1);
-    die_unequal(y.back().val_, 0u);
+    die_unequal(y.back().val_, 0U);
 
     std::sort(y.begin(), y.end(), [](const MyInteger& a, const MyInteger& b) {
         return a.val_ < b.val_;
@@ -78,8 +78,8 @@ int main()
     // move assignment
     x = std::move(y);
 
-    die_unequal(x.size(), 20u);
-    die_unequal(y.size(), 0u);
+    die_unequal(x.size(), 20U);
+    die_unequal(y.size(), 0U);
 
     // range iteration
     {
@@ -95,14 +95,14 @@ int main()
     // resize test
     {
         x.resize(40);
-        die_unequal(x.size(), 40u);
+        die_unequal(x.size(), 40U);
 
         // data still there?
         for (size_t i = 0; i < 20; ++i)
             die_unequal(x[i].val_, i);
 
         x.resize(10);
-        die_unequal(x.size(), 10u);
+        die_unequal(x.size(), 10U);
 
         // data still there?
         for (size_t i = 0; i < x.size(); ++i)
@@ -112,14 +112,14 @@ int main()
     // std::swap test
     std::swap(x, y);
 
-    die_unequal(x.size(), 0u);
-    die_unequal(y.size(), 10u);
+    die_unequal(x.size(), 0U);
+    die_unequal(y.size(), 10U);
 
     // move construction
     {
         tlx::SimpleVector<MyInteger> z = std::move(y);
-        die_unequal(y.size(), 0u);
-        die_unequal(z.size(), 10u);
+        die_unequal(y.size(), 0U);
+        die_unequal(z.size(), 10U);
 
         // data still there?
         for (size_t i = 0; i < z.size(); ++i)

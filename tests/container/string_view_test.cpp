@@ -17,7 +17,7 @@
 void construct_empty()
 {
     tlx::StringView empty(nullptr);
-    die_unequal(empty.size(), 0u);
+    die_unequal(empty.size(), 0U);
 }
 
 void assign_and_compare()
@@ -27,7 +27,7 @@ void assign_and_compare()
 
     tlx::StringView other_str;
     tlx::StringView fast_str = tlx::StringView(&input[5], 11); // "is a string"
-    die_unequal(fast_str.size(), 11u);
+    die_unequal(fast_str.size(), 11U);
 
     std::string cmp = "is a string";
     die_unless(fast_str == cmp);
@@ -42,7 +42,7 @@ void assign_and_compare()
     die_if(fast_str == other_str);
     die_unless(fast_str != other_str);
     tlx::StringView equal_str =
-        tlx::StringView(&input2[0], 11); // "is a string"
+        tlx::StringView(input2.data(), 11); // "is a string"
     die_unless(fast_str == equal_str);
     die_if(fast_str != equal_str);
 }
@@ -62,7 +62,7 @@ void split_view()
             die_unequal(sv, "string.");
         ++i;
     });
-    die_unequal(i, 4u);
+    die_unequal(i, 4U);
 }
 
 int main()

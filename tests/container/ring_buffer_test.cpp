@@ -18,7 +18,7 @@ static void test_fill_circular(size_t rb_size)
     tlx::RingBuffer<size_t> ring(rb_size);
 
     // put first element
-    die_unequal(0u, ring.size());
+    die_unequal(0U, ring.size());
     ring.push_back(0);
 
     // put nine more
@@ -28,7 +28,7 @@ static void test_fill_circular(size_t rb_size)
         ring.emplace_back(i);
     }
 
-    die_unequal(10u, ring.size());
+    die_unequal(10U, ring.size());
 
     // check contents of ring buffer
     for (size_t i = 0; i < ring.size(); ++i)
@@ -78,12 +78,12 @@ static void test_fill_circular(size_t rb_size)
             die_unequal(j + i, ring[i]);
 
         die_unequal(j, ring.front());
-        die_unequal(j + 9u, ring.back());
+        die_unequal(j + 9U, ring.back());
 
         // append an item, and remove one
-        ring.push_back(j + 10u);
+        ring.push_back(j + 10U);
         ring.pop_front();
-        die_unequal(10u, ring.size());
+        die_unequal(10U, ring.size());
     }
 }
 
@@ -106,7 +106,7 @@ static void test_non_default_constructible()
     ring.push_front(MyStruct(2, 3));
     ring.emplace_front(MyStruct(3, 4));
 
-    die_unequal(4u, ring.size());
+    die_unequal(4U, ring.size());
     die_unequal(3, ring[0].i1);
     die_unequal(2, ring[1].i1);
     die_unequal(0, ring[2].i1);

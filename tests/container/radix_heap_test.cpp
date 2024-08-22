@@ -252,8 +252,8 @@ void test_bucket_bounds()
         << "num_buckets=" << size_t(comp.num_buckets) //
         << "\n";
 
-    die_unequal(comp.lower_bound(0u), std::numeric_limits<T>::min());
-    die_unequal(comp.upper_bound(comp.num_buckets - 1u),
+    die_unequal(comp.lower_bound(0U), std::numeric_limits<T>::min());
+    die_unequal(comp.upper_bound(comp.num_buckets - 1U),
                 std::numeric_limits<T>::max());
 
     for (size_t i = 1; i < comp.num_buckets; i++)
@@ -270,9 +270,9 @@ void test_bucket_bounds()
         die_unless(lb <= mid);
         die_unless(mid <= ub);
 
-        die_unequal(comp(lb, 0u), i);
-        die_unequal(comp(mid, 0u), i);
-        die_unequal(comp(ub, 0u), i);
+        die_unequal(comp(lb, 0U), i);
+        die_unequal(comp(mid, 0U), i);
+        die_unequal(comp(ub, 0U), i);
     }
 }
 

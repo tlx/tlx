@@ -101,7 +101,7 @@ class BitArrayRecursive<Size, false>
     static constexpr size_t root_width =
         (width % leaf_width) != 0 ? (width % leaf_width) : leaf_width;
     static constexpr size_t child_width = width - root_width;
-    using child_type = BitArrayRecursive<1llu << child_width, child_width <= 6>;
+    using child_type = BitArrayRecursive<1LLU << child_width, child_width <= 6>;
 
     static constexpr size_t root_size = div_ceil(Size, child_type::size);
     using root_type = BitArrayRecursive<root_size <= 32 ? 32 : 64, true>;
@@ -304,7 +304,7 @@ public:
     //! Return bucket index key x belongs to given the current insertion limit
     size_t operator()(const Int x, const Int insertion_limit) const
     {
-        constexpr Int mask = (1u << radix_bits) - 1;
+        constexpr Int mask = (1U << radix_bits) - 1;
 
         assert(x >= insertion_limit);
 

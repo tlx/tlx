@@ -48,10 +48,10 @@ static inline std::uint64_t siphash_plain(const std::uint8_t key[16],
 
     k0 = bswap64_le(*reinterpret_cast<const std::uint64_t*>(key + 0));
     k1 = bswap64_le(*reinterpret_cast<const std::uint64_t*>(key + 8));
-    v0 = k0 ^ 0x736f6d6570736575ull;
-    v1 = k1 ^ 0x646f72616e646f6dull;
-    v2 = k0 ^ 0x6c7967656e657261ull;
-    v3 = k1 ^ 0x7465646279746573ull;
+    v0 = k0 ^ 0x736f6d6570736575ULL;
+    v1 = k1 ^ 0x646f72616e646f6dULL;
+    v2 = k0 ^ 0x6c7967656e657261ULL;
+    v3 = k1 ^ 0x7465646279746573ULL;
 
     last7 = static_cast<std::uint64_t>(len & 0xff) << 56;
 
@@ -135,11 +135,11 @@ union siphash_packedelem64
 
 /* 0,2,1,3 */
 static const siphash_packedelem64 siphash_init[2] = {
-    {{0x736f6d6570736575ull, 0x6c7967656e657261ull}},
-    {{0x646f72616e646f6dull, 0x7465646279746573ull}}};
+    {{0x736f6d6570736575ULL, 0x6c7967656e657261ULL}},
+    {{0x646f72616e646f6dULL, 0x7465646279746573ULL}}};
 
 static const siphash_packedelem64 siphash_final = {
-    {0x0000000000000000ull, 0x00000000000000ffull}};
+    {0x0000000000000000ULL, 0x00000000000000ffULL}};
 
 static inline std::uint64_t siphash_sse2(const std::uint8_t key[16],
                                          const std::uint8_t* m, size_t len)

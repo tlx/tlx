@@ -79,7 +79,7 @@ static void test_fold_left()
 {
     std::ostringstream oss;
 
-    test_foldl_run(oss, static_cast<int>(42), static_cast<double>(5), true);
+    test_foldl_run(oss, 42, static_cast<double>(5), true);
 
     // (((0 + 42) + 5) + 1)) where left operand is expected
     die_unequal("0\n42\n47\n0\n42\n47\n", oss.str());
@@ -124,8 +124,7 @@ static void test_fold_left_tuple()
 {
     std::ostringstream oss;
 
-    test_foldl_tuple_run(oss, static_cast<int>(42), static_cast<double>(5),
-                         true);
+    test_foldl_tuple_run(oss, 42, static_cast<double>(5), true);
 
     // (((0 + 42) + 5) + 1)) where left operand is expected
     die_unequal("0\n42\n47\n0\n42\n47\n", oss.str());
@@ -168,7 +167,7 @@ static void test_fold_right()
 {
     std::ostringstream oss;
 
-    test_foldr_run(oss, static_cast<int>(42), static_cast<double>(5), true);
+    test_foldr_run(oss, 42, static_cast<double>(5), true);
 
     // (42 + (5 + (1 + 0))) where left operand is expected
     die_unequal("1\n5\n42\n1\n5\n42\n", oss.str());
@@ -213,8 +212,7 @@ static void test_fold_right_tuple()
 {
     std::ostringstream oss;
 
-    test_foldr_tuple_run(oss, static_cast<int>(42), static_cast<double>(5),
-                         true);
+    test_foldr_tuple_run(oss, 42, static_cast<double>(5), true);
 
     // (42 + (5 + (1 + 0))) where left operand is expected
     die_unequal("1\n5\n42\n1\n5\n42\n", oss.str());

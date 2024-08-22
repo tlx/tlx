@@ -119,7 +119,7 @@ static inline void radixsort_CE0_loop(const StringShadowPtr& strptr,
     std::stack<RadixStep, std::vector<RadixStep> > radixstack;
     radixstack.emplace(strptr, depth);
 
-    while (radixstack.size())
+    while (!radixstack.empty())
     {
         while (radixstack.top().idx < 255)
         {

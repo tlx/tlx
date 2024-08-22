@@ -465,7 +465,7 @@ public:
         typedef SeqSampleSortStep Step;
 
         assert(ss_front_ == 0);
-        assert(ss_stack_.size() == 0);
+        assert(ss_stack_.empty());
 
         std::uint16_t* bktcache =
             reinterpret_cast<std::uint16_t*>(bktcache_.data());
@@ -997,7 +997,7 @@ public:
         key_type* cache = reinterpret_cast<key_type*>(bktcache_.data());
 
         assert(ms_front_ == 0);
-        assert(ms_stack_.size() == 0);
+        assert(ms_stack_.empty());
 
         // std::deque is much slower than std::vector, so we use an artificial
         // pop_front variable.

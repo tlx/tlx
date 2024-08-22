@@ -111,7 +111,7 @@ void test2_random()
             tree.insert(v);
             check.insert(std::lower_bound(check.begin(), check.end(), v), v);
         }
-        else if (check.size())
+        else if (!check.empty())
         {
             size_t idx = rng() % check.size();
             auto it = check.begin() + idx;

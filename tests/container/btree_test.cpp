@@ -1419,7 +1419,7 @@ void test_erase_iterator1()
         }
     }
 
-    die_unless(map.size() == 0);
+    die_unless(map.empty());
 }
 
 void test_iterators()

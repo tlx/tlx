@@ -1164,24 +1164,19 @@ public:
     struct tree_stats
     {
         //! Number of items in the B+ tree
-        size_type size;
+        size_type size = 0;
 
         //! Number of leaves in the B+ tree
-        size_type leaves;
+        size_type leaves = 0;
 
         //! Number of inner nodes in the B+ tree
-        size_type inner_nodes;
+        size_type inner_nodes = 0;
 
         //! Base B+ tree parameter: The number of key/data slots in each leaf
         static const unsigned short leaf_slots = Self::leaf_slotmax;
 
         //! Base B+ tree parameter: The number of key slots in each inner node.
         static const unsigned short inner_slots = Self::inner_slotmax;
-
-        //! Zero initialized
-        tree_stats() : size(0), leaves(0), inner_nodes(0)
-        {
-        }
 
         //! Return the total number of nodes
         size_type nodes() const

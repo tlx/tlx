@@ -93,9 +93,9 @@ private:
     std::chrono::duration<double> total_duration_;
 
     //! currently running timer name
-    const char* running_;
+    const char* running_ = nullptr;
     //! hash of running_
-    std::uint32_t running_hash_;
+    std::uint32_t running_hash_ = 0;
     //! start of currently running timer name
     std::chrono::time_point<std::chrono::high_resolution_clock> time_point_;
 

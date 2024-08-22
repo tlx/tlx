@@ -35,7 +35,7 @@ class PolynomialRegression
 public:
     //! start new polynomial regression calculation
     PolynomialRegression(size_t order)
-        : order_(order), size_(0), X_(2 * order + 1, 0), Y_(order + 1, 0)
+        : order_(order), X_(2 * order + 1, 0), Y_(order + 1, 0)
     {
     }
 
@@ -152,7 +152,7 @@ protected:
     std::vector<Point> points_;
 
     //! number of points added
-    size_t size_;
+    size_t size_ = 0;
 
     //! X_ = vector that stores values of sigma(x_i^2n)
     std::vector<Type> X_;

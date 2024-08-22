@@ -69,6 +69,7 @@ static_assert(!has_member_tfunc456<ClassA, int>::value,
 class ClassC
 {
 public:
+    // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
     void func123(int i)
     {
         tlx::unused(i);

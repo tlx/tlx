@@ -494,25 +494,25 @@ public:
     }
 
     //! Return CharIterator for referenced string, which belongs to this set.
-    CharIterator get_chars(const String& s, size_t depth) const
+    static CharIterator get_chars(const String& s, size_t depth)
     {
         return reinterpret_cast<CharIterator>(s.data()) + depth;
     }
 
     //! Returns true if CharIterator is at end of the given String
-    bool is_end(const String& s, const CharIterator& i) const
+    static bool is_end(const String& s, const CharIterator& i)
     {
         return (i >= reinterpret_cast<CharIterator>(s.data()) + s.size());
     }
 
     //! Return complete string (for debugging purposes)
-    std::string get_string(const String& s, size_t depth = 0) const
+    static std::string get_string(const String& s, size_t depth = 0)
     {
         return s.substr(depth);
     }
 
     //! Subset this string set using iterator range.
-    StdStringSet sub(Iterator begin, Iterator end) const
+    static StdStringSet sub(Iterator begin, Iterator end)
     {
         return StdStringSet(begin, end);
     }
@@ -606,25 +606,25 @@ public:
     }
 
     //! Return CharIterator for referenced string, which belongs to this set.
-    CharIterator get_chars(const String& s, size_t depth) const
+    static CharIterator get_chars(const String& s, size_t depth)
     {
         return reinterpret_cast<CharIterator>(s->data()) + depth;
     }
 
     //! Returns true if CharIterator is at end of the given String
-    bool is_end(const String& s, const CharIterator& i) const
+    static bool is_end(const String& s, const CharIterator& i)
     {
         return (i >= reinterpret_cast<CharIterator>(s->data()) + s->size());
     }
 
     //! Return complete string (for debugging purposes)
-    std::string get_string(const String& s, size_t depth = 0) const
+    static std::string get_string(const String& s, size_t depth = 0)
     {
         return s->substr(depth);
     }
 
     //! Subset this string set using iterator range.
-    UPtrStdStringSet sub(Iterator begin, Iterator end) const
+    static UPtrStdStringSet sub(Iterator begin, Iterator end)
     {
         return UPtrStdStringSet(begin, end);
     }

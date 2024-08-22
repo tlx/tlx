@@ -18,6 +18,7 @@ Checks:
   - "readability-make-member-function-const"
   - "readability-container-data-pointer"
   - "readability-static-definition-in-anonymous-namespace"
+  - "readability-convert-member-functions-to-static"
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

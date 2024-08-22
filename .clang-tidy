@@ -16,6 +16,7 @@ Checks:
   - "readability-uppercase-literal-suffix"
   - "readability-redundant-casting"
   - "readability-make-member-function-const"
+  - "readability-container-data-pointer"
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

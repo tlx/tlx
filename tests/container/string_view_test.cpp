@@ -42,7 +42,7 @@ void assign_and_compare()
     die_if(fast_str == other_str);
     die_unless(fast_str != other_str);
     tlx::StringView equal_str =
-        tlx::StringView(&input2[0], 11); // "is a string"
+        tlx::StringView(input2.data(), 11); // "is a string"
     die_unless(fast_str == equal_str);
     die_if(fast_str != equal_str);
 }

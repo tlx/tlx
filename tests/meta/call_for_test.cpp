@@ -49,8 +49,7 @@ static void test_call_foreach()
 {
     std::ostringstream oss;
 
-    test_call_foreach_run(oss, static_cast<int>(42), static_cast<double>(5),
-                          "hello");
+    test_call_foreach_run(oss, 42, static_cast<double>(5), "hello");
 
     die_unequal("42\n5\nhello\n42\n5\nhello\n", oss.str());
 }
@@ -94,8 +93,7 @@ static void test_call_foreach_with_index()
 {
     std::ostringstream oss;
 
-    test_call_foreach_with_index_run(oss, static_cast<int>(42),
-                                     static_cast<double>(5), "hello");
+    test_call_foreach_with_index_run(oss, 42, static_cast<double>(5), "hello");
 
     die_unequal("0 42 1\n1 5 x\n2 hello abc\n"
                 "0 42\n1 5\n2 hello\n",

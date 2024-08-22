@@ -68,13 +68,13 @@ public:
 
     //! return sum over all values aggregated
     // can't make noexcept since Type_'s conversion is allowed to throw
-    const Type sum() const
+    Type sum() const
     {
         return static_cast<Type>(count_ * mean_);
     }
 
     //! return sum over all values aggregated
-    const Type total() const
+    Type total() const
     {
         return sum();
     }

@@ -14,6 +14,7 @@ Checks:
   - "readability-implicit-bool-conversion"
   - "readability-redundant-inline-specifier"
   - "readability-uppercase-literal-suffix"
+  - "readability-redundant-casting"
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

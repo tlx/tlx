@@ -67,8 +67,7 @@ static void test_vmap_foreach()
 {
     std::ostringstream oss;
 
-    test_vmap_foreach_run(oss, static_cast<int>(42), static_cast<double>(5),
-                          "hello");
+    test_vmap_foreach_run(oss, 42, static_cast<double>(5), "hello");
 
     die_unequal("42\n5\nhello\n42\n5\nhello\n", oss.str());
 }
@@ -105,8 +104,7 @@ static void test_vmap_foreach_tuple()
 {
     std::ostringstream oss;
 
-    test_vmap_foreach_tuple_run(oss, static_cast<int>(42),
-                                static_cast<double>(5), "hello");
+    test_vmap_foreach_tuple_run(oss, 42, static_cast<double>(5), "hello");
 
     die_unequal("42\n5\nhello\n42\n5\nhello\n", oss.str());
 }
@@ -162,8 +160,7 @@ static void test_vmap_foreach_with_index()
 {
     std::ostringstream oss;
 
-    test_vmap_foreach_with_index_run(oss, static_cast<int>(42),
-                                     static_cast<double>(5), "hello");
+    test_vmap_foreach_with_index_run(oss, 42, static_cast<double>(5), "hello");
 
     die_unequal("0 42 1\n1 5 x\n2 hello abc\n"
                 "0 42\n1 5\n2 hello\n",
@@ -207,8 +204,7 @@ static void test_vmap_foreach_tuple_with_index()
     std::ostringstream oss;
 
     test_vmap_foreach_tuple_with_index_run(
-        oss,
-        std::make_tuple(static_cast<int>(42), static_cast<double>(5), "hello"));
+        oss, std::make_tuple(42, static_cast<double>(5), "hello"));
 
     die_unequal("0 42 1\n1 5 x\n2 hello abc\n"
                 "0 42\n1 5\n2 hello\n",

@@ -115,9 +115,9 @@ const char* MultiTimer::running() const
     return running_;
 }
 
-double MultiTimer::get(const char* name)
+double MultiTimer::get(const char* timer)
 {
-    return find_or_create(name).duration.count();
+    return find_or_create(timer).duration.count();
 }
 
 double MultiTimer::total() const

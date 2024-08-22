@@ -99,30 +99,29 @@ TLX_MAKE_HAS_METHOD(func123);
 
 static_assert(has_method_func123<ClassC, void(int)>::value,
               "has_method_func123 test failed.");
-static_assert(has_method_func123<ClassC, void(std::string)>::value == false,
+static_assert(!has_method_func123<ClassC, void(std::string)>::value,
               "has_method_func123 test failed.");
 
-static_assert(has_method_func123<ClassD, void(int)>::value == false,
+static_assert(!has_method_func123<ClassD, void(int)>::value,
               "has_method_func123 test failed.");
-static_assert(has_method_func123<ClassC, std::string(int)>::value == false,
+static_assert(!has_method_func123<ClassC, std::string(int)>::value,
               "has_method_func123 test failed.");
 
 TLX_MAKE_HAS_STATIC_METHOD(func456);
 
 static_assert(has_method_func456<ClassC, double(const std::string&)>::value,
               "has_method_func123 test failed.");
-static_assert(has_method_func456<ClassC, double(int)>::value == false,
+static_assert(!has_method_func456<ClassC, double(int)>::value,
               "has_method_func123 test failed.");
 
 TLX_MAKE_HAS_TEMPLATE_METHOD(tfunc123);
 
-static_assert(has_method_tfunc123<ClassC, void(std::string, double)>::value ==
-                  false,
+static_assert(!has_method_tfunc123<ClassC, void(std::string, double)>::value,
               "has_method_tfunc123 test failed.");
-static_assert(has_method_tfunc123<ClassC, void(int, double)>::value == false,
+static_assert(!has_method_tfunc123<ClassC, void(int, double)>::value,
               "has_method_tfunc123 test failed.");
 
-static_assert(has_method_tfunc123<ClassD, void(int, double)>::value == false,
+static_assert(!has_method_tfunc123<ClassD, void(int, double)>::value,
               "has_method_tfunc123 test failed.");
 
 #endif

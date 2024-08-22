@@ -122,7 +122,7 @@ public:
 
     //! enqueue a new job in the thread pool
     template <typename StringPtr>
-    void enqueue(PS5SortStep* sstep, const StringPtr& strptr, size_t depth);
+    void enqueue(PS5SortStep* pstep, const StringPtr& strptr, size_t depth);
 
     //! return sequential sorting threshold
     size_t sequential_threshold()

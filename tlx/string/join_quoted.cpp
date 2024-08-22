@@ -15,23 +15,23 @@
 
 namespace tlx {
 
-std::string join_quoted(const std::vector<std::string>& vec, char sep,
+std::string join_quoted(const std::vector<std::string>& strs, char sep,
                         char quote, char escape)
 {
     std::string out;
-    if (vec.empty())
+    if (strs.empty())
         return out;
 
-    for (size_t i = 0; i < vec.size(); ++i)
+    for (size_t i = 0; i < strs.size(); ++i)
     {
         if (i != 0)
             out += sep;
 
-        if (vec[i].find(sep) != std::string::npos)
+        if (strs[i].find(sep) != std::string::npos)
         {
             out += quote;
-            for (std::string::const_iterator it = vec[i].begin();
-                 it != vec[i].end(); ++it)
+            for (std::string::const_iterator it = strs[i].begin();
+                 it != strs[i].end(); ++it)
             {
                 if (*it == quote || *it == escape)
                 {
@@ -58,16 +58,16 @@ std::string join_quoted(const std::vector<std::string>& vec, char sep,
         }
         else
         {
-            out += vec[i];
+            out += strs[i];
         }
     }
 
     return out;
 }
 
-std::string join_quoted(const std::vector<std::string>& vec)
+std::string join_quoted(const std::vector<std::string>& strs)
 {
-    return join_quoted(vec, ' ', '"', '\\');
+    return join_quoted(strs, ' ', '"', '\\');
 }
 
 } // namespace tlx

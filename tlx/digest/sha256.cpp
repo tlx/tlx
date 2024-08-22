@@ -149,8 +149,6 @@ void sha256_compress(std::uint32_t state[8], const std::uint8_t* buf)
 
 SHA256::SHA256()
 {
-    curlen_ = 0;
-    length_ = 0;
     state_[0] = 0x6A09E667UL;
     state_[1] = 0xBB67AE85UL;
     state_[2] = 0x3C6EF372UL;

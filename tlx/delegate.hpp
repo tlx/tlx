@@ -185,7 +185,8 @@ public:
               typename = typename std::enable_if<!std::is_same<
                   Delegate, typename std::decay<T>::type>::value>::type>
     Delegate(T&& f)
-        : store_(
+        : caller_(functor_caller<typename std::decay<T>::type>),
+          store_(
               // allocate memory for T in shared_ptr with appropriate deleter
               typename std::allocator_traits<Allocator>::template rebind_alloc<
                   typename std::decay<T>::type>{}
@@ -203,8 +204,6 @@ public:
             Functor(std::forward<T>(f)));
 
         object_ptr_ = store_.get();
-
-        caller_ = functor_caller<Functor>;
     }
 
     //! constructor from any functor object T, which may be a lambda with

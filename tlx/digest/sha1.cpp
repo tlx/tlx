@@ -139,8 +139,6 @@ static void sha1_compress(std::uint32_t state[4], const std::uint8_t* buf)
 
 SHA1::SHA1()
 {
-    curlen_ = 0;
-    length_ = 0;
     state_[0] = 0x67452301UL;
     state_[1] = 0xefcdab89UL;
     state_[2] = 0x98badcfeUL;

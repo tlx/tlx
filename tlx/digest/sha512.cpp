@@ -162,8 +162,6 @@ static void sha512_compress(std::uint64_t state[8], const std::uint8_t* buf)
 
 SHA512::SHA512()
 {
-    curlen_ = 0;
-    length_ = 0;
     state_[0] = 0x6a09e667f3bcc908ULL;
     state_[1] = 0xbb67ae8584caa73bULL;
     state_[2] = 0x3c6ef372fe94f82bULL;

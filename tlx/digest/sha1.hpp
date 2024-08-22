@@ -55,9 +55,9 @@ public:
     std::string digest_hex_uc();
 
 private:
-    std::uint64_t length_;
+    std::uint64_t length_ = 0;
     std::uint32_t state_[5];
-    std::uint32_t curlen_;
+    std::uint32_t curlen_ = 0;
     std::uint8_t buf_[64];
 };
 

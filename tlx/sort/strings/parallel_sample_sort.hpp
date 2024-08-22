@@ -1231,6 +1231,7 @@ public:
         : ctx_(ctx), pstep_(pstep), strptr_(strptr), depth_(depth)
     {
         // calculate number of parts
+        // NOLINTNEXTLINE(cppcoreguidelines-prefer-member-initializer)
         parts_ = strptr_.size() / ctx.sequential_threshold() * 2;
         if (parts_ == 0)
             parts_ = 1;

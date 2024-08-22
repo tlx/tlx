@@ -114,7 +114,7 @@ public:
     //! change back timer to previous timer.
     ~ScopedMultiTimerSwitch();
 
-protected:
+private:
     //! reference to MultiTimer
     MultiTimer& timer_;
 
@@ -133,7 +133,7 @@ public:
     //! change back timer to previous timer.
     ~ScopedMultiTimer();
 
-protected:
+private:
     //! reference to base timer
     MultiTimer& base_;
 

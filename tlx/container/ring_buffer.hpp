@@ -394,7 +394,7 @@ public:
 
     //! \}
 
-protected:
+private:
     //! target max_size of circular buffer prescribed by the user. Never equal
     //! to the data_.size(), which is rounded up to a power of two.
     size_t max_size_;

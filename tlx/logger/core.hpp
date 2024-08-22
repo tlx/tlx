@@ -223,7 +223,7 @@ public:
     //! method the receive log lines
     void append_log_line(const std::string& line) final;
 
-protected:
+private:
     //! previous logger, will be restored by destructor
     LoggerOutputHook* next_;
 

@@ -598,7 +598,7 @@ public:
         initialize_();
     }
 
-protected:
+private:
     KeyExtract key_extract_;
     size_t size_{0};
     ranked_key_type insertion_limit_{0};

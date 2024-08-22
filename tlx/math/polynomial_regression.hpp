@@ -144,7 +144,7 @@ public:
         return coefficients_;
     }
 
-protected:
+private:
     //! polynomial order
     size_t order_;
 

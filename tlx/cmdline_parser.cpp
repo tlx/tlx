@@ -97,7 +97,7 @@ public:
 //! specialization of argument for boolean flags (can only be set to true).
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentBool final : public Argument
 {
-protected:
+private:
     //! reference to boolean to set to true
     bool& dest_;
 
@@ -132,7 +132,7 @@ public:
 //! specialization of argument for integer options or parameters
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentInt final : public Argument
 {
-protected:
+private:
     int& dest_;
 
 public:
@@ -176,7 +176,7 @@ public:
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentUnsigned final
     : public Argument
 {
-protected:
+private:
     unsigned int& dest_;
 
 public:
@@ -219,7 +219,7 @@ public:
 //! specialization of argument for size_t options or parameters
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentSizeT final : public Argument
 {
-protected:
+private:
     size_t& dest_;
 
 public:
@@ -262,7 +262,7 @@ public:
 //! specialization of argument for float options or parameters
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentFloat final : public Argument
 {
-protected:
+private:
     float& dest_;
 
 public:
@@ -304,7 +304,7 @@ public:
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentDouble final
     : public Argument
 {
-protected:
+private:
     double& dest_;
 
 public:
@@ -347,7 +347,7 @@ public:
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentBytes32 final
     : public Argument
 {
-protected:
+private:
     std::uint32_t& dest_;
 
 public:
@@ -391,7 +391,7 @@ public:
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentBytes64 final
     : public Argument
 {
-protected:
+private:
     std::uint64_t& dest_;
 
 public:
@@ -431,7 +431,7 @@ public:
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentString final
     : public Argument
 {
-protected:
+private:
     std::string& dest_;
 
 public:
@@ -468,7 +468,7 @@ public:
 class TLX_VISIBILITY_HIDDEN CmdlineParser::ArgumentStringlist final
     : public Argument
 {
-protected:
+private:
     std::vector<std::string>& dest_;
 
 public:

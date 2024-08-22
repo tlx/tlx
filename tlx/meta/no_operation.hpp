@@ -32,7 +32,7 @@ public:
         return return_value_;
     }
 
-protected:
+private:
     ReturnType return_value_;
 };
 

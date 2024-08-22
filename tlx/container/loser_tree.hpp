@@ -74,6 +74,8 @@ protected:
         ValueType key;
     };
 
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     //! number of nodes
     const Source ik_;
     //! log_2(ik) next greater power of 2
@@ -83,6 +85,9 @@ protected:
     SimpleVector<Loser> losers_;
     //! the comparator object
     Comparator cmp_;
+
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
+private:
     //! still have to construct keys
     bool first_insert_ = true;
 
@@ -346,6 +351,8 @@ protected:
         const ValueType* keyp;
     };
 
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     //! number of nodes
     const Source ik_;
     //! log_2(ik) next greater power of 2
@@ -355,6 +362,7 @@ protected:
     //! the comparator object
     Comparator cmp_;
 
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 public:
     explicit LoserTreePointerBase(Source k,
                                   const Comparator& cmp = Comparator())
@@ -587,6 +595,8 @@ protected:
         ValueType key;
     };
 
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     //! number of nodes
     Source ik_;
     //! log_2(ik) next greater power of 2
@@ -596,6 +606,7 @@ protected:
     //! the comparator object
     Comparator cmp_;
 
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 public:
     LoserTreeCopyUnguardedBase(Source k, const ValueType& sentinel,
                                const Comparator& cmp = Comparator())
@@ -778,6 +789,8 @@ protected:
         const ValueType* keyp;
     };
 
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     //! number of nodes
     Source ik_;
     //! log_2(ik) next greater power of 2
@@ -787,6 +800,7 @@ protected:
     //! the comparator object
     Comparator cmp_;
 
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 public:
     LoserTreePointerUnguardedBase(const Source& k, const ValueType& sentinel,
                                   const Comparator& cmp = Comparator())

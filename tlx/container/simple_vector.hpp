@@ -54,7 +54,7 @@ public:
     using value_type = ValueType;
     using size_type = size_t;
 
-protected:
+private:
     //! size of allocated memory
     size_type size_;
 

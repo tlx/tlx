@@ -1299,7 +1299,7 @@ public:
     //! Function class to compare value_type objects. Required by the STL
     class value_compare
     {
-    protected:
+    private:
         //! Key comparison function from the template parameter
         key_compare key_comp;
 

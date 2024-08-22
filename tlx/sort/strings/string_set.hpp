@@ -415,7 +415,7 @@ public:
         c.first = nullptr;
     }
 
-protected:
+private:
     //! array of string pointers
     Iterator begin_, end_;
 };
@@ -530,7 +530,7 @@ public:
         c.first = nullptr;
     }
 
-protected:
+private:
     //! pointers to std::string objects
     Iterator begin_, end_;
 };
@@ -652,7 +652,7 @@ public:
         }
     }
 
-protected:
+private:
     //! vector of std::string objects
     Iterator begin_, end_;
 };
@@ -779,7 +779,7 @@ public:
     {
     }
 
-protected:
+private:
     //! reference to base text
     const Text* text_;
 

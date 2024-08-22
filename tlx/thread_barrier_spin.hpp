@@ -109,7 +109,7 @@ public:
         return step_.load(std::memory_order_acquire);
     }
 
-protected:
+private:
     //! number of threads, minus one due to comparison needed in loop
     const size_t thread_count_;
 

@@ -402,7 +402,8 @@ struct RadixStep_CE3
             size_t second = get_next_non_empty_bkt_index(first + 1);
             while (second < RADIX)
             {
-                size_t partial_equal = (first >> 8) == (second >> 8);
+                size_t partial_equal =
+                    static_cast<size_t>((first >> 8) == (second >> 8));
                 strptr.set_lcp(bkt, depth + partial_equal);
                 bkt += bkt_size[second];
                 first = second;
@@ -772,7 +773,8 @@ struct RadixStep_CI3
             size_t second = get_next_non_empty_bkt_index(first + 1);
             while (second < RADIX)
             {
-                size_t partial_equal = (first >> 8) == (second >> 8);
+                size_t partial_equal =
+                    static_cast<size_t>((first >> 8) == (second >> 8));
                 strptr.set_lcp(bkt, depth + partial_equal);
                 bkt += bkt_size[second];
                 first = second;

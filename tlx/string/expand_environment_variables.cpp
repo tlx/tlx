@@ -53,11 +53,11 @@ std::string& expand_environment_variables(std::string* sp)
             p = dp + vlen + 1;
         }
         else if (dp + 1 < s.size() &&
-                 (std::isalpha(s[dp + 1]) || s[dp + 1] == '_'))
+                 (std::isalpha(s[dp + 1]) != 0 || s[dp + 1] == '_'))
         {
             // match "$[a-zA-Z][a-zA-Z0-9]*"
             std::string::size_type de = dp + 1;
-            while (de < s.size() && (std::isalnum(s[de]) || s[de] == '_'))
+            while (de < s.size() && (std::isalnum(s[de]) != 0 || s[de] == '_'))
                 ++de;
 
             // cut out variable name

@@ -73,7 +73,8 @@ void MultiTimer::start(const char* timer)
 {
     tlx_die_unless(timer);
     std::uint32_t hash = hash_djb2(timer);
-    if (running_ && hash == running_hash_ && strcmp(running_, timer) == 0)
+    if (running_ != nullptr && hash == running_hash_ &&
+        strcmp(running_, timer) == 0)
     {
         static bool warning_shown = false;
         if (!warning_shown)
@@ -93,7 +94,7 @@ void MultiTimer::start(const char* timer)
 void MultiTimer::stop()
 {
     auto new_time_point = std::chrono::high_resolution_clock::now();
-    if (running_)
+    if (running_ != nullptr)
     {
         Entry& e = find_or_create(running_);
         e.duration += new_time_point - time_point_;
@@ -145,7 +146,7 @@ void MultiTimer::print(const char* info) const
 MultiTimer& MultiTimer::add(const MultiTimer& b)
 {
     std::unique_lock<std::mutex> lock(s_timer_add_mutex);
-    if (b.running_)
+    if (b.running_ != nullptr)
         TLX_LOG1 << "MultiTimer: trying to add running timer";
 
     for (const Entry& t : b.timers_)

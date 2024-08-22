@@ -11,6 +11,7 @@ Checks:
   - "readability-inconsistent-declaration-parameter-name"
   - "readability-simplify-boolean-expr"
   - "readability-container-size-empty"
+  - "readability-implicit-bool-conversion"
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

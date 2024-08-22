@@ -1175,7 +1175,7 @@ public:
             ss_stack_[--ss_front_].calculate_lcp(ctx_);
         }
 
-        if (pstep_)
+        if (pstep_ != nullptr)
             pstep_->substep_notify_done();
         delete this;
     }
@@ -1501,7 +1501,7 @@ public:
             bkt_[0].destroy();
         }
 
-        if (pstep_)
+        if (pstep_ != nullptr)
             pstep_->substep_notify_done();
         delete this;
     }

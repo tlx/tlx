@@ -99,7 +99,7 @@ class BitArrayRecursive<Size, false>
     static_assert(width > leaf_width,
                   "Size has to be larger than 2**leaf_width");
     static constexpr size_t root_width =
-        (width % leaf_width) ? (width % leaf_width) : leaf_width;
+        (width % leaf_width) != 0 ? (width % leaf_width) : leaf_width;
     static constexpr size_t child_width = width - root_width;
     using child_type = BitArrayRecursive<1llu << child_width, child_width <= 6>;
 

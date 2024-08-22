@@ -263,7 +263,7 @@ private:
         {
             // Iterate from the last internal node up to the root.
             size_t last_internal = (heap_.size() - 2) / arity;
-            for (size_t i = last_internal + 1; i; --i)
+            for (size_t i = last_internal + 1; i != 0; --i)
             {
                 // Index of the current internal node.
                 size_t cur = i - 1;

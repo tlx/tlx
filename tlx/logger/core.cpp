@@ -87,7 +87,7 @@ LoggerPrefixHook* set_logger_prefix_hook(LoggerPrefixHook* hook)
 Logger::Logger()
 {
     LoggerPrefixHook* prefix_hook = s_logger_prefix_hook.load();
-    if (prefix_hook)
+    if (prefix_hook != nullptr)
         prefix_hook->add_log_prefix(oss_);
 }
 
@@ -100,7 +100,7 @@ Logger::~Logger()
 SpacingLogger::SpacingLogger()
 {
     LoggerPrefixHook* prefix_hook = s_logger_prefix_hook.load();
-    if (prefix_hook)
+    if (prefix_hook != nullptr)
         prefix_hook->add_log_prefix(oss_);
 }
 

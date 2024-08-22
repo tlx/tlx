@@ -80,8 +80,9 @@ public:
     StringView(std::string&&) = delete;
 
     //! assign a whole C-style string
-    StringView(const char* str) noexcept : ptr_(str),
-                                           size_(str ? std::strlen(str) : 0)
+    StringView(const char* str) noexcept
+        : ptr_(str),
+          size_(str != nullptr ? std::strlen(str) : 0)
     {
     }
 

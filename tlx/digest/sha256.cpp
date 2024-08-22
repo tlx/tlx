@@ -35,7 +35,7 @@ typedef std::uint64_t u64;
 
 namespace {
 
-static const u32 K[64] = {
+const u32 K[64] = {
     0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
     0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
     0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
@@ -50,65 +50,65 @@ static const u32 K[64] = {
     0x682e6ff3UL, 0x748f82eeUL, 0x78a5636fUL, 0x84c87814UL, 0x8cc70208UL,
     0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL};
 
-static inline u32 min(u32 x, u32 y)
+inline u32 min(u32 x, u32 y)
 {
     return x < y ? x : y;
 }
 
-static inline u32 load32(const std::uint8_t* y)
+inline u32 load32(const std::uint8_t* y)
 {
     return (u32(y[0]) << 24) | (u32(y[1]) << 16) | (u32(y[2]) << 8) |
            (u32(y[3]) << 0);
 }
 
-static inline void store64(u64 x, std::uint8_t* y)
+inline void store64(u64 x, std::uint8_t* y)
 {
     for (int i = 0; i != 8; ++i)
         y[i] = (x >> ((7 - i) * 8)) & 255;
 }
 
-static inline void store32(u32 x, std::uint8_t* y)
+inline void store32(u32 x, std::uint8_t* y)
 {
     for (int i = 0; i != 4; ++i)
         y[i] = (x >> ((3 - i) * 8)) & 255;
 }
 
-static inline u32 Ch(u32 x, u32 y, u32 z)
+inline u32 Ch(u32 x, u32 y, u32 z)
 {
     return z ^ (x & (y ^ z));
 }
 
-static inline u32 Maj(u32 x, u32 y, u32 z)
+inline u32 Maj(u32 x, u32 y, u32 z)
 {
     return ((x | y) & z) | (x & y);
 }
 
-static inline u32 Sh(u32 x, u32 n)
+inline u32 Sh(u32 x, u32 n)
 {
     return x >> n;
 }
 
-static inline u32 Sigma0(u32 x)
+inline u32 Sigma0(u32 x)
 {
     return ror32(x, 2) ^ ror32(x, 13) ^ ror32(x, 22);
 }
 
-static inline u32 Sigma1(u32 x)
+inline u32 Sigma1(u32 x)
 {
     return ror32(x, 6) ^ ror32(x, 11) ^ ror32(x, 25);
 }
 
-static inline u32 Gamma0(u32 x)
+inline u32 Gamma0(u32 x)
 {
     return ror32(x, 7) ^ ror32(x, 18) ^ Sh(x, 3);
 }
 
-static inline u32 Gamma1(u32 x)
+inline u32 Gamma1(u32 x)
 {
     return ror32(x, 17) ^ ror32(x, 19) ^ Sh(x, 10);
 }
 
-static void sha256_compress(std::uint32_t state[8], const std::uint8_t* buf)
+void sha256_compress(std::uint32_t state[8], const std::uint8_t* buf)
 {
     u32 S[8], W[64], t0, t1, t;
 

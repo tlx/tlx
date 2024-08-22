@@ -17,6 +17,7 @@ Checks:
   - "readability-redundant-casting"
   - "readability-make-member-function-const"
   - "readability-container-data-pointer"
+  - "readability-static-definition-in-anonymous-namespace"
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

@@ -64,7 +64,7 @@ static void test_stack1()
         composed_function(50);
     }
 
-    die_unequal(total, 368000u);
+    die_unequal(total, 368000U);
 }
 
 static void test_simple_deduction_test()
@@ -88,7 +88,7 @@ static void test_simple_deduction_test()
     auto new_stack3 = new_stack2.push(save_output);
     new_stack3.fold()(42);
 
-    die_unequal(output.size(), 2u);
+    die_unequal(output.size(), 2U);
     die_unequal(output[0], "123");
     die_unequal(output[1], "123");
 }

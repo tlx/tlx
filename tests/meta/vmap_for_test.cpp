@@ -50,14 +50,14 @@ void test_vmap_foreach_run(std::ostream& os, const Args&... args)
         },
         args...);
 
-    die_unequal(std::tuple_size<decltype(r1)>::value, 3u);
+    die_unequal(std::tuple_size<decltype(r1)>::value, 3U);
     die_unequal(std::get<0>(r1), 43);
     die_unequal(std::get<1>(r1), 6.0);
     die_unequal(std::get<2>(r1), std::string("ello"));
 
     auto r2 = tlx::vmap_foreach(SimpleMapFunctor(os), args...);
 
-    die_unequal(std::tuple_size<decltype(r2)>::value, 3u);
+    die_unequal(std::tuple_size<decltype(r2)>::value, 3U);
     die_unequal(std::get<0>(r2), 43);
     die_unequal(std::get<1>(r2), 6.0);
     die_unequal(std::get<2>(r2), std::string("ello"));
@@ -88,14 +88,14 @@ void test_vmap_foreach_tuple_run(std::ostream& os, const Args&... args)
         },
         my_tuple);
 
-    die_unequal(std::tuple_size<decltype(r1)>::value, 3u);
+    die_unequal(std::tuple_size<decltype(r1)>::value, 3U);
     die_unequal(std::get<0>(r1), 43);
     die_unequal(std::get<1>(r1), 6.0);
     die_unequal(std::get<2>(r1), std::string("ello"));
 
     auto r2 = tlx::vmap_foreach_tuple(SimpleMapFunctor(os), my_tuple);
 
-    die_unequal(std::tuple_size<decltype(r2)>::value, 3u);
+    die_unequal(std::tuple_size<decltype(r2)>::value, 3U);
     die_unequal(std::get<0>(r2), 43);
     die_unequal(std::get<1>(r2), 6.0);
     die_unequal(std::get<2>(r2), std::string("ello"));
@@ -144,7 +144,7 @@ void test_vmap_foreach_with_index_run(std::ostream& os, const Args&... args)
         },
         args...);
 
-    die_unequal(std::tuple_size<decltype(r1)>::value, 3u);
+    die_unequal(std::tuple_size<decltype(r1)>::value, 3U);
     die_unequal(std::get<0>(r1), 43);
     die_unequal(std::get<1>(r1), 6.0);
     die_unequal(std::get<2>(r1), std::string("ello"));
@@ -152,7 +152,7 @@ void test_vmap_foreach_with_index_run(std::ostream& os, const Args&... args)
     auto r2 =
         tlx::vmap_foreach_with_index(SimpleMapFunctorWithIndex(os), args...);
 
-    die_unequal(std::tuple_size<decltype(r2)>::value, 3u);
+    die_unequal(std::tuple_size<decltype(r2)>::value, 3U);
     die_unequal(std::get<0>(r2), 43);
     die_unequal(std::get<1>(r2), 6.0);
     die_unequal(std::get<2>(r2), std::string("ello"));
@@ -188,7 +188,7 @@ void test_vmap_foreach_tuple_with_index_run(std::ostream& os,
         },
         tuple);
 
-    die_unequal(std::tuple_size<decltype(r1)>::value, 3u);
+    die_unequal(std::tuple_size<decltype(r1)>::value, 3U);
     die_unequal(std::get<0>(r1), 43);
     die_unequal(std::get<1>(r1), 6.0);
     die_unequal(std::get<2>(r1), std::string("ello"));
@@ -196,7 +196,7 @@ void test_vmap_foreach_tuple_with_index_run(std::ostream& os,
     auto r2 = tlx::vmap_foreach_tuple_with_index(SimpleMapFunctorWithIndex(os),
                                                  tuple);
 
-    die_unequal(std::tuple_size<decltype(r2)>::value, 3u);
+    die_unequal(std::tuple_size<decltype(r2)>::value, 3U);
     die_unequal(std::get<0>(r2), 43);
     die_unequal(std::get<1>(r2), 6.0);
     die_unequal(std::get<2>(r2), std::string("ello"));
@@ -227,7 +227,7 @@ static void test_vmap_for_range()
         return std::to_string(index + 42);
     });
 
-    die_unequal(std::tuple_size<decltype(r1)>::value, 6u);
+    die_unequal(std::tuple_size<decltype(r1)>::value, 6U);
     die_unequal(std::get<0>(r1), "42");
     die_unequal(std::get<1>(r1), "43");
 
@@ -236,9 +236,9 @@ static void test_vmap_for_range()
         return index + 42;
     });
 
-    die_unequal(std::tuple_size<decltype(r2)>::value, 4u);
-    die_unequal(std::get<0>(r2), 46u);
-    die_unequal(std::get<1>(r2), 47u);
+    die_unequal(std::tuple_size<decltype(r2)>::value, 4U);
+    die_unequal(std::get<0>(r2), 46U);
+    die_unequal(std::get<1>(r2), 47U);
 
     die_unequal("0 1 2 3 4 5 4 5 6 7 ", oss.str());
 }

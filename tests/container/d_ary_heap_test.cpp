@@ -139,7 +139,7 @@ template <typename KeyType, unsigned Arity = 2,
 void d_ary_heap_test(size_t size, std::uint32_t r_seed = 42)
 {
     tlx::DAryHeap<KeyType, Arity, Compare> x;
-    die_unequal(x.size(), 0u);
+    die_unequal(x.size(), 0U);
     die_if(!x.empty());
 
     // To check the correctness of the heap.
@@ -179,7 +179,7 @@ template <typename KeyType, unsigned Arity = 2,
 void d_ary_addressable_int_heap_test(size_t size, std::uint32_t r_seed = 42)
 {
     tlx::DAryAddressableIntHeap<KeyType, Arity, Compare> x;
-    die_unequal(x.size(), 0u);
+    die_unequal(x.size(), 0U);
     die_if(!x.empty());
 
     // To check the correctness of the heap.
@@ -234,7 +234,7 @@ void d_ary_heap_test_update(size_t size, std::vector<double>& prio,
 {
     tlx::DAryAddressableIntHeap<KeyType, Arity, Comparator<KeyType> > x{
         Comparator<KeyType>(prio)};
-    die_unequal(x.size(), 0u);
+    die_unequal(x.size(), 0U);
     die_if(!x.empty());
 
     std::set<KeyType, Comparator<KeyType> > s{Comparator<KeyType>(prio)};

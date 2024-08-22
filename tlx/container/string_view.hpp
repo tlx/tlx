@@ -417,7 +417,7 @@ public:
             return npos;
         if (pos > size_ - s.size_)
             pos = size_ - s.size_;
-        if (s.size_ == 0u) // an empty string is always found
+        if (s.size_ == 0U) // an empty string is always found
             return pos;
         for (const char* cur = ptr_ + pos;; --cur)
         {
@@ -480,7 +480,7 @@ public:
 
     size_type find_last_of(StringView s, size_type pos = npos) const noexcept
     {
-        if (s.size_ == 0u)
+        if (s.size_ == 0U)
             return npos;
         if (pos >= size_)
             pos = 0;
@@ -548,7 +548,7 @@ public:
     {
         if (pos >= size_)
             pos = size_ - 1;
-        if (s.size_ == 0u)
+        if (s.size_ == 0U)
             return pos;
         pos = size_ - (pos + 1);
         const_reverse_iterator iter = find_not_of(crbegin() + pos, crend(), s);

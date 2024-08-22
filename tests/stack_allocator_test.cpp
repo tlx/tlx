@@ -34,7 +34,7 @@ static void test_string_vector_deque()
         const char* text = "abcdefghijklmnopqrstuvwxyz";
         {
             s_string str(text, CharAlloc(arena));
-            die_unless(arena.used() >= 27u);
+            die_unless(arena.used() >= 27U);
 
             str = s_string("abc", CharAlloc(arena));
             die_unequal("abc", str);

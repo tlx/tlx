@@ -459,7 +459,7 @@ public:
         //! Prefix++ advance the iterator to the next slot.
         iterator& operator++()
         {
-            if (curr_slot + 1u < curr_leaf->slotuse)
+            if (curr_slot + 1U < curr_leaf->slotuse)
             {
                 ++curr_slot;
             }
@@ -482,7 +482,7 @@ public:
         {
             iterator tmp = *this; // copy ourselves
 
-            if (curr_slot + 1u < curr_leaf->slotuse)
+            if (curr_slot + 1U < curr_leaf->slotuse)
             {
                 ++curr_slot;
             }
@@ -656,7 +656,7 @@ public:
         //! Prefix++ advance the iterator to the next slot.
         const_iterator& operator++()
         {
-            if (curr_slot + 1u < curr_leaf->slotuse)
+            if (curr_slot + 1U < curr_leaf->slotuse)
             {
                 ++curr_slot;
             }
@@ -679,7 +679,7 @@ public:
         {
             const_iterator tmp = *this; // copy ourselves
 
-            if (curr_slot + 1u < curr_leaf->slotuse)
+            if (curr_slot + 1U < curr_leaf->slotuse)
             {
                 ++curr_slot;
             }

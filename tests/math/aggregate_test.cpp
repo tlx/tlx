@@ -19,7 +19,7 @@ void test_integer()
     for (int i = 0; i < 30; ++i)
         agg.add(i);
 
-    die_unequal(30u, agg.count());
+    die_unequal(30U, agg.count());
     die_unequal((29 * 30) / 2, agg.total());
     die_unequal_eps6(14.5, agg.average());
     die_unequal(0, agg.min());
@@ -34,7 +34,7 @@ void test_double()
     for (size_t i = 1; i <= 1000; ++i)
         agg.add(1.0 / static_cast<double>(i));
 
-    die_unequal(1000u, agg.count());
+    die_unequal(1000U, agg.count());
     die_unequal_eps6(7.4854708605503451, agg.total());
     die_unequal_eps6(0.0074854708605503447, agg.average());
     die_unequal(0.001, agg.min());

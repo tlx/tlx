@@ -389,7 +389,7 @@ public:
         // binary tree traversal without left branch
 
         unsigned int i[Rollout];
-        std::fill(i, i + Rollout, 1u);
+        std::fill(i, i + Rollout, 1U);
 
         switch (treebits)
         {

@@ -32,7 +32,7 @@ static void test_set_simple_put()
     tlx::LruCacheSet<size_t> cache;
     cache.put(7);
     die_unless(cache.exists(7));
-    die_unequal(1u, cache.size());
+    die_unequal(1U, cache.size());
 }
 
 static void test_set_missing_value()
@@ -108,10 +108,10 @@ static void test_set_keep_all_values_within_capacity()
         die_unequal(cache.pop(), i);
     }
 
-    die_unequal(cache.pop(), 70u);
-    die_unequal(cache.pop(), 75u);
-    die_unequal(cache.pop(), 80u);
-    die_unequal(0u, cache.size());
+    die_unequal(cache.pop(), 70U);
+    die_unequal(cache.pop(), 75U);
+    die_unequal(cache.pop(), 80U);
+    die_unequal(0U, cache.size());
 }
 
 /******************************************************************************/
@@ -122,8 +122,8 @@ static void test_map_simple_put()
     tlx::LruCacheMap<size_t, size_t> cache;
     cache.put(7, 777);
     die_unless(cache.exists(7));
-    die_unequal(777u, cache.get(7));
-    die_unequal(1u, cache.size());
+    die_unequal(777U, cache.get(7));
+    die_unequal(1U, cache.size());
 }
 
 static void test_map_missing_value()
@@ -208,10 +208,10 @@ static void test_map_keep_all_values_within_capacity()
         die_unequal(cache.pop().first, i);
     }
 
-    die_unequal(cache.pop().first, 70u);
-    die_unequal(cache.pop().first, 75u);
-    die_unequal(cache.pop().first, 80u);
-    die_unequal(0u, cache.size());
+    die_unequal(cache.pop().first, 70U);
+    die_unequal(cache.pop().first, 75U);
+    die_unequal(cache.pop().first, 80U);
+    die_unequal(0U, cache.size());
 }
 
 int main()

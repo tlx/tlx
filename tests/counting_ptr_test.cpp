@@ -63,22 +63,22 @@ int main()
             die_unequal(42, i2->i);
             die_unless(!i1->unique());
             die_unless(i2 == i1);
-            die_unequal(2u, i1->reference_count());
+            die_unequal(2U, i1->reference_count());
 
             // make another pointer sharing the same object
             IntegerPtr i3 = i2;
 
             die_unequal(42, i3->i);
-            die_unequal(3u, i3->reference_count());
+            die_unequal(3U, i3->reference_count());
 
             // replace object in i3 with new integer
             i3 = IntegerPtr(new MyIntegerRC(5));
             die_unless(i3 != i1);
-            die_unequal(2u, i1->reference_count());
+            die_unequal(2U, i1->reference_count());
         }
 
         // check number of objects destructed
-        die_unequal(2u, count_deletes);
+        die_unequal(2U, count_deletes);
 
         // get a pointer from a function
         IntegerPtr i4 = MakeIntegerPtr();
@@ -86,7 +86,7 @@ int main()
         // quitting the block will release the ptr
     }
 
-    die_unequal(3u, count_deletes);
+    die_unequal(3U, count_deletes);
 
     return 0;
 }

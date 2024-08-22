@@ -182,7 +182,7 @@ protected:
     {
     }
 
-    virtual ~PS5SortStep()
+    ~PS5SortStep()
     {
         assert(substep_working_ == 0);
     }
@@ -324,7 +324,7 @@ public:
             << " flip=" << strptr_.flipped();
     }
 
-    ~PS5SmallsortJob()
+    virtual ~PS5SmallsortJob()
     {
         mtimer_.stop();
         ctx_.mtimer.add(mtimer_);

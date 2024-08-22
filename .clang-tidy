@@ -23,6 +23,7 @@ Checks:
   - "-readability-qualified-auto"
   - "-readability-redundant-access-specifiers"
   - "-readability-static-accessed-through-instance"
+  - "cppcoreguidelines-virtual-class-destructor"
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

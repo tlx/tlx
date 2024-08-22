@@ -46,76 +46,76 @@ inline unsigned clz(Integral x);
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<unsigned>(unsigned i)
+inline unsigned clz<unsigned>(unsigned x)
 {
-    if (i == 0)
-        return 8 * sizeof(i);
-    return static_cast<unsigned>(__builtin_clz(i));
+    if (x == 0)
+        return 8 * sizeof(x);
+    return static_cast<unsigned>(__builtin_clz(x));
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<int>(int i)
+inline unsigned clz<int>(int x)
 {
-    return clz(static_cast<unsigned>(i));
+    return clz(static_cast<unsigned>(x));
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<unsigned long>(unsigned long i)
+inline unsigned clz<unsigned long>(unsigned long x)
 {
-    if (i == 0)
-        return 8 * sizeof(i);
-    return static_cast<unsigned>(__builtin_clzl(i));
+    if (x == 0)
+        return 8 * sizeof(x);
+    return static_cast<unsigned>(__builtin_clzl(x));
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<long>(long i)
+inline unsigned clz<long>(long x)
 {
-    return clz(static_cast<unsigned long>(i));
+    return clz(static_cast<unsigned long>(x));
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<unsigned long long>(unsigned long long i)
+inline unsigned clz<unsigned long long>(unsigned long long x)
 {
-    if (i == 0)
-        return 8 * sizeof(i);
-    return static_cast<unsigned>(__builtin_clzll(i));
+    if (x == 0)
+        return 8 * sizeof(x);
+    return static_cast<unsigned>(__builtin_clzll(x));
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<long long>(long long i)
+inline unsigned clz<long long>(long long x)
 {
-    return clz(static_cast<unsigned long long>(i));
+    return clz(static_cast<unsigned long long>(x));
 }
 
 #elif defined(_MSC_VER)
 
 //! clz (count leading zeros)
 template <typename Integral>
-inline unsigned clz<unsigned>(Integral i)
+inline unsigned clz<unsigned>(Integral x)
 {
     unsigned long leading_zeros = 0;
-    if (sizeof(i) > 4)
+    if (sizeof(x) > 4)
     {
 #if defined(_WIN64)
-        if (_BitScanReverse64(&leading_zeros, i))
+        if (_BitScanReverse64(&leading_zeros, x))
             return 63 - leading_zeros;
         else
-            return 8 * sizeof(i);
+            return 8 * sizeof(x);
 #else
-        return clz_template(i);
+        return clz_template(x);
 #endif
     }
     else
     {
-        if (_BitScanReverse(&leading_zeros, static_cast<unsigned>(i)))
+        if (_BitScanReverse(&leading_zeros, static_cast<unsigned>(x)))
             return 31 - leading_zeros;
         else
-            return 8 * sizeof(i);
+            return 8 * sizeof(x);
     }
 }
 
@@ -123,44 +123,44 @@ inline unsigned clz<unsigned>(Integral i)
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<int>(int i)
+inline unsigned clz<int>(int x)
 {
-    return clz_template(i);
+    return clz_template(x);
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<unsigned>(unsigned i)
+inline unsigned clz<unsigned>(unsigned x)
 {
-    return clz_template(i);
+    return clz_template(x);
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<long>(long i)
+inline unsigned clz<long>(long x)
 {
-    return clz_template(i);
+    return clz_template(x);
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<unsigned long>(unsigned long i)
+inline unsigned clz<unsigned long>(unsigned long x)
 {
-    return clz_template(i);
+    return clz_template(x);
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<long long>(long long i)
+inline unsigned clz<long long>(long long x)
 {
-    return clz_template(i);
+    return clz_template(x);
 }
 
 //! clz (count leading zeros)
 template <>
-inline unsigned clz<unsigned long long>(unsigned long long i)
+inline unsigned clz<unsigned long long>(unsigned long long x)
 {
-    return clz_template(i);
+    return clz_template(x);
 }
 
 #endif

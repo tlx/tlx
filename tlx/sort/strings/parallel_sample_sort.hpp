@@ -122,7 +122,7 @@ public:
 
     //! enqueue a new job in the thread pool
     template <typename StringPtr>
-    void enqueue(PS5SortStep* sstep, const StringPtr& strptr, size_t depth);
+    void enqueue(PS5SortStep* pstep, const StringPtr& strptr, size_t depth);
 
     //! return sequential sorting threshold
     size_t sequential_threshold()
@@ -465,7 +465,7 @@ public:
         typedef SeqSampleSortStep Step;
 
         assert(ss_front_ == 0);
-        assert(ss_stack_.size() == 0);
+        assert(ss_stack_.empty());
 
         std::uint16_t* bktcache =
             reinterpret_cast<std::uint16_t*>(bktcache_.data());
@@ -679,13 +679,13 @@ public:
     /*------------------------------------------------------------------------*/
     //! Stack of Recursive MKQS Steps
 
-    static inline int cmp(const key_type& a, const key_type& b)
+    static int cmp(const key_type& a, const key_type& b)
     {
         return (a > b) ? 1 : (a < b) ? -1 : 0;
     }
 
     template <typename Type>
-    static inline size_t med3(Type* A, size_t i, size_t j, size_t k)
+    static size_t med3(Type* A, size_t i, size_t j, size_t k)
     {
         if (A[i] == A[j])
             return i;
@@ -708,8 +708,8 @@ public:
     }
 
     //! Insertion sort the strings only based on the cached characters.
-    static inline void insertion_sort_cache_block(const StringPtr& strptr,
-                                                  key_type* cache)
+    static void insertion_sort_cache_block(const StringPtr& strptr,
+                                           key_type* cache)
     {
         const StringSet& strings = strptr.active();
         size_t n = strptr.size();
@@ -732,8 +732,8 @@ public:
 
     //! Insertion sort, but use cached characters if possible.
     template <bool CacheDirty>
-    static inline void insertion_sort_cache(const StringPtr& _strptr,
-                                            key_type* cache, size_t depth)
+    static void insertion_sort_cache(const StringPtr& _strptr, key_type* cache,
+                                     size_t depth)
     {
         StringPtr strptr = _strptr.copy_back();
 
@@ -997,7 +997,7 @@ public:
         key_type* cache = reinterpret_cast<key_type*>(bktcache_.data());
 
         assert(ms_front_ == 0);
-        assert(ms_stack_.size() == 0);
+        assert(ms_stack_.empty());
 
         // std::deque is much slower than std::vector, so we use an artificial
         // pop_front variable.
@@ -1175,7 +1175,7 @@ public:
             ss_stack_[--ss_front_].calculate_lcp(ctx_);
         }
 
-        if (pstep_)
+        if (pstep_ != nullptr)
             pstep_->substep_notify_done();
         delete this;
     }
@@ -1501,7 +1501,7 @@ public:
             bkt_[0].destroy();
         }
 
-        if (pstep_)
+        if (pstep_ != nullptr)
             pstep_->substep_notify_done();
         delete this;
     }

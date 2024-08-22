@@ -67,7 +67,7 @@ bool set_die_with_exception(bool b);
 #define tlx_die_unless(X)                                                      \
     do                                                                         \
     {                                                                          \
-        if (!(X))                                                              \
+        if (!(X)) /* NOLINT(readability-simplify-boolean-expr) */              \
         {                                                                      \
             ::tlx::die_with_message("DIE: Assertion \"" #X "\" failed!",       \
                                     __FILE__, __LINE__);                       \
@@ -91,7 +91,7 @@ bool set_die_with_exception(bool b);
 #define tlx_die_verbose_unless(X, msg)                                         \
     do                                                                         \
     {                                                                          \
-        if (!(X))                                                              \
+        if (!(X)) /* NOLINT(readability-simplify-boolean-expr) */              \
         {                                                                      \
             tlx_die_with_sstream("DIE: Assertion \"" #X "\" failed!\n"         \
                                  << msg << '\n');                              \

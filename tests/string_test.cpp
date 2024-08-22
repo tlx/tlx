@@ -277,8 +277,8 @@ static void test_escape_uri()
 
 static void test_expand_environment_variables()
 {
-    tlx::setenv("TEST_1", "def", /* overwrite */ true);
-    tlx::setenv("VAR_2", "uvw", /* overwrite */ true);
+    tlx::setenv("TEST_1", "def", /* overwrite */ 1);
+    tlx::setenv("VAR_2", "uvw", /* overwrite */ 1);
 
     die_unequal(tlx::expand_environment_variables("abc$TEST_1 ---${VAR_2}xyz"),
                 "abcdef ---uvwxyz");

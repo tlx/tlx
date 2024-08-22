@@ -434,7 +434,8 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
 
     // run individually for debugging
-    if (0)
+    auto placeholder = false;
+    if (placeholder)
     {
         test_repeat<std::uint64_t, PARA_GNU_MWM_EXACT>(2, 2 * 1024 * 1024);
         test_repeat<std::uint64_t, PARA_MWM_EXACT_LT>(2, 2 * 1024 * 1024);

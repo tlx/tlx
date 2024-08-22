@@ -39,7 +39,7 @@ bool less_icase(const std::string& a, const std::string& b);
 //! Case-insensitive less order relation functional class for std::map, etc.
 struct less_icase_asc
 {
-    inline bool operator()(const std::string& a, const std::string& b) const
+    bool operator()(const std::string& a, const std::string& b) const
     {
         return less_icase(a, b);
     }
@@ -49,7 +49,7 @@ struct less_icase_asc
 //! std::map, etc.
 struct less_icase_desc
 {
-    inline bool operator()(const std::string& a, const std::string& b) const
+    bool operator()(const std::string& a, const std::string& b) const
     {
         return !less_icase(a, b);
     }

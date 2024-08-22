@@ -55,7 +55,7 @@ struct PerfectTreeCalculations
     static const size_t treebits = TreeBits;
     static const size_t num_nodes = (1 << treebits) - 1;
 
-    static inline unsigned int level_to_preorder(unsigned int id)
+    static unsigned int level_to_preorder(unsigned int id)
     {
         assert(id > 0);
         TLX_LOG << "index: " << id << " = " << to_binary(id);
@@ -71,7 +71,7 @@ struct PerfectTreeCalculations
         return bkt;
     }
 
-    static inline unsigned int pre_to_levelorder(unsigned int id)
+    static unsigned int pre_to_levelorder(unsigned int id)
     {
         assert(id > 0);
         TLX_LOG << "index: " << id << " = " << to_binary(id);
@@ -87,7 +87,7 @@ struct PerfectTreeCalculations
         return bkt;
     }
 
-    static inline void self_verify()
+    static void self_verify()
     {
         for (size_t i = 1; i <= num_nodes; ++i)
         {

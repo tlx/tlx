@@ -46,76 +46,76 @@ inline unsigned ctz(Integral x);
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<unsigned>(unsigned i)
+inline unsigned ctz<unsigned>(unsigned x)
 {
-    if (i == 0)
-        return 8 * sizeof(i);
-    return static_cast<unsigned>(__builtin_ctz(i));
+    if (x == 0)
+        return 8 * sizeof(x);
+    return static_cast<unsigned>(__builtin_ctz(x));
 }
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<int>(int i)
+inline unsigned ctz<int>(int x)
 {
-    return ctz(static_cast<unsigned>(i));
+    return ctz(static_cast<unsigned>(x));
 }
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<unsigned long>(unsigned long i)
+inline unsigned ctz<unsigned long>(unsigned long x)
 {
-    if (i == 0)
-        return 8 * sizeof(i);
-    return static_cast<unsigned>(__builtin_ctzl(i));
+    if (x == 0)
+        return 8 * sizeof(x);
+    return static_cast<unsigned>(__builtin_ctzl(x));
 }
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<long>(long i)
+inline unsigned ctz<long>(long x)
 {
-    return ctz(static_cast<unsigned long>(i));
+    return ctz(static_cast<unsigned long>(x));
 }
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<unsigned long long>(unsigned long long i)
+inline unsigned ctz<unsigned long long>(unsigned long long x)
 {
-    if (i == 0)
-        return 8 * sizeof(i);
-    return static_cast<unsigned>(__builtin_ctzll(i));
+    if (x == 0)
+        return 8 * sizeof(x);
+    return static_cast<unsigned>(__builtin_ctzll(x));
 }
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<long long>(long long i)
+inline unsigned ctz<long long>(long long x)
 {
-    return ctz(static_cast<unsigned long long>(i));
+    return ctz(static_cast<unsigned long long>(x));
 }
 
 #elif defined(_MSC_VER)
 
 //! ctz (count trailing zeros)
 template <typename Integral>
-inline unsigned ctz<unsigned>(Integral i)
+inline unsigned ctz<unsigned>(Integral x)
 {
     unsigned long trailing_zeros = 0;
-    if (sizeof(i) > 4)
+    if (sizeof(x) > 4)
     {
 #if defined(_WIN64)
-        if (_BitScanForward64(&trailing_zeros, i))
+        if (_BitScanForward64(&trailing_zeros, x))
             return trailing_zeros;
         else
-            return 8 * sizeof(i);
+            return 8 * sizeof(x);
 #else
-        return ctz_template(i);
+        return ctz_template(x);
 #endif
     }
     else
     {
-        if (_BitScanForward(&trailing_zeros, static_cast<unsigned>(i)))
+        if (_BitScanForward(&trailing_zeros, static_cast<unsigned>(x)))
             return trailing_zeros;
         else
-            return 8 * sizeof(i);
+            return 8 * sizeof(x);
     }
 }
 
@@ -123,44 +123,44 @@ inline unsigned ctz<unsigned>(Integral i)
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<int>(int i)
+inline unsigned ctz<int>(int x)
 {
-    return ctz_template(i);
+    return ctz_template(x);
 }
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<unsigned>(unsigned i)
+inline unsigned ctz<unsigned>(unsigned x)
 {
-    return ctz_template(i);
+    return ctz_template(x);
 }
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<long>(long i)
+inline unsigned ctz<long>(long x)
 {
-    return ctz_template(i);
+    return ctz_template(x);
 }
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<unsigned long>(unsigned long i)
+inline unsigned ctz<unsigned long>(unsigned long x)
 {
-    return ctz_template(i);
+    return ctz_template(x);
 }
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<long long>(long long i)
+inline unsigned ctz<long long>(long long x)
 {
-    return ctz_template(i);
+    return ctz_template(x);
 }
 
 //! ctz (count trailing zeros)
 template <>
-inline unsigned ctz<unsigned long long>(unsigned long long i)
+inline unsigned ctz<unsigned long long>(unsigned long long x)
 {
-    return ctz_template(i);
+    return ctz_template(x);
 }
 
 #endif

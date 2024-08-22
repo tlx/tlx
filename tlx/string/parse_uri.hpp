@@ -32,7 +32,7 @@ static inline void parse_uri(const char* uri, tlx::string_view* path,
 
     // find path part
     const char* begin = c;
-    while (!(*c == '?' || *c == '#' || *c == 0))
+    while (*c != '?' && *c != '#' && *c != 0)
     {
         ++c;
     }
@@ -43,7 +43,7 @@ static inline void parse_uri(const char* uri, tlx::string_view* path,
     if (*c == '?')
     {
         begin = ++c;
-        while (!(*c == '#' || *c == 0))
+        while (*c != '#' && *c != 0)
         {
             ++c;
         }

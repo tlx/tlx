@@ -37,7 +37,7 @@ public:
     }
 
     template <typename Type>
-    inline void operator()(Type& left, Type& right)
+    void operator()(Type& left, Type& right)
     {
         if (cmp_(right, left))
             std::swap(left, right);

@@ -116,21 +116,21 @@ void print_cxx_backtrace(FILE* out, unsigned int max_frames)
 
         // find parentheses and +address offset surrounding the mangled name:
         // ./module(function+0x15c) [0x8048a6d]
-        for (char* p = symbollist[i]; *p; ++p)
+        for (char* p = symbollist[i]; *p != 0; ++p)
         {
             if (*p == '(')
                 begin_name = p;
             else if (*p == '+')
                 begin_offset = p;
-            else if (*p == ')' && begin_offset)
+            else if (*p == ')' && begin_offset != nullptr)
             {
                 end_offset = p;
                 break;
             }
         }
 
-        if (begin_name && begin_offset && end_offset &&
-            begin_name < begin_offset)
+        if (begin_name != nullptr && begin_offset != nullptr &&
+            end_offset != nullptr && begin_name < begin_offset)
         {
             *begin_name++ = '\0';
             *begin_offset++ = '\0';

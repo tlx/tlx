@@ -35,7 +35,7 @@ static inline std::string parse_uri_form_data_decode(const char* str,
         out.reserve(end - str);
     char a, b;
 
-    while (*str && str != end)
+    while (*str != 0 && str != end)
     {
         if (*str == '%' && (a = str[1]) != 0 && (b = str[2]) != 0)
         {

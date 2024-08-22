@@ -33,7 +33,7 @@ struct LevenshteinStandardParameters
     static const unsigned int cost_insert_delete = 1;
     static const unsigned int cost_replace = 1;
 
-    static inline bool char_equal(const char& a, const char& b)
+    static bool char_equal(const char& a, const char& b)
     {
         return (a == b);
     }
@@ -48,7 +48,7 @@ struct LevenshteinStandardICaseParameters
     static const unsigned int cost_insert_delete = 1;
     static const unsigned int cost_replace = 1;
 
-    static inline bool char_equal(const char& a, const char& b)
+    static bool char_equal(const char& a, const char& b)
     {
         return to_lower(a) == to_lower(b);
     }

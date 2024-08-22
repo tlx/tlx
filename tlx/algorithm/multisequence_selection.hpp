@@ -48,8 +48,7 @@ public:
     {
     }
 
-    inline bool operator()(const std::pair<T1, T2>& p1,
-                           const std::pair<T1, T2>& p2)
+    bool operator()(const std::pair<T1, T2>& p1, const std::pair<T1, T2>& p2)
     {
         if (comp_(p1.first, p2.first))
             return true;
@@ -74,8 +73,7 @@ public:
     {
     }
 
-    inline bool operator()(const std::pair<T1, T2>& p1,
-                           const std::pair<T1, T2>& p2)
+    bool operator()(const std::pair<T1, T2>& p1, const std::pair<T1, T2>& p2)
     {
         if (comp_(p2.first, p1.first))
             return true;

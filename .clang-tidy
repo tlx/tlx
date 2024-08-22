@@ -12,6 +12,7 @@ Checks:
   - "readability-simplify-boolean-expr"
   - "readability-container-size-empty"
   - "readability-implicit-bool-conversion"
+  - "readability-redundant-inline-specifier"
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

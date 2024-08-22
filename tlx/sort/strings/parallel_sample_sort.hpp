@@ -679,13 +679,13 @@ public:
     /*------------------------------------------------------------------------*/
     //! Stack of Recursive MKQS Steps
 
-    static inline int cmp(const key_type& a, const key_type& b)
+    static int cmp(const key_type& a, const key_type& b)
     {
         return (a > b) ? 1 : (a < b) ? -1 : 0;
     }
 
     template <typename Type>
-    static inline size_t med3(Type* A, size_t i, size_t j, size_t k)
+    static size_t med3(Type* A, size_t i, size_t j, size_t k)
     {
         if (A[i] == A[j])
             return i;
@@ -708,8 +708,8 @@ public:
     }
 
     //! Insertion sort the strings only based on the cached characters.
-    static inline void insertion_sort_cache_block(const StringPtr& strptr,
-                                                  key_type* cache)
+    static void insertion_sort_cache_block(const StringPtr& strptr,
+                                           key_type* cache)
     {
         const StringSet& strings = strptr.active();
         size_t n = strptr.size();
@@ -732,8 +732,8 @@ public:
 
     //! Insertion sort, but use cached characters if possible.
     template <bool CacheDirty>
-    static inline void insertion_sort_cache(const StringPtr& _strptr,
-                                            key_type* cache, size_t depth)
+    static void insertion_sort_cache(const StringPtr& _strptr, key_type* cache,
+                                     size_t depth)
     {
         StringPtr strptr = _strptr.copy_back();
 

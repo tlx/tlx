@@ -1445,7 +1445,7 @@ struct TestData
     }
 
     // also used as implicit conversion constructor
-    inline TestData(unsigned int _a) : a(_a), b(0)
+    TestData(unsigned int _a) : a(_a), b(0)
     {
     }
 };
@@ -1454,7 +1454,7 @@ struct TestCompare
 {
     unsigned int somevalue;
 
-    inline TestCompare(unsigned int sv) : somevalue(sv)
+    TestCompare(unsigned int sv) : somevalue(sv)
     {
     }
 

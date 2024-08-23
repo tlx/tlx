@@ -51,6 +51,42 @@ std::vector<std::string> split_words(tlx::string_view str,
     return out;
 }
 
+std::vector<tlx::string_view> split_words_view(tlx::string_view str,
+                                               std::string::size_type limit)
+{
+    std::vector<tlx::string_view> out;
+    if (limit == 0)
+        return out;
+
+    tlx::string_view::const_iterator it = str.begin(), last = it;
+
+    for (; it != str.end(); ++it)
+    {
+        if (*it == ' ' || *it == '\n' || *it == '\t' || *it == '\r')
+        {
+            if (it == last)
+            { // skip over empty split substrings
+                last = it + 1;
+                continue;
+            }
+
+            if (out.size() + 1 >= limit)
+            {
+                out.emplace_back(last, str.end());
+                return out;
+            }
+
+            out.emplace_back(last, it);
+            last = it + 1;
+        }
+    }
+
+    if (last != it)
+        out.emplace_back(last, it);
+
+    return out;
+}
+
 } // namespace tlx
 
 /******************************************************************************/

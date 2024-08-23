@@ -23,6 +23,10 @@ Checks:
   - "-readability-qualified-auto"
   - "-readability-redundant-access-specifiers"
   - "-readability-static-accessed-through-instance"
+  - "cppcoreguidelines-prefer-member-initializer"
+  - "cppcoreguidelines-use-default-member-init"
+  - "cppcoreguidelines-virtual-class-destructor"
+  - "cppcoreguidelines-non-private-member-variables-in-classes"
 
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'

@@ -40,9 +40,7 @@ struct MultiTimer::Entry
 // MultiTimer
 
 MultiTimer::MultiTimer()
-    : total_duration_(std::chrono::duration<double>::zero()),
-      running_(nullptr),
-      running_hash_(0)
+    : total_duration_(std::chrono::duration<double>::zero())
 {
 }
 

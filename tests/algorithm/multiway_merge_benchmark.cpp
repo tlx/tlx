@@ -91,7 +91,7 @@ enum benchmark_type
  */
 class scoped_print_timer
 {
-protected:
+private:
     //! message
     std::string message_;
 

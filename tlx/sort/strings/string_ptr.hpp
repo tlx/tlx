@@ -49,7 +49,7 @@ public:
     typedef StringSet_ StringSet;
     typedef typename StringSet::String String;
 
-protected:
+private:
     //! strings (front) array
     StringSet active_;
 
@@ -112,7 +112,7 @@ public:
     typedef LcpType_ LcpType;
     typedef typename StringSet::String String;
 
-protected:
+private:
     //! strings (front) array
     StringSet active_;
 
@@ -195,7 +195,7 @@ public:
     typedef typename StringSet::String String;
     typedef typename StringSet::Iterator Iterator;
 
-protected:
+private:
     //! strings (front) and temporary shadow (back) array
     StringSet active_, shadow_;
 
@@ -294,7 +294,7 @@ public:
     typedef typename StringSet::String String;
     typedef typename StringSet::Iterator Iterator;
 
-protected:
+private:
     //! strings (front) and temporary shadow (back) array
     StringSet active_, shadow_;
 

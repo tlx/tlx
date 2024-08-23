@@ -85,7 +85,7 @@ public:
         return step_;
     }
 
-protected:
+private:
     //! number of threads
     const size_t thread_count_;
 

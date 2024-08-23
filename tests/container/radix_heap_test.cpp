@@ -76,7 +76,7 @@ public:
         std::swap(bits_, o.bits_);
     }
 
-protected:
+private:
     std::vector<bool> bits_;
 };
 

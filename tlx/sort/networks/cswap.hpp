@@ -43,7 +43,7 @@ public:
             std::swap(left, right);
     }
 
-protected:
+private:
     Comparator cmp_;
 };
 

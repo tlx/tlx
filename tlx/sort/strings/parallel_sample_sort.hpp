@@ -182,7 +182,7 @@ protected:
     {
     }
 
-    virtual ~PS5SortStep()
+    ~PS5SortStep()
     {
         assert(substep_working_ == 0);
     }
@@ -324,7 +324,7 @@ public:
             << " flip=" << strptr_.flipped();
     }
 
-    ~PS5SmallsortJob()
+    virtual ~PS5SmallsortJob()
     {
         mtimer_.stop();
         ctx_.mtimer.add(mtimer_);
@@ -367,7 +367,7 @@ public:
     {
     public:
         StringPtr strptr_;
-        size_t idx_;
+        size_t idx_ = 0;
         size_t depth_;
 
         using StringSet = typename StringPtr::StringSet;
@@ -383,7 +383,7 @@ public:
 
         SeqSampleSortStep(Context& ctx, const StringPtr& strptr, size_t depth,
                           std::uint16_t* bktcache)
-            : strptr_(strptr), idx_(0), depth_(depth)
+            : strptr_(strptr), depth_(depth)
         {
             size_t n = strptr_.size();
 
@@ -811,14 +811,14 @@ public:
         StringPtr strptr_;
         key_type* cache_;
         size_t num_lt_, num_eq_, num_gt_, depth_;
-        size_t idx_;
+        size_t idx_ = 0;
         unsigned char eq_recurse_;
         // typename StringPtr::StringSet::Char dchar_eq_, dchar_gt_;
         std::uint8_t lcp_lt_, lcp_eq_, lcp_gt_;
 
         MKQSStep(Context& ctx, const StringPtr& strptr, key_type* cache,
                  size_t depth, bool CacheDirty)
-            : strptr_(strptr), cache_(cache), depth_(depth), idx_(0)
+            : strptr_(strptr), cache_(cache), depth_(depth)
         {
             size_t n = strptr_.size();
 
@@ -1231,6 +1231,7 @@ public:
         : ctx_(ctx), pstep_(pstep), strptr_(strptr), depth_(depth)
     {
         // calculate number of parts
+        // NOLINTNEXTLINE(cppcoreguidelines-prefer-member-initializer)
         parts_ = strptr_.size() / ctx.sequential_threshold() * 2;
         if (parts_ == 0)
             parts_ = 1;

@@ -126,6 +126,7 @@ LoggerOutputHook::~LoggerOutputHook()
 
 LoggerCollectOutput::LoggerCollectOutput(bool echo) : echo_(echo)
 {
+    // NOLINTNEXTLINE(cppcoreguidelines-prefer-member-initializer)
     next_ = set_logger_output_hook(this);
 }
 

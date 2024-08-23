@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <iostream>
 #include <random>
+#include <string>
 #include <utility>
 #include <vector>
 

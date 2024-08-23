@@ -51,7 +51,7 @@ public:
 
     static constexpr size_t arity = Arity;
 
-protected:
+private:
     //! Cells in the heap.
     std::vector<key_type> heap_;
 

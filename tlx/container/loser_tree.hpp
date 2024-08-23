@@ -74,6 +74,8 @@ protected:
         ValueType key;
     };
 
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     //! number of nodes
     const Source ik_;
     //! log_2(ik) next greater power of 2
@@ -83,17 +85,16 @@ protected:
     SimpleVector<Loser> losers_;
     //! the comparator object
     Comparator cmp_;
+
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
+private:
     //! still have to construct keys
-    bool first_insert_;
+    bool first_insert_ = true;
 
 public:
     explicit LoserTreeCopyBase(const Source& k,
                                const Comparator& cmp = Comparator())
-        : ik_(k),
-          k_(round_up_to_power_of_two(ik_)),
-          losers_(2 * k_),
-          cmp_(cmp),
-          first_insert_(true)
+        : ik_(k), k_(round_up_to_power_of_two(ik_)), losers_(2 * k_), cmp_(cmp)
     {
         for (Source i = ik_ - 1; i < k_; ++i)
         {
@@ -350,6 +351,8 @@ protected:
         const ValueType* keyp;
     };
 
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     //! number of nodes
     const Source ik_;
     //! log_2(ik) next greater power of 2
@@ -359,6 +362,7 @@ protected:
     //! the comparator object
     Comparator cmp_;
 
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 public:
     explicit LoserTreePointerBase(Source k,
                                   const Comparator& cmp = Comparator())
@@ -591,6 +595,8 @@ protected:
         ValueType key;
     };
 
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     //! number of nodes
     Source ik_;
     //! log_2(ik) next greater power of 2
@@ -600,6 +606,7 @@ protected:
     //! the comparator object
     Comparator cmp_;
 
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 public:
     LoserTreeCopyUnguardedBase(Source k, const ValueType& sentinel,
                                const Comparator& cmp = Comparator())
@@ -782,6 +789,8 @@ protected:
         const ValueType* keyp;
     };
 
+    // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
+
     //! number of nodes
     Source ik_;
     //! log_2(ik) next greater power of 2
@@ -791,6 +800,7 @@ protected:
     //! the comparator object
     Comparator cmp_;
 
+    // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 public:
     LoserTreePointerUnguardedBase(const Source& k, const ValueType& sentinel,
                                   const Comparator& cmp = Comparator())

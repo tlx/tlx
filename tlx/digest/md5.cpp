@@ -189,8 +189,6 @@ static void md5_compress(std::uint32_t state[4], const std::uint8_t* buf)
 
 MD5::MD5()
 {
-    curlen_ = 0;
-    length_ = 0;
     state_[0] = 0x67452301UL;
     state_[1] = 0xefcdab89UL;
     state_[2] = 0x98badcfeUL;

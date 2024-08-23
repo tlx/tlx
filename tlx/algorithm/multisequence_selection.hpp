@@ -40,7 +40,7 @@ namespace multisequence_selection_detail {
 template <typename T1, typename T2, typename Comparator>
 class lexicographic
 {
-protected:
+private:
     Comparator& comp_;
 
 public:
@@ -65,7 +65,7 @@ public:
 template <typename T1, typename T2, typename Comparator>
 class lexicographic_rev
 {
-protected:
+private:
     Comparator& comp_;
 
 public:

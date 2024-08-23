@@ -3,12 +3,13 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2013-2015 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2013-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
 #include <tlx/cmdline_parser.hpp>
+#include <tlx/container/string_view.hpp>
 #include <tlx/define/visibility_hidden.hpp>
 #include <tlx/string/parse_si_iec_units.hpp>
 #include <tlx/unused.hpp>
@@ -48,8 +49,8 @@ public:
 
 public:
     //! contructor filling most attributes
-    Argument(char key, const std::string& longkey, const std::string& keytype,
-             const std::string& desc, bool required)
+    Argument(char key, tlx::string_view longkey, tlx::string_view keytype,
+             tlx::string_view desc, bool required)
         : key_(key),
           longkey_(longkey),
           keytype_(keytype),
@@ -103,9 +104,8 @@ private:
 
 public:
     //! contructor filling most attributes
-    ArgumentBool(char key, const std::string& longkey,
-                 const std::string& keytype, const std::string& desc,
-                 bool required, bool& dest)
+    ArgumentBool(char key, tlx::string_view longkey, tlx::string_view keytype,
+                 tlx::string_view desc, bool required, bool& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest)
     {
     }
@@ -137,9 +137,8 @@ private:
 
 public:
     //! contructor filling most attributes
-    ArgumentInt(char key, const std::string& longkey,
-                const std::string& keytype, const std::string& desc,
-                bool required, int& dest)
+    ArgumentInt(char key, tlx::string_view longkey, tlx::string_view keytype,
+                tlx::string_view desc, bool required, int& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest)
     {
     }
@@ -181,8 +180,8 @@ private:
 
 public:
     //! contructor filling most attributes
-    ArgumentUnsigned(char key, const std::string& longkey,
-                     const std::string& keytype, const std::string& desc,
+    ArgumentUnsigned(char key, tlx::string_view longkey,
+                     tlx::string_view keytype, tlx::string_view desc,
                      bool required, unsigned int& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest)
     {
@@ -224,9 +223,8 @@ private:
 
 public:
     //! contructor filling most attributes
-    ArgumentSizeT(char key, const std::string& longkey,
-                  const std::string& keytype, const std::string& desc,
-                  bool required, size_t& dest)
+    ArgumentSizeT(char key, tlx::string_view longkey, tlx::string_view keytype,
+                  tlx::string_view desc, bool required, size_t& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest)
     {
     }
@@ -267,9 +265,8 @@ private:
 
 public:
     //! contructor filling most attributes
-    ArgumentFloat(char key, const std::string& longkey,
-                  const std::string& keytype, const std::string& desc,
-                  bool required, float& dest)
+    ArgumentFloat(char key, tlx::string_view longkey, tlx::string_view keytype,
+                  tlx::string_view desc, bool required, float& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest)
     {
     }
@@ -309,9 +306,8 @@ private:
 
 public:
     //! contructor filling most attributes
-    ArgumentDouble(char key, const std::string& longkey,
-                   const std::string& keytype, const std::string& desc,
-                   bool required, double& dest)
+    ArgumentDouble(char key, tlx::string_view longkey, tlx::string_view keytype,
+                   tlx::string_view desc, bool required, double& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest)
     {
     }
@@ -352,8 +348,8 @@ private:
 
 public:
     //! contructor filling most attributes
-    ArgumentBytes32(char key, const std::string& longkey,
-                    const std::string& keytype, const std::string& desc,
+    ArgumentBytes32(char key, tlx::string_view longkey,
+                    tlx::string_view keytype, tlx::string_view desc,
                     bool required, std::uint32_t& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest)
     {
@@ -396,8 +392,8 @@ private:
 
 public:
     //! contructor filling most attributes
-    ArgumentBytes64(char key, const std::string& longkey,
-                    const std::string& keytype, const std::string& desc,
+    ArgumentBytes64(char key, tlx::string_view longkey,
+                    tlx::string_view keytype, tlx::string_view desc,
                     bool required, std::uint64_t& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest)
     {
@@ -436,9 +432,8 @@ private:
 
 public:
     //! contructor filling most attributes
-    ArgumentString(char key, const std::string& longkey,
-                   const std::string& keytype, const std::string& desc,
-                   bool required, std::string& dest)
+    ArgumentString(char key, tlx::string_view longkey, tlx::string_view keytype,
+                   tlx::string_view desc, bool required, std::string& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest)
     {
     }
@@ -473,8 +468,8 @@ private:
 
 public:
     //! contructor filling most attributes
-    ArgumentStringlist(char key, const std::string& longkey,
-                       const std::string& keytype, const std::string& desc,
+    ArgumentStringlist(char key, tlx::string_view longkey,
+                       tlx::string_view keytype, tlx::string_view desc,
                        bool required, std::vector<std::string>& dest)
         : Argument(key, longkey, keytype, desc, required), dest_(dest)
     {
@@ -524,7 +519,7 @@ void CmdlineParser::calc_param_max(const Argument* arg)
 
 /******************************************************************************/
 
-void CmdlineParser::output_wrap(std::ostream& os, const std::string& text,
+void CmdlineParser::output_wrap(std::ostream& os, tlx::string_view text,
                                 size_t wraplen, size_t indent_first,
                                 size_t indent_rest, size_t current,
                                 size_t indent_newline)
@@ -583,14 +578,14 @@ CmdlineParser::~CmdlineParser()
     param_list_.clear();
 }
 
-void CmdlineParser::set_description(const std::string& description)
+void CmdlineParser::set_description(tlx::string_view description)
 {
-    description_ = description;
+    description_.assign(description.data(), description.size());
 }
 
-void CmdlineParser::set_author(const std::string& author)
+void CmdlineParser::set_author(tlx::string_view author)
 {
-    author_ = author;
+    author_.assign(author.data(), author.size());
 }
 
 void CmdlineParser::set_verbose_process(bool verbose_process)
@@ -600,105 +595,105 @@ void CmdlineParser::set_verbose_process(bool verbose_process)
 
 /******************************************************************************/
 
-void CmdlineParser::add_bool(char key, const std::string& longkey,
-                             const std::string& keytype, bool& dest,
-                             const std::string& desc)
+void CmdlineParser::add_bool(char key, tlx::string_view longkey,
+                             tlx::string_view keytype, bool& dest,
+                             tlx::string_view desc)
 {
     option_list_.emplace_back(
         new ArgumentBool(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
 
-void CmdlineParser::add_flag(char key, const std::string& longkey,
-                             const std::string& keytype, bool& dest,
-                             const std::string& desc)
+void CmdlineParser::add_flag(char key, tlx::string_view longkey,
+                             tlx::string_view keytype, bool& dest,
+                             tlx::string_view desc)
 {
     return add_bool(key, longkey, keytype, dest, desc);
 }
 
-void CmdlineParser::add_int(char key, const std::string& longkey,
-                            const std::string& keytype, int& dest,
-                            const std::string& desc)
+void CmdlineParser::add_int(char key, tlx::string_view longkey,
+                            tlx::string_view keytype, int& dest,
+                            tlx::string_view desc)
 {
     option_list_.emplace_back(
         new ArgumentInt(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
 
-void CmdlineParser::add_unsigned(char key, const std::string& longkey,
-                                 const std::string& keytype, unsigned int& dest,
-                                 const std::string& desc)
+void CmdlineParser::add_unsigned(char key, tlx::string_view longkey,
+                                 tlx::string_view keytype, unsigned int& dest,
+                                 tlx::string_view desc)
 {
     option_list_.emplace_back(
         new ArgumentUnsigned(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
 
-void CmdlineParser::add_uint(char key, const std::string& longkey,
-                             const std::string& keytype, unsigned int& dest,
-                             const std::string& desc)
+void CmdlineParser::add_uint(char key, tlx::string_view longkey,
+                             tlx::string_view keytype, unsigned int& dest,
+                             tlx::string_view desc)
 {
     return add_unsigned(key, longkey, keytype, dest, desc);
 }
 
-void CmdlineParser::add_size_t(char key, const std::string& longkey,
-                               const std::string& keytype, size_t& dest,
-                               const std::string& desc)
+void CmdlineParser::add_size_t(char key, tlx::string_view longkey,
+                               tlx::string_view keytype, size_t& dest,
+                               tlx::string_view desc)
 {
     option_list_.emplace_back(
         new ArgumentSizeT(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
 
-void CmdlineParser::add_float(char key, const std::string& longkey,
-                              const std::string& keytype, float& dest,
-                              const std::string& desc)
+void CmdlineParser::add_float(char key, tlx::string_view longkey,
+                              tlx::string_view keytype, float& dest,
+                              tlx::string_view desc)
 {
     option_list_.emplace_back(
         new ArgumentFloat(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
 
-void CmdlineParser::add_double(char key, const std::string& longkey,
-                               const std::string& keytype, double& dest,
-                               const std::string& desc)
+void CmdlineParser::add_double(char key, tlx::string_view longkey,
+                               tlx::string_view keytype, double& dest,
+                               tlx::string_view desc)
 {
     option_list_.emplace_back(
         new ArgumentDouble(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
 
-void CmdlineParser::add_bytes(char key, const std::string& longkey,
-                              const std::string& keytype, std::uint32_t& dest,
-                              const std::string& desc)
+void CmdlineParser::add_bytes(char key, tlx::string_view longkey,
+                              tlx::string_view keytype, std::uint32_t& dest,
+                              tlx::string_view desc)
 {
     option_list_.emplace_back(
         new ArgumentBytes32(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
 
-void CmdlineParser::add_bytes(char key, const std::string& longkey,
-                              const std::string& keytype, std::uint64_t& dest,
-                              const std::string& desc)
+void CmdlineParser::add_bytes(char key, tlx::string_view longkey,
+                              tlx::string_view keytype, std::uint64_t& dest,
+                              tlx::string_view desc)
 {
     option_list_.emplace_back(
         new ArgumentBytes64(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
 
-void CmdlineParser::add_string(char key, const std::string& longkey,
-                               const std::string& keytype, std::string& dest,
-                               const std::string& desc)
+void CmdlineParser::add_string(char key, tlx::string_view longkey,
+                               tlx::string_view keytype, std::string& dest,
+                               tlx::string_view desc)
 {
     option_list_.emplace_back(
         new ArgumentString(key, longkey, keytype, desc, false, dest));
     calc_option_max(option_list_.back());
 }
 
-void CmdlineParser::add_stringlist(char key, const std::string& longkey,
-                                   const std::string& keytype,
+void CmdlineParser::add_stringlist(char key, tlx::string_view longkey,
+                                   tlx::string_view keytype,
                                    std::vector<std::string>& dest,
-                                   const std::string& desc)
+                                   tlx::string_view desc)
 {
     option_list_.emplace_back(
         new ArgumentStringlist(key, longkey, keytype, desc, false, dest));
@@ -707,227 +702,225 @@ void CmdlineParser::add_stringlist(char key, const std::string& longkey,
 
 /******************************************************************************/
 
-void CmdlineParser::add_bool(char key, const std::string& longkey, bool& dest,
-                             const std::string& desc)
+void CmdlineParser::add_bool(char key, tlx::string_view longkey, bool& dest,
+                             tlx::string_view desc)
 {
     return add_bool(key, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_flag(char key, const std::string& longkey, bool& dest,
-                             const std::string& desc)
+void CmdlineParser::add_flag(char key, tlx::string_view longkey, bool& dest,
+                             tlx::string_view desc)
 {
     return add_bool(key, longkey, dest, desc);
 }
 
-void CmdlineParser::add_int(char key, const std::string& longkey, int& dest,
-                            const std::string& desc)
+void CmdlineParser::add_int(char key, tlx::string_view longkey, int& dest,
+                            tlx::string_view desc)
 {
     return add_int(key, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_unsigned(char key, const std::string& longkey,
-                                 unsigned int& dest, const std::string& desc)
+void CmdlineParser::add_unsigned(char key, tlx::string_view longkey,
+                                 unsigned int& dest, tlx::string_view desc)
 {
     return add_unsigned(key, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_uint(char key, const std::string& longkey,
-                             unsigned int& dest, const std::string& desc)
+void CmdlineParser::add_uint(char key, tlx::string_view longkey,
+                             unsigned int& dest, tlx::string_view desc)
 {
     return add_unsigned(key, longkey, dest, desc);
 }
 
-void CmdlineParser::add_size_t(char key, const std::string& longkey,
-                               size_t& dest, const std::string& desc)
+void CmdlineParser::add_size_t(char key, tlx::string_view longkey, size_t& dest,
+                               tlx::string_view desc)
 {
     return add_size_t(key, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_float(char key, const std::string& longkey, float& dest,
-                              const std::string& desc)
+void CmdlineParser::add_float(char key, tlx::string_view longkey, float& dest,
+                              tlx::string_view desc)
 {
     return add_float(key, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_double(char key, const std::string& longkey,
-                               double& dest, const std::string& desc)
+void CmdlineParser::add_double(char key, tlx::string_view longkey, double& dest,
+                               tlx::string_view desc)
 {
     return add_double(key, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_bytes(char key, const std::string& longkey,
-                              std::uint32_t& dest, const std::string& desc)
+void CmdlineParser::add_bytes(char key, tlx::string_view longkey,
+                              std::uint32_t& dest, tlx::string_view desc)
 {
     return add_bytes(key, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_bytes(char key, const std::string& longkey,
-                              std::uint64_t& dest, const std::string& desc)
+void CmdlineParser::add_bytes(char key, tlx::string_view longkey,
+                              std::uint64_t& dest, tlx::string_view desc)
 {
     return add_bytes(key, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_string(char key, const std::string& longkey,
-                               std::string& dest, const std::string& desc)
+void CmdlineParser::add_string(char key, tlx::string_view longkey,
+                               std::string& dest, tlx::string_view desc)
 {
     return add_string(key, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_stringlist(char key, const std::string& longkey,
+void CmdlineParser::add_stringlist(char key, tlx::string_view longkey,
                                    std::vector<std::string>& dest,
-                                   const std::string& desc)
+                                   tlx::string_view desc)
 {
     return add_stringlist(key, longkey, "", dest, desc);
 }
 
 /******************************************************************************/
 
-void CmdlineParser::add_bool(const std::string& longkey, bool& dest,
-                             const std::string& desc)
+void CmdlineParser::add_bool(tlx::string_view longkey, bool& dest,
+                             tlx::string_view desc)
 {
     return add_bool(0, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_flag(const std::string& longkey, bool& dest,
-                             const std::string& desc)
+void CmdlineParser::add_flag(tlx::string_view longkey, bool& dest,
+                             tlx::string_view desc)
 {
     return add_bool(0, longkey, dest, desc);
 }
 
-void CmdlineParser::add_int(const std::string& longkey, int& dest,
-                            const std::string& desc)
+void CmdlineParser::add_int(tlx::string_view longkey, int& dest,
+                            tlx::string_view desc)
 {
     return add_int(0, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_unsigned(const std::string& longkey, unsigned int& dest,
-                                 const std::string& desc)
+void CmdlineParser::add_unsigned(tlx::string_view longkey, unsigned int& dest,
+                                 tlx::string_view desc)
 {
     return add_unsigned(0, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_uint(const std::string& longkey, unsigned int& dest,
-                             const std::string& desc)
+void CmdlineParser::add_uint(tlx::string_view longkey, unsigned int& dest,
+                             tlx::string_view desc)
 {
     return add_unsigned(0, longkey, dest, desc);
 }
 
-void CmdlineParser::add_size_t(const std::string& longkey, size_t& dest,
-                               const std::string& desc)
+void CmdlineParser::add_size_t(tlx::string_view longkey, size_t& dest,
+                               tlx::string_view desc)
 {
     return add_size_t(0, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_float(const std::string& longkey, float& dest,
-                              const std::string& desc)
+void CmdlineParser::add_float(tlx::string_view longkey, float& dest,
+                              tlx::string_view desc)
 {
     return add_float(0, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_double(const std::string& longkey, double& dest,
-                               const std::string& desc)
+void CmdlineParser::add_double(tlx::string_view longkey, double& dest,
+                               tlx::string_view desc)
 {
     return add_double(0, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_bytes(const std::string& longkey, std::uint32_t& dest,
-                              const std::string& desc)
+void CmdlineParser::add_bytes(tlx::string_view longkey, std::uint32_t& dest,
+                              tlx::string_view desc)
 {
     return add_bytes(0, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_bytes(const std::string& longkey, std::uint64_t& dest,
-                              const std::string& desc)
+void CmdlineParser::add_bytes(tlx::string_view longkey, std::uint64_t& dest,
+                              tlx::string_view desc)
 {
     return add_bytes(0, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_string(const std::string& longkey, std::string& dest,
-                               const std::string& desc)
+void CmdlineParser::add_string(tlx::string_view longkey, std::string& dest,
+                               tlx::string_view desc)
 {
     return add_string(0, longkey, "", dest, desc);
 }
 
-void CmdlineParser::add_stringlist(const std::string& longkey,
+void CmdlineParser::add_stringlist(tlx::string_view longkey,
                                    std::vector<std::string>& dest,
-                                   const std::string& desc)
+                                   tlx::string_view desc)
 {
     return add_stringlist(0, longkey, "", dest, desc);
 }
 
 /******************************************************************************/
 
-void CmdlineParser::add_param_int(const std::string& name, int& dest,
-                                  const std::string& desc)
+void CmdlineParser::add_param_int(tlx::string_view name, int& dest,
+                                  tlx::string_view desc)
 {
     param_list_.emplace_back(new ArgumentInt(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_param_unsigned(const std::string& name,
+void CmdlineParser::add_param_unsigned(tlx::string_view name,
                                        unsigned int& dest,
-                                       const std::string& desc)
+                                       tlx::string_view desc)
 {
     param_list_.emplace_back(
         new ArgumentUnsigned(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_param_uint(const std::string& name, unsigned int& dest,
-                                   const std::string& desc)
+void CmdlineParser::add_param_uint(tlx::string_view name, unsigned int& dest,
+                                   tlx::string_view desc)
 {
     add_param_unsigned(name, dest, desc);
 }
 
-void CmdlineParser::add_param_size_t(const std::string& name, size_t& dest,
-                                     const std::string& desc)
+void CmdlineParser::add_param_size_t(tlx::string_view name, size_t& dest,
+                                     tlx::string_view desc)
 {
     param_list_.emplace_back(new ArgumentSizeT(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_param_float(const std::string& name, float& dest,
-                                    const std::string& desc)
+void CmdlineParser::add_param_float(tlx::string_view name, float& dest,
+                                    tlx::string_view desc)
 {
     param_list_.emplace_back(new ArgumentFloat(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_param_double(const std::string& name, double& dest,
-                                     const std::string& desc)
+void CmdlineParser::add_param_double(tlx::string_view name, double& dest,
+                                     tlx::string_view desc)
 {
     param_list_.emplace_back(new ArgumentDouble(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_param_bytes(const std::string& name,
-                                    std::uint32_t& dest,
-                                    const std::string& desc)
+void CmdlineParser::add_param_bytes(tlx::string_view name, std::uint32_t& dest,
+                                    tlx::string_view desc)
 {
     param_list_.emplace_back(
         new ArgumentBytes32(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_param_bytes(const std::string& name,
-                                    std::uint64_t& dest,
-                                    const std::string& desc)
+void CmdlineParser::add_param_bytes(tlx::string_view name, std::uint64_t& dest,
+                                    tlx::string_view desc)
 {
     param_list_.emplace_back(
         new ArgumentBytes64(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_param_string(const std::string& name, std::string& dest,
-                                     const std::string& desc)
+void CmdlineParser::add_param_string(tlx::string_view name, std::string& dest,
+                                     tlx::string_view desc)
 {
     param_list_.emplace_back(new ArgumentString(0, name, "", desc, true, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_param_stringlist(const std::string& name,
+void CmdlineParser::add_param_stringlist(tlx::string_view name,
                                          std::vector<std::string>& dest,
-                                         const std::string& desc)
+                                         tlx::string_view desc)
 {
     param_list_.emplace_back(
         new ArgumentStringlist(0, name, "", desc, true, dest));
@@ -936,81 +929,81 @@ void CmdlineParser::add_param_stringlist(const std::string& name,
 
 /******************************************************************************/
 
-void CmdlineParser::add_opt_param_int(const std::string& name, int& dest,
-                                      const std::string& desc)
+void CmdlineParser::add_opt_param_int(tlx::string_view name, int& dest,
+                                      tlx::string_view desc)
 {
     param_list_.emplace_back(new ArgumentInt(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_opt_param_unsigned(const std::string& name,
+void CmdlineParser::add_opt_param_unsigned(tlx::string_view name,
                                            unsigned int& dest,
-                                           const std::string& desc)
+                                           tlx::string_view desc)
 {
     param_list_.emplace_back(
         new ArgumentUnsigned(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_opt_param_uint(const std::string& name,
+void CmdlineParser::add_opt_param_uint(tlx::string_view name,
                                        unsigned int& dest,
-                                       const std::string& desc)
+                                       tlx::string_view desc)
 {
     return add_opt_param_unsigned(name, dest, desc);
 }
 
-void CmdlineParser::add_opt_param_size_t(const std::string& name, size_t& dest,
-                                         const std::string& desc)
+void CmdlineParser::add_opt_param_size_t(tlx::string_view name, size_t& dest,
+                                         tlx::string_view desc)
 {
     param_list_.emplace_back(new ArgumentSizeT(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_opt_param_float(const std::string& name, float& dest,
-                                        const std::string& desc)
+void CmdlineParser::add_opt_param_float(tlx::string_view name, float& dest,
+                                        tlx::string_view desc)
 {
     param_list_.emplace_back(new ArgumentFloat(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_opt_param_double(const std::string& name, double& dest,
-                                         const std::string& desc)
+void CmdlineParser::add_opt_param_double(tlx::string_view name, double& dest,
+                                         tlx::string_view desc)
 {
     param_list_.emplace_back(
         new ArgumentDouble(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_opt_param_bytes(const std::string& name,
+void CmdlineParser::add_opt_param_bytes(tlx::string_view name,
                                         std::uint32_t& dest,
-                                        const std::string& desc)
+                                        tlx::string_view desc)
 {
     param_list_.emplace_back(
         new ArgumentBytes32(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_opt_param_bytes(const std::string& name,
+void CmdlineParser::add_opt_param_bytes(tlx::string_view name,
                                         std::uint64_t& dest,
-                                        const std::string& desc)
+                                        tlx::string_view desc)
 {
     param_list_.emplace_back(
         new ArgumentBytes64(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_opt_param_string(const std::string& name,
+void CmdlineParser::add_opt_param_string(tlx::string_view name,
                                          std::string& dest,
-                                         const std::string& desc)
+                                         tlx::string_view desc)
 {
     param_list_.emplace_back(
         new ArgumentString(0, name, "", desc, false, dest));
     calc_param_max(param_list_.back());
 }
 
-void CmdlineParser::add_opt_param_stringlist(const std::string& name,
+void CmdlineParser::add_opt_param_stringlist(tlx::string_view name,
                                              std::vector<std::string>& dest,
-                                             const std::string& desc)
+                                             tlx::string_view desc)
 {
     param_list_.emplace_back(
         new ArgumentStringlist(0, name, "", desc, false, dest));

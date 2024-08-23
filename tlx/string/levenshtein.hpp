@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -12,10 +12,10 @@
 #define TLX_STRING_LEVENSHTEIN_HEADER
 
 #include <tlx/container/simple_vector.hpp>
+#include <tlx/container/string_view.hpp>
 #include <tlx/string/to_lower.hpp>
 #include <algorithm>
 #include <cstring>
-#include <string>
 
 namespace tlx {
 
@@ -163,7 +163,7 @@ static inline size_t levenshtein_icase(const char* a, const char* b)
  * \param b     second string
  * \return      Levenshtein distance
  */
-static inline size_t levenshtein(const std::string& a, const std::string& b)
+static inline size_t levenshtein(tlx::string_view a, tlx::string_view b)
 {
     return levenshtein_algorithm<LevenshteinStandardParameters>(
         a.data(), a.size(), b.data(), b.size());
@@ -178,8 +178,7 @@ static inline size_t levenshtein(const std::string& a, const std::string& b)
  * \param b     second string
  * \return      Levenshtein distance
  */
-static inline size_t levenshtein_icase(const std::string& a,
-                                       const std::string& b)
+static inline size_t levenshtein_icase(tlx::string_view a, tlx::string_view b)
 {
     return levenshtein_algorithm<LevenshteinStandardICaseParameters>(
         a.data(), a.size(), b.data(), b.size());

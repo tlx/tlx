@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_SPLIT_HEADER
 #define TLX_STRING_SPLIT_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <string>
 #include <vector>
 
@@ -35,7 +36,7 @@ namespace tlx {
  * \return       vector containing each split substring
  */
 std::vector<std::string> split(
-    char sep, const std::string& str,
+    char sep, tlx::string_view str,
     std::string::size_type limit = std::string::npos);
 
 /*!
@@ -49,21 +50,7 @@ std::vector<std::string> split(
  * \return       vector containing each split substring
  */
 std::vector<std::string> split(
-    const char* sep, const std::string& str,
-    std::string::size_type limit = std::string::npos);
-
-/*!
- * Split the given string at each separator string into distinct substrings.
- * Multiple consecutive separators are considered individually and will result
- * in empty split substrings.
- *
- * \param sep    separator string
- * \param str    string to split
- * \param limit  maximum number of parts returned
- * \return       vector containing each split substring
- */
-std::vector<std::string> split(
-    const std::string& sep, const std::string& str,
+    tlx::string_view sep, tlx::string_view str,
     std::string::size_type limit = std::string::npos);
 
 /******************************************************************************/
@@ -81,7 +68,7 @@ std::vector<std::string> split(
  * \param limit       maximum number of parts returned
  * \return            vector containing each split substring
  */
-std::vector<std::string> split(char sep, const std::string& str,
+std::vector<std::string> split(char sep, tlx::string_view str,
                                std::string::size_type min_fields,
                                std::string::size_type limit);
 
@@ -97,23 +84,7 @@ std::vector<std::string> split(char sep, const std::string& str,
  * \param limit       maximum number of parts returned
  * \return            vector containing each split substring
  */
-std::vector<std::string> split(const char* sep, const std::string& str,
-                               std::string::size_type min_fields,
-                               std::string::size_type limit);
-
-/*!
- * Split the given string at each separator string into distinct substrings.
- * Multiple consecutive separators are considered individually and will result
- * in empty split substrings.  Returns a vector of strings with at least
- * min_fields and at most limit_fields, empty fields are added if needed.
- *
- * \param sep         separator string
- * \param str         string to split
- * \param min_fields  minimum number of parts returned
- * \param limit       maximum number of parts returned
- * \return            vector containing each split substring
- */
-std::vector<std::string> split(const std::string& sep, const std::string& str,
+std::vector<std::string> split(tlx::string_view sep, tlx::string_view str,
                                std::string::size_type min_fields,
                                std::string::size_type limit);
 
@@ -132,7 +103,7 @@ std::vector<std::string> split(const std::string& sep, const std::string& str,
  * \return       vector containing each split substring
  */
 std::vector<std::string>& split(
-    std::vector<std::string>* into, char sep, const std::string& str,
+    std::vector<std::string>* into, char sep, tlx::string_view str,
     std::string::size_type limit = std::string::npos);
 
 /*!
@@ -147,23 +118,8 @@ std::vector<std::string>& split(
  * \return       vector containing each split substring
  */
 std::vector<std::string>& split(
-    std::vector<std::string>* into, const char* sep, const std::string& str,
+    std::vector<std::string>* into, tlx::string_view sep, tlx::string_view str,
     std::string::size_type limit = std::string::npos);
-
-/*!
- * Split the given string at each separator string into distinct substrings.
- * Multiple consecutive separators are considered individually and will result
- * in empty split substrings.
- *
- * \param into   destination std::vector
- * \param sep    separator string
- * \param str    string to split
- * \param limit  maximum number of parts returned
- * \return       vector containing each split substring
- */
-std::vector<std::string>& split(
-    std::vector<std::string>* into, const std::string& sep,
-    const std::string& str, std::string::size_type limit = std::string::npos);
 
 /******************************************************************************/
 // split() into std::vector<std::string> with minimum fields
@@ -182,25 +138,7 @@ std::vector<std::string>& split(
  * \return            vector containing each split substring
  */
 std::vector<std::string>& split(std::vector<std::string>* into, char sep,
-                                const std::string& str,
-                                std::string::size_type min_fields,
-                                std::string::size_type limit);
-
-/*!
- * Split the given string at each separator string into distinct substrings.
- * Multiple consecutive separators are considered individually and will result
- * in empty split substrings.  Returns a vector of strings with at least
- * min_fields and at most limit_fields, empty fields are added if needed.
- *
- * \param into        destination std::vector
- * \param sep         separator string
- * \param str         string to split
- * \param min_fields  minimum number of parts returned
- * \param limit       maximum number of parts returned
- * \return            vector containing each split substring
- */
-std::vector<std::string>& split(std::vector<std::string>* into, const char* sep,
-                                const std::string& str,
+                                tlx::string_view str,
                                 std::string::size_type min_fields,
                                 std::string::size_type limit);
 
@@ -218,7 +156,7 @@ std::vector<std::string>& split(std::vector<std::string>* into, const char* sep,
  * \return            vector containing each split substring
  */
 std::vector<std::string>& split(std::vector<std::string>* into,
-                                const std::string& sep, const std::string& str,
+                                tlx::string_view sep, tlx::string_view str,
                                 std::string::size_type min_fields,
                                 std::string::size_type limit);
 

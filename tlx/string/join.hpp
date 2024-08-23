@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_JOIN_HEADER
 #define TLX_STRING_JOIN_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <string>
 #include <vector>
 
@@ -52,8 +53,7 @@ std::string join(const char* glue, const std::vector<std::string>& parts);
  * \param parts    the vector of strings to join
  * \return string  constructed from the vector with the glue between two strings
  */
-std::string join(const std::string& glue,
-                 const std::vector<std::string>& parts);
+std::string join(tlx::string_view glue, const std::vector<std::string>& parts);
 
 //! \}
 //! \}

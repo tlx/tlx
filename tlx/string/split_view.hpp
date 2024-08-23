@@ -5,7 +5,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2016-2019 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2016-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -35,7 +35,7 @@ namespace tlx {
  * \param limit     maximum number of parts returned
  */
 template <typename Functor>
-static inline void split_view(char sep, const std::string& str,
+static inline void split_view(char sep, tlx::string_view str,
                               Functor&& callback,
                               std::string::size_type limit = std::string::npos)
 {
@@ -45,8 +45,8 @@ static inline void split_view(char sep, const std::string& str,
         return;
     }
 
-    std::string::size_type count = 0;
-    auto it = str.begin(), last = it;
+    tlx::string_view::size_type count = 0;
+    tlx::string_view::const_iterator it = str.begin(), last = it;
 
     for (; it != str.end(); ++it)
     {

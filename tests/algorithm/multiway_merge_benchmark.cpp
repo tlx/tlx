@@ -4,7 +4,7 @@
  * Part of tlx - http://panthema.net/tlx
  *
  * Copyright (C) 2014 Thomas Keh <thomas.keh@student.kit.edu>
- * Copyright (C) 2014-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2014-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -13,6 +13,7 @@
 #include <tlx/algorithm/multiway_merge_splitting.hpp>
 #include <tlx/algorithm/parallel_multiway_merge.hpp>
 #include <tlx/cmdline_parser.hpp>
+#include <tlx/container/string_view.hpp>
 #include <tlx/die.hpp>
 #include <tlx/logger.hpp>
 #include <tlx/string/format_iec_units.hpp>
@@ -103,7 +104,7 @@ private:
 
 public:
     //! save message and start timer
-    explicit scoped_print_timer(const std::string& message,
+    explicit scoped_print_timer(tlx::string_view message,
                                 const std::uint64_t bytes = 0)
         : message_(message), bytes_(bytes), ts_(tlx::timestamp())
     {

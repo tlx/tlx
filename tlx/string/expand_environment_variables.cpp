@@ -3,11 +3,12 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2018-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/string/expand_environment_variables.hpp>
 #include <cctype>
 #include <cstdlib>
@@ -81,9 +82,9 @@ std::string& expand_environment_variables(std::string* sp)
     return s;
 }
 
-std::string expand_environment_variables(const std::string& s)
+std::string expand_environment_variables(tlx::string_view s)
 {
-    std::string copy = s;
+    std::string copy(s.data(), s.size());
     expand_environment_variables(&copy);
     return copy;
 }

@@ -5,7 +5,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -14,6 +14,7 @@
 #define TLX_TESTS_SORT_STRINGS_TEST_HEADER
 
 #include <tlx/container/simple_vector.hpp>
+#include <tlx/container/string_view.hpp>
 #include <tlx/logger.hpp>
 #include <tlx/sort/strings/string_ptr.hpp>
 #include <tlx/sort/strings/string_set.hpp>
@@ -44,7 +45,7 @@ using StringLcpSorter = void (*)(const StringLcpPtr<StringSet, LcpType>&,
                                  size_t, size_t);
 
 template <typename Random, typename Iterator>
-void fill_random(Random& rng, const std::string& letters, Iterator begin,
+void fill_random(Random& rng, tlx::string_view letters, Iterator begin,
                  Iterator end)
 {
     for (Iterator i = begin; i != end; ++i)
@@ -52,7 +53,7 @@ void fill_random(Random& rng, const std::string& letters, Iterator begin,
 }
 
 template <typename Random, typename Iterator>
-void fill_random_lognormal(Random& rng, const std::string& letters,
+void fill_random_lognormal(Random& rng, tlx::string_view letters,
                            Iterator begin, Iterator end)
 {
     std::lognormal_distribution<double> lognorm(0.0, 1.0);
@@ -99,7 +100,7 @@ static inline bool check_lcp(const StringSet& ss, LcpType* lcp)
 template <typename StringSet, StringSorter<StringSet> sorter, typename LcpType,
           StringLcpSorter<StringSet, LcpType> lcp_sorter>
 void TestUCharString(const char* name, const size_t num_strings,
-                     const size_t num_chars, const std::string& letters,
+                     const size_t num_chars, tlx::string_view letters,
                      bool with_lcp)
 {
     std::default_random_engine rng(seed);
@@ -177,7 +178,7 @@ void TestUCharString(const char* name, const size_t num_strings,
 template <typename StringSet, StringSorter<StringSet> sorter, typename LcpType,
           StringLcpSorter<StringSet, LcpType> lcp_sorter>
 void TestVectorStdString(const char* name, const size_t num_strings,
-                         const size_t num_chars, const std::string& letters,
+                         const size_t num_chars, tlx::string_view letters,
                          bool with_lcp)
 {
     std::default_random_engine rng(seed);
@@ -255,7 +256,7 @@ void TestVectorStdString(const char* name, const size_t num_strings,
 template <typename StringSet, StringSorter<StringSet> sorter, typename LcpType,
           StringLcpSorter<StringSet, LcpType> lcp_sorter>
 void TestUPtrStdString(const char* name, const size_t num_strings,
-                       const size_t num_chars, const std::string& letters,
+                       const size_t num_chars, tlx::string_view letters,
                        bool with_lcp)
 {
     std::default_random_engine rng(seed);
@@ -330,7 +331,7 @@ void TestUPtrStdString(const char* name, const size_t num_strings,
 
 template <typename StringSet, StringSorter<StringSet> sorter>
 void TestStringSuffixString(const char* name, const size_t num_chars,
-                            const std::string& letters)
+                            tlx::string_view letters)
 {
     std::default_random_engine rng(seed);
 

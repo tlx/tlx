@@ -6,11 +6,12 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2018-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/digest/md5.hpp>
 #include <tlx/math/rol.hpp>
 #include <tlx/string/hexdump.hpp>
@@ -200,7 +201,7 @@ MD5::MD5(const void* data, std::uint32_t size) : MD5()
     process(data, size);
 }
 
-MD5::MD5(const std::string& str) : MD5()
+MD5::MD5(tlx::string_view str) : MD5()
 {
     process(str);
 }
@@ -241,7 +242,7 @@ void MD5::process(const void* data, std::uint32_t size)
     }
 }
 
-void MD5::process(const std::string& str)
+void MD5::process(tlx::string_view str)
 {
     return process(str.data(), str.size());
 }
@@ -307,7 +308,7 @@ std::string md5_hex(const void* data, std::uint32_t size)
     return MD5(data, size).digest_hex();
 }
 
-std::string md5_hex(const std::string& str)
+std::string md5_hex(tlx::string_view str)
 {
     return MD5(str).digest_hex();
 }
@@ -317,7 +318,7 @@ std::string md5_hex_uc(const void* data, std::uint32_t size)
     return MD5(data, size).digest_hex_uc();
 }
 
-std::string md5_hex_uc(const std::string& str)
+std::string md5_hex_uc(tlx::string_view str)
 {
     return MD5(str).digest_hex_uc();
 }

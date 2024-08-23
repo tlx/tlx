@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2019 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2019-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_BITDUMP_HEADER
 #define TLX_STRING_BITDUMP_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <cstddef>
 #include <string>
 
@@ -43,7 +44,7 @@ std::string bitdump_8_msb(const void* const data, size_t size);
  * \param str  binary data to output as bits
  * \return     string of binary digits
  */
-std::string bitdump_8_msb(const std::string& str);
+std::string bitdump_8_msb(tlx::string_view str);
 
 /*!
  * Dump a (binary) item of 8-bit bytes as a sequence of '0' and '1' characters,
@@ -65,7 +66,7 @@ std::string bitdump_8_msb_type(const Type& t)
 std::string bitdump_le8(const void* const data, size_t size);
 
 //! deprecated method: unclear naming and documentation.
-std::string bitdump_le8(const std::string& str);
+std::string bitdump_le8(tlx::string_view str);
 
 //! deprecated method: unclear naming and documentation.
 template <typename Type>
@@ -95,7 +96,7 @@ std::string bitdump_8_lsb(const void* const data, size_t size);
  * \param str  binary data to output as bits
  * \return     string of binary digits
  */
-std::string bitdump_8_lsb(const std::string& str);
+std::string bitdump_8_lsb(tlx::string_view str);
 
 /*!
  * Dump a (binary) item of 8-bit bytes as a sequence of '0' and '1' characters,
@@ -117,7 +118,7 @@ std::string bitdump_8_lsb_type(const Type& t)
 std::string bitdump_be8(const void* const data, size_t size);
 
 //! deprecated method: unclear naming and documentation.
-std::string bitdump_be8(const std::string& str);
+std::string bitdump_be8(tlx::string_view str);
 
 //! deprecated method: unclear naming and documentation.
 template <typename Type>

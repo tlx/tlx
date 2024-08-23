@@ -6,11 +6,12 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2018-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/digest/sha512.hpp>
 #include <tlx/math/ror.hpp>
 #include <tlx/string/hexdump.hpp>
@@ -177,7 +178,7 @@ SHA512::SHA512(const void* data, std::uint32_t size) : SHA512()
     process(data, size);
 }
 
-SHA512::SHA512(const std::string& str) : SHA512()
+SHA512::SHA512(tlx::string_view str) : SHA512()
 {
     process(str);
 }
@@ -218,7 +219,7 @@ void SHA512::process(const void* data, std::uint32_t size)
     }
 }
 
-void SHA512::process(const std::string& str)
+void SHA512::process(tlx::string_view str)
 {
     return process(str.data(), str.size());
 }
@@ -285,7 +286,7 @@ std::string sha512_hex(const void* data, std::uint32_t size)
     return SHA512(data, size).digest_hex();
 }
 
-std::string sha512_hex(const std::string& str)
+std::string sha512_hex(tlx::string_view str)
 {
     return SHA512(str).digest_hex();
 }
@@ -295,7 +296,7 @@ std::string sha512_hex_uc(const void* data, std::uint32_t size)
     return SHA512(data, size).digest_hex_uc();
 }
 
-std::string sha512_hex_uc(const std::string& str)
+std::string sha512_hex_uc(tlx::string_view str)
 {
     return SHA512(str).digest_hex_uc();
 }

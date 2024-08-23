@@ -21,8 +21,7 @@ namespace tlx {
 
 /******************************************************************************/
 
-static std::atomic<bool> s_die_with_exception
-{
+static std::atomic<bool> s_die_with_exception{
 #if TLX_DIE_WITH_EXCEPTION
     true
 #else

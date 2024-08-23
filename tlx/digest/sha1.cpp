@@ -6,11 +6,12 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2018-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/digest/sha1.hpp>
 #include <tlx/math/rol.hpp>
 #include <tlx/string/hexdump.hpp>
@@ -151,7 +152,7 @@ SHA1::SHA1(const void* data, std::uint32_t size) : SHA1()
     process(data, size);
 }
 
-SHA1::SHA1(const std::string& str) : SHA1()
+SHA1::SHA1(tlx::string_view str) : SHA1()
 {
     process(str);
 }
@@ -192,7 +193,7 @@ void SHA1::process(const void* data, std::uint32_t size)
     }
 }
 
-void SHA1::process(const std::string& str)
+void SHA1::process(tlx::string_view str)
 {
     return process(str.data(), str.size());
 }
@@ -256,7 +257,7 @@ std::string sha1_hex(const void* data, std::uint32_t size)
     return SHA1(data, size).digest_hex();
 }
 
-std::string sha1_hex(const std::string& str)
+std::string sha1_hex(tlx::string_view str)
 {
     return SHA1(str).digest_hex();
 }
@@ -266,7 +267,7 @@ std::string sha1_hex_uc(const void* data, std::uint32_t size)
     return SHA1(data, size).digest_hex_uc();
 }
 
-std::string sha1_hex_uc(const std::string& str)
+std::string sha1_hex_uc(tlx::string_view str)
 {
     return SHA1(str).digest_hex_uc();
 }

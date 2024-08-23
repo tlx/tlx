@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_BASE64_HEADER
 #define TLX_STRING_BASE64_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <cstddef>
 #include <string>
 
@@ -47,7 +48,7 @@ std::string base64_encode(const void* data, size_t size, size_t line_break = 0);
  * \param line_break  break the output string every n characters
  * \return            base64 encoded string
  */
-std::string base64_encode(const std::string& str, size_t line_break = 0);
+std::string base64_encode(tlx::string_view str, size_t line_break = 0);
 
 /*!
  * Decode a string in base64 representation as described in RFC 2045 or RFC 3548
@@ -74,7 +75,7 @@ std::string base64_decode(const void* data, size_t size, bool strict = true);
  * \param strict  throw exception on invalid character
  * \return        decoded binary data
  */
-std::string base64_decode(const std::string& str, bool strict = true);
+std::string base64_decode(tlx::string_view str, bool strict = true);
 
 //! \}
 //! \}

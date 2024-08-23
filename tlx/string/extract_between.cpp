@@ -3,59 +3,32 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2016-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2016-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/string/extract_between.hpp>
-#include <cstring>
 #include <string>
 
 namespace tlx {
 
-template <typename Separator1, typename Separator2>
-static inline std::string extract_between_template(const std::string& str,
-                                                   const Separator1& sep1,
-                                                   size_t sep1_size,
-                                                   const Separator2& sep2)
+std::string extract_between(tlx::string_view str, tlx::string_view sep1,
+                            tlx::string_view sep2)
 {
-    std::string::size_type start = str.find(sep1);
+    std::string::size_type start = str.find(sep1.data(), 0, sep1.size());
     if (start == std::string::npos)
         return std::string();
 
-    start += sep1_size;
+    start += sep1.size();
 
-    std::string::size_type limit = str.find(sep2, start);
+    std::string::size_type limit = str.find(sep2.data(), start, sep2.size());
 
     if (limit == std::string::npos)
         return std::string();
 
-    return str.substr(start, limit - start);
-}
-
-std::string extract_between(const std::string& str, const char* sep1,
-                            const char* sep2)
-{
-    return extract_between_template(str, sep1, std::strlen(sep1), sep2);
-}
-
-std::string extract_between(const std::string& str, const char* sep1,
-                            const std::string& sep2)
-{
-    return extract_between_template(str, sep1, std::strlen(sep1), sep2);
-}
-
-std::string extract_between(const std::string& str, const std::string& sep1,
-                            const char* sep2)
-{
-    return extract_between_template(str, sep1, sep1.size(), sep2);
-}
-
-std::string extract_between(const std::string& str, const std::string& sep1,
-                            const std::string& sep2)
-{
-    return extract_between_template(str, sep1, sep1.size(), sep2);
+    return std::string(str.data() + start, limit - start);
 }
 
 } // namespace tlx

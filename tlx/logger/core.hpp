@@ -13,6 +13,7 @@
 #ifndef TLX_LOGGER_CORE_HEADER
 #define TLX_LOGGER_CORE_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -194,7 +195,7 @@ public:
     virtual ~LoggerOutputHook();
 
     //! method the receive log lines
-    virtual void append_log_line(const std::string& line) = 0;
+    virtual void append_log_line(tlx::string_view line) = 0;
 };
 
 //! set new LoggerOutputHook instance to receive global log lines. returns the
@@ -221,7 +222,7 @@ public:
     void clear();
 
     //! method the receive log lines
-    void append_log_line(const std::string& line) final;
+    void append_log_line(tlx::string_view line) final;
 
 private:
     //! previous logger, will be restored by destructor

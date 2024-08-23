@@ -5,13 +5,14 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2015-2019 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2015-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
 #include "sort_strings_test.hpp"
 #include <tlx/container/simple_vector.hpp>
+#include <tlx/container/string_view.hpp>
 #include <tlx/logger.hpp>
 #include <tlx/sort/strings.hpp>
 #include <tlx/sort/strings/insertion_sort.hpp>
@@ -23,10 +24,9 @@
 #include <cstdint>
 #include <cstdlib>
 #include <random>
-#include <string>
 
 void TestFrontend(const size_t num_strings, const size_t num_chars,
-                  const std::string& letters)
+                  tlx::string_view letters)
 {
     std::default_random_engine rng(seed);
 

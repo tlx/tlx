@@ -3,25 +3,26 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2016-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2016-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/string/split_words.hpp>
 #include <string>
 #include <vector>
 
 namespace tlx {
 
-std::vector<std::string> split_words(const std::string& str,
+std::vector<std::string> split_words(tlx::string_view str,
                                      std::string::size_type limit)
 {
     std::vector<std::string> out;
     if (limit == 0)
         return out;
 
-    std::string::const_iterator it = str.begin(), last = it;
+    tlx::string_view::const_iterator it = str.begin(), last = it;
 
     for (; it != str.end(); ++it)
     {

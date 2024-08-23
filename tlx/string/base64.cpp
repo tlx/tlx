@@ -3,11 +3,12 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/string/base64.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -106,7 +107,7 @@ std::string base64_encode(const void* data, size_t size, size_t line_break)
     }
 }
 
-std::string base64_encode(const std::string& str, size_t line_break)
+std::string base64_encode(tlx::string_view str, size_t line_break)
 {
     return base64_encode(str.data(), str.size(), line_break);
 }
@@ -217,7 +218,7 @@ std::string base64_decode(const void* data, size_t size, bool strict)
     }
 }
 
-std::string base64_decode(const std::string& str, bool strict)
+std::string base64_decode(tlx::string_view str, bool strict)
 {
     return base64_decode(str.data(), str.size(), strict);
 }

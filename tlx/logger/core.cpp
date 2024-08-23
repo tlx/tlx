@@ -10,6 +10,7 @@
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/logger/core.hpp>
 #include <atomic>
 #include <iostream>
@@ -27,12 +28,12 @@ class DefaultLoggerOutputCOut : public LoggerOutputHook
     std::mutex mutex_;
 
     //! method the receive log lines
-    void append_log_line(const std::string& line) final
+    void append_log_line(tlx::string_view line) final
     {
         // lock the global mutex of logger for serialized output in
         // multi-threaded programs.
         std::unique_lock<std::mutex> lock(mutex_);
-        (std::cout << line).flush();
+        std::cout.write(line.data(), line.size()).flush();
     }
 };
 
@@ -43,12 +44,12 @@ class DefaultLoggerOutputCErr : public LoggerOutputHook
     std::mutex mutex_;
 
     //! method the receive log lines
-    void append_log_line(const std::string& line) final
+    void append_log_line(tlx::string_view line) final
     {
         // lock the global mutex of logger for serialized output in
         // multi-threaded programs.
         std::unique_lock<std::mutex> lock(mutex_);
-        (std::cerr << line).flush();
+        std::cout.write(line.data(), line.size()).flush();
     }
 };
 
@@ -146,7 +147,7 @@ std::string LoggerCollectOutput::get()
     return oss_.str();
 }
 
-void LoggerCollectOutput::append_log_line(const std::string& line)
+void LoggerCollectOutput::append_log_line(tlx::string_view line)
 {
     oss_ << line;
     if (echo_)

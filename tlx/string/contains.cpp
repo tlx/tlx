@@ -3,27 +3,23 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/string/contains.hpp>
 #include <string>
 
 namespace tlx {
 
-bool contains(const std::string& str, const std::string& pattern)
+bool contains(tlx::string_view str, tlx::string_view pattern)
 {
     return str.find(pattern) != std::string::npos;
 }
 
-bool contains(const std::string& str, const char* pattern)
-{
-    return str.find(pattern) != std::string::npos;
-}
-
-bool contains(const std::string& str, const char ch)
+bool contains(tlx::string_view str, const char ch)
 {
     return str.find(ch) != std::string::npos;
 }

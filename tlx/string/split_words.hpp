@@ -32,6 +32,18 @@ namespace tlx {
 std::vector<std::string> split_words(
     tlx::string_view str, std::string::size_type limit = std::string::npos);
 
+/*!
+ * Split the given string by whitespaces into distinct words. Multiple
+ * consecutive whitespaces are considered as one split point. Whitespaces are
+ * space, tab, newline and carriage-return.
+ *
+ * \param str   string to split
+ * \param limit maximum number of parts returned
+ * \return      vector containing each split substring
+ */
+std::vector<tlx::string_view> split_words_view(
+    tlx::string_view str, std::string::size_type limit = std::string::npos);
+
 //! \}
 
 } // namespace tlx

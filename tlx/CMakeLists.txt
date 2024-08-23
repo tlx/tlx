@@ -45,6 +45,7 @@ set(LIBTLX_SOURCES
   string/replace.cpp
   string/split.cpp
   string/split_quoted.cpp
+  string/split_view.cpp
   string/split_words.cpp
   string/ssprintf.cpp
   string/starts_with.cpp

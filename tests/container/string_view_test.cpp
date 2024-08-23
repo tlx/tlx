@@ -51,7 +51,7 @@ void split_view()
 {
     std::string input = "This is a string.";
     size_t i = 0;
-    tlx::split_view(' ', input, [&](const tlx::string_view& sv) {
+    tlx::split_callback(' ', input, [&](const tlx::string_view& sv) {
         if (i == 0)
             die_unequal(sv, "This");
         if (i == 1)

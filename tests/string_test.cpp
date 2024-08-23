@@ -39,6 +39,7 @@
 #include <tlx/string/replace.hpp>
 #include <tlx/string/split.hpp>
 #include <tlx/string/split_quoted.hpp>
+#include <tlx/string/split_view.hpp>
 #include <tlx/string/split_words.hpp>
 #include <tlx/string/ssprintf.hpp>
 #include <tlx/string/ssprintf_generic.hpp>
@@ -564,6 +565,102 @@ static void test_split()
     die_unequal(sv[4], "");
 }
 
+static void test_split_view()
+{
+    // simple char split
+    std::vector<tlx::string_view> sv = tlx::split_view('/', "/usr/bin/test/");
+
+    die_unequal(sv.size(), 5U);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin");
+    die_unequal(sv[3], "test");
+    die_unequal(sv[4], "");
+
+    sv = tlx::split_view('/', "/usr/bin/test", 3);
+
+    die_unequal(sv.size(), 3U);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin/test");
+
+    // char split with some strange limits
+    sv = tlx::split_view('/', "/usr//bin/test", 0);
+    die_unequal(sv.size(), 0U);
+
+    sv = tlx::split_view('/', "/usr//bin/test", 1);
+    die_unequal(sv.size(), 1U);
+    die_unequal(sv[0], "/usr//bin/test");
+
+    // simple str split
+    sv = tlx::split_view("/", "/usr/bin/test");
+
+    die_unequal(sv.size(), 4U);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin");
+    die_unequal(sv[3], "test");
+
+    sv = tlx::split_view("/", "/usr/bin/test", 3);
+
+    die_unequal(sv.size(), 3U);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin/test");
+
+    // str split with some strange limits
+    sv = tlx::split_view("/", "/usr//bin/test", 0);
+    die_unequal(sv.size(), 0U);
+
+    sv = tlx::split_view("/", "/usr//bin/test", 1);
+    die_unequal(sv.size(), 1U);
+    die_unequal(sv[0], "/usr//bin/test");
+
+    // str split with parital needle at end
+    sv = tlx::split_view("abc", "testabcblahabcabcab");
+    die_unequal(sv.size(), 4U);
+    die_unequal(sv[0], "test");
+    die_unequal(sv[1], "blah");
+    die_unequal(sv[2], "");
+    die_unequal(sv[3], "ab");
+
+    // str split with "" separator
+    sv = tlx::split_view("", "abcdef");
+    die_unequal(sv.size(), 6U);
+    die_unequal(sv[0], "a");
+    die_unequal(sv[1], "b");
+    die_unequal(sv[2], "c");
+    die_unequal(sv[3], "d");
+    die_unequal(sv[4], "e");
+    die_unequal(sv[5], "f");
+
+    /**************************************************************************/
+
+    // str split with min-limit
+    sv = tlx::split_view('/', "/usr/bin/test", 2, 2);
+    die_unequal(sv.size(), 2U);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr/bin/test");
+
+    // str split with min-limit
+    sv = tlx::split_view('/', "/usr/bin/test", 5, 5);
+    die_unequal(sv.size(), 5U);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin");
+    die_unequal(sv[3], "test");
+    die_unequal(sv[4], "");
+
+    // str split with min-limit
+    sv = tlx::split_view("/", "/usr/bin/test", 5, 5);
+    die_unequal(sv.size(), 5U);
+    die_unequal(sv[0], "");
+    die_unequal(sv[1], "usr");
+    die_unequal(sv[2], "bin");
+    die_unequal(sv[3], "test");
+    die_unequal(sv[4], "");
+}
+
 static void test_split_join_quoted()
 {
     // simple whitespace split
@@ -692,6 +789,81 @@ static void test_split_words()
 
     // whitespace split with limit at exactly the end
     sv = tlx::split_words("  ab  c  df  fdlk f  ", 5);
+
+    die_unequal(sv.size(), 5U);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f  ");
+}
+
+static void test_split_words_view()
+{
+    // simple whitespace split
+    std::vector<tlx::string_view> sv =
+        tlx::split_words_view("  ab c df  fdlk f  ");
+
+    die_unequal(sv.size(), 5U);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    sv = tlx::split_words_view("ab c df  fdlk f  ");
+
+    die_unequal(sv.size(), 5U);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    sv = tlx::split_words_view("ab c df  fdlk f");
+
+    die_unequal(sv.size(), 5U);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    sv = tlx::split_words_view("");
+    die_unequal(sv.size(), 0U);
+
+    sv = tlx::split_words_view("    ");
+    die_unequal(sv.size(), 0U);
+
+    // whitespace split with limit
+    sv = tlx::split_words_view("  ab c   df  fdlk f  ", 3);
+
+    die_unequal(sv.size(), 3U);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df  fdlk f  ");
+
+    // whitespace split with some strange limits
+    sv = tlx::split_words_view("  ab c df  fdlk f  ", 0);
+    die_unequal(sv.size(), 0U);
+
+    sv = tlx::split_words_view("  ab c df  fdlk f  ", 1);
+
+    die_unequal(sv.size(), 1U);
+    die_unequal(sv[0], "ab c df  fdlk f  ");
+
+    // whitespace split with large limit
+    sv = tlx::split_words_view("  ab  c  df  fdlk f  ", 10);
+
+    die_unequal(sv.size(), 5U);
+    die_unequal(sv[0], "ab");
+    die_unequal(sv[1], "c");
+    die_unequal(sv[2], "df");
+    die_unequal(sv[3], "fdlk");
+    die_unequal(sv[4], "f");
+
+    // whitespace split with limit at exactly the end
+    sv = tlx::split_words_view("  ab  c  df  fdlk f  ", 5);
 
     die_unequal(sv.size(), 5U);
     die_unequal(sv[0], "ab");
@@ -982,8 +1154,10 @@ int main()
     test_parse_uri_form_data();
     test_replace();
     test_split();
+    test_split_view();
     test_split_join_quoted();
     test_split_words();
+    test_split_words_view();
     test_ssprintf();
     test_starts_with_ends_with();
     test_toupper_tolower();

@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2019 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2019-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -11,9 +11,9 @@
 #ifndef TLX_STRING_HASH_SDBM_HEADER
 #define TLX_STRING_HASH_SDBM_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <cstddef>
 #include <cstdint>
-#include <string>
 
 namespace tlx {
 
@@ -72,7 +72,7 @@ static inline std::uint32_t hash_sdbm(const char* str, size_t size)
  * Simple, fast, but "insecure" string hash method by sdbm database from
  * http://www.cse.yorku.ca/~oz/hash.html
  */
-static inline std::uint32_t hash_sdbm(const std::string& str)
+static inline std::uint32_t hash_sdbm(tlx::string_view str)
 {
     return hash_sdbm(str.data(), str.size());
 }

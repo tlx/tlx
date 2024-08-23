@@ -6,7 +6,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2017-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -14,12 +14,12 @@
 #ifndef TLX_SIPHASH_HEADER
 #define TLX_SIPHASH_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/define/attribute_fallthrough.hpp>
 #include <tlx/math/bswap_le.hpp>
 #include <tlx/math/rol.hpp>
 #include <cstdint>
 #include <cstdlib>
-#include <string>
 
 #if defined(_MSC_VER)
 
@@ -261,7 +261,7 @@ static inline std::uint64_t siphash(const char* msg, size_t size)
     return siphash(reinterpret_cast<const std::uint8_t*>(msg), size);
 }
 
-static inline std::uint64_t siphash(const std::string& str)
+static inline std::uint64_t siphash(tlx::string_view str)
 {
     return siphash(str.data(), str.size());
 }

@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2020 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2020-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_PARSE_URI_FORM_DATA_HEADER
 #define TLX_STRING_PARSE_URI_FORM_DATA_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <cstring>
 #include <string>
 #include <utility>
@@ -25,20 +26,19 @@ namespace tlx {
  * Helper function to decode %20 and + in urlencoded form data like
  * "query=string+with+spaces&submit=yes%21&".
  */
-static inline std::string parse_uri_form_data_decode(const char* str,
-                                                     const char* end = nullptr)
+static inline std::string parse_uri_form_data_decode(tlx::string_view str)
 {
-    std::string out;
-    if (end == nullptr)
-        out.reserve(strlen(str));
-    else
-        out.reserve(end - str);
-    char a, b;
+    tlx::string_view::const_iterator s = str.begin();
+    const tlx::string_view::const_iterator end = str.end();
 
-    while (*str != 0 && str != end)
+    std::string out;
+    out.reserve(str.size());
+
+    while (s != end)
     {
-        if (*str == '%' && (a = str[1]) != 0 && (b = str[2]) != 0)
+        if (*s == '%' && s + 2 < end)
         {
+            char a = s[1], b = s[2];
             if (a >= '0' && a <= '9')
                 a -= '0';
             else if (a >= 'a' && a <= 'f')
@@ -48,7 +48,7 @@ static inline std::string parse_uri_form_data_decode(const char* str,
             else
             {
                 // invalid hex digits, copy '%' and continue
-                out += *str++;
+                out += *s++;
                 continue;
             }
 
@@ -61,21 +61,21 @@ static inline std::string parse_uri_form_data_decode(const char* str,
             else
             {
                 // invalid hex digits, copy '%' and continue
-                out += *str++;
+                out += *s++;
                 continue;
             }
 
             out += static_cast<char>(16 * a + b);
-            str += 3;
+            s += 3;
         }
-        else if (*str == '+')
+        else if (*s == '+')
         {
             out += ' ';
-            str++;
+            s++;
         }
         else
         {
-            out += *str++;
+            out += *s++;
         }
     }
     return out;
@@ -86,27 +86,26 @@ static inline std::string parse_uri_form_data_decode(const char* str,
  * into a list of keys and values. The keys and values are returned as pairs in
  * the two vectors, to avoid using std::pair or another struct.
  */
-static inline void parse_uri_form_data(const char* query_string,
+static inline void parse_uri_form_data(tlx::string_view query_string,
                                        std::vector<std::string>* key,
                                        std::vector<std::string>* value)
 {
     key->clear(), value->clear();
-    const char* c = query_string;
+    tlx::string_view::const_iterator c = query_string.begin(),
+                                     e = query_string.end();
 
-    while (*c != 0)
+    while (c != e)
     {
-        const char* begin = c;
-        while (*c != '=' && *c != 0)
-        {
+        tlx::string_view::const_iterator begin = c;
+        while (c != e && *c != '=')
             ++c;
-        }
 
         if (c == begin)
             return;
 
-        std::string k = parse_uri_form_data_decode(begin, c);
+        std::string k = parse_uri_form_data_decode(tlx::string_view(begin, c));
 
-        if (*c == 0)
+        if (c == e)
         {
             key->emplace_back(std::move(k));
             value->emplace_back(std::string());
@@ -114,12 +113,10 @@ static inline void parse_uri_form_data(const char* query_string,
         }
 
         begin = ++c;
-        while (*c != '&' && *c != 0)
-        {
+        while (c != e && *c != '&')
             ++c;
-        }
 
-        std::string v = parse_uri_form_data_decode(begin, c);
+        std::string v = parse_uri_form_data_decode(tlx::string_view(begin, c));
 
         key->emplace_back(std::move(k));
         value->emplace_back(std::move(v));
@@ -128,18 +125,6 @@ static inline void parse_uri_form_data(const char* query_string,
             break;
         ++c;
     }
-}
-
-/*!
- * Parse a urlencoded form data like "query=string+with+spaces&submit=yes%21&"
- * into a list of keys and values. The keys and values are returned as pairs in
- * the two vectors, to avoid using std::pair or another struct.
- */
-static inline void parse_uri_form_data(const std::string& query_string,
-                                       std::vector<std::string>* key,
-                                       std::vector<std::string>* value)
-{
-    return parse_uri_form_data(query_string.c_str(), key, value);
 }
 
 //! \}

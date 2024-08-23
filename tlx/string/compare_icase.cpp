@@ -3,14 +3,14 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/string/compare_icase.hpp>
 #include <tlx/string/to_lower.hpp>
-#include <string>
 
 namespace tlx {
 
@@ -35,9 +35,9 @@ int compare_icase(const char* a, const char* b)
     return 0;
 }
 
-int compare_icase(const char* a, const std::string& b)
+int compare_icase(const char* a, tlx::string_view b)
 {
-    std::string::const_iterator bi = b.begin();
+    tlx::string_view::const_iterator bi = b.begin();
 
     while (*a != 0 && bi != b.end())
     {
@@ -58,9 +58,9 @@ int compare_icase(const char* a, const std::string& b)
     return 0;
 }
 
-int compare_icase(const std::string& a, const char* b)
+int compare_icase(tlx::string_view a, const char* b)
 {
-    std::string::const_iterator ai = a.begin();
+    tlx::string_view::const_iterator ai = a.begin();
 
     while (ai != a.end() && *b != 0)
     {
@@ -81,10 +81,10 @@ int compare_icase(const std::string& a, const char* b)
     return 0;
 }
 
-int compare_icase(const std::string& a, const std::string& b)
+int compare_icase(tlx::string_view a, tlx::string_view b)
 {
-    std::string::const_iterator ai = a.begin();
-    std::string::const_iterator bi = b.begin();
+    tlx::string_view::const_iterator ai = a.begin();
+    tlx::string_view::const_iterator bi = b.begin();
 
     while (ai != a.end() && bi != b.end())
     {

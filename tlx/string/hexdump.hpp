@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2007-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2007-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -11,6 +11,7 @@
 #ifndef TLX_STRING_HEXDUMP_HEADER
 #define TLX_STRING_HEXDUMP_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -41,7 +42,7 @@ std::string hexdump(const void* const data, size_t size);
  * \param str  binary data to output in hex
  * \return     string of hexadecimal pairs
  */
-std::string hexdump(const std::string& str);
+std::string hexdump(tlx::string_view str);
 
 /*!
  * Dump a (binary) item as a sequence of uppercase hexadecimal pairs.
@@ -79,8 +80,8 @@ std::string hexdump(const std::vector<std::uint8_t>& data);
  * \param var_name  name of the array variable in the outputted code snippet
  * \return          string holding C source snippet
  */
-std::string hexdump_sourcecode(const std::string& str,
-                               const std::string& var_name = "name");
+std::string hexdump_sourcecode(tlx::string_view str,
+                               tlx::string_view var_name = "name");
 
 /******************************************************************************/
 // Lowercase Hexdump Methods
@@ -100,7 +101,7 @@ std::string hexdump_lc(const void* const data, size_t size);
  * \param str  binary data to output in hex
  * \return     string of hexadecimal pairs
  */
-std::string hexdump_lc(const std::string& str);
+std::string hexdump_lc(tlx::string_view str);
 
 /*!
  * Dump a (binary) item as a sequence of lowercase hexadecimal pairs.
@@ -141,7 +142,7 @@ std::string hexdump_lc(const std::vector<std::uint8_t>& data);
  * \param str  string to parse as hex digits
  * \return     string of read bytes
  */
-std::string parse_hexdump(const std::string& str);
+std::string parse_hexdump(tlx::string_view str);
 
 //! \}
 //! \}

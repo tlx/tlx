@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2020 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2020-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -12,7 +12,6 @@
 #define TLX_STRING_PARSE_URI_HEADER
 
 #include <tlx/container/string_view.hpp>
-#include <string>
 
 namespace tlx {
 
@@ -24,18 +23,17 @@ namespace tlx {
  * parts path, query_string, and fragment. The parts are returned as
  * tlx::string_views to avoid copying data.
  */
-static inline void parse_uri(const char* uri, tlx::string_view* path,
+static inline void parse_uri(tlx::string_view uri, tlx::string_view* path,
                              tlx::string_view* query_string,
                              tlx::string_view* fragment)
 {
-    const char* c = uri;
+    tlx::string_view::const_iterator c = uri.begin(), e = uri.end();
 
     // find path part
-    const char* begin = c;
-    while (*c != '?' && *c != '#' && *c != 0)
-    {
+    tlx::string_view::const_iterator begin = c;
+    while (c != e && *c != '?' && *c != '#')
         ++c;
-    }
+
     *path = tlx::string_view(begin, c - begin);
 
     // find query string
@@ -43,10 +41,8 @@ static inline void parse_uri(const char* uri, tlx::string_view* path,
     if (*c == '?')
     {
         begin = ++c;
-        while (*c != '#' && *c != 0)
-        {
+        while (c != e && *c != '#')
             ++c;
-        }
     }
     *query_string = tlx::string_view(begin, c - begin);
 
@@ -55,24 +51,10 @@ static inline void parse_uri(const char* uri, tlx::string_view* path,
     if (*c == '#')
     {
         begin = ++c;
-        while (*c != 0)
-        {
+        while (c != e)
             ++c;
-        }
     }
     *fragment = tlx::string_view(begin, c - begin);
-}
-
-/*!
- * Parse a URI like "/path1/path2?query=string&submit=submit#fragment" into the
- * parts path, query_string, and fragment. The parts are returned as
- * tlx::string_views to avoid copying data.
- */
-static inline void parse_uri(const std::string& uri, tlx::string_view* path,
-                             tlx::string_view* query_string,
-                             tlx::string_view* fragment)
-{
-    return parse_uri(uri.c_str(), path, query_string, fragment);
 }
 
 //! \}

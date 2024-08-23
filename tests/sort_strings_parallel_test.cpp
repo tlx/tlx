@@ -11,6 +11,7 @@
  ******************************************************************************/
 
 #include <tlx/container/simple_vector.hpp>
+#include <tlx/container/string_view.hpp>
 #include <tlx/logger.hpp>
 #include <tlx/sort/strings/parallel_sample_sort.hpp>
 #include <tlx/sort/strings/sample_sort_tools.hpp>
@@ -21,7 +22,6 @@
 #include <cstdint>
 #include <cstdlib>
 #include <random>
-#include <string>
 #include "sort_strings_test.hpp"
 
 /******************************************************************************/
@@ -49,7 +49,7 @@ void parallel_sample_sort_unroll_interleave(const StringPtr& strptr,
 /******************************************************************************/
 
 void TestFrontend(const size_t num_strings, const size_t num_chars,
-                  const std::string& letters)
+                  tlx::string_view letters)
 {
     std::default_random_engine rng(seed);
 

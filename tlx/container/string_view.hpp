@@ -14,7 +14,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2016-2020 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2016-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -22,15 +22,19 @@
 #ifndef TLX_CONTAINER_STRING_VIEW_HEADER
 #define TLX_CONTAINER_STRING_VIEW_HEADER
 
-#include <tlx/string/hash_djb2.hpp>
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
 #include <functional>
 #include <iterator>
 #include <ostream>
 #include <stdexcept>
 #include <string>
+
+#if __cplusplus >= 201703L
+#include <string_view>
+#endif
 
 namespace tlx {
 
@@ -76,10 +80,12 @@ public:
     {
     }
 
-    //! constructing a StringView from a temporary string is a bad idea
-    StringView(std::string&&) = delete;
+    //! assign a r-value string
+    StringView(std::string&& str) : ptr_(str.data()), size_(str.size())
+    {
+    }
 
-    //! assign a whole C-style string
+    //! assign a C-style string
     StringView(const char* str) noexcept
         : ptr_(str),
           size_(str != nullptr ? std::strlen(str) : 0)
@@ -89,6 +95,12 @@ public:
     //! assign a C-style string with given length
     StringView(const char* str, size_type size) noexcept : ptr_(str),
                                                            size_(size)
+    {
+    }
+
+    //! assign a string between two iterators
+    StringView(const const_iterator& begin, const const_iterator& end) noexcept
+        : StringView(begin, end - begin)
     {
     }
 
@@ -105,6 +117,12 @@ public:
         : StringView(begin, end - begin)
     {
     }
+
+#if __cplusplus >= 201703L
+    StringView(std::string_view sv) noexcept : StringView(sv.data(), sv.size())
+    {
+    }
+#endif
 
     //! \name iterators
     //! \{
@@ -765,7 +783,14 @@ struct hash<tlx::StringView>
 {
     size_t operator()(const tlx::StringView& sv) const
     {
-        return tlx::hash_djb2(sv.data(), sv.size());
+        std::uint32_t h = 5381;
+        for (tlx::StringView::const_iterator it = sv.begin(); it != sv.end();
+             ++it)
+        {
+            // hash * 33 + c
+            h = ((h << 5) + h) + static_cast<unsigned char>(*it);
+        }
+        return h;
     }
 };
 

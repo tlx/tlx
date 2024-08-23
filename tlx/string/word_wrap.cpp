@@ -3,11 +3,12 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2016-2017 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2016-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/string/word_wrap.hpp>
 #include <cctype>
 #include <string>
@@ -20,7 +21,7 @@ bool is_space(char ch)
            ch == '\v';
 }
 
-std::string word_wrap(const std::string& str, unsigned int wrap)
+std::string word_wrap(tlx::string_view str, unsigned int wrap)
 {
     std::string out;
     out.resize(str.size());

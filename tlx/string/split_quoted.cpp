@@ -3,11 +3,12 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2016-2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2016-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/string/split_quoted.hpp>
 #include <stdexcept>
 #include <string>
@@ -16,12 +17,12 @@
 
 namespace tlx {
 
-std::vector<std::string> split_quoted(const std::string& str, char sep,
+std::vector<std::string> split_quoted(tlx::string_view str, char sep,
                                       char quote, char escape)
 {
     std::vector<std::string> out;
 
-    std::string::const_iterator it = str.begin();
+    tlx::string_view::const_iterator it = str.begin();
     std::string entry;
 
     for (; it != str.end();)
@@ -140,7 +141,7 @@ std::vector<std::string> split_quoted(const std::string& str, char sep,
     return out;
 }
 
-std::vector<std::string> split_quoted(const std::string& str)
+std::vector<std::string> split_quoted(tlx::string_view str)
 {
     return split_quoted(str, ' ', '"', '\\');
 }

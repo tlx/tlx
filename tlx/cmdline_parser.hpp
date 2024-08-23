@@ -3,7 +3,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2013-2015 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2013-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -11,6 +11,7 @@
 #ifndef TLX_CMDLINE_PARSER_HEADER
 #define TLX_CMDLINE_PARSER_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
@@ -134,7 +135,7 @@ public:
     //! Wrap a long string at spaces into lines. Prefix is added
     //! unconditionally to each line. Lines are wrapped after wraplen
     //! characters if possible.
-    static void output_wrap(std::ostream& os, const std::string& text,
+    static void output_wrap(std::ostream& os, tlx::string_view text,
                             size_t wraplen, size_t indent_first = 0,
                             size_t indent_rest = 0, size_t current = 0,
                             size_t indent_newline = 0);
@@ -147,10 +148,10 @@ public:
     ~CmdlineParser();
 
     //! Set description of program, text will be wrapped
-    void set_description(const std::string& description);
+    void set_description(tlx::string_view description);
 
     //! Set author of program, will be wrapped.
-    void set_author(const std::string& author);
+    void set_author(tlx::string_view author);
 
     //! Set verbose processing of command line arguments
     void set_verbose_process(bool verbose_process);
@@ -162,59 +163,58 @@ public:
 
     //! add boolean option flag -key, --longkey with description and store to
     //! dest
-    void add_bool(char key, const std::string& longkey, bool& dest,
-                  const std::string& desc);
+    void add_bool(char key, tlx::string_view longkey, bool& dest,
+                  tlx::string_view desc);
 
     //! add boolean option flag -key, --longkey with description and store to
     //! dest. identical to add_bool()
-    void add_flag(char key, const std::string& longkey, bool& dest,
-                  const std::string& desc);
+    void add_flag(char key, tlx::string_view longkey, bool& dest,
+                  tlx::string_view desc);
 
     //! add signed integer option -key, --longkey with description and store to
     //! dest
-    void add_int(char key, const std::string& longkey, int& dest,
-                 const std::string& desc);
+    void add_int(char key, tlx::string_view longkey, int& dest,
+                 tlx::string_view desc);
 
     //! add unsigned integer option -key, --longkey with description and store
     //! to dest
-    void add_unsigned(char key, const std::string& longkey, unsigned int& dest,
-                      const std::string& desc);
+    void add_unsigned(char key, tlx::string_view longkey, unsigned int& dest,
+                      tlx::string_view desc);
 
     //! add unsigned integer option -key, --longkey with description and store
     //! to dest. identical to add_unsigned()
-    void add_uint(char key, const std::string& longkey, unsigned int& dest,
-                  const std::string& desc);
+    void add_uint(char key, tlx::string_view longkey, unsigned int& dest,
+                  tlx::string_view desc);
 
     //! add size_t option -key, --longkey with description and store to dest
-    void add_size_t(char key, const std::string& longkey, size_t& dest,
-                    const std::string& desc);
+    void add_size_t(char key, tlx::string_view longkey, size_t& dest,
+                    tlx::string_view desc);
 
     //! add float option -key, --longkey with description and store to dest
-    void add_float(char key, const std::string& longkey, float& dest,
-                   const std::string& desc);
+    void add_float(char key, tlx::string_view longkey, float& dest,
+                   tlx::string_view desc);
 
     //! add double option -key, --longkey with description and store to dest
-    void add_double(char key, const std::string& longkey, double& dest,
-                    const std::string& desc);
+    void add_double(char key, tlx::string_view longkey, double& dest,
+                    tlx::string_view desc);
 
     //! add SI/IEC suffixes byte size option -key, --longkey and store to 32-bit
     //! dest
-    void add_bytes(char key, const std::string& longkey, std::uint32_t& dest,
-                   const std::string& desc);
+    void add_bytes(char key, tlx::string_view longkey, std::uint32_t& dest,
+                   tlx::string_view desc);
 
     //! add SI/IEC suffixes byte size option -key, --longkey and store to 64-bit
     //! dest
-    void add_bytes(char key, const std::string& longkey, std::uint64_t& dest,
-                   const std::string& desc);
+    void add_bytes(char key, tlx::string_view longkey, std::uint64_t& dest,
+                   tlx::string_view desc);
 
     //! add string option -key, --longkey and store to dest
-    void add_string(char key, const std::string& longkey, std::string& dest,
-                    const std::string& desc);
+    void add_string(char key, tlx::string_view longkey, std::string& dest,
+                    tlx::string_view desc);
 
     //! add string list option -key, --longkey and store to dest
-    void add_stringlist(char key, const std::string& longkey,
-                        std::vector<std::string>& dest,
-                        const std::string& desc);
+    void add_stringlist(char key, tlx::string_view longkey,
+                        std::vector<std::string>& dest, tlx::string_view desc);
 
     //! \}
 
@@ -224,55 +224,51 @@ public:
     //! \{
 
     //! add boolean option flag --longkey with description and store to dest
-    void add_bool(const std::string& longkey, bool& dest,
-                  const std::string& desc);
+    void add_bool(tlx::string_view longkey, bool& dest, tlx::string_view desc);
 
     //! add boolean option flag --longkey with description and store to
     //! dest. identical to add_bool()
-    void add_flag(const std::string& longkey, bool& dest,
-                  const std::string& desc);
+    void add_flag(tlx::string_view longkey, bool& dest, tlx::string_view desc);
 
     //! add signed integer option --longkey with description and store to dest
-    void add_int(const std::string& longkey, int& dest,
-                 const std::string& desc);
+    void add_int(tlx::string_view longkey, int& dest, tlx::string_view desc);
 
     //! add unsigned integer option --longkey with description and store to dest
-    void add_unsigned(const std::string& longkey, unsigned int& dest,
-                      const std::string& desc);
+    void add_unsigned(tlx::string_view longkey, unsigned int& dest,
+                      tlx::string_view desc);
 
     //! add unsigned integer option --longkey with description and store to
     //! dest. identical to add_unsigned()
-    void add_uint(const std::string& longkey, unsigned int& dest,
-                  const std::string& desc);
+    void add_uint(tlx::string_view longkey, unsigned int& dest,
+                  tlx::string_view desc);
 
     //! add size_t option --longkey with description and store to dest
-    void add_size_t(const std::string& longkey, size_t& dest,
-                    const std::string& desc);
+    void add_size_t(tlx::string_view longkey, size_t& dest,
+                    tlx::string_view desc);
 
     //! add float option --longkey with description and store to dest
-    void add_float(const std::string& longkey, float& dest,
-                   const std::string& desc);
+    void add_float(tlx::string_view longkey, float& dest,
+                   tlx::string_view desc);
 
     //! add double option --longkey with description and store to dest
-    void add_double(const std::string& longkey, double& dest,
-                    const std::string& desc);
+    void add_double(tlx::string_view longkey, double& dest,
+                    tlx::string_view desc);
 
     //! add SI/IEC suffixes byte size option --longkey and store to 32-bit dest
-    void add_bytes(const std::string& longkey, std::uint32_t& dest,
-                   const std::string& desc);
+    void add_bytes(tlx::string_view longkey, std::uint32_t& dest,
+                   tlx::string_view desc);
 
     //! add SI/IEC suffixes byte size option --longkey and store to 64-bit dest
-    void add_bytes(const std::string& longkey, std::uint64_t& dest,
-                   const std::string& desc);
+    void add_bytes(tlx::string_view longkey, std::uint64_t& dest,
+                   tlx::string_view desc);
 
     //! add string option --longkey and store to dest
-    void add_string(const std::string& longkey, std::string& dest,
-                    const std::string& desc);
+    void add_string(tlx::string_view longkey, std::string& dest,
+                    tlx::string_view desc);
 
     //! add string list option --longkey and store to dest
-    void add_stringlist(const std::string& longkey,
-                        std::vector<std::string>& dest,
-                        const std::string& desc);
+    void add_stringlist(tlx::string_view longkey,
+                        std::vector<std::string>& dest, tlx::string_view desc);
 
     //! \}
 
@@ -283,74 +279,66 @@ public:
 
     //! add boolean option flag -key, --longkey [keytype] with description and
     //! store to dest
-    void add_bool(char key, const std::string& longkey,
-                  const std::string& keytype, bool& dest,
-                  const std::string& desc);
+    void add_bool(char key, tlx::string_view longkey, tlx::string_view keytype,
+                  bool& dest, tlx::string_view desc);
 
     //! add boolean option flag -key, --longkey [keytype] with description and
     //! store to dest. identical to add_bool()
-    void add_flag(char key, const std::string& longkey,
-                  const std::string& keytype, bool& dest,
-                  const std::string& desc);
+    void add_flag(char key, tlx::string_view longkey, tlx::string_view keytype,
+                  bool& dest, tlx::string_view desc);
 
     //! add signed integer option -key, --longkey [keytype] with description
     //! and store to dest
-    void add_int(char key, const std::string& longkey,
-                 const std::string& keytype, int& dest,
-                 const std::string& desc);
+    void add_int(char key, tlx::string_view longkey, tlx::string_view keytype,
+                 int& dest, tlx::string_view desc);
 
     //! add unsigned integer option -key, --longkey [keytype] with description
     //! and store to dest
-    void add_unsigned(char key, const std::string& longkey,
-                      const std::string& keytype, unsigned int& dest,
-                      const std::string& desc);
+    void add_unsigned(char key, tlx::string_view longkey,
+                      tlx::string_view keytype, unsigned int& dest,
+                      tlx::string_view desc);
 
     //! add unsigned integer option -key, --longkey [keytype] with description
     //! and store to dest. identical to add_unsigned()
-    void add_uint(char key, const std::string& longkey,
-                  const std::string& keytype, unsigned int& dest,
-                  const std::string& desc);
+    void add_uint(char key, tlx::string_view longkey, tlx::string_view keytype,
+                  unsigned int& dest, tlx::string_view desc);
 
     //! add size_t option -key, --longkey [keytype] with description and store
     //! to dest
-    void add_size_t(char key, const std::string& longkey,
-                    const std::string& keytype, size_t& dest,
-                    const std::string& desc);
+    void add_size_t(char key, tlx::string_view longkey,
+                    tlx::string_view keytype, size_t& dest,
+                    tlx::string_view desc);
 
     //! add float option -key, --longkey [keytype] with description and store
     //! to dest
-    void add_float(char key, const std::string& longkey,
-                   const std::string& keytype, float& dest,
-                   const std::string& desc);
+    void add_float(char key, tlx::string_view longkey, tlx::string_view keytype,
+                   float& dest, tlx::string_view desc);
 
     //! add double option -key, --longkey [keytype] with description and store
     //! to dest
-    void add_double(char key, const std::string& longkey,
-                    const std::string& keytype, double& dest,
-                    const std::string& desc);
+    void add_double(char key, tlx::string_view longkey,
+                    tlx::string_view keytype, double& dest,
+                    tlx::string_view desc);
 
     //! add SI/IEC suffixes byte size option -key, --longkey [keytype] and
     //! store to 64-bit dest
-    void add_bytes(char key, const std::string& longkey,
-                   const std::string& keytype, std::uint32_t& dest,
-                   const std::string& desc);
+    void add_bytes(char key, tlx::string_view longkey, tlx::string_view keytype,
+                   std::uint32_t& dest, tlx::string_view desc);
 
     //! add SI/IEC suffixes byte size option -key, --longkey [keytype] and
     //! store to 64-bit dest
-    void add_bytes(char key, const std::string& longkey,
-                   const std::string& keytype, std::uint64_t& dest,
-                   const std::string& desc);
+    void add_bytes(char key, tlx::string_view longkey, tlx::string_view keytype,
+                   std::uint64_t& dest, tlx::string_view desc);
 
     //! add string option -key, --longkey [keytype] and store to dest
-    void add_string(char key, const std::string& longkey,
-                    const std::string& keytype, std::string& dest,
-                    const std::string& desc);
+    void add_string(char key, tlx::string_view longkey,
+                    tlx::string_view keytype, std::string& dest,
+                    tlx::string_view desc);
 
     //! add string list option -key, --longkey [keytype] and store to dest
-    void add_stringlist(char key, const std::string& longkey,
-                        const std::string& keytype,
-                        std::vector<std::string>& dest,
-                        const std::string& desc);
+    void add_stringlist(char key, tlx::string_view longkey,
+                        tlx::string_view keytype,
+                        std::vector<std::string>& dest, tlx::string_view desc);
 
     //! \}
 
@@ -360,50 +348,49 @@ public:
     //! \{
 
     //! add signed integer parameter [name] with description and store to dest
-    void add_param_int(const std::string& name, int& dest,
-                       const std::string& desc);
+    void add_param_int(tlx::string_view name, int& dest, tlx::string_view desc);
 
     //! add unsigned integer parameter [name] with description and store to dest
-    void add_param_unsigned(const std::string& name, unsigned int& dest,
-                            const std::string& desc);
+    void add_param_unsigned(tlx::string_view name, unsigned int& dest,
+                            tlx::string_view desc);
 
     //! add unsigned integer parameter [name] with description and store to
     //! dest. identical to add_unsigned()
-    void add_param_uint(const std::string& name, unsigned int& dest,
-                        const std::string& desc);
+    void add_param_uint(tlx::string_view name, unsigned int& dest,
+                        tlx::string_view desc);
 
     //! add size_t parameter [name] with description and store to dest
-    void add_param_size_t(const std::string& name, size_t& dest,
-                          const std::string& desc);
+    void add_param_size_t(tlx::string_view name, size_t& dest,
+                          tlx::string_view desc);
 
     //! add float parameter [name] with description and store to dest
-    void add_param_float(const std::string& name, float& dest,
-                         const std::string& desc);
+    void add_param_float(tlx::string_view name, float& dest,
+                         tlx::string_view desc);
 
     //! add double parameter [name] with description and store to dest
-    void add_param_double(const std::string& name, double& dest,
-                          const std::string& desc);
+    void add_param_double(tlx::string_view name, double& dest,
+                          tlx::string_view desc);
 
     //! add SI/IEC suffixes byte size parameter [name] with description and
     //! store to dest
-    void add_param_bytes(const std::string& name, std::uint32_t& dest,
-                         const std::string& desc);
+    void add_param_bytes(tlx::string_view name, std::uint32_t& dest,
+                         tlx::string_view desc);
 
     //! add SI/IEC suffixes byte size parameter [name] with description and
     //! store to dest
-    void add_param_bytes(const std::string& name, std::uint64_t& dest,
-                         const std::string& desc);
+    void add_param_bytes(tlx::string_view name, std::uint64_t& dest,
+                         tlx::string_view desc);
 
     //! add string parameter [name] with description and store to dest
-    void add_param_string(const std::string& name, std::string& dest,
-                          const std::string& desc);
+    void add_param_string(tlx::string_view name, std::string& dest,
+                          tlx::string_view desc);
 
     //! add string list parameter [name] with description and store to dest.
     //! \warning this parameter must be last, as it will gobble all non-option
     //! arguments!
-    void add_param_stringlist(const std::string& name,
+    void add_param_stringlist(tlx::string_view name,
                               std::vector<std::string>& dest,
-                              const std::string& desc);
+                              tlx::string_view desc);
 
     //! \}
 
@@ -414,51 +401,51 @@ public:
 
     //! add optional signed integer parameter [name] with description and store
     //! to dest
-    void add_opt_param_int(const std::string& name, int& dest,
-                           const std::string& desc);
+    void add_opt_param_int(tlx::string_view name, int& dest,
+                           tlx::string_view desc);
 
     //! add optional unsigned integer parameter [name] with description and
     //! store to dest
-    void add_opt_param_unsigned(const std::string& name, unsigned int& dest,
-                                const std::string& desc);
+    void add_opt_param_unsigned(tlx::string_view name, unsigned int& dest,
+                                tlx::string_view desc);
 
     //! add optional unsigned integer parameter [name] with description and
     //! store to dest. identical to add_unsigned()
-    void add_opt_param_uint(const std::string& name, unsigned int& dest,
-                            const std::string& desc);
+    void add_opt_param_uint(tlx::string_view name, unsigned int& dest,
+                            tlx::string_view desc);
 
     //! add optional size_t parameter [name] with description and store to dest
-    void add_opt_param_size_t(const std::string& name, size_t& dest,
-                              const std::string& desc);
+    void add_opt_param_size_t(tlx::string_view name, size_t& dest,
+                              tlx::string_view desc);
 
     //! add optional float parameter [name] with description and store to dest
-    void add_opt_param_float(const std::string& name, float& dest,
-                             const std::string& desc);
+    void add_opt_param_float(tlx::string_view name, float& dest,
+                             tlx::string_view desc);
 
     //! add optional double parameter [name] with description and store to dest
-    void add_opt_param_double(const std::string& name, double& dest,
-                              const std::string& desc);
+    void add_opt_param_double(tlx::string_view name, double& dest,
+                              tlx::string_view desc);
 
     //! add optional SI/IEC suffixes byte size parameter [name] with
     //! description and store to dest
-    void add_opt_param_bytes(const std::string& name, std::uint32_t& dest,
-                             const std::string& desc);
+    void add_opt_param_bytes(tlx::string_view name, std::uint32_t& dest,
+                             tlx::string_view desc);
 
     //! add optional SI/IEC suffixes byte size parameter [name] with
     //! description and store to dest
-    void add_opt_param_bytes(const std::string& name, std::uint64_t& dest,
-                             const std::string& desc);
+    void add_opt_param_bytes(tlx::string_view name, std::uint64_t& dest,
+                             tlx::string_view desc);
 
     //! add optional string parameter [name] with description and store to dest
-    void add_opt_param_string(const std::string& name, std::string& dest,
-                              const std::string& desc);
+    void add_opt_param_string(tlx::string_view name, std::string& dest,
+                              tlx::string_view desc);
 
     //! add optional string parameter [name] with description and store to dest
     //! \warning this parameter must be last, as it will gobble all non-option
     //! arguments!
-    void add_opt_param_stringlist(const std::string& name,
+    void add_opt_param_stringlist(tlx::string_view name,
                                   std::vector<std::string>& dest,
-                                  const std::string& desc);
+                                  tlx::string_view desc);
 
     //! \}
 

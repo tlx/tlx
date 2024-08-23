@@ -6,7 +6,7 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2018 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2018-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
@@ -14,6 +14,7 @@
 #ifndef TLX_DIGEST_SHA256_HEADER
 #define TLX_DIGEST_SHA256_HEADER
 
+#include <tlx/container/string_view.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <string>
@@ -34,12 +35,12 @@ public:
     //! construct context and process data range
     SHA256(const void* data, std::uint32_t size);
     //! construct context and process string
-    explicit SHA256(const std::string& str);
+    explicit SHA256(tlx::string_view str);
 
     //! process more data
     void process(const void* data, std::uint32_t size);
     //! process more data
-    void process(const std::string& str);
+    void process(tlx::string_view str);
 
     //! digest length in bytes
     static constexpr size_t kDigestLength = 32;
@@ -64,12 +65,12 @@ private:
 //! process data and return 32 byte (256 bit) digest hex encoded
 std::string sha256_hex(const void* data, std::uint32_t size);
 //! process data and return 32 byte (256 bit) digest hex encoded
-std::string sha256_hex(const std::string& str);
+std::string sha256_hex(tlx::string_view str);
 
 //! process data and return 32 byte (256 bit) digest upper-case hex encoded
 std::string sha256_hex_uc(const void* data, std::uint32_t size);
 //! process data and return 32 byte (256 bit) digest upper-case hex encoded
-std::string sha256_hex_uc(const std::string& str);
+std::string sha256_hex_uc(tlx::string_view str);
 
 //! \}
 

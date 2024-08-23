@@ -3,11 +3,12 @@
  *
  * Part of tlx - http://panthema.net/tlx
  *
- * Copyright (C) 2019 Timo Bingmann <tb@panthema.net>
+ * Copyright (C) 2019-2024 Timo Bingmann <tb@panthema.net>
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/
 
+#include <tlx/container/string_view.hpp>
 #include <tlx/string/bitdump.hpp>
 #include <cstddef>
 #include <string>
@@ -45,7 +46,7 @@ std::string bitdump_8_msb(const void* const data, size_t size)
     return out;
 }
 
-std::string bitdump_8_msb(const std::string& str)
+std::string bitdump_8_msb(tlx::string_view str)
 {
     return bitdump_8_msb(str.data(), str.size());
 }
@@ -55,7 +56,7 @@ std::string bitdump_le8(const void* const data, size_t size)
     return bitdump_8_msb(data, size);
 }
 
-std::string bitdump_le8(const std::string& str)
+std::string bitdump_le8(tlx::string_view str)
 {
     return bitdump_8_msb(str);
 }
@@ -91,7 +92,7 @@ std::string bitdump_8_lsb(const void* const data, size_t size)
     return out;
 }
 
-std::string bitdump_8_lsb(const std::string& str)
+std::string bitdump_8_lsb(tlx::string_view str)
 {
     return bitdump_8_lsb(str.data(), str.size());
 }
@@ -101,7 +102,7 @@ std::string bitdump_be8(const void* const data, size_t size)
     return bitdump_8_lsb(data, size);
 }
 
-std::string bitdump_be8(const std::string& str)
+std::string bitdump_be8(tlx::string_view str)
 {
     return bitdump_8_lsb(str);
 }

@@ -24,7 +24,7 @@
 // *** Settings
 
 //! starting number of items to insert
-const size_t min_items = 125;
+const size_t min_items = 500;
 
 //! maximum number of items to insert
 const size_t max_items = 1024000 * 128;

@@ -50,7 +50,7 @@ public:
         HeapType heap;
 
         for (size_t i = 0; i < items; i++)
-            heap.push(items - i);
+            heap.push(i);
 
         die_unless(heap.size() == items);
     }

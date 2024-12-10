@@ -49,7 +49,7 @@ class DefaultLoggerOutputCErr : public LoggerOutputHook
         // lock the global mutex of logger for serialized output in
         // multi-threaded programs.
         std::unique_lock<std::mutex> lock(mutex_);
-        std::cout.write(line.data(), line.size()).flush();
+        std::cerr.write(line.data(), line.size()).flush();
     }
 };
 

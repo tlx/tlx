@@ -975,41 +975,110 @@ static void test_trim()
     die_unequal(tlx::trim("abc  "), "abc");
     die_unequal(tlx::trim("  abc"), "abc");
     die_unequal(tlx::trim("  "), "");
+    die_unequal(tlx::trim("abc  ", ' '), "abc");
 
     die_unequal(tlx::trim_left("  abc  "), "abc  ");
     die_unequal(tlx::trim_left("abc  "), "abc  ");
     die_unequal(tlx::trim_left("  "), "");
+    die_unequal(tlx::trim_left("   abc  ", ' '), "abc  ");
 
     die_unequal(tlx::trim_right("  abc  "), "  abc");
     die_unequal(tlx::trim_right("  abc"), "  abc");
     die_unequal(tlx::trim_right("  "), "");
+    die_unequal(tlx::trim_right("  abc   ", ' '), "  abc");
 
     // in-place functions
     std::string str1 = "  abc  ";
     std::string str2 = "abc  ";
     std::string str3 = "  ";
+    std::string str4 = "  abc  ";
 
     die_unequal(tlx::trim_left(&str1), "abc  ");
     die_unequal(tlx::trim_left(&str2), "abc  ");
     die_unequal(tlx::trim_left(&str3), "");
+    die_unequal(tlx::trim_left(&str4, ' '), "abc  ");
 
     str1 = "  abc  ";
     str2 = "  abc";
     str3 = "  ";
+    str4 = "  abc  ";
 
     die_unequal(tlx::trim_right(&str1), "  abc");
     die_unequal(tlx::trim_right(&str2), "  abc");
     die_unequal(tlx::trim_right(&str3), "");
+    die_unequal(tlx::trim_right(&str4, ' '), "  abc");
 
     str1 = "  abc  ";
     str2 = "  abc";
     str3 = "abc  ";
-    std::string str4 = "  ";
+    str4 = "  ";
+    std::string str5 = "  abc  ";
 
     die_unequal(tlx::trim(&str1), "abc");
     die_unequal(tlx::trim(&str2), "abc");
     die_unequal(tlx::trim(&str3), "abc");
     die_unequal(tlx::trim(&str4), "");
+    die_unequal(tlx::trim(&str5, ' '), "abc");
+}
+
+static void test_trim_string_view()
+{
+    // string_view-copy functions
+    tlx::string_view sv1("  abc  ");
+    tlx::string_view sv2("abc  ");
+    tlx::string_view sv3("  abc");
+    tlx::string_view sv4("  ");
+
+    die_unequal(tlx::trim(sv1), "abc");
+    die_unequal(tlx::trim(sv2), "abc");
+    die_unequal(tlx::trim(sv3), "abc");
+    die_unequal(tlx::trim(sv4), "");
+    die_unequal(tlx::trim(sv1, ' '), "abc");
+
+    die_unequal(tlx::trim_left(sv1), "abc  ");
+    die_unequal(tlx::trim_left(sv2), "abc  ");
+    die_unequal(tlx::trim_left(sv3), "abc");
+    die_unequal(tlx::trim_left(sv4), "");
+    die_unequal(tlx::trim_left(sv1, ' '), "abc  ");
+
+    die_unequal(tlx::trim_right(sv1), "  abc");
+    die_unequal(tlx::trim_right(sv2), "abc");
+    die_unequal(tlx::trim_right(sv3), "  abc");
+    die_unequal(tlx::trim_right(sv4), "");
+    die_unequal(tlx::trim_right(sv1, ' '), "  abc");
+
+    // in-place functions
+    tlx::string_view str1 = "  abc  ";
+    tlx::string_view str2 = "abc  ";
+    tlx::string_view str3 = "  ";
+    tlx::string_view str4 = "  abc  ";
+
+    die_unequal(tlx::trim_left(&str1), "abc  ");
+    die_unequal(tlx::trim_left(&str2), "abc  ");
+    die_unequal(tlx::trim_left(&str3), "");
+    die_unequal(tlx::trim_left(&str4, ' '), "abc  ");
+
+    str1 = "  abc  ";
+    str2 = "  abc";
+    str3 = "  ";
+    str4 = "  abc  ";
+
+    die_unequal(tlx::trim_right(&str1), "  abc");
+    die_unequal(tlx::trim_right(&str2), "  abc");
+    die_unequal(tlx::trim_right(&str3), "");
+    die_unequal(tlx::trim_right(&str4, ' '), "  abc");
+
+    str1 = "  abc  ";
+    str2 = "  abc";
+    str3 = "abc  ";
+    str4 = "  ";
+    tlx::string_view str5 = "  abc  ";
+
+    die_unequal(tlx::trim(&str1), "abc");
+    die_unequal(tlx::trim(&str2), "abc");
+    die_unequal(tlx::trim(&str3), "abc");
+    die_unequal(tlx::trim(&str4), "");
+    die_unequal(tlx::trim(&str5, ' '), "abc");
 }
 
 static void test_word_wrap()
@@ -1162,6 +1231,7 @@ int main()
     test_starts_with_ends_with();
     test_toupper_tolower();
     test_trim();
+    test_trim_string_view();
     test_word_wrap();
 
     return 0;

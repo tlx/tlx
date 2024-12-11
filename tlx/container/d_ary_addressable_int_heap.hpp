@@ -122,8 +122,9 @@ public:
     {
         // Avoid to add the key that we use to mark non present keys.
         assert(new_key != not_present());
-        if (new_key >= handles_.size())
-            handles_.resize(new_key + 1, not_present());
+        if (auto current_size = handles_.size(); new_key >= current_size)
+            handles_.insert(handles_.end(), new_key + 1 - current_size,
+                            not_present());
         else
             assert(handles_[new_key] == not_present());
 
@@ -138,8 +139,9 @@ public:
     {
         // Avoid to add the key that we use to mark non present keys.
         assert(new_key != not_present());
-        if (new_key >= handles_.size())
-            handles_.resize(new_key + 1, not_present());
+        if (auto current_size = handles_.size(); new_key >= current_size)
+            handles_.insert(handles_.end(), new_key + 1 - current_size,
+                            not_present());
         else
             assert(handles_[new_key] == not_present());
 

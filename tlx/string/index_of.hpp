@@ -28,10 +28,23 @@ namespace tlx {
 size_t index_of(const std::vector<std::string>& list, tlx::string_view str);
 
 /*!
+ * Attempts to find str in the list and return the index. Throws a
+ * std::runtime_error if it is not found.
+ */
+size_t index_of(const std::vector<tlx::string_view>& list, tlx::string_view str);
+
+/*!
  * Attempts to find str in the list and return the index using case-insensitive
  * comparisons. Throws a std::runtime_error if it is not found.
  */
 size_t index_of_icase(const std::vector<std::string>& list,
+                      tlx::string_view str);
+
+/*!
+ * Attempts to find str in the list and return the index using case-insensitive
+ * comparisons. Throws a std::runtime_error if it is not found.
+ */
+size_t index_of_icase(const std::vector<tlx::string_view>& list,
                       tlx::string_view str);
 
 //! \}

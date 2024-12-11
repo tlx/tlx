@@ -119,9 +119,13 @@ public:
     }
 
 #if __cplusplus >= 201703L
+    //! implicit construction from a std::string_view
     StringView(std::string_view sv) noexcept : StringView(sv.data(), sv.size())
     {
     }
+
+    //! implicit conversion to std::string_view
+    operator std::string_view() const { return std::string_view(data(), size()); }
 #endif
 
     //! \name iterators

@@ -7,42 +7,28 @@ when:
 
 matrix:
   include:
-    - IMAGE:        ubuntu-14.04
+    - IMAGE:        ubuntu-16.04-1
       BUILD_TYPE:   Debug
       C_COMPILER:   gcc
       CXX_COMPILER: g++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-14.04
+    - IMAGE:        ubuntu-16.04-1
       BUILD_TYPE:   Release
       C_COMPILER:   gcc
       CXX_COMPILER: g++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-16.04
-      BUILD_TYPE:   Debug
-      C_COMPILER:   gcc
-      CXX_COMPILER: g++
-      CXX_FLAGS:
-      CMAKE_FLAGS:
-
-    - IMAGE:        ubuntu-16.04
-      BUILD_TYPE:   Release
-      C_COMPILER:   gcc
-      CXX_COMPILER: g++
-      CXX_FLAGS:
-      CMAKE_FLAGS:
-
-    - IMAGE:        ubuntu-16.04
+    - IMAGE:        ubuntu-16.04-1
       BUILD_TYPE:   Debug
       C_COMPILER:   clang
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-16.04
+    - IMAGE:        ubuntu-16.04-1
       BUILD_TYPE:   Release
       C_COMPILER:   clang
       CXX_COMPILER: clang++

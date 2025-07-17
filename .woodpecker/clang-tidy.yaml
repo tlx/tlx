@@ -7,7 +7,7 @@ when:
 
 matrix:
   include:
-    - IMAGE:        ubuntu-24.04
+    - IMAGE:        ubuntu-24.04-noble-1
       BUILD_TYPE:   Release
       C_COMPILER:   clang
       CXX_COMPILER: clang++

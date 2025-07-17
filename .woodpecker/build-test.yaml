@@ -7,217 +7,217 @@ when:
 
 matrix:
   include:
-    - IMAGE:        ubuntu-16.04-1
+    - IMAGE:        ubuntu-16.04-xenial-2
       BUILD_TYPE:   Debug
       CXX_COMPILER: g++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-16.04-1
+    - IMAGE:        ubuntu-16.04-xenial-2
       BUILD_TYPE:   Release
       CXX_COMPILER: g++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-16.04-1
+    - IMAGE:        ubuntu-16.04-xenial-2
       BUILD_TYPE:   Debug
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-16.04-1
+    - IMAGE:        ubuntu-16.04-xenial-2
       BUILD_TYPE:   Release
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-18.04
+    - IMAGE:        ubuntu-18.04-bionic-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: g++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-18.04
+    - IMAGE:        ubuntu-18.04-bionic-1
       BUILD_TYPE:   Release
       CXX_COMPILER: g++
       CXX_FLAGS:    -m32
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-18.04
+    - IMAGE:        ubuntu-18.04-bionic-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-18.04
+    - IMAGE:        ubuntu-18.04-bionic-1
       BUILD_TYPE:   Release
       CXX_COMPILER: clang++
       CXX_FLAGS:    -fsanitize=address
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-20.04
+    - IMAGE:        ubuntu-20.04-focal-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: g++
       CXX_FLAGS:    -m32
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-20.04
+    - IMAGE:        ubuntu-20.04-focal-1
       BUILD_TYPE:   Release
       CXX_COMPILER: g++
       CXX_FLAGS:    -D_GLIBCXX_DEBUG
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-20.04
+    - IMAGE:        ubuntu-20.04-focal-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-20.04
+    - IMAGE:        ubuntu-20.04-focal-1
       BUILD_TYPE:   Release
       CXX_COMPILER: clang++
       CXX_FLAGS:    -D_GLIBCXX_DEBUG
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-22.04
+    - IMAGE:        ubuntu-22.04-jammy-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: g++
       CXX_FLAGS:    -m32
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-22.04
+    - IMAGE:        ubuntu-22.04-jammy-1
       BUILD_TYPE:   Release
       CXX_COMPILER: g++
       CXX_FLAGS:
       CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
 
-    - IMAGE:        ubuntu-22.04
+    - IMAGE:        ubuntu-22.04-jammy-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-22.04
+    - IMAGE:        ubuntu-22.04-jammy-1
       BUILD_TYPE:   Release
       CXX_COMPILER: clang++
       CXX_FLAGS:    -fsanitize=address
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-24.04
+    - IMAGE:        ubuntu-24.04-noble-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: g++
       CXX_FLAGS:    -m32
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-24.04
+    - IMAGE:        ubuntu-24.04-noble-1
       BUILD_TYPE:   Release
       CXX_COMPILER: g++
       CXX_FLAGS:
       CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
 
-    - IMAGE:        ubuntu-24.04
+    - IMAGE:        ubuntu-24.04-noble-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        ubuntu-24.04
+    - IMAGE:        ubuntu-24.04-noble-1
       BUILD_TYPE:   Release
       CXX_COMPILER: clang++
       CXX_FLAGS:    -fsanitize=undefined
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-9
+    - IMAGE:        debian-9-strech-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: g++
       CXX_FLAGS:    -m32
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-9
+    - IMAGE:        debian-9-strech-1
       BUILD_TYPE:   Release
       CXX_COMPILER: g++
       CXX_FLAGS:
       CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
 
-    - IMAGE:        debian-9
+    - IMAGE:        debian-9-strech-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-9
+    - IMAGE:        debian-9-strech-1
       BUILD_TYPE:   Release
       CXX_COMPILER: clang++
       CXX_FLAGS:    -D_GLIBCXX_DEBUG
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-10
+    - IMAGE:        debian-10-buster-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: g++
       CXX_FLAGS:    -m32
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-10
+    - IMAGE:        debian-10-buster-1
       BUILD_TYPE:   Release
       CXX_COMPILER: g++
       CXX_FLAGS:
       CMAKE_FLAGS:  -DTLX_MORE_TESTS=ON
 
-    - IMAGE:        debian-10
+    - IMAGE:        debian-10-buster-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-10
+    - IMAGE:        debian-10-buster-1
       BUILD_TYPE:   Release
       CXX_COMPILER: clang++
       CXX_FLAGS:    -D_GLIBCXX_DEBUG
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-11
+    - IMAGE:        debian-11-bullseye-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: g++
       CXX_FLAGS:    -m32
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-11
+    - IMAGE:        debian-11-bullseye-1
       BUILD_TYPE:   Release
       CXX_COMPILER: g++
       CXX_FLAGS:    -fsanitize=address
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-11
+    - IMAGE:        debian-11-bullseye-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-11
+    - IMAGE:        debian-11-bullseye-1
       BUILD_TYPE:   Release
       CXX_COMPILER: clang++
       CXX_FLAGS:    -D_GLIBCXX_DEBUG -DTLX_MORE_TESTS=ON
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-12
+    - IMAGE:        debian-12-bookworm-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: g++
       CXX_FLAGS:    -m32
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-12
+    - IMAGE:        debian-12-bookworm-1
       BUILD_TYPE:   Release
       CXX_COMPILER: g++
       CXX_FLAGS:    -D_GLIBCXX_DEBUG
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-12
+    - IMAGE:        debian-12-bookworm-1
       BUILD_TYPE:   Debug
       CXX_COMPILER: clang++
       CXX_FLAGS:
       CMAKE_FLAGS:
 
-    - IMAGE:        debian-12
+    - IMAGE:        debian-12-bookworm-1
       BUILD_TYPE:   Release
       CXX_COMPILER: clang++
       CXX_FLAGS:    -D_GLIBCXX_DEBUG -fsanitize=address
@@ -239,5 +239,5 @@ steps:
           -DTLX_TRY_COMPILE_HEADERS=ON
           -DTLX_WARNINGS_ARE_ERRORS=ON
           ..
-      - ninja
-      - ninja test
+      - ninja -j 1
+      - ninja -j 1 test

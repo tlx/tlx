@@ -17,6 +17,7 @@
 #include <tlx/math/div_ceil.hpp>
 #include <tlx/math/ffs.hpp>
 #include <tlx/meta/log2.hpp>
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstddef>

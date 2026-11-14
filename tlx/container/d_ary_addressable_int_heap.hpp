@@ -12,11 +12,13 @@
 #ifndef TLX_CONTAINER_D_ARY_ADDRESSABLE_INT_HEAP_HEADER
 #define TLX_CONTAINER_D_ARY_ADDRESSABLE_INT_HEAP_HEADER
 
+#include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <functional>
 #include <limits>
 #include <queue>
+#include <utility>
 #include <vector>
 
 namespace tlx {

@@ -13,31 +13,20 @@ jobs:
       fail-fast: false
       matrix:
         config:
-        - name: "Ubuntu 20.04 gcc 7.5 Debug"
-          os: ubuntu-20.04
+        - name: "Ubuntu 22.04 gcc 9 Debug"
+          os: ubuntu-22.04
           build_type: "Debug"
-          gcc_install: "7"
+          gcc_install: "9"
 
-        - name: "Ubuntu 20.04 gcc 9.3 Debug 32-bit"
-          os: ubuntu-20.04
+        - name: "Ubuntu 22.04 gcc 11 Debug 32-bit"
+          os: ubuntu-22.04
           build_type: "Debug"
           cxx_flags: "-m32"
 
-        - name: "Ubuntu 20.04 gcc 9.3 Release AddressSanitizer"
-          os: ubuntu-20.04
+        - name: "Ubuntu 22.04 gcc 11 Release AddressSanitizer"
+          os: ubuntu-22.04
           build_type: "Release"
           cxx_flags: "-fsanitize=address"
-
-        - name: "Ubuntu 20.04 gcc 11 Debug"
-          os: ubuntu-20.04
-          build_type: "Debug"
-          gcc_install: "11"
-
-        - name: "Ubuntu 20.04 gcc 11 Release GLIBCXX_DEBUG"
-          os: ubuntu-20.04
-          build_type: "Release"
-          gcc_install: "11"
-          cxx_flags: "-D_GLIBCXX_DEBUG"
 
         - name: "Ubuntu 22.04 gcc 11 Debug"
           os: ubuntu-22.04
@@ -49,9 +38,9 @@ jobs:
           gcc_install: "13"
           cxx_flags: "-D_GLIBCXX_DEBUG"
 
-        - name: "macOS 13 clang 15 Release"
-          os: macos-13
-          build_type: "Release"
+        - name: "Ubuntu 24.04 gcc 13 Debug"
+          os: ubuntu-24.04
+          build_type: "Debug"
 
         - name: "macOS 14 Debug"
           os: macos-14
@@ -66,7 +55,7 @@ jobs:
         #   build_type: "Debug"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Install gcc version
         if: ${{matrix.config.gcc_install}}
@@ -74,9 +63,9 @@ jobs:
           echo --- Install gcc version ${{matrix.config.gcc_install}}
           echo --- gcc version before
           gcc --version
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
           sudo apt-get update
-          sudo apt-get install gcc-${{matrix.config.gcc_install}} g++-${{matrix.config.gcc_install}}
+          sudo apt-get install -y gcc-${{matrix.config.gcc_install}} g++-${{matrix.config.gcc_install}}
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{matrix.config.gcc_install}} 90 --slave /usr/bin/g++ g++ /usr/bin/g++-${{matrix.config.gcc_install}}
           echo --- gcc version after
           gcc --version
@@ -84,9 +73,9 @@ jobs:
       - name: Install additional packages
         if: ${{matrix.config.cxx_flags == '-m32'}}
         run: |
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
           sudo apt-get update
-          sudo apt-get install g++-9-multilib
+          sudo apt-get install -y g++-multilib
 
       - name: Configure CMake
         run: >
